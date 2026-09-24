@@ -1,0 +1,15 @@
+{
+  "$comment": "Items every dish refers to.",
+  "items": [
+    {
+      "id": "burnt",
+      "label": "Burnt food",
+      "quality": "Junk",
+      "look": {
+        "base": "pie",
+        "texture": "Items/Consumables/Food/Pie_Textures/Pumpkin.png",
+        "tint": "#2e2824"
+      }
+    }
+  ]
+}

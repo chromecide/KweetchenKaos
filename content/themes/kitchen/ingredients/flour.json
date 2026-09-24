@@ -1,0 +1,31 @@
+{
+  "item": {
+    "id": "flour",
+    "label": "Flour",
+    "look": {
+      "model": "Items/Tools/Feedbag/Feedbag.blockymodel",
+      "texture": "Items/Tools/Feedbag/Flourbag_Texture.png",
+      "scale": 0.5,
+      "icon": "Icons/ItemsGenerated/Food_Flour.png"
+    }
+  },
+  "source": "crate",
+  "steps": [
+    {
+      "type": "press",
+      "station": "board",
+      "input": "flour",
+      "presses": 4,
+      "output": {
+        "id": "dough",
+        "label": "Dough",
+        "look": {
+          "model": "Items/Ingredients/Dough.blockymodel",
+          "texture": "Items/Ingredients/Dough_Texture.png",
+          "scale": 0.25,
+          "icon": "Icons/ItemsGenerated/Food_Dough.png"
+        }
+      }
+    }
+  ]
+}

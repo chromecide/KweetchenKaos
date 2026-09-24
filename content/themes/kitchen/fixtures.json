@@ -1,0 +1,4 @@
+{
+  "$comment": "The theme's block for each layout slot. Filled in when layouts move to v2; empty means the slot keeps its plain slot block.",
+  "slots": {}
+}

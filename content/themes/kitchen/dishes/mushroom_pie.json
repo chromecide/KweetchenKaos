@@ -1,0 +1,87 @@
+{
+  "id": "mushroom_pie",
+  "label": "Mushroom pie",
+  "steps": [
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "dough",
+        "mushroom_chopped"
+      ],
+      "output": {
+        "id": "mushroom_pie_unbaked",
+        "label": "Unbaked mushroom pie",
+        "look": {
+          "base": "pie",
+          "texture": "Items/Consumables/Food/Pie_Textures/Mushroom.png",
+          "icon": "Icons/ItemsGenerated/Plant_Crop_Mushroom_Cap_Brown.png",
+          "tint": "#a8b0c4"
+        }
+      }
+    },
+    {
+      "type": "heat",
+      "station": "stove",
+      "ladder": "bake",
+      "input": "mushroom_pie_unbaked",
+      "look": {
+        "base": "pie",
+        "texture": "Items/Consumables/Food/Pie_Textures/Mushroom.png",
+        "icon": "Icons/ItemsGenerated/Plant_Crop_Mushroom_Cap_Brown.png"
+      },
+      "stage_looks": {
+        "raw": {
+          "tint": "#a8b0c4"
+        }
+      }
+    },
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "plate",
+        "mushroom_pie_cooked"
+      ],
+      "output": {
+        "id": "mushroom_pie_cooked_plated",
+        "label": "Mushroom pie (cooked), plated",
+        "look": {
+          "of": "mushroom_pie_cooked"
+        },
+        "bin": {
+          "leaves": "plate_dirty"
+        }
+      }
+    },
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "plate",
+        "mushroom_pie_well"
+      ],
+      "output": {
+        "id": "mushroom_pie_well_plated",
+        "label": "Mushroom pie (well done), plated",
+        "look": {
+          "of": "mushroom_pie_well"
+        },
+        "bin": {
+          "leaves": "plate_dirty"
+        }
+      }
+    }
+  ],
+  "menu": [
+    {
+      "serves": "mushroom_pie_cooked_plated",
+      "label": "Mushroom pie (cooked)"
+    },
+    {
+      "serves": "mushroom_pie_well_plated",
+      "label": "Mushroom pie (well done)",
+      "price": 6
+    }
+  ]
+}

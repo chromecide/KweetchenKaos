@@ -1,0 +1,30 @@
+{
+  "item": {
+    "id": "mushroom",
+    "label": "Mushroom",
+    "look": {
+      "model": "Blocks/Foliage/Plants/Mushroom_Fox.blockymodel",
+      "texture": "Blocks/Foliage/Plants/Mushroom_Fox_Brown.png",
+      "scale": 0.5,
+      "icon": "Icons/ItemsGenerated/Plant_Crop_Mushroom_Cap_Brown.png"
+    }
+  },
+  "source": "crate",
+  "steps": [
+    {
+      "type": "press",
+      "station": "board",
+      "input": "mushroom",
+      "presses": 4,
+      "output": {
+        "id": "mushroom_chopped",
+        "label": "Chopped mushroom",
+        "look": {
+          "base": "petal",
+          "texture": "Resources/Plants/Petal_Textures/White.png",
+          "icon": "Icons/ItemsGenerated/Plant_Petals_White.png"
+        }
+      }
+    }
+  ]
+}

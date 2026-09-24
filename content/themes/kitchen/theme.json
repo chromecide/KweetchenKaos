@@ -1,0 +1,16 @@
+{
+  "id": "kitchen",
+  "name": "Kitchen",
+  "prefix": "Kitchen",
+  "defaults": {
+    "heat_seconds": 8,
+    "order_patience": 30,
+    "food_patience": 75,
+    "eat_seconds": 6,
+    "price": 5,
+    "max_stack": 1
+  },
+  "guest": {
+    "appearance": "Klops"
+  }
+}

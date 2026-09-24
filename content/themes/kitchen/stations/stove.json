@@ -1,0 +1,16 @@
+{
+  "id": "stove",
+  "role": "heat",
+  "label": "Stove",
+  "look": {
+    "sides": "BlockTextures/Metal_Bronze.png",
+    "busy_sides": "BlockTextures/Metal_Bronze_Decorative.png",
+    "top": "BlockTextures/Calcite_Brick_Top.png",
+    "sound": "Stone"
+  },
+  "words": {
+    "free": "Stove - put something on to cook",
+    "busy": "Stove - in use",
+    "on_top": "{label} - {stage}. Press to take it off"
+  }
+}

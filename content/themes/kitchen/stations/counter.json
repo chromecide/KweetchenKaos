@@ -1,0 +1,14 @@
+{
+  "id": "counter",
+  "role": "combine",
+  "label": "Counter",
+  "look": {
+    "sides": "BlockTextures/Calcite_Brick_Smooth.png",
+    "top": "BlockTextures/Calcite_Brick_Decorative_Top.png",
+    "sound": "Stone"
+  },
+  "words": {
+    "free": "Counter - put anything down here",
+    "on_top": "{label} - press to pick up"
+  }
+}

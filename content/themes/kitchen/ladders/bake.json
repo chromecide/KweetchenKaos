@@ -1,0 +1,30 @@
+{
+  "id": "bake",
+  "station_role": "heat",
+  "stages": [
+    {
+      "id": "raw",
+      "word": "unbaked",
+      "gives": "input"
+    },
+    {
+      "id": "cooked",
+      "word": "cooked",
+      "gives": "new",
+      "seconds": 8
+    },
+    {
+      "id": "well",
+      "word": "well done",
+      "gives": "new",
+      "seconds": 6,
+      "tint": "#6a4020"
+    },
+    {
+      "id": "burnt",
+      "word": "burnt",
+      "gives": "burnt",
+      "tint": "#2e2824"
+    }
+  ]
+}

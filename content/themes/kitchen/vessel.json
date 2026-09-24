@@ -1,0 +1,31 @@
+{
+  "$comment": "What food is served in. Guests leave it dirty; the wash station cleans it. Never binned: plates are finite.",
+  "clean": {
+    "id": "plate",
+    "label": "Clean plate",
+    "look": {
+      "model": "Blocks/Miscellaneous/Plate.blockymodel",
+      "texture": "Blocks/Miscellaneous/Plate_Texture.png",
+      "scale": 0.75,
+      "icon": "Icons/ItemsGenerated/Deco_Plate.png"
+    },
+    "bin": "refuse"
+  },
+  "dirty": {
+    "id": "plate_dirty",
+    "label": "Dirty plate",
+    "quality": "Junk",
+    "look": {
+      "model": "Blocks/Miscellaneous/Plate.blockymodel",
+      "texture": "Blocks/Miscellaneous/Plate_Texture.png",
+      "scale": 0.75,
+      "icon": "Icons/ItemsGenerated/Deco_Plate.png",
+      "tint": "#b3a689"
+    },
+    "bin": "refuse"
+  },
+  "wash": {
+    "station": "sink",
+    "presses": 4
+  }
+}

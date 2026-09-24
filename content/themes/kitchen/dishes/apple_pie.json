@@ -1,0 +1,87 @@
+{
+  "id": "apple_pie",
+  "label": "Apple pie",
+  "steps": [
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "dough",
+        "apple_chopped"
+      ],
+      "output": {
+        "id": "apple_pie_unbaked",
+        "label": "Unbaked apple pie",
+        "look": {
+          "base": "pie",
+          "texture": "Items/Consumables/Food/Pie_Textures/Apple.png",
+          "icon": "Icons/ItemsGenerated/Food_Pie_Apple.png",
+          "tint": "#f098b8"
+        }
+      }
+    },
+    {
+      "type": "heat",
+      "station": "stove",
+      "ladder": "bake",
+      "input": "apple_pie_unbaked",
+      "look": {
+        "base": "pie",
+        "texture": "Items/Consumables/Food/Pie_Textures/Apple.png",
+        "icon": "Icons/ItemsGenerated/Food_Pie_Apple.png"
+      },
+      "stage_looks": {
+        "raw": {
+          "tint": "#f098b8"
+        }
+      }
+    },
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "plate",
+        "apple_pie_cooked"
+      ],
+      "output": {
+        "id": "apple_pie_cooked_plated",
+        "label": "Apple pie (cooked), plated",
+        "look": {
+          "of": "apple_pie_cooked"
+        },
+        "bin": {
+          "leaves": "plate_dirty"
+        }
+      }
+    },
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "plate",
+        "apple_pie_well"
+      ],
+      "output": {
+        "id": "apple_pie_well_plated",
+        "label": "Apple pie (well done), plated",
+        "look": {
+          "of": "apple_pie_well"
+        },
+        "bin": {
+          "leaves": "plate_dirty"
+        }
+      }
+    }
+  ],
+  "menu": [
+    {
+      "serves": "apple_pie_cooked_plated",
+      "label": "Apple pie (cooked)"
+    },
+    {
+      "serves": "apple_pie_well_plated",
+      "label": "Apple pie (well done)",
+      "price": 6
+    }
+  ]
+}

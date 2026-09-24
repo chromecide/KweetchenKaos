@@ -1,0 +1,30 @@
+{
+  "item": {
+    "id": "meat",
+    "label": "Raw meat",
+    "look": {
+      "model": "Items/Consumables/Food/Wildmeat.blockymodel",
+      "texture": "Items/Consumables/Food/Wildmeat_Raw.png",
+      "scale": 0.25,
+      "icon": "Icons/ItemsGenerated/Food_Wildmeat_Raw.png"
+    }
+  },
+  "source": "crate",
+  "steps": [
+    {
+      "type": "press",
+      "station": "board",
+      "input": "meat",
+      "presses": 4,
+      "output": {
+        "id": "meat_chopped",
+        "label": "Chopped raw meat",
+        "look": {
+          "base": "petal",
+          "texture": "Resources/Plants/Petal_Textures/Blood.png",
+          "icon": "Icons/ItemsGenerated/Plant_Petals_Blood.png"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "bin",
+  "role": "bin",
+  "label": "Bin",
+  "look": {
+    "sides": "BlockTextures/Metal_Bronze.png",
+    "top": "BlockTextures/Metal_Bronze.png",
+    "tint": "#5a5a5a",
+    "busy_tint": "#4a4038",
+    "sound": "Stone"
+  },
+  "words": {
+    "free": "Bin - press holding food to throw it away",
+    "busy": "Bin - take the plate off first",
+    "on_top": "{label} - press to take it"
+  }
+}

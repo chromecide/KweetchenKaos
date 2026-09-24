@@ -1,0 +1,6 @@
+{
+  "$comment": "A chopped piece: the petal at half size. Items pick a colour texture.",
+  "id": "petal",
+  "model": "Resources/Plants/Petal.blockymodel",
+  "scale": 0.5
+}

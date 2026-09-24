@@ -1,0 +1,87 @@
+{
+  "id": "meat_pie",
+  "label": "Meat pie",
+  "steps": [
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "dough",
+        "meat_chopped"
+      ],
+      "output": {
+        "id": "meat_pie_unbaked",
+        "label": "Unbaked meat pie",
+        "look": {
+          "base": "pie",
+          "texture": "Items/Consumables/Food/Pie_Textures/Meat.png",
+          "icon": "Icons/ItemsGenerated/Food_Pie_Meat.png",
+          "tint": "#d06858"
+        }
+      }
+    },
+    {
+      "type": "heat",
+      "station": "stove",
+      "ladder": "bake",
+      "input": "meat_pie_unbaked",
+      "look": {
+        "base": "pie",
+        "texture": "Items/Consumables/Food/Pie_Textures/Meat.png",
+        "icon": "Icons/ItemsGenerated/Food_Pie_Meat.png"
+      },
+      "stage_looks": {
+        "raw": {
+          "tint": "#d06858"
+        }
+      }
+    },
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "plate",
+        "meat_pie_cooked"
+      ],
+      "output": {
+        "id": "meat_pie_cooked_plated",
+        "label": "Meat pie (cooked), plated",
+        "look": {
+          "of": "meat_pie_cooked"
+        },
+        "bin": {
+          "leaves": "plate_dirty"
+        }
+      }
+    },
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "plate",
+        "meat_pie_well"
+      ],
+      "output": {
+        "id": "meat_pie_well_plated",
+        "label": "Meat pie (well done), plated",
+        "look": {
+          "of": "meat_pie_well"
+        },
+        "bin": {
+          "leaves": "plate_dirty"
+        }
+      }
+    }
+  ],
+  "menu": [
+    {
+      "serves": "meat_pie_cooked_plated",
+      "label": "Meat pie (cooked)"
+    },
+    {
+      "serves": "meat_pie_well_plated",
+      "label": "Meat pie (well done)",
+      "price": 6
+    }
+  ]
+}

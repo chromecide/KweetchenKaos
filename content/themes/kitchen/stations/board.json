@@ -1,0 +1,17 @@
+{
+  "id": "board",
+  "role": "press",
+  "label": "Chopping board",
+  "leave_on": true,
+  "look": {
+    "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+    "top": "BlockTextures/Wood_Softwood_Planks_Top.png",
+    "sound": "Wood"
+  },
+  "words": {
+    "free": "Chopping board - put something raw on it",
+    "busy": "Chopping - {n} press{s} to go",
+    "on_top": "Press to chop",
+    "done": "Done - press to pick it up"
+  }
+}

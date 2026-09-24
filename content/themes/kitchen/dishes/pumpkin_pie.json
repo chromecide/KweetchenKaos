@@ -1,0 +1,87 @@
+{
+  "id": "pumpkin_pie",
+  "label": "Pumpkin pie",
+  "steps": [
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "dough",
+        "pumpkin_chopped"
+      ],
+      "output": {
+        "id": "pumpkin_pie_unbaked",
+        "label": "Unbaked pumpkin pie",
+        "look": {
+          "base": "pie",
+          "texture": "Items/Consumables/Food/Pie_Textures/Pumpkin.png",
+          "icon": "Icons/ItemsGenerated/Food_Pie_Pumpkin.png",
+          "tint": "#a8b0c4"
+        }
+      }
+    },
+    {
+      "type": "heat",
+      "station": "stove",
+      "ladder": "bake",
+      "input": "pumpkin_pie_unbaked",
+      "look": {
+        "base": "pie",
+        "texture": "Items/Consumables/Food/Pie_Textures/Pumpkin.png",
+        "icon": "Icons/ItemsGenerated/Food_Pie_Pumpkin.png"
+      },
+      "stage_looks": {
+        "raw": {
+          "tint": "#a8b0c4"
+        }
+      }
+    },
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "plate",
+        "pumpkin_pie_cooked"
+      ],
+      "output": {
+        "id": "pumpkin_pie_cooked_plated",
+        "label": "Pumpkin pie (cooked), plated",
+        "look": {
+          "of": "pumpkin_pie_cooked"
+        },
+        "bin": {
+          "leaves": "plate_dirty"
+        }
+      }
+    },
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "plate",
+        "pumpkin_pie_well"
+      ],
+      "output": {
+        "id": "pumpkin_pie_well_plated",
+        "label": "Pumpkin pie (well done), plated",
+        "look": {
+          "of": "pumpkin_pie_well"
+        },
+        "bin": {
+          "leaves": "plate_dirty"
+        }
+      }
+    }
+  ],
+  "menu": [
+    {
+      "serves": "pumpkin_pie_cooked_plated",
+      "label": "Pumpkin pie (cooked)"
+    },
+    {
+      "serves": "pumpkin_pie_well_plated",
+      "label": "Pumpkin pie (well done)",
+      "price": 6
+    }
+  ]
+}

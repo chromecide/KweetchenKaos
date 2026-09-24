@@ -1,0 +1,30 @@
+{
+  "item": {
+    "id": "pumpkin",
+    "label": "Pumpkin",
+    "look": {
+      "model": "Resources/Ingredients/Pumpkin.blockymodel",
+      "texture": "Resources/Ingredients/Pumpkin_default.png",
+      "scale": 0.4,
+      "icon": "Icons/ItemsGenerated/Plant_Crop_Pumpkin.png"
+    }
+  },
+  "source": "crate",
+  "steps": [
+    {
+      "type": "press",
+      "station": "board",
+      "input": "pumpkin",
+      "presses": 4,
+      "output": {
+        "id": "pumpkin_chopped",
+        "label": "Chopped pumpkin",
+        "look": {
+          "base": "petal",
+          "texture": "Resources/Plants/Petal_Textures/Yellow.png",
+          "icon": "Icons/ItemsGenerated/Plant_Petals_Yellow.png"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "item": {
+    "id": "apple",
+    "label": "Apple",
+    "look": {
+      "model": "Resources/Ingredients/Apple.blockymodel",
+      "texture": "Resources/Ingredients/Apple_Red.png",
+      "scale": 0.25,
+      "icon": "Icons/ItemsGenerated/Plant_Fruit_Apple.png"
+    }
+  },
+  "source": "crate",
+  "steps": [
+    {
+      "type": "press",
+      "station": "board",
+      "input": "apple",
+      "presses": 4,
+      "output": {
+        "id": "apple_chopped",
+        "label": "Chopped apple",
+        "look": {
+          "base": "petal",
+          "texture": "Resources/Plants/Petal_Textures/Pink.png",
+          "icon": "Icons/ItemsGenerated/Plant_Petals_Pink.png"
+        }
+      }
+    }
+  ]
+}
