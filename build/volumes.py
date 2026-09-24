@@ -14,8 +14,9 @@ the Kitchen POC (kitchen-poc/docs/systems.md has the full record):
     line and vanishes. NPC Log is limited to ONE LINE A SECOND across the whole server.
     The logger must stay out of the way: a full-size Klops spawned on the player made the
     board nearly unusable. So its body is a speck (the salt model at a tenth size, with a
-    tiny hitbox), it spawns two blocks BELOW the player's feet, and it has no DisplayNames,
-    so no name tag.
+    tiny hitbox), and it has no DisplayNames, so no name tag. It spawns AT the player's
+    feet: spawned two blocks below, it fell out of the bottom of the flat spike world and
+    was removed before it could log anything.
   * Chat (say) is for the tester; it never reaches a log file.
 """
 import pack
@@ -124,7 +125,7 @@ def log(key, text, event="BLOCK_USED"):
             {"Sensor": {"Type": "State", "State": "Idle"},
              "Actions": [{"Type": "Log", "Message": text}, {"Type": "Despawn"}]}]}]})
     return {"Type": "SpawnNpc", "Event": event, "NpcType": role, "Origin": "Entity",
-            "Count": 1, "Offset": {"X": 0.0, "Y": -2.0, "Z": 0.0}, "Yaw": 0.0}
+            "Count": 1, "Offset": {"X": 0.0, "Y": 0.0, "Z": 0.0}, "Yaw": 0.0}
 
 
 def report(key, text, debug, event="BLOCK_USED"):
