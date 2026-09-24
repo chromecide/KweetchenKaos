@@ -56,6 +56,9 @@ def chain(model, target):
             lines.append(f"{name(iid)}: from a {src}" if src else f"{name(iid)}: to hand")
             return
         kind, s, st = how
+        if kind == "source":
+            lines.append(f"{name(iid)}: from the {station(s).lower()}")
+            return
         if kind == "press":
             walk(s["input"])
             lines.append(f"{station(s)}, {s['presses']} presses: {name(s['input'])} -> "

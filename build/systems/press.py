@@ -46,6 +46,10 @@ def free_block(model, station_id):
     return ids(model, station_id)["free"]
 
 
+def layout(model, station_id):
+    return [(0, free_block(model, station_id))]
+
+
 def build(model, station_id, debug=True):
     """Write one press station's blocks and volume effect; return the effect's name."""
     st = model["stations"][station_id]
@@ -65,7 +69,8 @@ def build(model, station_id, debug=True):
     blocks.station_block(b["free"], label, look, words["free"], note)
     for n in range(1, top + 1):
         blocks.station_block(b["left"](n), f"{label} (in use)", look,
-                             words["busy"].format(n=n, s="" if n == 1 else "es"), note,
+                             words["busy"].format(n=n, s="" if n == 1 else "s",
+                                                  es="" if n == 1 else "es"), note,
                              sides=look.get("busy_sides"))
     if leave_on:
         blocks.station_block(b["done"], f"{label} (done)", look, words["done"], note,

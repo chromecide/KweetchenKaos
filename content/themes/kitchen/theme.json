@@ -8,7 +8,8 @@
     "food_patience": 75,
     "eat_seconds": 6,
     "price": 5,
-    "max_stack": 1
+    "max_stack": 1,
+    "restock_seconds": 3
   },
   "guest": {
     "appearance": "Klops"

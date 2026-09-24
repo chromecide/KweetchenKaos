@@ -28,6 +28,7 @@ What was learned in the POC and is built in here:
     has crashed the server. Leave first.
 """
 import blocks
+import clock
 import pack
 import settings
 import systems
@@ -39,7 +40,21 @@ INSTANCE = f"{settings.NAMESPACE}_Spike"
 SPIKES = {
     "board": {"board": 2},
     "counter": {"counter": 3, "board": 2},
+    # The whole kitchen: every crate, and every station the pies pass through.
+    "kitchen": {"crates": 1, "board": 2, "counter": 3, "stove": 2, "bin": 1, "sink": 1},
 }
+
+
+def stations_of(model, name):
+    """A spike's stations; "crates" means one of every crate the theme has."""
+    out = {}
+    for st, count in SPIKES[name].items():
+        if st == "crates":
+            out.update({sid: count for sid, s in model["stations"].items()
+                        if s["role"] == "crate"})
+        else:
+            out[st] = count
+    return out
 
 SETUP = f"{settings.NAMESPACE}_Spike_Setup"
 SETUP_EFFECT = f"{SETUP}_System"
@@ -60,6 +75,10 @@ def kit(model, stations):
     # Items stack one to a slot, so keep it lean: two of anything used up in quantity
     # (raw ingredients, plates), one of the rest.
     plate = model["vessel"]["clean"]["id"]
+    # The restaurant's plates: the sink makes clean ones from dirty, but a restaurant
+    # starts with a stack, so a spike that plates always gets some.
+    if any(plate in s.get("inputs", []) for s in steps) and plate not in needed:
+        needed.append(plate)
     many = lambda i: model["items"][i].get("source") or i == plate
     return ([(SETUP, 1)]
             + [(model["items"][i]["game_id"], 2 if many(i) else 1) for i in needed])
@@ -68,13 +87,13 @@ def kit(model, stations):
 def setup(model, stations, debug):
     """The setup block, the layout it pastes, and the rule that pastes it once. Returns
     the setup volume."""
-    free = lambda st: systems.for_station(model, st).free_block(model, st)
-    row = [free(st) for st, count in stations.items() for _ in range(count)]
+    row = [systems.for_station(model, st).layout(model, st)
+           for st, count in stations.items() for _ in range(count)]
     pack.write(pack.out("Prefabs", f"{SETUP}_Layout.prefab.json"), {
         "$Comment": "The spike world's stations, in a row in front of spawn. See build/spike.py.",
         "version": 8, "blockIdVersion": 11, "anchorX": 0, "anchorY": 0, "anchorZ": 0,
-        "blocks": [{"x": ROW_X + GAP * k, "y": GROUND, "z": ROW_Z, "name": block}
-                   for k, block in enumerate(row)],
+        "blocks": [{"x": ROW_X + GAP * k, "y": GROUND + dy, "z": ROW_Z, "name": block}
+                   for k, column in enumerate(row) for dy, block in column],
         "entities": []})
     blocks.station_block(SETUP, "Spike setup", {
         "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
@@ -96,14 +115,15 @@ def setup(model, stations, debug):
                {"Type": "ModifyTags", "Event": "BLOCK_USED", "Operation": "Set",
                 "TagKey": "done", "TagValue": "1"}]
               + v.report("kk.setup.done", "[setup] stations laid out: " + ", ".join(
-                  f"{n}x {model['stations'][st]['label'].lower()}" for st, n in stations.items()),
+                  f"{n}x {model['stations'][st]['label'].lower()}" for st, n in stations.items()
+                  if model["stations"][st]["role"] != "crate") + ", and the crates",
                          debug))
     rules.write(SETUP_EFFECT, "Spike only: the setup block. See build/spike.py.")
     return v.volume("spike_setup", SETUP_EFFECT, {"done": "0"})
 
 
 def build(model, name, debug=True):
-    stations = SPIKES[name]
+    stations = stations_of(model, name)
     mounted = [v.volume(f"spike_{st}", systems.for_station(model, st).build(model, st, debug),
                         {"spike": st}) for st in stations]
     mounted.append(setup(model, stations, debug))
@@ -121,6 +141,9 @@ def build(model, name, debug=True):
         "GameMode": "Adventure",
         "GameTime": "0001-01-01T12:00:00Z",
         "IsGameTimePaused": True,
+        # A timed station (stove, crates) needs the clock running.
+        **(clock.WORLD_TIME if any(getattr(systems.for_station(model, st), "NEEDS_CLOCK",
+                                           False) for st in stations) else {}),
         "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False,
         "IsBlockSpawnersEnabled": False,
         "DeleteOnRemove": True, "DeleteOnUniverseStart": True,

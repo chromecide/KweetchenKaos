@@ -1,0 +1,17 @@
+{
+  "$comment": "A TEMPLATE: the build makes one crate per ingredient whose source is 'crate'. The ingredient sits on top; take it and the next one restocks after restock_seconds (theme default).",
+  "id": "crate",
+  "role": "crate",
+  "per_ingredient": true,
+  "label": "{ingredient} crate",
+  "look": {
+    "sides": "BlockTextures/Furniture_Village_Crate.png",
+    "top": "BlockTextures/Furniture_Village_Crate.png",
+    "sound": "Wood"
+  },
+  "words": {
+    "free": "{ingredient} crate - press to take one",
+    "on_top": "{ingredient} - press to take it",
+    "restocking": "{ingredient} crate - restocking"
+  }
+}

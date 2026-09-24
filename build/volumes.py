@@ -62,6 +62,12 @@ def holding(item, event="BLOCK_USED"):
             "Consume": True, "Location": "InHand"}
 
 
+def has(item, event="BLOCK_USED"):
+    """The presser holds one of these; nothing is taken."""
+    return {"Type": "ItemCondition", "Event": event, "Item": item, "Quantity": 1,
+            "Consume": False, "Location": "InHand"}
+
+
 def not_holding(item, event="BLOCK_USED"):
     """The presser does NOT have this in hand (a count of at most zero). Nothing is taken."""
     return {"Type": "ItemCondition", "Event": event, "Item": item, "Quantity": 0,

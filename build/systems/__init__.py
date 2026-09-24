@@ -14,6 +14,11 @@ THE CONTRACT -- every system module:
                         effect's name, for whoever mounts it (spike world, layout)
     free_block(model, station_id) -> str
                         the game id of the station as you place it (for kits, layouts)
+    layout(model, station_id) -> [(dy, block)]
+                        what a layout places for this station, bottom up: usually just the
+                        station, but a crate comes with its ingredient on top
+    NEEDS_CLOCK         (optional) True if the world must run its clock (anything timed by
+                        growth: the stove, crates)
 
 THE RULES that keep systems maintainable:
 
@@ -30,10 +35,10 @@ THE RULES that keep systems maintainable:
   5. The top of each system file says what the player does and what happens, in plain
      words, before any code.
 """
-from systems import counter, press
+from systems import bin, counter, crate, heat, press
 
 _BY_ROLE = {}
-for _module in (press, counter):
+for _module in (press, counter, heat, crate, bin):
     for _role in _module.ROLES:
         _BY_ROLE[_role] = _module
 

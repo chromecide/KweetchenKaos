@@ -10,7 +10,7 @@
   },
   "words": {
     "free": "Chopping board - put something raw on it",
-    "busy": "Chopping - {n} press{s} to go",
+    "busy": "Chopping - {n} press{es} to go",
     "on_top": "Press to chop",
     "done": "Done - press to pick it up"
   }

@@ -68,7 +68,9 @@ def station_block(game_id, label, look, hint_text, comment, sides=None, tint=Non
     _item(game_id, label, look.get("icon", STATION_ICON), block, comment)
 
 
-def display_block(game_id, label, look, hint_text, comment):
+def display_block(game_id, label, look, hint_text, comment, extra=None):
+    """`extra`: more BlockType settings (a growth config, for things that change by
+    themselves)."""
     block = dict(block_for(look), InteractionHint=hint(game_id, hint_text),
-                 Interactions={"Use": NOOP})
+                 Interactions={"Use": NOOP}, **(extra or {}))
     _item(game_id, label, look["icon"], block, comment)

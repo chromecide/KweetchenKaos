@@ -281,6 +281,19 @@ guest can order is exactly the `serve` entries of every dish.
 long heat step in the example above is the full form; a dish normally uses a
 ladder instead (see "Decided" below).
 
+### Crates (`stations/crate.json`, decided 2026-09-24)
+
+A station file with `"per_ingredient": true` is a **template**. The build makes
+one crate per ingredient whose `source` names it (`crate_pumpkin`, `crate_apple`…),
+filling `{ingredient}` in its label and words. It also adds a *source* step
+(nothing in, the ingredient out), so kits, reports and checks all see where raw
+ingredients come from.
+
+A crate shows its ingredient on top. Take it, and the next one appears after
+`restock_seconds` (a theme default: 3). Restocking is growth, like the stove:
+the top grows from a tiny ingredient to a full one. A new ingredient brings its
+own crate with no extra work.
+
 ## Checks the generator makes
 
 - Every id is unique across the whole theme.
@@ -422,6 +435,28 @@ restaurant is:
 gen_volumes, gen_stations, gen_seat, gen_queue, gen_crates, gen_testroom,
 gen_author). The new systems replace them. Their saved levels need rebuilding
 with slots.
+
+## Deliveries, recipe cards and upgrade kits (decided 2026-09-24)
+
+All three arrive on the **offer pads** (a layout slot) between days:
+
+| Day | The pads show |
+|---|---|
+| Day 1 | the starting menu's crates, free. No offers |
+| Card days (every 3rd, `rules/cards.json`) | a pair of recipe cards, **instead of** the random offer roll. Choosing one puts the dish on the menu from the next day; any crates it needs that the restaurant doesn't own arrive on the pads the next morning, free |
+| Other days | the random offers (`rules/offers.json`): stations and upgrade kits |
+
+- A dish says `"unlock": "start"` or `"unlock": "card"`. What it needs is
+  worked out from its steps (the report already walks every dish back to its
+  crates).
+- The run remembers which crates it owns (tags on the run's volume), so a crate
+  is never delivered twice. Crates, like plates, can't be binned.
+- **Upgrade kits:** bought on a pad, then F on a matching station while holding
+  the kit swaps the station for its upgraded variant. The variant is a theme
+  station file with `upgrade_of` (a fast crate or a fast stove glows, and a
+  light growth modifier speeds its growth, as `probe_heat` proved; a safety
+  stove stops the well-done stage burning). The rules decide when kits are
+  offered and their price.
 
 ## Room to grow
 

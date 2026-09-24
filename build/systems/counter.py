@@ -42,6 +42,10 @@ def free_block(model, station_id):
     return ids(model, station_id)["free"]
 
 
+def layout(model, station_id):
+    return [(0, free_block(model, station_id))]
+
+
 def build(model, station_id, debug=True):
     st, items = model["stations"][station_id], model["items"]
     b = ids(model, station_id)

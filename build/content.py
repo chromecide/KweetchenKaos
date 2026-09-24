@@ -130,9 +130,29 @@ def load_theme(theme_id):
                 "input": s["input"], "owner": owner, "owner_label": owner_label,
                 "stages": stages, "file": at}
 
+    # CRATES: a station file marked per_ingredient is a template, expanded into one station
+    # per ingredient that comes from it -- the pumpkin crate, the apple crate... Each gets a
+    # "source" step (nothing in, the ingredient out) so everything that reads steps (the
+    # kit, the report, checks) sees where raw ingredients come from.
+    templates = {sid: st for sid, st in stations.items() if st.get("per_ingredient")}
+    for sid in templates:
+        del stations[sid]
     for f, d in many("ingredients"):
         iid = define(d["item"], f)
-        items[iid]["source"] = d.get("source")
+        source = d.get("source")
+        items[iid]["source"] = source
+        if source:
+            t = templates.get(source)
+            if t is None:
+                problems.append(f"{f}: source '{source}' has no station template")
+            else:
+                label = d["item"]["label"]
+                fill = lambda text: text.replace("{ingredient}", label)
+                cid = f"{source}_{iid}"
+                stations[cid] = dict(t, id=cid, label=fill(t["label"]), ingredient=iid,
+                                     words={k: fill(w) for k, w in t["words"].items()},
+                                     file=t["file"])
+                steps.append({"type": "source", "station": cid, "output": iid, "file": f})
         read_steps(iid, d["item"]["label"], d.get("steps", []), f)
 
     # PLATING IS BUILT IN. A dish only lists what it serves; for each, the build makes the

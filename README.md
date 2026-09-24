@@ -36,6 +36,10 @@ plate. If it reads right, the theme is right.
 | `systems/__init__.py` | the one shape every system has, the rules that keep them separate, and which system runs which station role |
 | `systems/press.py` | press stations: the chopping board, and later the sink |
 | `systems/counter.py` | the counter: holds one thing, combines (assembling and plating) |
+| `systems/heat.py` | the stove: cooks through a ladder of stages by itself, and burns |
+| `systems/crate.py` | crates: an ingredient on top, restocking after a few seconds |
+| `systems/bin.py` | the bin: food goes, plates stay |
+| `clock.py` | the world clock that growth (stove, crates) runs on |
 | `spike.py` | the spike world: stations mounted over an empty world, `/kk spike`, `/kk kit`, and a setup block that lays the stations out |
 | `build.py` | runs it all and prints the report |
 
@@ -46,7 +50,9 @@ plate. If it reads right, the theme is right.
 - The kitchen theme (`content/themes/kitchen/`) reads and checks, and its 33 items
   build and load in game with nothing rejected.
 - **Board: built and spike-tested** (all five ingredients).
-- **Counter: built, awaiting its spike test** (`./deploy.sh counter`: counter + board).
+- **Counter: built and spike-tested** (put down, pick up, assembling, plating both ways).
+- **Batch 1, the whole kitchen: built, awaiting its spike test** (`./deploy.sh kitchen`):
+  crates, board, counter, stove, bin, sink.
 - **The other systems are next, rewritten fresh one at a time** (not copied from the POC),
   each reading its station, words and recipes from the model and each re-spiked:
   board, stove, counter, sink, bin, then guests, queue, seating, shift.
