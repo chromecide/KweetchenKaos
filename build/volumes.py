@@ -128,9 +128,14 @@ def log(key, text, event="BLOCK_USED"):
             "Count": 1, "Offset": {"X": 0.0, "Y": 0.0, "Z": 0.0}, "Yaw": 0.0}
 
 
-def report(key, text, debug, event="BLOCK_USED"):
-    """Instrumentation: chat AND server log when debugging, nothing otherwise."""
-    return [say(key, text, event), log(key, text, event)] if debug else []
+def report(key, text, debug, event="BLOCK_USED", to_log=True):
+    """Instrumentation: chat AND server log when debugging, nothing otherwise.
+
+    to_log=False keeps a line to chat only. The log takes ONE line a second, so frequent
+    events (every press) crowd out the milestones that matter; log the milestones."""
+    if not debug:
+        return []
+    return [say(key, text, event)] + ([log(key, text, event)] if to_log else [])
 
 
 def volume(name, effect, tags, box=64.0):

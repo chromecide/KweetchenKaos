@@ -82,7 +82,8 @@ def build(model, station_id, debug=True):
     ladder = [b["left"](n) for n in range(1, top + 1)] + ([b["done"]] if leave_on else [])
 
     rules = v.Entries()
-    rep = lambda key, text: v.report(f"kk.{station_id}.{key}", f"[{station_id}] {text}", debug)
+    rep = lambda key, text, to_log=True: v.report(f"kk.{station_id}.{key}",
+                                                  f"[{station_id}] {text}", debug, to_log=to_log)
 
     def either(station_block, on_top, effects, extra=()):
         """The same rule twice: pressing the station, and pressing what's on it. `effects`
@@ -105,7 +106,9 @@ def build(model, station_id, debug=True):
         either(b["left"](n), shown_in, [
             lambda dy, n=n: v.cell([b["left"](n)], b["left"](n - 1), dy=dy),
             lambda dy, n=n: v.sound(1.4 + 0.1 * (top - n), volume=0.9)],
-            rep(f"press.{n}", f"press - {n - 1} to go"))
+            # Chat only: the log takes a line a second, and presses would crowd out the
+            # milestones (on, made, picked up).
+            rep(f"press.{n}", f"press - {n - 1} to go", to_log=False))
 
     # THE LAST PRESS: the only one that asks what is on top.
     for s in table:
