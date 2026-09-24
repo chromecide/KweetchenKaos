@@ -135,19 +135,38 @@ def load_theme(theme_id):
         items[iid]["source"] = d.get("source")
         read_steps(iid, d["item"]["label"], d.get("steps", []), f)
 
+    # PLATING IS BUILT IN. A dish only lists what it serves; for each, the build makes the
+    # plated item (the food's own look, Legendary so it stands out in the hotbar, leaves a
+    # dirty plate if binned), the step that plates it at the combine station, and the menu
+    # entry. No recipe can forget its plating or get it wrong.
+    combine_stations = [sid for sid, st in stations.items() if st["role"] == "combine"]
+    clean, dirty = vessel["clean"]["id"], vessel["dirty"]["id"]
+    serving = []
     for f, d in many("dishes"):
         for raw in d.get("items", []):
             define(raw, f)
         if "id" not in d:
             continue
         read_steps(d["id"], d["label"], d.get("steps", []), f)
-        for e in d.get("menu", []):
-            menu.append({
-                "serves": e["serves"], "label": e["label"], "dish": d["id"], "file": f,
-                "price": e.get("price", defaults["price"]),
-                "order_patience": e.get("order_patience", defaults["order_patience"]),
-                "food_patience": e.get("food_patience", defaults["food_patience"]),
-                "eat_seconds": e.get("eat_seconds", defaults["eat_seconds"])})
+        for e in d.get("serve", []):
+            serving.append((f, d, e))
+    for f, d, e in serving:
+        food = e["item"]
+        if food not in items:
+            problems.append(f"{f}: serves unknown item '{food}'")
+            continue
+        plated = define({"id": f"{food}_plated", "label": f"{items[food]['label']}, plated",
+                         "look": {"of": food}, "quality": "Legendary",
+                         "bin": {"leaves": dirty}}, f)
+        station = e.get("plate_at") or (combine_stations[0] if combine_stations else None)
+        steps.append({"type": "combine", "station": station, "inputs": [clean, food],
+                      "output": plated, "file": f"{f} (plating {food})"})
+        menu.append({
+            "serves": plated, "label": items[food]["label"], "dish": d["id"], "file": f,
+            "price": e.get("price", defaults["price"]),
+            "order_patience": e.get("order_patience", defaults["order_patience"]),
+            "food_patience": e.get("food_patience", defaults["food_patience"]),
+            "eat_seconds": e.get("eat_seconds", defaults["eat_seconds"])})
 
     # Looks last: an item's look may be "of" another item, defined anywhere.
     resolving = set()

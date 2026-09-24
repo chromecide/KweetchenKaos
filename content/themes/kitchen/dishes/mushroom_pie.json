@@ -35,52 +35,14 @@
           "tint": "#a8b0c4"
         }
       }
-    },
-    {
-      "type": "combine",
-      "station": "counter",
-      "inputs": [
-        "plate",
-        "mushroom_pie_cooked"
-      ],
-      "output": {
-        "id": "mushroom_pie_cooked_plated",
-        "label": "Mushroom pie (cooked), plated",
-        "look": {
-          "of": "mushroom_pie_cooked"
-        },
-        "bin": {
-          "leaves": "plate_dirty"
-        }
-      }
-    },
-    {
-      "type": "combine",
-      "station": "counter",
-      "inputs": [
-        "plate",
-        "mushroom_pie_well"
-      ],
-      "output": {
-        "id": "mushroom_pie_well_plated",
-        "label": "Mushroom pie (well done), plated",
-        "look": {
-          "of": "mushroom_pie_well"
-        },
-        "bin": {
-          "leaves": "plate_dirty"
-        }
-      }
     }
   ],
-  "menu": [
+  "serve": [
     {
-      "serves": "mushroom_pie_cooked_plated",
-      "label": "Mushroom pie (cooked)"
+      "item": "mushroom_pie_cooked"
     },
     {
-      "serves": "mushroom_pie_well_plated",
-      "label": "Mushroom pie (well done)",
+      "item": "mushroom_pie_well",
       "price": 6
     }
   ]

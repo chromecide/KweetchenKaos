@@ -13,8 +13,9 @@ What every item is, whatever the theme:
     game's own eating with it. v2 items have no parent: nothing in a kitchen is eaten by
     the player.
   * ONE AT A TIME. MaxStack is the theme's default (1: Plate Up's one-thing-in-hand).
-  * QUALITY COLOURS THE HOTBAR SLOT. Served dishes are Legendary so they stand out; an
-    item may set its own (a dirty plate is Junk); everything else is Common.
+  * QUALITY COLOURS THE HOTBAR SLOT. An item may set its own: plated dishes are Legendary
+    (made so by content.py when it builds plating in), a dirty plate is Junk; everything
+    else is Common.
 
 Serving (a guest taking a dish) is added by the guest system when it exists; nothing here
 knows about guests yet.
@@ -25,11 +26,10 @@ import pack
 
 def write_all(model):
     blocks.write_noop()
-    served = {e["serves"] for e in model["menu"]}
     stack = model["theme"]["defaults"].get("max_stack", 1)
     for iid, item in model["items"].items():
         gid = item["game_id"]
-        quality = item["quality"] or ("Legendary" if iid in served else "Common")
+        quality = item["quality"] or "Common"
         pack.say(f"items.{gid}.name", item["label"])
         pack.write_item(gid, {
             "$Comment": f"{item['label']}. From content/{item['file']}.",

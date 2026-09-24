@@ -236,7 +236,7 @@ whole, as two steps in one file.
 
 ### `dishes/<id>.json`
 
-A dish's own steps (from prepared ingredients to served) and its menu entries.
+A dish's own steps (from prepared ingredients to cooked) and what it serves.
 
 ```json
 {
@@ -248,33 +248,33 @@ A dish's own steps (from prepared ingredients to served) and its menu entries.
       "output": { "id": "pumpkin_pie_unbaked", "label": "Unbaked pumpkin pie",
                   "look": { "base": "pie", "texture": "…/Pie_Textures/Pumpkin.png",
                             "tint": "#a8b0c4" } } },
-    { "type": "heat", "station": "stove", "input": "pumpkin_pie_unbaked",
-      "stages": [
-        { "id": "raw", "look": { "base": "pie", "texture": "…/Pumpkin.png", "tint": "#a8b0c4" },
-          "gives": "pumpkin_pie_unbaked" },
-        { "id": "cooked", "look": { "base": "pie", "texture": "…/Pumpkin.png" },
-          "gives": { "id": "pumpkin_pie_cooked", "label": "Pumpkin pie (cooked)", "look": "…" } },
-        { "id": "well", "seconds": 6, "look": { "…": "…", "tint": "#6a4020" },
-          "gives": { "id": "pumpkin_pie_well", "label": "Pumpkin pie (well done)", "look": "…" } },
-        { "id": "burnt", "look": { "…": "…", "tint": "#2e2824" }, "gives": "burnt" }
-      ] },
-    { "type": "combine", "station": "counter", "inputs": ["plate", "pumpkin_pie_cooked"],
-      "output": { "id": "pumpkin_pie_cooked_plated", "label": "Pumpkin pie (cooked), plated",
-                  "look": "…", "bin": { "leaves": "plate_dirty" } } },
-    { "type": "combine", "station": "counter", "inputs": ["plate", "pumpkin_pie_well"],
-      "output": { "id": "pumpkin_pie_well_plated", "…": "…" } }
+    { "type": "heat", "station": "stove", "ladder": "bake",
+      "input": "pumpkin_pie_unbaked",
+      "look": { "base": "pie", "texture": "…/Pie_Textures/Pumpkin.png" },
+      "stage_looks": { "raw": { "tint": "#a8b0c4" } } }
   ],
-  "menu": [
-    { "serves": "pumpkin_pie_cooked_plated", "label": "Pumpkin pie (cooked)" },
-    { "serves": "pumpkin_pie_well_plated", "label": "Pumpkin pie (well done)", "price": 6 }
+  "serve": [
+    { "item": "pumpkin_pie_cooked" },
+    { "item": "pumpkin_pie_well", "price": 6 }
   ]
 }
 ```
 
 `…` marks repetition left out of this doc, not a real value.
 
-A menu entry takes the theme's defaults for price and patience unless it sets
-its own. What a guest can order is exactly the `menu` entries of every dish.
+**Plating is built in (decided 2026-09-24).** For each `serve` entry the build
+makes:
+- the plated item `<item>_plated`, labelled "<item>, plated", drawn as the
+  food itself, **Legendary** so it stands out in the hotbar, and leaving a
+  dirty plate if binned;
+- the step that plates it: clean plate + food at the combine station (or
+  `plate_at`);
+- the menu entry, labelled as the food, with the theme's defaults for price and
+  patience unless the entry sets its own (`price`, `order_patience`,
+  `food_patience`, `eat_seconds`).
+
+No recipe writes its own plating, so none can forget it or get it wrong. What a
+guest can order is exactly the `serve` entries of every dish.
 
 **Burnt** is one item shared by every dish. It is defined once, in
 `dishes/_shared.json`, and every heat ladder's last stage refers to it. The
@@ -289,8 +289,8 @@ ladder instead (see "Decided" below).
 - Exactly one station per role (today's rule).
 - Every item that can reach a counter has a look, and every combine's inputs
   and output can sit on a counter.
-- Every menu entry's `serves` is the output of a combine with the vessel, so
-  guests are only ever handed something on a plate.
+- Every `serve` entry names an item that exists (plating itself is built in,
+  so guests are only ever handed something on a plate).
 - Every look path exists in the shipped assets.
 
 Every check names the file, the field and the id it failed on.

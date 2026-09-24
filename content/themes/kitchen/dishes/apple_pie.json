@@ -35,52 +35,14 @@
           "tint": "#f098b8"
         }
       }
-    },
-    {
-      "type": "combine",
-      "station": "counter",
-      "inputs": [
-        "plate",
-        "apple_pie_cooked"
-      ],
-      "output": {
-        "id": "apple_pie_cooked_plated",
-        "label": "Apple pie (cooked), plated",
-        "look": {
-          "of": "apple_pie_cooked"
-        },
-        "bin": {
-          "leaves": "plate_dirty"
-        }
-      }
-    },
-    {
-      "type": "combine",
-      "station": "counter",
-      "inputs": [
-        "plate",
-        "apple_pie_well"
-      ],
-      "output": {
-        "id": "apple_pie_well_plated",
-        "label": "Apple pie (well done), plated",
-        "look": {
-          "of": "apple_pie_well"
-        },
-        "bin": {
-          "leaves": "plate_dirty"
-        }
-      }
     }
   ],
-  "menu": [
+  "serve": [
     {
-      "serves": "apple_pie_cooked_plated",
-      "label": "Apple pie (cooked)"
+      "item": "apple_pie_cooked"
     },
     {
-      "serves": "apple_pie_well_plated",
-      "label": "Apple pie (well done)",
+      "item": "apple_pie_well",
       "price": 6
     }
   ]

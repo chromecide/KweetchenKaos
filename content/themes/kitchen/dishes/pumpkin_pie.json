@@ -35,52 +35,14 @@
           "tint": "#a8b0c4"
         }
       }
-    },
-    {
-      "type": "combine",
-      "station": "counter",
-      "inputs": [
-        "plate",
-        "pumpkin_pie_cooked"
-      ],
-      "output": {
-        "id": "pumpkin_pie_cooked_plated",
-        "label": "Pumpkin pie (cooked), plated",
-        "look": {
-          "of": "pumpkin_pie_cooked"
-        },
-        "bin": {
-          "leaves": "plate_dirty"
-        }
-      }
-    },
-    {
-      "type": "combine",
-      "station": "counter",
-      "inputs": [
-        "plate",
-        "pumpkin_pie_well"
-      ],
-      "output": {
-        "id": "pumpkin_pie_well_plated",
-        "label": "Pumpkin pie (well done), plated",
-        "look": {
-          "of": "pumpkin_pie_well"
-        },
-        "bin": {
-          "leaves": "plate_dirty"
-        }
-      }
     }
   ],
-  "menu": [
+  "serve": [
     {
-      "serves": "pumpkin_pie_cooked_plated",
-      "label": "Pumpkin pie (cooked)"
+      "item": "pumpkin_pie_cooked"
     },
     {
-      "serves": "pumpkin_pie_well_plated",
-      "label": "Pumpkin pie (well done)",
+      "item": "pumpkin_pie_well",
       "price": 6
     }
   ]

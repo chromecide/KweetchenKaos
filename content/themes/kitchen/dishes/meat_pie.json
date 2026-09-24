@@ -35,52 +35,14 @@
           "tint": "#d06858"
         }
       }
-    },
-    {
-      "type": "combine",
-      "station": "counter",
-      "inputs": [
-        "plate",
-        "meat_pie_cooked"
-      ],
-      "output": {
-        "id": "meat_pie_cooked_plated",
-        "label": "Meat pie (cooked), plated",
-        "look": {
-          "of": "meat_pie_cooked"
-        },
-        "bin": {
-          "leaves": "plate_dirty"
-        }
-      }
-    },
-    {
-      "type": "combine",
-      "station": "counter",
-      "inputs": [
-        "plate",
-        "meat_pie_well"
-      ],
-      "output": {
-        "id": "meat_pie_well_plated",
-        "label": "Meat pie (well done), plated",
-        "look": {
-          "of": "meat_pie_well"
-        },
-        "bin": {
-          "leaves": "plate_dirty"
-        }
-      }
     }
   ],
-  "menu": [
+  "serve": [
     {
-      "serves": "meat_pie_cooked_plated",
-      "label": "Meat pie (cooked)"
+      "item": "meat_pie_cooked"
     },
     {
-      "serves": "meat_pie_well_plated",
-      "label": "Meat pie (well done)",
+      "item": "meat_pie_well",
       "price": 6
     }
   ]
