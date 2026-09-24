@@ -36,7 +36,7 @@ plate. If it reads right, the theme is right.
 | `systems/__init__.py` | the one shape every system has, the rules that keep them separate, and which system runs which station role |
 | `systems/press.py` | press stations: the chopping board, and later the sink |
 | `systems/counter.py` | the counter: holds one thing, combines (assembling and plating) |
-| `spike.py` | the spike world: one system mounted over an empty world, `/kk spike` and `/kk kit` |
+| `spike.py` | the spike world: stations mounted over an empty world, `/kk spike`, `/kk kit`, and a setup block that lays the stations out |
 | `build.py` | runs it all and prints the report |
 
 `pack/` is build output and is not committed.
