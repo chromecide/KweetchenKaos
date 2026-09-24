@@ -9,7 +9,11 @@ the Kitchen POC (kitchen-poc/docs/systems.md has the full record):
     rule, even after it has asked for _Left_2.
   * BlockTypeCondition never matches air ("is the cell above empty" can't be asked), which
     is why stations have busy states instead.
-  * ItemCondition consumes only after EVERY condition in its entry has passed.
+  * ItemCondition consumes only after EVERY condition in its entry has passed, and then at
+    once -- a later rule for the same press sees the hand already emptied.
+  * RULES RUN IN NUMBER ORDER. The volume sorts its entry numbers and walks them upwards
+    (TriggerVolumeTickingSystem.collectEntries), so a rule that must see the hand before
+    another empties it gets the lower number.
   * The server log: a volume can't log. A throwaway NPC can -- log() spawns one that logs a
     line and vanishes. NPC Log is limited to ONE LINE A SECOND across the whole server.
     The logger must stay out of the way: a full-size Klops spawned on the player made the
@@ -56,6 +60,12 @@ def holding(item, event="BLOCK_USED"):
     """The presser holds one of these; it is taken once the whole rule passes."""
     return {"Type": "ItemCondition", "Event": event, "Item": item, "Quantity": 1,
             "Consume": True, "Location": "InHand"}
+
+
+def not_holding(item, event="BLOCK_USED"):
+    """The presser does NOT have this in hand (a count of at most zero). Nothing is taken."""
+    return {"Type": "ItemCondition", "Event": event, "Item": item, "Quantity": 0,
+            "Comparison": "AtMost", "Consume": False, "Location": "InHand"}
 
 
 def cell(frm, to, dy=0.0, event="BLOCK_USED"):

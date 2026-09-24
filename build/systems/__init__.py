@@ -1,0 +1,46 @@
+"""
+THE SYSTEMS, and the one shape every system has.
+
+A system is the machinery behind one ROLE of station (press, combine, heat...). The theme
+says what stations exist and what they do; a system turns one station into blocks and a
+volume effect. The same code runs in a spike world today and in a real layout later, so
+integration is mounting, never rewiring.
+
+THE CONTRACT -- every system module:
+
+    ROLES               the station roles it serves, e.g. ("press", "wash")
+    build(model, station_id, debug) -> str
+                        writes the station's blocks and its volume effect; returns the
+                        effect's name, for whoever mounts it (spike world, layout)
+    free_block(model, station_id) -> str
+                        the game id of the station as you place it (for kits, layouts)
+
+THE RULES that keep systems maintainable:
+
+  1. A system reads ONLY the model (build/content.py). It never imports another system, and
+     never assumes what another system makes -- if the counter needs to know what combines,
+     it reads the theme's combine steps, not the stove's code.
+  2. Systems share only infrastructure: blocks.py (block shapes), volumes.py (rules and
+     reporting), settings.py (ids). Anything two systems both need goes there, or into the
+     model, never into one of them.
+  3. A system's game ids all start with its station's id (K2_Kitchen_Counter_...), so no two
+     systems can make the same block.
+  4. Instrumented by default: every milestone goes to chat and the server log (the log
+     takes one line a second, so frequent events go to chat only).
+  5. The top of each system file says what the player does and what happens, in plain
+     words, before any code.
+"""
+from systems import counter, press
+
+_BY_ROLE = {}
+for _module in (press, counter):
+    for _role in _module.ROLES:
+        _BY_ROLE[_role] = _module
+
+
+def for_station(model, station_id):
+    """The system that runs this station."""
+    role = model["stations"][station_id]["role"]
+    if role not in _BY_ROLE:
+        raise KeyError(f"no system is written yet for '{role}' stations ({station_id})")
+    return _BY_ROLE[role]

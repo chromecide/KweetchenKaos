@@ -28,6 +28,8 @@ import blocks
 import settings
 import volumes as v
 
+ROLES = ("press", "wash")
+
 
 def ids(model, station_id):
     """The game ids this system makes for one station."""
@@ -38,6 +40,10 @@ def ids(model, station_id):
             "done": gid(f"{station_id}_done"),
             "on": lambda item: gid(f"{station_id}_on_{item}"),
             "effect": gid(f"{station_id}_system")}
+
+
+def free_block(model, station_id):
+    return ids(model, station_id)["free"]
 
 
 def build(model, station_id, debug=True):
