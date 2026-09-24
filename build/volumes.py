@@ -12,7 +12,10 @@ the Kitchen POC (kitchen-poc/docs/systems.md has the full record):
   * ItemCondition consumes only after EVERY condition in its entry has passed.
   * The server log: a volume can't log. A throwaway NPC can -- log() spawns one that logs a
     line and vanishes. NPC Log is limited to ONE LINE A SECOND across the whole server.
-    The logger has no DisplayNames, so it has no name tag.
+    The logger must stay out of the way: a full-size Klops spawned on the player made the
+    board nearly unusable. So its body is a speck (the salt model at a tenth size, with a
+    tiny hitbox), it spawns two blocks BELOW the player's feet, and it has no DisplayNames,
+    so no name tag.
   * Chat (say) is for the tester; it never reaches a log file.
 """
 import pack
@@ -87,8 +90,24 @@ def say(key, text, event="BLOCK_USED"):
             "Recipient": "AllPlayers"}
 
 
+LOGGER_MODEL = f"{settings.NAMESPACE}_Logger"
+
+
+def _write_logger_model():
+    pack.write(pack.out("Models", settings.NAMESPACE, f"{LOGGER_MODEL}.json"), {
+        "$Comment": "The logger's body: a speck, so it is never in the way. See build/volumes.py.",
+        # An entity model must come from Characters/, NPC/, Items/ or VFX/ -- the petal
+        # (Resources/) was refused. Salt is already tiny.
+        "Model": "Items/Ingredients/Salt.blockymodel",
+        "Texture": "Items/Ingredients/Salt_Texture.png",
+        "HitBox": {"Min": {"X": -0.05, "Y": 0.0, "Z": -0.05},
+                   "Max": {"X": 0.05, "Y": 0.1, "Z": 0.05}},
+        "MinScale": 0.1, "MaxScale": 0.1})
+
+
 def log(key, text, event="BLOCK_USED"):
     """A line in the server log, by way of a throwaway NPC (see the top of this file)."""
+    _write_logger_model()
     role = f"{settings.NAMESPACE}_Log_{key}"
     pack.say(f"npcRoles.{role}.name", "log")
     pack.write(pack.out("NPC", "Roles", settings.NAMESPACE, f"{role}.json"), {
@@ -96,7 +115,7 @@ def log(key, text, event="BLOCK_USED"):
         "Type": "Generic", "StartState": "Idle",
         "NameTranslationKey": f"server.npcRoles.{role}.name",
         "DefaultNPCAttitude": "Ignore", "DefaultPlayerAttitude": "Neutral",
-        "Appearance": "Klops", "MaxHealth": 20, "Invulnerable": True,
+        "Appearance": LOGGER_MODEL, "MaxHealth": 20, "Invulnerable": True,
         "DisableDamageGroups": ["Self"], "KnockbackScale": 0.0,
         "MotionControllerList": [{"Type": "Walk", "MaxWalkSpeed": 4, "Gravity": 10,
                                   "RunThreshold": 0.3, "MaxFallSpeed": 15,
@@ -105,7 +124,7 @@ def log(key, text, event="BLOCK_USED"):
             {"Sensor": {"Type": "State", "State": "Idle"},
              "Actions": [{"Type": "Log", "Message": text}, {"Type": "Despawn"}]}]}]})
     return {"Type": "SpawnNpc", "Event": event, "NpcType": role, "Origin": "Entity",
-            "Count": 1, "Offset": {"X": 0.0, "Y": 0.0, "Z": 0.0}, "Yaw": 0.0}
+            "Count": 1, "Offset": {"X": 0.0, "Y": -2.0, "Z": 0.0}, "Yaw": 0.0}
 
 
 def report(key, text, debug, event="BLOCK_USED"):
