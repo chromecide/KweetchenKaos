@@ -5,12 +5,13 @@ BUILD v2: read a theme, check it, report it, write the pack.
     python3 build/build.py                 build the kitchen theme
     python3 build/build.py --check         read and check only; write nothing
     python3 build/build.py --theme NAME    another theme
+    python3 build/build.py --spike NAME    which system the spike world mounts (default board)
 
 The REPORT is the point for a person: every menu entry, and the whole chain that makes
 it, from crate to plate, in plain words. If the report reads right, the theme is right.
 
-Only items are written so far. The systems (board, stove, counter...) are rewritten for
-v2 one at a time and each will be added here as it lands.
+Systems are rewritten one at a time; each is mounted in the spike world (build/spike.py)
+until the layouts can mount them for real.
 """
 import sys
 
@@ -18,6 +19,7 @@ import check
 import content
 import items
 import pack
+import spike
 
 
 def producers(model):
@@ -101,10 +103,13 @@ def main(argv):
     report(model)
     if "--check" in argv:
         return 0
+    name = argv[argv.index("--spike") + 1] if "--spike" in argv else "board"
     pack.begin()
     n = items.write_all(model)
+    note, kit = spike.build(model, name)
     pack.finish()
-    print(f"\nwrote pack: {n} items")
+    print(f"\nwrote pack: {n} items; spike world mounts {note}; kit: "
+          + ", ".join(f"{c}x {i}" for i, c in kit))
     return 0
 
 

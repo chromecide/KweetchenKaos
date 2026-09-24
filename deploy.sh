@@ -2,7 +2,8 @@
 # Build v2 and deploy it to the scratch server, BESIDE v1 (its ids are namespaced K2_),
 # then restart the server and report anything the game rejected.
 #
-#   ./deploy.sh              build the kitchen theme, deploy, restart
+#   ./deploy.sh [SPIKE]      build the kitchen theme with SPIKE mounted in the spike world
+#                            (default board), deploy, restart
 #
 # Lessons carried over from v1's deploy (kitchen-poc/tools/deploy.sh), rewritten rather than shared:
 #   * the server is up if its UDP port is taken -- never pgrep for the jar name (it matches
@@ -16,7 +17,7 @@ V2="$(cd "$(dirname "$0")" && pwd)"
 SERVER="$HOME/hytale-mods/lowtalk-firstrun"
 MOD="Chromecide_KwitchenKaos"
 
-python3 "$V2/build/build.py" > /tmp/kwitchenkaos_build.txt || { cat /tmp/kwitchenkaos_build.txt; exit 1; }
+python3 "$V2/build/build.py" --spike "${1:-board}" > /tmp/kwitchenkaos_build.txt || { cat /tmp/kwitchenkaos_build.txt; exit 1; }
 tail -1 /tmp/kwitchenkaos_build.txt
 
 cd "$SERVER"

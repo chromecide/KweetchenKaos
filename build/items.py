@@ -19,37 +19,12 @@ What every item is, whatever the theme:
 Serving (a guest taking a dish) is added by the guest system when it exists; nothing here
 knows about guests yet.
 """
+import blocks
 import pack
-import settings
-
-NOOP = f"{settings.NAMESPACE}_Noop"
-
-
-def write_noop():
-    """The do-nothing right-click every item gets."""
-    pack.write(pack.out("Item", "Interactions", settings.NAMESPACE, f"{NOOP}_Simple.json"),
-               {"$Comment": "Does nothing, on purpose. See build/items.py.",
-                "Type": "Simple"})
-    pack.write(pack.out("Item", "RootInteractions", settings.NAMESPACE, f"{NOOP}.json"),
-               {"$Comment": "Right-click on any kitchen item: nothing. See build/items.py.",
-                "Interactions": [f"{NOOP}_Simple"]})
-
-
-def block_for(look):
-    """A look as a block: drawn by its model, never solid. Systems use this for their
-    display blocks too, so an item looks the same in the hand and on a station."""
-    block = {"Material": "Empty", "DrawType": "Model", "Opacity": "Transparent",
-             "CustomModel": look["model"],
-             "CustomModelTexture": [{"Texture": look["texture"], "Weight": 1}]}
-    if look.get("scale", 1) != 1:
-        block["CustomModelScale"] = look["scale"]
-    if look.get("tint"):
-        block["Tint"] = [look["tint"]]
-    return block
 
 
 def write_all(model):
-    write_noop()
+    blocks.write_noop()
     served = {e["serves"] for e in model["menu"]}
     stack = model["theme"]["defaults"].get("max_stack", 1)
     for iid, item in model["items"].items():
@@ -63,7 +38,7 @@ def write_all(model):
             "Quality": quality,
             "MaxStack": stack,
             "PlayerAnimationsId": "Block",
-            "Interactions": {"Secondary": NOOP},
-            "BlockType": block_for(item["look"]),
+            "Interactions": {"Secondary": blocks.NOOP},
+            "BlockType": blocks.block_for(item["look"]),
         })
     return len(model["items"])
