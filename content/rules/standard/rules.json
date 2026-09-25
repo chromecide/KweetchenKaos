@@ -26,5 +26,6 @@
     "late": 8
   },
   "queue_patience": 60,
-  "queue_patience_boost": 10
+  "queue_patience_boost": 10,
+  "guest_patience_scale": 1.0
 }

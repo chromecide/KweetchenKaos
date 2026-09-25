@@ -399,7 +399,7 @@ rules/
   "stages": [ { "id": "early", "from": 1, "to": 3 }, { "id": "mid", "from": 4, "to": 6 },
               { "id": "late", "from": 7, "to": 999 } ],
   "arrival_every": { "early": 15, "mid": 11, "late": 8 },
-  "queue_patience": 60, "queue_patience_boost": 10 }
+  "queue_patience": 60, "queue_patience_boost": 10, "guest_patience_scale": 1.0 }
 ```
 
 - Rules name **stations and kits by id**, never blocks, so the same rules
@@ -409,7 +409,8 @@ rules/
   from the theme's variant station file, which has `upgrade_of`, `glow` and
   `kit`.
 - The theme's `defaults` (times, patience, prices) stay in the theme, because
-  they belong to the dishes.
+  they belong to the dishes. The rules can scale them: `guest_patience_scale`
+  multiplies every guest's patience (practice: 2.5).
 
 ## World
 

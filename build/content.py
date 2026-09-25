@@ -304,4 +304,10 @@ def load(theme_id, rules_id="standard"):
     """A restaurant's content: the theme, with the rules it runs under."""
     model = load_theme(theme_id)
     model["rules"] = load_rules(rules_id)
+    # The rules may scale how patient guests are (the theme sets the dish's own patience;
+    # a practice run doubles it, a hard mode could shorten it).
+    scale = model["rules"].get("guest_patience_scale", 1.0)
+    for e in model["menu"]:
+        e["order_patience"] = round(e["order_patience"] * scale, 1)
+        e["food_patience"] = round(e["food_patience"] * scale, 1)
     return model
