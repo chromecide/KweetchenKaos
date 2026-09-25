@@ -53,6 +53,7 @@ LEAVING, RISE_TIMER = "seating_leaving", "seating_rise"
 RISE = 0.6          # after signalling it is getting up, how long the guest stays put
 SETTLE = 1.5        # after sitting, before "my chair isn't taken" can mean "I've gone"
 REACH_CHAIR = 2.0
+FACE_TIMER, FACE = "seating_face", 1.2   # how long a new sitter turns to its table
 TABLE_REACH = 1.6   # a chair's own table is 1 away; this reaches it, not the next one's first
 # THE POSE: sitting is only an animation (the Status slot); standing up clears it -- BEFORE
 # anything else changes the guest, as the queue/role notes warn.
@@ -113,19 +114,21 @@ def guest_fragment(model, on_sat=(), while_seated=(), on_unseated=(), on_lost=()
                         npc.all_of(leaving, npc.stopped(RISE_TIMER))), **after),
         npc.branch("Just got up: stay on the chair until the signal has found it.",
                    leaving, npc.STILL),
+        # FACING THE TABLE, for a moment after sitting -- and BEFORE the seated branches: the
+        # chair turns taken almost at once, so a branch after them never ran. A chair's own
+        # table is the block right in front of it (1 away; a neighbour's is further), so
+        # facing the nearest table is facing the way the chair does -- the Feran civilian's
+        # pattern, MatchLook + Watch. The teleport can't set it: UseTarget needs an entity.
+        dict(npc.branch("Just sat down: turn to face this chair's table.",
+                        npc.all_of(npc.near(s["set_tables"], TABLE_REACH), seated,
+                                   {"Type": "Timer", "Name": FACE_TIMER, "State": "Running"}),
+                        {"Type": "MatchLook"}), HeadMotion={"Type": "Watch"}),
         npc.branch("Sitting, and the chair we remembered is still taken: the guest's own "
                    "seated behaviour.", npc.all_of(seated, mine),
                    instructions=list(while_seated) or None,
                    motion=None if while_seated else npc.STILL),
         dict(npc.branch("Sitting, settled, and our chair isn't taken any more: we got up, "
                         "or it went.", npc.all_of(seated, npc.stopped(SETTLE_TIMER))), **after),
-        # FACING THE TABLE, while it settles: a chair's own table is the block right in front
-        # of it (1 away; a neighbour's is further), so facing the nearest table is facing the
-        # way the chair does -- the Feran civilian's pattern, MatchLook + Watch. The teleport
-        # can't set it: its UseTarget needs an entity, and a chair is a block.
-        dict(npc.branch("Just sat down: turn to face this chair's table.",
-                        npc.all_of(npc.near(s["set_tables"], TABLE_REACH), seated),
-                        {"Type": "MatchLook"}), HeadMotion={"Type": "Watch"}),
         npc.branch("Just sat down; the chair hasn't turned taken yet.", seated, npc.STILL),
         npc.branch("At a free chair: sit, claim it, remember where it is. The chair sensor "
                    "comes FIRST: the teleport and StorePosition use its position.",
@@ -134,6 +137,7 @@ def guest_fragment(model, on_sat=(), while_seated=(), on_unseated=(), on_lost=()
                     "Orientation": "Unchanged"},
                    [signals.from_npc(SIGNAL_KEY, SAT, tag=SIGNAL_TAG),
                     {"Type": "StorePosition", "Slot": CHAIR_SLOT}, npc.set_flag(SEATED), SIT,
+                    *npc.timer(FACE_TIMER, FACE),
                     *npc.timer(SETTLE_TIMER, SETTLE), *on_sat], "Seated", debug),
         npc.branch("Walking to the nearest free chair.", chair_free(model),
                    {"Type": "Seek", "StopDistance": 1.0, "SlowDownDistance": 3}, (),
