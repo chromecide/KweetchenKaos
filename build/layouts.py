@@ -13,6 +13,8 @@ it (docs/content-schema.md, Layouts).
     /kk grid       lay the plots' floors -- ONCE, when the world is new: it is destructive
     /kk slots      hand over the slot blocks (the arrival, and HQ portals 1-4)
     /kk save       save every plot as a prefab (K2_Save_01, _02, ...)
+    /kk restore    paste the kept rooms back into their plots (RESTORE below) -- after a
+                   fresh /kk grid
 
 THE PLOTS. Each plot is 32 x 32 (two chunks square), a gravel forecourt down the front
 edge for the queue and a plank floor behind it for the room, plots six chunks apart so no
@@ -27,6 +29,11 @@ imported, and every world pastes the border round its room (world.json "border")
     python3 build/layouts.py import 2 meadow "Meadow"      -> content/layouts/meadow/
 
 Nothing can go below the floor: the authoring world's floor is the bottom of the world.
+/kk grid marks a border plot with EDGE blocks only -- round the outside of the ring and round
+the hole -- and leaves the grass between; importing turns any edge block left back into grass.
+
+RESTORE: the imported layouts named in RESTORE are pasted back into their plots by
+/kk restore (they are corner-anchored, so each goes at its plot's corner).
 
 ZONES are drawn, not placed: draw a trigger volume with the game's volume tool and name it.
 Today there is one, "queue" -- the area where guests wait (the spots and the pool). The
@@ -61,6 +68,9 @@ PLOTS = 4
 BORDER = CHUNK                # a border plot's ring is one chunk thick
 BORDER_PLOTS = {2}            # 1-based: which plots are borders
 BORDER_HEIGHT = 48
+BORDER_EDGE = f"{settings.NAMESPACE}_Border_Edge"
+EDGE_TINT = "#e0c020"
+RESTORE = {1: "hq", 3: "test_room"}     # plot (1-based) -> the layout pasted back into it
 AUTHOR = f"{settings.NAMESPACE}_Author"
 SAVE_PREFIX = f"{settings.NAMESPACE}_Save_"
 SAVES = os.path.join(settings.CONTENT, "layouts", "_saves")
@@ -122,6 +132,19 @@ def plot_box(i):
     return x, z, x + LAYOUT - 1, z + LAYOUT - 1, AUTHOR_HEIGHT
 
 
+def _lay_edges(i):
+    """Commands marking border plot i (0-based): an edge line round the ring's outside and
+    round its hole, nothing else."""
+    x1, z1, x2, z2, _ = plot_box(i)
+    hx, hz = plot_origin(i)
+    out = []
+    for (a, b, c, d) in ((x1, z1, x2, z2), (hx - 1, hz - 1, hx + LAYOUT, hz + LAYOUT)):
+        for p1, p2 in (((a, b), (c, b)), ((a, d), (c, d)), ((a, b), (a, d)), ((c, b), (c, d))):
+            out += [f"pos1 --x={p1[0]} --y=0 --z={p1[1]}", f"pos2 --x={p2[0]} --y=0 --z={p2[1]}",
+                    f"set {BORDER_EDGE}"]
+    return out
+
+
 def _lay_floor(x, z):
     """Commands laying a plot's floor at corner (x, z): gravel forecourt, planks behind."""
     return [f"pos1 --x={x} --y=0 --z={z}",
@@ -131,6 +154,10 @@ def _lay_floor(x, z):
 
 
 def write_slots():
+    blocks.station_block(BORDER_EDGE, "Border plot edge", SLOT_LOOK,
+                         "Border plot edge (turns back into grass when imported)",
+                         "Marks a border plot's ring. See build/layouts.py.", tint=EDGE_TINT,
+                         use=False)
     for name, label, tint in SLOTS:
         if name == "chair":
             # A chair has a FACING (its table goes in front), so its slot is a chair.
@@ -165,7 +192,7 @@ def write_authoring():
     enter = [f"instances spawn {AUTHOR}", "wait 4", "gamemode creative"]
     grid, save = list(enter), []
     for i in range(PLOTS):
-        grid += _lay_floor(*plot_origin(i))
+        grid += _lay_edges(i) if i + 1 in BORDER_PLOTS else _lay_floor(*plot_origin(i))
         x1, z1, x2, z2, height = plot_box(i)
         save += [f"pos1 --x={x1} --y=0 --z={z1}", f"pos2 --x={x2} --y={height - 1} --z={z2}",
                  # --entities, or the zones you drew are left out of the save.
@@ -175,32 +202,20 @@ def write_authoring():
               ("KKSave", "kk save", "Save every authoring plot as a prefab", save),
               ("KKSlots", "kk slots", "Hand over the layout slot blocks",
                [f"give {slot_id(n)}" for n, _, _ in SLOTS for _ in range(4 if n == "chair" else 1)])]
-    # MOVE plot 2's build to plot 3 and make plot 2 the BORDER plot, from plot 2's rescued
-    # save. A save is CENTRE-anchored, so it is pasted at the plot's centre cell (+15, +15).
-    # paste writes only into LOADED chunks, so stand in plot 3 first; then plot 2's whole
-    # border box is cleared, its ring left as the world's grass and its hole laid as a plot.
-    raw = os.path.join(SAVES, f"{SAVE_PREFIX}02.prefab.json")
-    # Only while that save is still a ROOM (it has slots): once plot 2 is a border, moving
-    # it would carry the border off.
-    is_room = os.path.exists(raw) and any(
-        b["name"].startswith(f"{settings.NAMESPACE}_Slot_")
-        for b in json.load(open(raw)).get("blocks") or [])
-    if is_room:
-        shutil.copy(raw, pack.out("Prefabs", f"{SAVE_PREFIX}02.prefab.json"))
-        (x2, z2), (x3, z3) = plot_origin(1), plot_origin(2)
-        bx1, bz1, bx2, bz2, height = plot_box(1)
-        half = LAYOUT // 2 - 1
-        macros.append(("KKPlot2to3", "kk plot2to3",
-                       "Move plot 2's saved build to plot 3; make plot 2 the border plot", [
-            f"tp {x3 + LAYOUT // 2} 2 {z3 + LAYOUT // 2}", "wait 5",
-            f"prefab load {SAVE_PREFIX}02", "wait 1",
-            f"paste {x3 + half} 0 {z3 + half}", "wait 5",
-            f"tp {x2 + LAYOUT // 2} 30 {z2 + LAYOUT // 2}", "wait 3",
-            f"pos1 --x={bx1} --y=1 --z={bz1}", f"pos2 --x={bx2} --y={height - 1} --z={bz2}",
-            "set Empty",
-            f"pos1 --x={bx1} --y=0 --z={bz1}", f"pos2 --x={bx2} --y=0 --z={bz2}",
-            "set Soil_Grass",
-            *_lay_floor(x2, z2)]))
+    # RESTORE: the kept layouts pasted back at their plots' corners (they are corner-
+    # anchored). paste writes only into LOADED chunks, so stand in each plot first.
+    restore = list(enter)
+    for plot, lid in sorted(RESTORE.items()):
+        src = os.path.join(settings.CONTENT, "layouts", lid, "room.prefab.json")
+        name = f"{settings.NAMESPACE}_Restore_Plot_{plot}"
+        pack.write(pack.out("Prefabs", f"{name}.prefab.json"),
+                   dict(json.load(open(src)), **{"$Comment": f"Layout {lid}, for /kk restore. "
+                                                            f"See build/layouts.py."}))
+        x, z = plot_origin(plot - 1)
+        restore += [f"tp {x + LAYOUT // 2} 2 {z + LAYOUT // 2}", "wait 5",
+                    f"prefab load {name}", "wait 1", f"paste {x} 0 {z}", "wait 3"]
+    macros.append(("KKRestore", "kk restore",
+                   "Paste the kept layouts back into their plots", restore))
     for file, name, desc, commands in macros:
         key = f"commands.{name.replace(' ', '.')}.desc"
         pack.say(key, desc)
@@ -234,7 +249,8 @@ def import_save(plot, layout_id, name):
     if border:
         # THE HOLE is where the room goes: nothing of the border's is kept there.
         hole = lambda c: BORDER <= c["x"] < BORDER + LAYOUT and BORDER <= c["z"] < BORDER + LAYOUT
-        placed[:] = [b for b in placed if not hole(b)]
+        placed[:] = [dict(b, name="Soil_Grass") if b["name"] == BORDER_EDGE else b
+                     for b in placed if not hole(b)]
         data["blocks"] = placed
     assert all(0 <= b["x"] < size and 0 <= b["z"] < size for b in placed), \
         "blocks fall outside the plot after re-anchoring: the save anchor isn't where assumed"
