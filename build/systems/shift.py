@@ -216,7 +216,9 @@ def build(model, roles, debug=True, exit_on_lose=False):
                       [_set("TICK", "beat", 1), EVERY_TICK])
     rules.add(5999, [v.at([s["sign"]]), _t("BLOCK_USED", "open", 1)],
               say("BLOCK_USED", "opened", "[shift] Day {day} - OPEN. Expecting {expected} "
-                                          "guests. Purse: {money} coins."))
+                                          "guests. Purse: {money} coins.")
+              + [v.title("kk.shift.title_open", "Day {day}", "kk.shift.title_expected",
+                         "Expecting {expected} guests")])
 
     def fair_pick(base, gate, options):
         """The fair chain over `options` while `gate` holds: sets choice = k + 1."""

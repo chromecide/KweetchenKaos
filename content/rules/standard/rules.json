@@ -29,7 +29,7 @@
   },
   "guests": {
     "$comment": "Guests expected each day: day_1, +per_day each day, +per_card for each recipe card chosen (not the starter). They arrive evenly spread over the day.",
-    "day_1": 3,
+    "day_1": 4,
     "per_day": 1,
     "per_card": 2
   }

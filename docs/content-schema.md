@@ -399,7 +399,7 @@ rules/
   "day_growth": { "every_days": 3, "seconds": 25 },
   "stages": [ { "id": "early", "from": 1, "to": 3 }, { "id": "mid", "from": 4, "to": 6 },
               { "id": "late", "from": 7, "to": 999 } ],
-  "guests": { "day_1": 3, "per_day": 1, "per_card": 2 },
+  "guests": { "day_1": 4, "per_day": 1, "per_card": 2 },
   "queue_patience": 120, "queue_patience_boost": 10, "guest_patience_scale": 1.0 }
 ```
 

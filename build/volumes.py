@@ -107,6 +107,18 @@ def say(key, text, event="BLOCK_USED"):
             "Recipient": "AllPlayers"}
 
 
+def title(key, text, sub_key=None, sub_text=None, event="BLOCK_USED", seconds=4.0):
+    """The big centre banner. It reaches only the player who set the event off, so it goes
+    on player events (a block used), never on a tick or a signal. It can print tags too."""
+    pack.say(key, text)
+    effect = {"Type": "ShowEventTitle", "Event": event, "PrimaryTitle": f"server.{key}",
+              "IsMajor": True, "Duration": seconds}
+    if sub_key:
+        pack.say(sub_key, sub_text)
+        effect["SecondaryTitle"] = f"server.{sub_key}"
+    return effect
+
+
 LOGGER_MODEL = f"{settings.NAMESPACE}_Logger"
 
 
