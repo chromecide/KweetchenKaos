@@ -11,6 +11,7 @@ BLOCKS: the shapes every system builds its blocks from. Infrastructure only -- n
                            for the press to reach a volume and for its hint to show; the
                            volume does the actual work. Items use it for right-click too.
 """
+import carry
 import pack
 import settings
 
@@ -38,14 +39,15 @@ def block_for(look):
     return block
 
 
-def item(game_id, label, icon, block, comment):
-    """Any block item: its name, icon and block."""
+def item(game_id, label, icon, block, comment, movable=False):
+    """Any block item: its name, icon and block. `movable`: it can be picked up and put
+    down elsewhere between days (carry.py)."""
     pack.say(f"items.{game_id}.name", label)
-    pack.write_item(game_id, {
-        "$Comment": comment,
-        "TranslationProperties": {"Name": f"server.items.{game_id}.name"},
-        "Icon": icon, "PlayerAnimationsId": "Block", "BlockType": block,
-        "Tags": {"Type": ["Furniture"], "Family": ["Kitchen"]}})
+    data = {"$Comment": comment,
+            "TranslationProperties": {"Name": f"server.items.{game_id}.name"},
+            "Icon": icon, "PlayerAnimationsId": "Block", "BlockType": block,
+            "Tags": {"Type": ["Furniture"], "Family": ["Kitchen"]}}
+    pack.write_item(game_id, carry.carryable(data) if movable else data)
 
 
 def hint(game_id, text):
@@ -56,7 +58,7 @@ def hint(game_id, text):
 
 
 def station_block(game_id, label, look, hint_text, comment, sides=None, tint=None, use=True,
-                  light=None):
+                  light=None, movable=False):
     """`use=False`: a block nothing presses (a queue spot works off ENTER and EXIT only).
     `light`: a glow (glow.light) -- an upgraded station."""
     sides = sides or look["sides"]
@@ -72,7 +74,7 @@ def station_block(game_id, label, look, hint_text, comment, sides=None, tint=Non
         block["Tint"] = [tint]
     if light:
         block["Light"] = light
-    item(game_id, label, look.get("icon", STATION_ICON), block, comment)
+    item(game_id, label, look.get("icon", STATION_ICON), block, comment, movable)
 
 
 def display_block(game_id, label, look, hint_text, comment, extra=None):

@@ -62,7 +62,8 @@ def build(model, station_id, debug=True):
     for sid, vs in kinds:
         blocks.station_block(b["of"](sid), vs["label"], dict(vs["look"], icon=item["look"]["icon"]),
                              vs["words"]["free"], note, tint=vs["look"].get("tint"),
-                             light=glow.light(model, vs["glow"]) if vs.get("glow") else None)
+                             light=glow.light(model, vs["glow"]) if vs.get("glow") else None,
+                             movable=True)
     crates = [b["of"](sid) for sid, _ in kinds]
     grow = clock.growth([b["restocking"], b["ready"]], [seconds, None],
                         modifiers=[mods["fast"]] if "fast" in mods else None)

@@ -130,7 +130,7 @@ def guest_fragment(model, on_sat=(), while_seated=(), on_unseated=(), on_lost=()
 
 # ---------------------------------------------------------------- blocks and the volume
 
-def _chair_block(game_id, label, look, tint=None):
+def _chair_block(game_id, label, look, tint=None, movable=False):
     block = {"CustomModel": look["model"],
              "CustomModelTexture": [{"Texture": look["texture"], "Weight": 1}],
              "DrawType": "Model", "Material": "Solid", "Opacity": "Transparent",
@@ -141,7 +141,8 @@ def _chair_block(game_id, label, look, tint=None):
              "VariantRotation": "NESW"}
     if tint:
         block["Tint"] = [tint]
-    blocks.item(game_id, label, look["icon"], block, "A chair. See build/systems/seating.py.")
+    blocks.item(game_id, label, look["icon"], block, "A chair. See build/systems/seating.py.",
+                movable)
 
 
 def layout(model, rotation="Deg0"):
@@ -159,7 +160,9 @@ def build(model, debug=True):
     dirty_plate = model["items"][model["vessel"]["dirty"]["id"]]
     note = "Seating. See build/systems/seating.py."
 
-    _chair_block(s["chair"], "Chair", chair)
+    # Only a CLEAN chair moves; one with a guest on it or a plate to clear stays put. Its
+    # table follows by itself: picking up is a break (the table goes), putting down a place.
+    _chair_block(s["chair"], "Chair", chair, movable=True)
     # Taken is tinted only while debugging: whether the chair really turned taken is the
     # question a spike asks.
     _chair_block(s["taken"], "Chair (taken)", chair, "#7fb3e6" if debug else None)

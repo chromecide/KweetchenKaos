@@ -66,7 +66,7 @@ def build(model, station_id, debug=True):
 
     # The ladder. Only the free station would ever be movable (rearranging comes later);
     # anything holding something stays put.
-    blocks.station_block(b["free"], label, look, words["free"], note)
+    blocks.station_block(b["free"], label, look, words["free"], note, movable=True)
     for n in range(1, top + 1):
         blocks.station_block(b["left"](n), f"{label} (in use)", look,
                              words["busy"].format(n=n, s="" if n == 1 else "s",

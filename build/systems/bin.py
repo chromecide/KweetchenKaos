@@ -47,7 +47,8 @@ def build(model, station_id, debug=True):
     refuse = [i for i, it in items.items() if it["bin"] == "refuse"]
     leaves = {i: it["bin"]["leaves"] for i, it in items.items() if isinstance(it["bin"], dict)}
 
-    blocks.station_block(b["free"], label, look, words["free"], note, tint=look.get("tint"))
+    blocks.station_block(b["free"], label, look, words["free"], note, tint=look.get("tint"),
+                         movable=True)
     blocks.station_block(b["busy"], f"{label} (plate on it)", look, words["busy"], note,
                          tint=look.get("busy_tint"))
     left = list(dict.fromkeys(leaves.values()))

@@ -34,6 +34,8 @@ THE RULES that keep systems maintainable:
      takes one line a second, so frequent events go to chat only).
   5. The top of each system file says what the player does and what happens, in plain
      words, before any code.
+  6. A station's FREE block is movable (blocks.station_block movable=True, carry.py):
+     picked up and put down between days. Anything holding food or a plate is not.
 """
 from systems import bin, counter, crate, heat, press
 

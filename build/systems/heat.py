@@ -68,7 +68,7 @@ def build(model, station_id, debug=True):
     for sid, vs in kinds:
         lit = glow.light(model, vs["glow"]) if vs.get("glow") else None
         blocks.station_block(b["free_of"](sid), vs["label"], vs["look"], vs["words"]["free"],
-                             note, tint=vs["look"].get("tint"), light=lit)
+                             note, tint=vs["look"].get("tint"), light=lit, movable=True)
         blocks.station_block(b["busy_of"](sid), f"{vs['label']} (in use)", vs["look"],
                              vs["words"]["busy"], note, sides=vs["look"].get("busy_sides"),
                              tint=vs["look"].get("tint"), light=lit)

@@ -36,6 +36,7 @@ HOW IT KEEPS TIME, ported from the POC's probes:
 import re
 
 import blocks
+import carry
 import offers
 import settings
 import signals
@@ -289,10 +290,11 @@ def build(model, roles, debug=True):
 
     rules.write(s["effect"], "The shift: the day, arrivals, the purse, the menu, deliveries. "
                              "See build/systems/shift.py.")
-    # The service lock's own effect is empty: the lock is its Rules (no building, no
-    # breaking), switched on and off by the shift.
-    v.Entries().write(s["lock"], "The service lock: its Rules do the work. "
-                                 "See build/systems/shift.py.")
+    # The service lock: its Rules stop building and breaking, and its one effect marks
+    # every player inside as in service, so nothing can be picked up (carry.py).
+    lock = v.Entries()
+    lock.add(1, [], [carry.in_service_mark()])
+    lock.write(s["lock"], "The service lock. See build/systems/shift.py.")
     locked = sum(1 for d in dishes.values() if d["unlock"] != "start")
     tags = {**signals.LISTENER_TAGS, signals.MONEY: "0", signals.DAY: "1", "open": "0",
             "closing": "0", "time_left": "0", "beat": "0", "picked": "0", "choice": "0",

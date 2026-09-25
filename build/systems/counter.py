@@ -61,7 +61,7 @@ def build(model, station_id, debug=True):
              for a, h in (tuple(s["inputs"]), tuple(reversed(s["inputs"])))]
     partners = {iid: [h for a, h, _ in pairs if a == iid] for iid in items}
 
-    blocks.station_block(b["free"], label, look, words["free"], note)
+    blocks.station_block(b["free"], label, look, words["free"], note, movable=True)
     blocks.station_block(b["busy"], f"{label} (in use)", look, words["free"], note,
                          sides=look.get("busy_sides"))
     for iid, item in items.items():
