@@ -3,6 +3,6 @@
   "hq": "hq",
   "restaurants": [
     {"id": "test_kitchen", "name": "Test kitchen", "theme": "kitchen", "layout": "test_room",
-     "rules": "practice", "portal": 1}
+     "rules": "standard", "portal": 1}
   ]
 }
