@@ -85,6 +85,24 @@ def turn_index(look):
     return None if not t else 16 * t.get("roll", 0) + 4 * t.get("pitch", 0) + t.get("yaw", 0)
 
 
+def turned_faces(look, sides, top):
+    """The texture entry: `top` on whichever faces END UP top and bottom once the look's turn
+    is applied -- so a turned station's "top" is still what you see on top. A quarter roll
+    brings East/West up, a quarter pitch North/South (yaw never changes the top)."""
+    t = look.get("turn") or {}
+    roll, pitch = t.get("roll", 0) % 2, t.get("pitch", 0) % 2
+    if roll and pitch:
+        raise ValueError("a turn with both a quarter roll and a quarter pitch: say which face "
+                         "is on top some other way")
+    if roll:
+        return {"Weight": 1, "North": sides, "South": sides, "Up": sides, "Down": sides,
+                "East": top, "West": top}
+    if pitch:
+        return {"Weight": 1, "East": sides, "West": sides, "Up": sides, "Down": sides,
+                "North": top, "South": top}
+    return {"Weight": 1, "Sides": sides, "Up": top, "Down": sides}
+
+
 def turn_fields(look):
     """The Rotation / Pitch / Roll settings a PlaceBlock or ReplaceBlockType takes."""
     t = look.get("turn") or {}
@@ -99,7 +117,7 @@ def station_block(game_id, label, look, hint_text, comment, sides=None, tint=Non
     look's (a busy state's own, e.g. a stove's copper top while cooking)."""
     sides = sides or look["sides"]
     block = {"Material": "Solid", "DrawType": "Cube", "Opacity": "Transparent",
-             "Textures": [{"Weight": 1, "Sides": sides, "Up": top or look["top"], "Down": sides}],
+             "Textures": [turned_faces(look, sides, top or look["top"])],
              "BlockSoundSetId": look.get("sound", "Stone"),
              "PhysicalMaterialId": look.get("sound", "Stone"),
              "InteractionHint": hint(game_id, hint_text),

@@ -13,7 +13,7 @@ The data lives in `content/themes/kitchen/stations/*.json` (`look`).
 | Chopping board | `Metal_Iron` | `Wood_Softwood_Planks_Top` | same | `#b07850` warm brown |
 | Sink | `Metal_Iron` | `Mushroom_Block_Blue_Trunk_Top` (the water) | same | `#d0d0d0` grey (the rim) |
 | Bin | `Furniture_Village_Crate` | `Wood_Village_Wall_Black_Full` | same, tinted `#4a4038` with a plate on it | none |
-| Plate rack | `Metal_Iron_Ornate`, the block TURNED (roll 90, yaw 90) so the bars lie flat -- a stack of plates | same | a plate on top while it holds any | none |
+| Plate rack | `Metal_Iron_Ornate`, the block TURNED (roll 90, yaw 90) so the bars lie flat -- a stack of plates | `Metal_Iron` (the stove's plain side) | a plate on top while it holds any | none |
 | Counter | `Wood_Softwood_Planks_Side` | `Soil_Snow`, greyed by the trim's tint to read as marble | same | `#aaaaaa` grey (step 6 of 16 on the gallery's snow ramp) |
 | Produce crate | `Wood_Village_Wall_RedDark_Full` | same | | none (the fast crate is tinted `#9fb8ff`) |
 
@@ -35,7 +35,8 @@ Every station has been reviewed. The first theme is Hytale Kweebec: softwood and
   face's texture can't be rotated, so the whole block is. It allows any rotation
   and holds what sits on it on every face; the room paste sets the turn, block
   swaps keep it, and the rack sets it again whenever one is put down (the client
-  picks a rotation from how the player faces).
+  picks a rotation from how the player faces). A turned look's `top` is
+  what ends up on top: the build puts it on the faces the turn brings up.
 
 ## Tried and set aside
 

@@ -7,7 +7,7 @@
   "start": 6,
   "look": {
     "sides": "BlockTextures/Metal_Iron_Ornate.png",
-    "top": "BlockTextures/Metal_Iron_Ornate.png",
+    "top": "BlockTextures/Metal_Iron.png",
     "sound": "Stone",
     "icon": "Icons/ItemsGenerated/Deco_Plate.png",
     "turn": {
