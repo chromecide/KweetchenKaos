@@ -36,6 +36,7 @@ content/layouts/corner_pass/.
 """
 import json
 import os
+import shutil
 import sys
 
 import blocks
@@ -51,6 +52,8 @@ PLOTS = 4
 AUTHOR = f"{settings.NAMESPACE}_Author"
 SAVE_PREFIX = f"{settings.NAMESPACE}_Save_"
 SAVES = os.path.join(settings.CONTENT, "layouts", "_saves")
+DEPLOYED_PREFABS = os.path.expanduser(
+    f"~/hytale-mods/lowtalk-firstrun/mods/Chromecide_{settings.PACK_NAME}/Server/Prefabs")
 
 # THE SLOTS, theme-agnostic: a station slot is a ROLE (the theme has one station per role),
 # the rest are fixtures. Tinted by kind so a room reads at a glance.
@@ -181,6 +184,13 @@ def write_authoring():
 def import_save(plot, layout_id, name):
     """A rescued save -> content/layouts/<layout_id>/ (corner-anchored, slots listed)."""
     src = os.path.join(SAVES, f"{SAVE_PREFIX}{plot:02d}.prefab.json")
+    # A save made since the last deploy is still only in the server's copy of the mod (the
+    # deploy rescues it): take it from there, or this imports the previous save.
+    live = os.path.join(DEPLOYED_PREFABS, os.path.basename(src))
+    if os.path.exists(live) and (not os.path.exists(src)
+                                 or os.path.getmtime(live) > os.path.getmtime(src)):
+        shutil.copy2(live, src)
+        print(f"plot {plot}: took the newer save from the server")
     data = json.load(open(src))
     placed = data.get("blocks") or []
     if not placed:
