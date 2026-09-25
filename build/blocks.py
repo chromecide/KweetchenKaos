@@ -58,6 +58,19 @@ def hint(game_id, text):
     return f"server.{key}"
 
 
+# THE TRIM: a band round the top of a station's sides, in the look's "trim" colour. It is a
+# side mask (TextureSideMask) -- an overlay drawn in its OWN colours times TintUp -- so it is
+# one plain white band, the only image the pack ships, coloured per station. The catch, taken
+# knowingly: TintUp colours the station's TOP as well (proven in the texture gallery probe).
+TRIM_MASK = "BlockTextures/K2_Trim_Band.png"
+TRIM_PIXELS = 6                 # of the texture's 32
+
+
+def write_trim_mask():
+    pack.write_png(pack.common(TRIM_MASK), 32, 32,
+                   lambda x, y: (255, 255, 255, 255) if y < TRIM_PIXELS else (0, 0, 0, 0))
+
+
 def station_block(game_id, label, look, hint_text, comment, sides=None, tint=None, use=True,
                   light=None, movable=False, top=None):
     """`use=False`: a block nothing presses (a queue spot works off ENTER and EXIT only).
@@ -76,6 +89,10 @@ def station_block(game_id, label, look, hint_text, comment, sides=None, tint=Non
         block["Tint"] = [tint]
     if light:
         block["Light"] = light
+    if look.get("trim"):
+        write_trim_mask()
+        block["TextureSideMask"] = TRIM_MASK
+        block["TintUp"] = [look["trim"]]
     item(game_id, label, look.get("icon", STATION_ICON), block, comment, movable)
 
 

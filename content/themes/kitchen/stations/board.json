@@ -6,7 +6,8 @@
   "look": {
     "sides": "BlockTextures/Metal_Iron.png",
     "top": "BlockTextures/Wood_Softwood_Planks_Top.png",
-    "sound": "Wood"
+    "sound": "Wood",
+    "trim": "#b07850"
   },
   "words": {
     "free": "Chopping board - put something raw on it",

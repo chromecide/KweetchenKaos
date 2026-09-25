@@ -35,6 +35,27 @@ def out(*parts):
     return path
 
 
+def common(*parts):
+    """A path under pack/Common (textures the pack ships), with its folder made."""
+    path = os.path.join(settings.PACK, "Common", *parts)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    return path
+
+
+def write_png(path, width, height, pixel):
+    """A plain RGBA PNG: pixel(x, y) -> (r, g, b, a)."""
+    import struct
+    import zlib
+    rows = b"".join(b"\x00" + b"".join(bytes(pixel(x, y)) for x in range(width))
+                    for y in range(height))
+    chunk = lambda kind, data: (struct.pack(">I", len(data)) + kind + data
+                                + struct.pack(">I", zlib.crc32(kind + data) & 0xffffffff))
+    with open(path, "wb") as fh:
+        fh.write(b"\x89PNG\r\n\x1a\n"
+                 + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0))
+                 + chunk(b"IDAT", zlib.compress(rows)) + chunk(b"IEND", b""))
+
+
 def write(path, data):
     with open(path, "w") as fh:
         json.dump(data, fh, indent=2)

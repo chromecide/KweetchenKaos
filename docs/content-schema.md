@@ -202,7 +202,9 @@ Roles today: `press` (board), `heat` (stove), `combine` (counter), `wash`
 
 A `look` may also say how the station looks while in use: `busy_sides` and
 `busy_top` (the stove's top turns copper while something cooks), and `tint` /
-`busy_tint` (a colour over the whole block). Pick textures in the texture
+`busy_tint` (a colour over the whole block). `trim` (a colour) puts a band round the top of the
+sides -- one plain white band image the pack ships, coloured by the game's top tint, so the
+station's top takes that colour too. Pick textures in the texture
 gallery probe (`~/hytale-mods/texture-gallery`, `/tex`): a cube's hint is its path.
 
 ### `looks/<id>.json`
