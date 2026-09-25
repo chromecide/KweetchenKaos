@@ -225,7 +225,7 @@ def build(model, name, debug=True):
     spike = SPIKES[name]
     stations = stations_of(model, name)
     mounted = [v.volume(f"spike_{st}", systems.for_station(model, st).build(model, st, debug),
-                        {"spike": st}) for st in stations]
+                        systems.tags_for(model, st, {"spike": st})) for st in stations]
     front = None
     if spike.get("front"):
         front_volumes, front_layout = spike_front.build(model, GROUND, debug,

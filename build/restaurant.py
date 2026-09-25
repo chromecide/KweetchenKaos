@@ -159,7 +159,8 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
               if st["role"] == "crate" and not st.get("upgrade_of")]
     for sid in sorted(used) + crates:
         effect = systems.for_station(model, sid).build(model, sid, debug)
-        entities.append(_carried(f"station_{sid}", effect, {"station": sid}, box))
+        entities.append(_carried(f"station_{sid}", effect,
+                                 systems.tags_for(model, sid, {"station": sid}), box))
     qi, si = queue.ids(model), shift.ids(model)
     entities.append(_carried("queue", qi["world_effect"], {"queue": "system"}, box))
     if area:

@@ -19,6 +19,8 @@ THE CONTRACT -- every system module:
                         station, but a crate comes with its ingredient on top
     NEEDS_CLOCK         (optional) True if the world must run its clock (anything timed by
                         growth: the stove, crates)
+    TAGS                (optional) tags the station's volume must carry (a lock, say): a rule
+                        can't read a tag that was never set
 
 THE RULES that keep systems maintainable:
 
@@ -43,6 +45,11 @@ _BY_ROLE = {}
 for _module in (press, counter, heat, crate, bin, rack):
     for _role in _module.ROLES:
         _BY_ROLE[_role] = _module
+
+
+def tags_for(model, station_id, extra):
+    """The tags a station's volume carries: whatever it mounts with, plus its system's own."""
+    return dict(extra, **getattr(for_station(model, station_id), "TAGS", {}))
 
 
 def for_station(model, station_id):
