@@ -26,7 +26,8 @@ THE PLOTS, in a row along x, six chunks apart so no guest can see or walk into t
     plots 2-9      restaurant layouts
 
 A room plot is 32 x 32 (two chunks square); build inside it, floor and all -- everything
-from the floor up to AUTHOR_HEIGHT is saved. /kk grid draws a line of EDGE blocks round each
+from ROOM_BELOW under the floor up to AUTHOR_HEIGHT above it is saved. The world has real
+ground (stone, dirt, grass at FLOOR), so gravel rests and you can dig down. /kk grid draws a line of EDGE blocks round each
 plot one block OUTSIDE it, so the markers are never saved and the grid never touches what
 is inside: more plots can be added (PLOTS) and the grid run again at any time.
 
@@ -37,7 +38,8 @@ imported, and every world pastes the border round its room (world.json "border")
 
     python3 build/layouts.py import 0 meadow "Meadow"      -> content/layouts/meadow/
 
-Nothing can go below the floor: the authoring world's floor is the bottom of the world.
+The border saves BORDER_BELOW under the floor: sculpt the underside of a floating island
+there (under the hole too, below the room's own ground).
 
 RESTORE: the imported layouts named in RESTORE are pasted back into their plots by
 /kk restore (they are corner-anchored, so each goes at its plot's corner).
@@ -71,13 +73,22 @@ LAYOUT = 2 * CHUNK            # a plot is 32 x 32 blocks
 PITCH = 6 * CHUNK             # plots are 96 blocks apart on x
 AUTHOR_HEIGHT = 16
 PLOTS = 10                    # plot 0 the border, 1 HQ, 2-9 layouts; more can be added
-MAX_PLOTS = 32                # "/kk grid 20", "/kk save 20": up to this many
+MAX_PLOTS = 32
+# THE GROUND: stone, then dirt, then the grass the plots stand on at FLOOR -- deep enough to
+# dig into and for gravel to rest on. A plot saves some of the ground under its floor too
+# (a room ROOM_BELOW deep, the border BORDER_BELOW -- room for an island's underside); an
+# import puts the floor back at y 0, so what is under it is at negative y.
+FLOOR = 32
+ROOM_BELOW, BORDER_BELOW = 3, 16
+GROUND = [{"From": 0, "To": FLOOR - 3, "BlockType": "Rock_Stone"},
+          {"From": FLOOR - 3, "To": FLOOR, "BlockType": "Soil_Dirt"},
+          {"From": FLOOR, "To": FLOOR + 1, "BlockType": "Soil_Grass"}]                # "/kk grid 20", "/kk save 20": up to this many
 BORDER = CHUNK                # a border plot's ring is one chunk thick
 BORDER_PLOTS = {0}            # which plots are borders
 BORDER_HEIGHT = 48
 BORDER_EDGE = f"{settings.NAMESPACE}_Border_Edge"
 EDGE_TINT = "#e0c020"
-RESTORE = {1: "hq", 2: "test_room"}     # plot -> the layout pasted back into it
+RESTORE = {0: "backdrop", 1: "hq", 2: "test_room"}   # plot -> the layout pasted back
 AUTHOR = f"{settings.NAMESPACE}_Author"
 SAVE_PREFIX = f"{settings.NAMESPACE}_Save_"
 SAVES = os.path.join(settings.CONTENT, "layouts", "_saves")
@@ -130,20 +141,28 @@ def plot_origin(i):
     return i * PITCH, 0
 
 
+def below(i):
+    """How deep under the floor plot i saves."""
+    return BORDER_BELOW if i in BORDER_PLOTS else ROOM_BELOW
+
+
 def plot_box(i):
-    """(x1, z1, x2, z2, height): what plot i saves -- a border plot, its ring too."""
+    """(x1, z1, x2, z2, y1, y2): what plot i saves -- a border plot, its ring too -- from
+    below(i) under the floor up."""
     x, z = plot_origin(i)
+    y1 = FLOOR - below(i)
     if i in BORDER_PLOTS:
-        return x - BORDER, z - BORDER, x + LAYOUT + BORDER - 1, z + LAYOUT + BORDER - 1, \
-            BORDER_HEIGHT
-    return x, z, x + LAYOUT - 1, z + LAYOUT - 1, AUTHOR_HEIGHT
+        return (x - BORDER, z - BORDER, x + LAYOUT + BORDER - 1, z + LAYOUT + BORDER - 1,
+                y1, FLOOR + BORDER_HEIGHT - 1)
+    return x, z, x + LAYOUT - 1, z + LAYOUT - 1, y1, FLOOR + AUTHOR_HEIGHT - 1
 
 
 def _rect(a, b, c, d):
     """Commands drawing a line of edge blocks round the rectangle (a, b)-(c, d), on the floor."""
     out = []
     for p1, p2 in (((a, b), (c, b)), ((a, d), (c, d)), ((a, b), (a, d)), ((c, b), (c, d))):
-        out += [f"pos1 --x={p1[0]} --y=0 --z={p1[1]}", f"pos2 --x={p2[0]} --y=0 --z={p2[1]}",
+        out += [f"pos1 --x={p1[0]} --y={FLOOR} --z={p1[1]}",
+                f"pos2 --x={p2[0]} --y={FLOOR} --z={p2[1]}",
                 f"set {BORDER_EDGE}"]
     return out
 
@@ -151,7 +170,7 @@ def _rect(a, b, c, d):
 def _lay_edges(i):
     """Commands marking plot i: a line one block OUTSIDE what it saves -- and for a border
     plot, a second just inside its hole (the hole is dropped on import)."""
-    x1, z1, x2, z2, _ = plot_box(i)
+    x1, z1, x2, z2, _, _ = plot_box(i)
     out = _rect(x1 - 1, z1 - 1, x2 + 1, z2 + 1)
     if i in BORDER_PLOTS:
         hx, hz = plot_origin(i)
@@ -200,10 +219,10 @@ def write_authoring():
         "$Comment": "The layout workshop: creative, and PERSISTENT -- what you build here is "
                     "still here tomorrow. See build/layouts.py.",
         "Version": 2,
-        "WorldGen": {"Type": "Flat", "Layers": [{"From": 0, "To": 1, "BlockType": "Soil_Grass"}]},
+        "WorldGen": {"Type": "Flat", "Layers": GROUND},
         "SpawnProvider": {"Id": "Global", "SpawnPoint": {
             # In front of HQ's plot (plot 1), outside its edge.
-            "X": PITCH + LAYOUT / 2, "Y": 2.0, "Z": -4.0, "Pitch": 0.0, "Yaw": 0.0,
+            "X": PITCH + LAYOUT / 2, "Y": FLOOR + 2.0, "Z": -4.0, "Pitch": 0.0, "Yaw": 0.0,
             "Roll": 0.0}},
         "GameMode": "Creative", "GameTime": "0001-01-01T12:00:00Z", "IsGameTimePaused": True,
         "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False, "IsBlockSpawnersEnabled": False,
@@ -213,18 +232,19 @@ def write_authoring():
     def grid(n):
         out = list(enter)
         for i in range(n):
-            x1, z1, x2, z2, _ = plot_box(i)
+            x1, z1, x2, z2, _, _ = plot_box(i)
             # set writes only into LOADED chunks: stand over each plot first.
-            out += [f"tp {(x1 + x2) // 2} 30 {(z1 + z2) // 2}", "wait 3", *_lay_edges(i)]
+            out += [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 3",
+                    *_lay_edges(i)]
         return out
 
     def save(n):
         out = []
         for i in range(n):
-            x1, z1, x2, z2, height = plot_box(i)
+            x1, z1, x2, z2, y1, y2 = plot_box(i)
             # Stand over the plot first: its chunks must be loaded to be read.
-            out += [f"tp {(x1 + x2) // 2} 30 {(z1 + z2) // 2}", "wait 3",
-                    f"pos1 --x={x1} --y=0 --z={z1}", f"pos2 --x={x2} --y={height - 1} --z={z2}",
+            out += [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 3",
+                    f"pos1 --x={x1} --y={y1} --z={z1}", f"pos2 --x={x2} --y={y2} --z={z2}",
                     # --entities, or the zones you drew are left out of the save.
                     f"prefab save {SAVE_PREFIX}{i:02d} --overwrite --entities --pack={pack_id}"]
         return out
@@ -252,31 +272,31 @@ def write_authoring():
         pack.write(pack.out("Prefabs", f"{name}.prefab.json"),
                    dict(json.load(open(src)), **{"$Comment": f"Layout {lid}, for /kk restore. "
                                                             f"See build/layouts.py."}))
-        x, z = plot_origin(plot)
-        restore += [f"tp {x + LAYOUT // 2} 2 {z + LAYOUT // 2}", "wait 5",
-                    f"prefab load {name}", "wait 1", f"paste {x} 0 {z}", "wait 3"]
+        x1, z1, x2, z2, _, _ = plot_box(plot)
+        # An imported layout has its floor at y 0 (the ground under it below).
+        restore += [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 5",
+                    f"prefab load {name}", "wait 1", f"paste {x1} {FLOOR} {z1}", "wait 3"]
     macros.append(("KKRestore", "kk restore",
                    "Paste the kept layouts back into their plots", restore))
     # "/kk restore 3": plot 3 back to its LAST SAVE, throwing away what was built since. The
     # saves go into the pack (a deploy wipes the server's copy). Only for plots that HAVE a
     # save: a macro carries on past a failed step, so with no save to paste it would clear
-    # the plot and leave it empty. Load first, then clear the box (the world's grass at the
-    # floor), then paste -- a save is CENTRE-anchored, so at the box's centre cell.
+    # the plot and leave it empty. Load first, then clear the whole box, ground and all (the
+    # save holds every block of it), then paste -- a save is anchored at the centre on x and z
+    # and at the BOTTOM on y, so at the box's centre cell on its lowest layer.
     for n in range(MAX_PLOTS):
         src = latest_save(n, quiet=True)
         if src is None:
             continue
         shutil.copy2(src, pack.out("Prefabs", os.path.basename(src)))
-        x1, z1, x2, z2, height = plot_box(n)
+        x1, z1, x2, z2, y1, y2 = plot_box(n)
         macros.append((f"KKRestore{n}", f"kk restore {n}",
                        f"Put plot {n} back as it was last saved", list(enter) + [
-            f"tp {(x1 + x2) // 2} 30 {(z1 + z2) // 2}", "wait 5",
+            f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 5",
             f"prefab load {SAVE_PREFIX}{n:02d}", "wait 1",
-            f"pos1 --x={x1} --y=1 --z={z1}", f"pos2 --x={x2} --y={height - 1} --z={z2}",
+            f"pos1 --x={x1} --y={y1} --z={z1}", f"pos2 --x={x2} --y={y2} --z={z2}",
             "set Empty",
-            f"pos1 --x={x1} --y=0 --z={z1}", f"pos2 --x={x2} --y=0 --z={z2}",
-            "set Soil_Grass",
-            f"paste {x1 + (x2 - x1) // 2} 0 {z1 + (z2 - z1) // 2}", "wait 3"]))
+            f"paste {x1 + (x2 - x1) // 2} {y1} {z1 + (z2 - z1) // 2}", "wait 3"]))
     for file, name, desc, commands in macros:
         key = f"commands.{name.replace(' ', '.')}.desc"
         pack.say(key, desc)
@@ -313,12 +333,22 @@ def import_save(plot, layout_id, name):
     shift = size // 2 - 1         # the save's anchor is the selection's centre
     if min(b["x"] for b in placed) >= 0:
         raise SystemExit(f"plot {plot}: already corner-anchored -- not a fresh save")
+    # A save starts below(plot) under the floor, so its bottom layer is the world's ground
+    # (dirt or stone). One whose bottom is a floor was saved before the ground went in.
+    bottom = [b["name"] for b in placed if b["y"] == 0]
+    if not bottom or max(set(bottom), key=bottom.count) not in ("Soil_Dirt", "Rock_Stone"):
+        raise SystemExit(f"plot {plot}: saved before the authoring world had ground under "
+                         f"its floor -- save it again")
+    down = below(plot)
     for b in placed:
         b["x"] += shift
         b["z"] += shift
+        b["y"] -= down
     if border:
-        # THE HOLE is where the room goes: nothing of the border's is kept there.
-        hole = lambda c: BORDER <= c["x"] < BORDER + LAYOUT and BORDER <= c["z"] < BORDER + LAYOUT
+        # THE HOLE is where the room goes, its ground too: nothing of the border's is kept
+        # there -- except what is under the room's ground (an island's underside).
+        hole = lambda c: (BORDER <= c["x"] < BORDER + LAYOUT and BORDER <= c["z"] < BORDER + LAYOUT
+                          and c["y"] >= -ROOM_BELOW)
         placed[:] = [dict(b, name="Soil_Grass") if b["name"] == BORDER_EDGE else b
                      for b in placed if not hole(b)]
         data["blocks"] = placed
@@ -329,7 +359,7 @@ def import_save(plot, layout_id, name):
     # fluid" over a room-sized patch half a plot away, clearing the ground there (the hole
     # a player fell through). Real fluids are shifted with the blocks; empty ones carry
     # nothing and are dropped.
-    fluids = [dict(f, x=f["x"] + shift, z=f["z"] + shift)
+    fluids = [dict(f, x=f["x"] + shift, z=f["z"] + shift, y=f["y"] - down)
               for f in data.get("fluids") or [] if f.get("name") != "Empty"]
     if border:
         fluids = [f for f in fluids if not hole(f)]
@@ -338,7 +368,8 @@ def import_save(plot, layout_id, name):
     for e in data.get("entities", []):
         tv, tr = e.get("Components", {}).get("TriggerVolume"), e.get("Components", {}).get("Transform")
         if tv and tr and tv.get("Name"):
-            pos = dict(tr["Position"], X=tr["Position"]["X"] + shift, Z=tr["Position"]["Z"] + shift)
+            pos = dict(tr["Position"], X=tr["Position"]["X"] + shift, Y=tr["Position"]["Y"] - down,
+                       Z=tr["Position"]["Z"] + shift)
             zones[tv["Name"].strip().lower()] = {"position": pos, "shape": tv["Shape"]}
     data["anchorX"] = data["anchorY"] = data["anchorZ"] = 0
     data["entities"] = []

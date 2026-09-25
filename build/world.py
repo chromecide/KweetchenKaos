@@ -38,7 +38,9 @@ import volumes as v
 
 NS = settings.NAMESPACE
 HQ = f"{NS}_HQ"
-AT = (32, 0, 32)             # where a room or HQ is pasted in its own world
+# Where a room or HQ is pasted in its own world: its floor at AT, and the ground it brought
+# (and a border's underside, layouts.BORDER_BELOW deep) below -- above the world's bottom.
+AT = (32, 32, 32)
 FRONT = (16.0, 2.0, -4.0)    # a restaurant's arrival, relative to its room: in front of it
 # Feet on top of the arrival block. The room is pasted only once a player is in the world, so
 # over a void there is nothing under them for a moment: arrive standing, not dropping in.
