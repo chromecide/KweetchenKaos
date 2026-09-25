@@ -91,6 +91,11 @@ def build(model, station_id, debug=True):
         rules.add(150 + k, [v.at([b["free"]]), v.holding(kit["game_id"])],
                   [v.cell([b["free"]], b["of"](sid)), v.sound(1.5)]
                   + rep(f"upgraded.{sid}", f"upgraded to a {vs['label'].lower()}"))
+    # The kit pressed on an already-fast crate: say so.
+    for k, (sid, vs) in enumerate(kinds[1:]):
+        kit = items[vs["kit_item"]]
+        rules.add(170 + k, [v.at(crates[1:]), v.has(kit["game_id"])],
+                  [v.say("kk.crate.kit_wrong", "[crate] That crate is already upgraded.")])
     # A crate put down grows its own top; a crate picked up (broken) takes its top.
     rules.add(200, [v.at(crates, event="BLOCK_PLACED")],
               [v.place(b["restocking"], event="BLOCK_PLACED")]

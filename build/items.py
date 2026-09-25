@@ -33,9 +33,13 @@ def write_all(model):
         gid = item["game_id"]
         quality = item["quality"] or "Common"
         pack.say(f"items.{gid}.name", item["label"])
+        names = {"Name": f"server.items.{gid}.name"}
+        if item.get("description"):
+            pack.say(f"items.{gid}.description", item["description"])
+            names["Description"] = f"server.items.{gid}.description"
         pack.write_item(gid, {
             "$Comment": f"{item['label']}. From content/{item['file']}.",
-            "TranslationProperties": {"Name": f"server.items.{gid}.name"},
+            "TranslationProperties": names,
             "Icon": item["look"]["icon"],
             "Quality": quality,
             "MaxStack": stack,

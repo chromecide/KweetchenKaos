@@ -283,7 +283,9 @@ def build(model, roles, debug=True):
         rules.add(next(num), [signals.heard(signals.BOUGHT, c["key"])],
                   say("SIGNAL_RECEIVED", f"bought.{c['key']}",
                       f"[shift] Bought the {c['label'].lower()} for {c['price']} - "
-                      f"{{money}} left."))
+                      f"{{money}} left."
+                      + ("" if c["cube"] else " Hold it and press a free station it fits "
+                                              "to upgrade it.")))
 
     rules.write(s["effect"], "The shift: the day, arrivals, the purse, the menu, deliveries. "
                              "See build/systems/shift.py.")

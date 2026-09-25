@@ -151,8 +151,10 @@ def build(model, name, debug=True):
         front = front_layout
     mounted.append(setup(model, stations, front, debug))
     # A run needs only plates: the run delivers the crates, which make everything else.
+    # ...plus one of every upgrade kit, so upgrades can be tried without earning them.
+    kits = [(it["game_id"], 1) for i, it in model["items"].items() if i.endswith("_kit")]
     given = ([(SETUP, 1), (model["items"][model["vessel"]["clean"]["id"]]["game_id"], 2)]
-             if spike.get("run") else kit(model, stations))
+             + kits if spike.get("run") else kit(model, stations))
     note = " + ".join(model["stations"][st]["label"].lower() for st in stations)
     if front:
         note += " + the front of house"

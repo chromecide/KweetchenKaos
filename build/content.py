@@ -146,9 +146,13 @@ def load_theme(theme_id):
     # "fast crate kit" upgrades any crate.
     for sid, st in list(stations.items()) + list(templates.items()):
         if "kit" in st:
+            base = stations.get(st["upgrade_of"]) or templates.get(st["upgrade_of"])
+            what = (base["label"].replace("{ingredient} ", "") if base else "station").lower()
             kid = define({"id": f"{sid}_kit", "label": st["kit"]["label"],
                           "look": fixtures["looks"]["kit"], "quality": "Rare",
                           "bin": "refuse"}, st["file"])
+            items[kid]["description"] = st["kit"].get(
+                "description", f"An upgrade: hold it and press a free {what} (F).")
             st["kit_item"] = kid
     for f, d in many("ingredients"):
         iid = define(d["item"], f)

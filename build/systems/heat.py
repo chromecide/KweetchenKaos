@@ -132,6 +132,15 @@ def build(model, station_id, debug=True):
                   [v.cell([b["free"]], b["free_of"](sid)), v.sound(1.5)]
                   + rep(f"upgraded.{sid}", f"upgraded to a {vs['label'].lower()}"))
 
+    # A kit pressed on the wrong stove (busy, or already upgraded): say why, not nothing.
+    for sid, vs in kinds[1:]:
+        kit = items[vs["kit_item"]]
+        rules.add(next(n), [v.at([x for x in frees + busies if x != b["free"]]),
+                            v.has(kit["game_id"])],
+                  [v.say(f"kk.{station_id}.kit_wrong",
+                         f"[{label.lower()}] A kit upgrades a FREE, plain {label.lower()} "
+                         f"- nothing on it, not already upgraded.")])
+
     # BREAKING: a dish broken frees its stove; a stove broken takes its dish.
     rules.add(90, [v.at(on_top, event="BLOCK_BROKEN")],
               [dict(c, Event="BLOCK_BROKEN") for c in to_free(-1)])
