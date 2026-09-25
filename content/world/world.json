@@ -14,10 +14,10 @@
       "portal": 1
     },
     {
-      "id": "second_room",
-      "name": "Second room",
+      "id": "kweebec_klub",
+      "name": "KweebecKlub",
       "theme": "kitchen",
-      "layout": "second_room",
+      "layout": "kweebec_klub",
       "rules": "standard",
       "portal": 2
     }

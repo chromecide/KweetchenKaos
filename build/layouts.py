@@ -392,7 +392,7 @@ def import_save(plot, layout_id, name):
     for s, n in sorted(slots.items()):
         print(f"  {n}x {s}")
     if "queue" not in zones and not border:
-        print("  NOTE: no 'queue' zone drawn -- the queue's patience needs one")
+        print("  (no 'queue' zone drawn: the queue's area is worked out round its spots and pool)")
 
 
 if __name__ == "__main__":
