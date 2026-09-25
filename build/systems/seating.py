@@ -38,6 +38,7 @@ Seating is a FIXTURE: chairs are placed by a layout (or the spike setup) with th
 """
 import blocks
 import npc
+import pack
 import settings
 import signals
 import volumes as v
@@ -130,11 +131,28 @@ def guest_fragment(model, on_sat=(), while_seated=(), on_unseated=(), on_lost=()
 
 # ---------------------------------------------------------------- blocks and the volume
 
+# THE SEAT HEIGHT. A seated guest is moved onto its chair, and the engine stands it on the
+# chair's HIGHEST hitbox (translateToAccessiblePosition: "highest y value wins") -- the shipped
+# Chair_Small has a backrest box up to 1.0, which stood the guest a whole block up. So the
+# chair stands on a hitbox of our own: Chair_Small's SEAT alone (0.5 high), and the guest sits
+# at seat height, as it did on the old stool. Aiming keeps the whole chair (the interaction
+# hitbox), so picking it up still works on the backrest.
+SEAT_HITBOX = f"{settings.NAMESPACE}_Chair_Seat"
+
+
+def _write_seat_hitbox():
+    pack.write(pack.out("Item", "Block", "Hitboxes", settings.NAMESPACE, f"{SEAT_HITBOX}.json"),
+               {"Boxes": [{"Min": {"X": 0.1, "Y": 0.0, "Z": 0.05},
+                           "Max": {"X": 0.9, "Y": 0.5, "Z": 0.9}}]})
+
+
 def _chair_block(game_id, label, look, tint=None, movable=False):
+    _write_seat_hitbox()
     block = {"CustomModel": look["model"],
              "CustomModelTexture": [{"Texture": look["texture"], "Weight": 1}],
              "DrawType": "Model", "Material": "Solid", "Opacity": "Transparent",
-             "HitboxType": "Chair_Small", "BlockSoundSetId": look.get("sound", "Wood"),
+             "HitboxType": SEAT_HITBOX, "InteractionHitboxType": "Chair_Small",
+             "BlockSoundSetId": look.get("sound", "Wood"),
              "PhysicalMaterialId": look.get("sound", "Wood"),
              "Support": {"Down": [{"FaceType": "Full"}]},
              # A FACING, so "in front of it" means something.
