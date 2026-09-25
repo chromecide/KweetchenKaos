@@ -175,10 +175,17 @@ def _world(note, needs_clock, mounted, given, spawn=(8.0, 2.0, 8.0)):
         "Commands": [f"give {item}" for item, n in given for _ in range(n)]})
 
 
+ROOM_AT = (32, 0, 32)     # the room's corner: clear of negative coordinates (see below)
+
+
 def build_room(model, layout_id, debug=True):
     """A RESTAURANT spike: a layout's room, dressed in the theme, running a real run. The
-    setup block pastes the room at the world's origin; you arrive in front of it."""
-    room, volumes, problems, info = restaurant.build(model, layout_id, debug=debug,
+    setup block pastes the room at ROOM_AT; you arrive in front of it.
+
+    Everything stays at POSITIVE coordinates: the first room spike put the arrival at
+    z = -4, and the player arrived over missing ground and fell out of the world."""
+    room, volumes, problems, info = restaurant.build(model, layout_id, origin=ROOM_AT,
+                                                     debug=debug,
                                                      patience=spike_front.SPIKE_PATIENCE)
     for p in problems:
         print(f"  LAYOUT: {p}")
@@ -195,7 +202,9 @@ def build_room(model, layout_id, debug=True):
               [v.say("kk.setup.again", "[setup] already built - leave and /kk spike again")])
     rules.add(2, [v.at([SETUP]), once("0")],
               [{"Type": "PastePrefab", "Event": "BLOCK_USED", "Prefab": f"{SETUP}_Layout",
-                "Origin": "VolumeOrigin", "Position": {"X": 0.0, "Y": 0.0, "Z": 0.0},
+                "Origin": "VolumeOrigin",
+                "Position": {"X": float(ROOM_AT[0]), "Y": float(ROOM_AT[1]),
+                             "Z": float(ROOM_AT[2])},
                 "ShowParticles": False},
                {"Type": "ModifyTags", "Event": "BLOCK_USED", "Operation": "Set",
                 "TagKey": "done", "TagValue": "1"}]
@@ -205,8 +214,9 @@ def build_room(model, layout_id, debug=True):
     kits = [(it["game_id"], 1) for i, it in model["items"].items() if i.endswith("_kit")]
     given = [(SETUP, 1), (model["items"][model["vessel"]["clean"]["id"]]["game_id"], 2)] + kits
     note = f"the room {info['name']}"
-    # Arrive in front of the room's forecourt, outside it.
-    _world(note, True, volumes, given, spawn=(16.0, 2.0, -4.0))
+    # Arrive in front of the room's forecourt, just outside it.
+    _world(note, True, volumes, given,
+           spawn=(ROOM_AT[0] + 16.0, 2.0, ROOM_AT[2] - 4.0))
     return note, given
 
 
