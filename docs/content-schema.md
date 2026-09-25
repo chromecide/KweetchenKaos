@@ -454,11 +454,14 @@ All three arrive on the **offer pads** (a layout slot) between days:
 
 | Day | The pads show |
 |---|---|
-| Day 1 | the starting menu's crates, free. No offers |
+| Day 0 | a starter card for each starter dish. Choose one: it's on the menu, its crates delivered |
 | Card days (every 3rd, `rules/cards.json`) | a pair of recipe cards, **instead of** the random offer roll. Choosing one puts the dish on the menu from the next day; any crates it needs that the restaurant doesn't own arrive on the pads the next morning, free |
 | Other days | the random offers (`rules/offers.json`): stations and upgrade kits |
 
-- A dish says `"unlock": "start"` or `"unlock": "card"`. What it needs is
+- A dish says `"unlock": "start"` (a STARTER: offered as a starter card when the
+  run begins, and later as a recipe card if not chosen) or `"unlock": "card"` (only
+  ever a recipe card). The run begins with every starter's card on the pads; the
+  chosen one goes on the menu and its crates are delivered. What it needs is
   worked out from its steps (the report already walks every dish back to its
   crates).
 - The run remembers which crates it owns (tags on the run's volume), so a crate

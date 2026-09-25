@@ -1,7 +1,8 @@
 """
 THE SHIFT SYSTEM: the restaurant's day -- open, serve, close, count the takings, deliver.
 
-    the run starts           ->  the starting menu's crates are delivered to the pads, free
+    the run starts           ->  a STARTER CARD for each dish that can start a run is on the
+                                 pads: choose one -- it's on the menu, its crates delivered
     press the SIGN (closed)  ->  the day opens: the clock starts, guests arrive, the service
                                  lock goes on, unbought offers and unchosen cards vanish
     ...the day runs          ->  a guest every few seconds (faster as the run goes on),
@@ -89,12 +90,10 @@ def build(model, roles, debug=True):
     guests = list(roles.values())
     every = rules_["cards"]["every_days"]
     assert rules_["cards"]["choices"] in (1, 2), "cards.json: choices must be 1 or 2"
-    start_crates = []
-    for d in dishes.values():
-        if d["unlock"] == "start":
-            start_crates += [c for c in d["needs"] if c not in start_crates]
+    starters = [d for d, dish in dishes.items() if dish["unlock"] == "start"]
     pads = offers.pad_numbers(model)
-    assert len(start_crates) <= len(pads), "more starting crates than offer pads"
+    assert starters, "no dish can start a run"
+    assert len(starters) <= len(pads), "more starter dishes than offer pads"
 
     rules = v.Entries()
     num = iter(range(1000, 100000))
@@ -110,20 +109,22 @@ def build(model, roles, debug=True):
         return [signals.to_pad(event, pad, signals.DELIVER, crate, delay),
                 _set(event, f"own_{crate}", 1)]
 
-    # 1: THE RUN STARTS once there are pads to deliver to: the starting crates, free.
+    # 1: THE RUN STARTS once there are pads: a starter card on a pad for each dish that can
+    # start a run. Choosing one is an ordinary card choice (below): on the menu, crates
+    # delivered. The others can still come round later as recipe cards.
     pad_here = {"Type": "TagCondition", "Event": "TICK", "Source": "Radius",
                 "MatchKey": signals.PADS_KEY, "MatchValue": signals.PADS_VALUE, "Radius": 64.0,
                 "Center": "Volume", "TagKey": signals.PADS_KEY, "Comparison": "Exactly",
                 "TagValue": signals.PADS_VALUE}
     rules.add(1, [_t("TICK", "started", 0), pad_here],
               [_set("TICK", "started", 1), EVERY_TICK]
-              + [e for j, c in enumerate(start_crates) for e in deliver("TICK", c, pads[j])]
-              + say("TICK", "started", "[shift] Day {day}. Your crates are on the pads - set "
-                                       "up the kitchen, then open the sign."))
+              + [signals.to_pad("TICK", pads[j], signals.CARD, d) for j, d in enumerate(starters)]
+              + say("TICK", "started", "[shift] Choose your starting recipe on the pads, set up "
+                                       "the kitchen, then open the sign."))
 
     # 10: open the day. 11: already open. 12: nothing delivered yet.
     rules.add(10, [v.at([s["sign"]]), _t("BLOCK_USED", "open", 0),
-                   _t("BLOCK_USED", "started", 1)],
+                   _t("BLOCK_USED", "onmenu", 1, "AtLeast")],
               [v.cell([s["sign"]], s["sign_open"]),
                _set("BLOCK_USED", "open", 1), _set("BLOCK_USED", "closing", 0),
                _set("BLOCK_USED", "lost", 0),
@@ -137,8 +138,9 @@ def build(model, roles, debug=True):
               + say("BLOCK_USED", "opened", "[shift] Day {day} - OPEN. Purse: {money} coins."))
     rules.add(11, [v.at([s["sign_open"]])],
               say("BLOCK_USED", "stillopen", "[shift] Open - {time_left}s to closing time."))
-    rules.add(12, [v.at([s["sign"]]), _t("BLOCK_USED", "started", 0)],
-              say("BLOCK_USED", "nopads", "[shift] Nothing to open yet - no offer pads."))
+    rules.add(12, [v.at([s["sign"]]), _t("BLOCK_USED", "onmenu", 0)],
+              say("BLOCK_USED", "nomenu", "[shift] Nothing on the menu yet - choose a "
+                                          "starting recipe on the pads."))
 
     # 20, 21: the clock.
     rules.add(20, [_t("TICK", "open", 1), _t("TICK", "closing", 0), _every(1.0)],
@@ -233,6 +235,7 @@ def build(model, roles, debug=True):
         rules.add(next(num), [signals.heard(signals.CHOSE, d)],
                   [_set("SIGNAL_RECEIVED", f"has_{d}", 1),
                    _set("SIGNAL_RECEIVED", "locked", -1, op="Increment"),
+                   _set("SIGNAL_RECEIVED", "onmenu", 1, op="Increment"),
                    signals.to_pads("SIGNAL_RECEIVED", signals.CLEAR)]
                   + say("SIGNAL_RECEIVED", f"chose.{d}",
                         f"[shift] {dish['label']} is on the menu from the next day."))
@@ -298,13 +301,12 @@ def build(model, roles, debug=True):
     lock = v.Entries()
     lock.add(1, [], [carry.in_service_mark()])
     lock.write(s["lock"], "The service lock. See build/systems/shift.py.")
-    locked = sum(1 for d in dishes.values() if d["unlock"] != "start")
+    locked = len(dishes)          # nothing is on the menu until a starter is chosen
     tags = {**signals.LISTENER_TAGS, signals.MONEY: "0", signals.DAY: "1", "open": "0",
             "closing": "0", "time_left": "0", "beat": "0", "picked": "0", "choice": "0",
             "lost": "0", "started": "0", "dayover": "0", "cardpick": "0",
-            "cards_in": str(every), "locked": str(locked)}
-    tags.update({f"has_{d}": "1" if dish["unlock"] == "start" else "0"
-                 for d, dish in dishes.items()})
+            "cards_in": str(every), "locked": str(locked), "onmenu": "0"}
+    tags.update({f"has_{d}": "0" for d in dishes})
     tags.update({f"offered_{d}": "0" for d in dishes})
     tags.update({f"own_{c}": "0" for c in offers.crates(model)})
     return tags
