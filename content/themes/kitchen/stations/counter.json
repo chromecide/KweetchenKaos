@@ -3,9 +3,10 @@
   "role": "combine",
   "label": "Counter",
   "look": {
-    "sides": "BlockTextures/Calcite_Brick_Smooth.png",
-    "top": "BlockTextures/Calcite_Brick_Decorative_Top.png",
-    "sound": "Stone"
+    "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+    "top": "BlockTextures/Soil_Snow.png",
+    "sound": "Wood",
+    "trim": "#c0c0c8"
   },
   "words": {
     "free": "Counter - put anything down here",

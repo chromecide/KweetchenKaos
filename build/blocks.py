@@ -114,6 +114,9 @@ def station_block(game_id, label, look, hint_text, comment, sides=None, tint=Non
         block["VariantRotation"] = "All"
         block["Supporting"] = {face: [{"FaceType": "Full"}]
                                for face in ("Up", "Down", "North", "South", "East", "West")}
+    if look.get("top_tint"):
+        # The top face only (the sides keep their colour); a trim uses the same tint.
+        block["TintUp"] = [look["top_tint"]]
     if look.get("trim"):
         write_trim_mask()
         block["TextureSideMask"] = TRIM_MASK
