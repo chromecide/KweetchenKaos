@@ -17,6 +17,7 @@ it (docs/content-schema.md, Layouts).
     /kk save [n]   save the plots as prefabs (K2_Save_00, _01, ...; the first n)
     /kk restore    paste the kept layouts back into their plots (RESTORE below) -- for a
                    new authoring world
+    /kk restore n  put plot n back as it was LAST SAVED, throwing away changes since
 
 THE PLOTS, in a row along x, six chunks apart so no guest can see or walk into the next:
 
@@ -221,7 +222,9 @@ def write_authoring():
         out = []
         for i in range(n):
             x1, z1, x2, z2, height = plot_box(i)
-            out += [f"pos1 --x={x1} --y=0 --z={z1}", f"pos2 --x={x2} --y={height - 1} --z={z2}",
+            # Stand over the plot first: its chunks must be loaded to be read.
+            out += [f"tp {(x1 + x2) // 2} 30 {(z1 + z2) // 2}", "wait 3",
+                    f"pos1 --x={x1} --y=0 --z={z1}", f"pos2 --x={x2} --y={height - 1} --z={z2}",
                     # --entities, or the zones you drew are left out of the save.
                     f"prefab save {SAVE_PREFIX}{i:02d} --overwrite --entities --pack={pack_id}"]
         return out
@@ -254,6 +257,26 @@ def write_authoring():
                     f"prefab load {name}", "wait 1", f"paste {x} 0 {z}", "wait 3"]
     macros.append(("KKRestore", "kk restore",
                    "Paste the kept layouts back into their plots", restore))
+    # "/kk restore 3": plot 3 back to its LAST SAVE, throwing away what was built since. The
+    # saves go into the pack (a deploy wipes the server's copy). Only for plots that HAVE a
+    # save: a macro carries on past a failed step, so with no save to paste it would clear
+    # the plot and leave it empty. Load first, then clear the box (the world's grass at the
+    # floor), then paste -- a save is CENTRE-anchored, so at the box's centre cell.
+    for n in range(MAX_PLOTS):
+        src = latest_save(n, quiet=True)
+        if src is None:
+            continue
+        shutil.copy2(src, pack.out("Prefabs", os.path.basename(src)))
+        x1, z1, x2, z2, height = plot_box(n)
+        macros.append((f"KKRestore{n}", f"kk restore {n}",
+                       f"Put plot {n} back as it was last saved", list(enter) + [
+            f"tp {(x1 + x2) // 2} 30 {(z1 + z2) // 2}", "wait 5",
+            f"prefab load {SAVE_PREFIX}{n:02d}", "wait 1",
+            f"pos1 --x={x1} --y=1 --z={z1}", f"pos2 --x={x2} --y={height - 1} --z={z2}",
+            "set Empty",
+            f"pos1 --x={x1} --y=0 --z={z1}", f"pos2 --x={x2} --y=0 --z={z2}",
+            "set Soil_Grass",
+            f"paste {x1 + (x2 - x1) // 2} 0 {z1 + (z2 - z1) // 2}", "wait 3"]))
     for file, name, desc, commands in macros:
         key = f"commands.{name.replace(' ', '.')}.desc"
         pack.say(key, desc)
@@ -262,16 +285,25 @@ def write_authoring():
             "Description": f"server.{key}", "Commands": commands})
 
 
-def import_save(plot, layout_id, name):
-    """A rescued save -> content/layouts/<layout_id>/ (corner-anchored, slots listed)."""
+def latest_save(plot, quiet=False):
+    """Plot's last save, kept in content/layouts/_saves/ -- or None. A save made since the
+    last deploy is still only in the server's copy of the mod (the deploy rescues it): it is
+    taken from there first, or this would give the previous save."""
     src = os.path.join(SAVES, f"{SAVE_PREFIX}{plot:02d}.prefab.json")
-    # A save made since the last deploy is still only in the server's copy of the mod (the
-    # deploy rescues it): take it from there, or this imports the previous save.
     live = os.path.join(DEPLOYED_PREFABS, os.path.basename(src))
     if os.path.exists(live) and (not os.path.exists(src)
                                  or os.path.getmtime(live) > os.path.getmtime(src)):
         shutil.copy2(live, src)
-        print(f"plot {plot}: took the newer save from the server")
+        if not quiet:
+            print(f"plot {plot}: took the newer save from the server")
+    return src if os.path.exists(src) else None
+
+
+def import_save(plot, layout_id, name):
+    """A rescued save -> content/layouts/<layout_id>/ (corner-anchored, slots listed)."""
+    src = latest_save(plot)
+    if src is None:
+        raise SystemExit(f"plot {plot}: never saved")
     data = json.load(open(src))
     placed = data.get("blocks") or []
     if not placed:
