@@ -128,6 +128,9 @@ def build(model, roles, debug=True):
                _set("BLOCK_USED", "open", 1), _set("BLOCK_USED", "closing", 0),
                _set("BLOCK_USED", "lost", 0),
                _set("BLOCK_USED", "time_left", rules_["day_seconds"]),
+               # The first guest comes the moment the day opens, not a whole beat later: a
+               # day that starts with nothing happening looks broken.
+               _set("BLOCK_USED", "beat", 1),
                {"Type": "EnableVolume", "Event": "BLOCK_USED", "MatchKey": "servicelock",
                 "MatchValue": "1", "Radius": 128.0, "Center": "Volume"},
                signals.to_pads("BLOCK_USED", signals.CLEAR)]
