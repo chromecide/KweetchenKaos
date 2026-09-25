@@ -9,7 +9,9 @@ CARRYING: picking a station up and putting it down somewhere else. Infrastructur
 Ported from the POC (probe_carry.py, docs/systems.md, "Rearranging"):
   * With EMPTY hands only left-click and F ask a block anything -- a block's right-click is
     never consulted -- and F is every station's "use", so pick-up is left-click. Holding
-    anything, that item's own left-click wins: a station only comes up empty-handed.
+    anything, that item's own left-click wins: a station only comes up empty-handed. So
+    EVERY item of ours has its own left-click (items.py), even one that does nothing: an
+    item without one lets the block's through, and whatever was in hand is lost.
   * Put-down is right-click (the place key everywhere else) and never shares a button with
     pick-up: sharing one, a lingering press did both.
   * No Cooldown on either: a cooldown's Id is what shares it, and naming both the same once

@@ -45,8 +45,11 @@ def write_all(model):
             "MaxStack": stack,
             "PlayerAnimationsId": "Block",
             # Served dishes are handed to guests (serving.py); everything else does nothing.
+            # BOTH buttons, always: an item with no left-click of its own lets the block's
+            # through, and a station's left-click is PICK UP (carry.py) -- holding a kit, a
+            # left-click on the stove carried it off and the kit was gone.
             "Interactions": (serving.interactions(item) if iid in served
-                             else {"Secondary": blocks.NOOP}),
+                             else {"Primary": blocks.NOOP, "Secondary": blocks.NOOP}),
             "BlockType": blocks.block_for(item["look"]),
         })
     return len(model["items"])
