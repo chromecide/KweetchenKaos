@@ -2,6 +2,7 @@
   "hq": "hq",
   "ground": "void",
   "weather": "Zone1_Sunny",
+  "border": "backdrop",
   "$comment": "The world: HQ (a layout), and the restaurants its portals lead to. Each restaurant is a theme + a layout + a rules set, hung on an HQ portal slot by number.",
   "restaurants": [
     {
