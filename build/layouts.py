@@ -12,7 +12,8 @@ it (docs/content-schema.md, Layouts).
     /kk author     open the authoring world (creative, and it keeps what you build)
     /kk grid       mark every plot's edges -- OUTSIDE what is saved, so it never touches a
                    build: safe to run again, and after adding plots
-    /kk slots      hand over the slot blocks (the arrival, and HQ portals 1-4)
+    /kk slots      hand over the slot blocks -- all of them; "/kk slots hq" just HQ's
+                   (the arrival, portals 1-4), "/kk slots plot" just a restaurant plot's
     /kk save       save every plot as a prefab (K2_Save_00, _01, ...)
     /kk restore    paste the kept layouts back into their plots (RESTORE below) -- for a
                    new authoring world
@@ -176,6 +177,19 @@ def write_slots():
                                  "A layout slot. See build/layouts.py.", tint=tint, use=False)
 
 
+def slot_kit(name):
+    """Which kits a slot is in: "hq" (the arrival, portals) and "plot" (everything a
+    restaurant layout uses -- the arrival too)."""
+    if name == "arrival":
+        return {"hq", "plot"}
+    return {"hq"} if name.startswith("portal_") else {"plot"}
+
+
+def _give(slots, kit=None):
+    return [f"give {slot_id(n)}" for n, _, _ in slots if kit is None or kit in slot_kit(n)
+            for _ in range(4 if n == "chair" else 1)]
+
+
 def write_authoring():
     """The authoring world and its commands."""
     manifest = json.load(open(os.path.join(settings.PACK, "manifest.json")))
@@ -205,8 +219,11 @@ def write_authoring():
     macros = [("KKAuthor", "kk author", "Open the layout authoring world", enter),
               ("KKGrid", "kk grid", "Mark the authoring plots' edges (safe to rerun)", grid),
               ("KKSave", "kk save", "Save every authoring plot as a prefab", save),
-              ("KKSlots", "kk slots", "Hand over the layout slot blocks",
-               [f"give {slot_id(n)}" for n, _, _ in SLOTS for _ in range(4 if n == "chair" else 1)])]
+              ("KKSlots", "kk slots", "Hand over every slot block", _give(SLOTS)),
+              ("KKSlotsHq", "kk slots hq", "Hand over HQ's slot blocks (arrival, portals)",
+               _give(SLOTS, "hq")),
+              ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant plot's slot blocks",
+               _give(SLOTS, "plot"))]
     # RESTORE: the kept layouts pasted back at their plots' corners (they are corner-
     # anchored). paste writes only into LOADED chunks, so stand in each plot first.
     restore = list(enter)
