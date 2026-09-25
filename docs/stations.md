@@ -30,7 +30,6 @@ Not yet reviewed: the counter (still its first-iteration look).
   gives the sink its rim.
 - **No painted textures.** A band painted with a plank pattern looked great,
   but it starts down the road of custom art; a strip and a tint is enough.
-
 - **A turned station** (`look.turn`, quarter turns of yaw/pitch/roll): a cube
   face's texture can't be rotated, so the whole block is. It allows any rotation
   and holds what sits on it on every face; the room paste sets the turn, block
