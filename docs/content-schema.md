@@ -185,7 +185,7 @@ A station's role, name, look and words. The role decides which words it needs.
   "id": "board",
   "role": "press",
   "label": "Chopping board",
-  "look": { "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+  "look": { "sides": "BlockTextures/Metal_Iron.png",
             "top": "BlockTextures/Wood_Softwood_Planks_Top.png",
             "sound": "Wood" },
   "leave_on": true,
@@ -199,6 +199,11 @@ A station's role, name, look and words. The role decides which words it needs.
 
 Roles today: `press` (board), `heat` (stove), `combine` (counter), `wash`
 (sink), `bin` (bin). Each has one station.
+
+A `look` may also say how the station looks while in use: `busy_sides` and
+`busy_top` (the stove's top turns copper while something cooks), and `tint` /
+`busy_tint` (a colour over the whole block). Pick textures in the texture
+gallery probe (`~/hytale-mods/texture-gallery`, `/tex`): a cube's hint is its path.
 
 ### `looks/<id>.json`
 

@@ -3,9 +3,8 @@
   "role": "bin",
   "label": "Bin",
   "look": {
-    "sides": "BlockTextures/Metal_Bronze.png",
+    "sides": "BlockTextures/Metal_Iron.png",
     "top": "BlockTextures/Metal_Bronze.png",
-    "tint": "#5a5a5a",
     "busy_tint": "#4a4038",
     "sound": "Stone"
   },

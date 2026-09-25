@@ -71,7 +71,8 @@ def build(model, station_id, debug=True):
                              note, tint=vs["look"].get("tint"), light=lit, movable=True)
         blocks.station_block(b["busy_of"](sid), f"{vs['label']} (in use)", vs["look"],
                              vs["words"]["busy"], note, sides=vs["look"].get("busy_sides"),
-                             tint=vs["look"].get("tint"), light=lit)
+                             top=vs["look"].get("busy_top"), tint=vs["look"].get("tint"),
+                             light=lit)
     frees = [b["free_of"](sid) for sid, _ in kinds]
     busies = [b["busy_of"](sid) for sid, _ in kinds]
     # Every free -> busy (and back) pair; only the one matching the block present applies.

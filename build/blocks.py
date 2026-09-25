@@ -59,12 +59,13 @@ def hint(game_id, text):
 
 
 def station_block(game_id, label, look, hint_text, comment, sides=None, tint=None, use=True,
-                  light=None, movable=False):
+                  light=None, movable=False, top=None):
     """`use=False`: a block nothing presses (a queue spot works off ENTER and EXIT only).
-    `light`: a glow (glow.light) -- an upgraded station."""
+    `light`: a glow (glow.light) -- an upgraded station. `sides`/`top`: instead of the
+    look's (a busy state's own, e.g. a stove's copper top while cooking)."""
     sides = sides or look["sides"]
     block = {"Material": "Solid", "DrawType": "Cube", "Opacity": "Transparent",
-             "Textures": [{"Weight": 1, "Sides": sides, "Up": look["top"], "Down": sides}],
+             "Textures": [{"Weight": 1, "Sides": sides, "Up": top or look["top"], "Down": sides}],
              "BlockSoundSetId": look.get("sound", "Stone"),
              "PhysicalMaterialId": look.get("sound", "Stone"),
              "InteractionHint": hint(game_id, hint_text),

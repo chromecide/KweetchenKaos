@@ -3,7 +3,7 @@
   "role": "wash",
   "label": "Sink",
   "look": {
-    "sides": "BlockTextures/Metal_Zinc_Smooth.png",
+    "sides": "BlockTextures/Metal_Iron.png",
     "top": "BlockTextures/Fluid_Water.png",
     "sound": "Stone"
   },

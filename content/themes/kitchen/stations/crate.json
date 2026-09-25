@@ -5,8 +5,8 @@
   "per_ingredient": true,
   "label": "{ingredient} crate",
   "look": {
-    "sides": "BlockTextures/Furniture_Village_Crate.png",
-    "top": "BlockTextures/Furniture_Village_Crate.png",
+    "sides": "BlockTextures/Wood_Village_Wall_RedDark_Full.png",
+    "top": "BlockTextures/Wood_Village_Wall_RedDark_Full.png",
     "sound": "Wood"
   },
   "words": {

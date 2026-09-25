@@ -4,7 +4,7 @@
   "label": "Chopping board",
   "leave_on": true,
   "look": {
-    "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+    "sides": "BlockTextures/Metal_Iron.png",
     "top": "BlockTextures/Wood_Softwood_Planks_Top.png",
     "sound": "Wood"
   },

@@ -6,11 +6,10 @@
   "label": "Fast stove",
   "glow": "fast",
   "look": {
-    "sides": "BlockTextures/Metal_Bronze.png",
-    "busy_sides": "BlockTextures/Metal_Bronze_Decorative.png",
-    "top": "BlockTextures/Calcite_Brick_Top.png",
+    "sides": "BlockTextures/Metal_Iron.png",
+    "top": "BlockTextures/Metal_Iron_Decorative_Top.png",
     "sound": "Stone",
-    "tint": "#6080ff"
+    "busy_top": "BlockTextures/Metal_Copper_Decorative_Top.png"
   },
   "words": {
     "free": "Stove - put something on to cook",

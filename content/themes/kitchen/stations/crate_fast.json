@@ -7,8 +7,8 @@
   "label": "Fast {ingredient} crate",
   "glow": "fast",
   "look": {
-    "sides": "BlockTextures/Furniture_Village_Crate.png",
-    "top": "BlockTextures/Furniture_Village_Crate.png",
+    "sides": "BlockTextures/Wood_Village_Wall_RedDark_Full.png",
+    "top": "BlockTextures/Wood_Village_Wall_RedDark_Full.png",
     "sound": "Wood",
     "tint": "#9fb8ff"
   },
