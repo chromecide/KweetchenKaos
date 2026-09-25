@@ -10,11 +10,11 @@ stove in the kitchen and a cauldron in witchery. You live with the ugly room whi
 it (docs/content-schema.md, Layouts).
 
     /kk author     open the authoring world (creative, and it keeps what you build)
-    /kk grid       mark every plot's edges -- OUTSIDE what is saved, so it never touches a
-                   build: safe to run again, and after adding plots
+    /kk grid [n]   mark the plots' edges (the first n; PLOTS without) -- OUTSIDE what is
+                   saved, so it never touches a build: safe to run again, and to add plots
     /kk slots      hand over the slot blocks -- all of them; "/kk slots hq" just HQ's
                    (the arrival, portals 1-4), "/kk slots plot" just a restaurant plot's
-    /kk save       save every plot as a prefab (K2_Save_00, _01, ...)
+    /kk save [n]   save the plots as prefabs (K2_Save_00, _01, ...; the first n)
     /kk restore    paste the kept layouts back into their plots (RESTORE below) -- for a
                    new authoring world
 
@@ -70,6 +70,7 @@ LAYOUT = 2 * CHUNK            # a plot is 32 x 32 blocks
 PITCH = 6 * CHUNK             # plots are 96 blocks apart on x
 AUTHOR_HEIGHT = 16
 PLOTS = 10                    # plot 0 the border, 1 HQ, 2-9 layouts; more can be added
+MAX_PLOTS = 32                # "/kk grid 20", "/kk save 20": up to this many
 BORDER = CHUNK                # a border plot's ring is one chunk thick
 BORDER_PLOTS = {0}            # which plots are borders
 BORDER_HEIGHT = 48
@@ -208,22 +209,37 @@ def write_authoring():
         "DeleteOnRemove": False, "DeleteOnUniverseStart": False,
         "Plugin": {"Instance": {"InstanceKey": AUTHOR.lower()}}})
     enter = [f"instances spawn {AUTHOR}", "wait 4", "gamemode creative"]
-    grid, save = list(enter), []
-    for i in range(PLOTS):
-        x1, z1, x2, z2, height = plot_box(i)
-        # set writes only into LOADED chunks: stand over each plot first.
-        grid += [f"tp {(x1 + x2) // 2} 30 {(z1 + z2) // 2}", "wait 3", *_lay_edges(i)]
-        save += [f"pos1 --x={x1} --y=0 --z={z1}", f"pos2 --x={x2} --y={height - 1} --z={z2}",
-                 # --entities, or the zones you drew are left out of the save.
-                 f"prefab save {SAVE_PREFIX}{i:02d} --overwrite --entities --pack={pack_id}"]
+    def grid(n):
+        out = list(enter)
+        for i in range(n):
+            x1, z1, x2, z2, _ = plot_box(i)
+            # set writes only into LOADED chunks: stand over each plot first.
+            out += [f"tp {(x1 + x2) // 2} 30 {(z1 + z2) // 2}", "wait 3", *_lay_edges(i)]
+        return out
+
+    def save(n):
+        out = []
+        for i in range(n):
+            x1, z1, x2, z2, height = plot_box(i)
+            out += [f"pos1 --x={x1} --y=0 --z={z1}", f"pos2 --x={x2} --y={height - 1} --z={z2}",
+                    # --entities, or the zones you drew are left out of the save.
+                    f"prefab save {SAVE_PREFIX}{i:02d} --overwrite --entities --pack={pack_id}"]
+        return out
+
     macros = [("KKAuthor", "kk author", "Open the layout authoring world", enter),
-              ("KKGrid", "kk grid", "Mark the authoring plots' edges (safe to rerun)", grid),
-              ("KKSave", "kk save", "Save every authoring plot as a prefab", save),
+              ("KKGrid", "kk grid", f"Mark the {PLOTS} authoring plots' edges (safe to rerun)",
+               grid(PLOTS)),
+              ("KKSave", "kk save", f"Save the {PLOTS} authoring plots as prefabs", save(PLOTS)),
               ("KKSlots", "kk slots", "Hand over every slot block", _give(SLOTS)),
               ("KKSlotsHq", "kk slots hq", "Hand over HQ's slot blocks (arrival, portals)",
                _give(SLOTS, "hq")),
               ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant plot's slot blocks",
                _give(SLOTS, "plot"))]
+    # "/kk grid 20", "/kk save 20": the same for the first n plots -- a macro can't loop,
+    # so each count is its own subcommand.
+    for n in range(1, MAX_PLOTS + 1):
+        macros += [(f"KKGrid{n}", f"kk grid {n}", f"Mark the first {n} plots' edges", grid(n)),
+                   (f"KKSave{n}", f"kk save {n}", f"Save the first {n} plots", save(n))]
     # RESTORE: the kept layouts pasted back at their plots' corners (they are corner-
     # anchored). paste writes only into LOADED chunks, so stand in each plot first.
     restore = list(enter)
