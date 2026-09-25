@@ -91,7 +91,7 @@ def report(model):
                       f"{s['to']})" for s in r["stages"])
           + f"; recipe cards every {r['cards']['every_days']} days")
     for d in model["dishes"].values():
-        print(f"DISH {d['label']}: {'on the menu from day 1' if d['unlock'] == 'start' else 'a recipe card'}"
+        print(f"DISH {d['label']}: {'a starter (chosen on day 0)' if d['unlock'] == 'start' else 'a recipe card'}"
               f"; needs " + ", ".join(model["stations"][c]["label"].lower() for c in d["needs"]))
     for e in model["menu"]:
         print(f"\n  {e['label']}: {e['price']} coins, waits {e['order_patience']}s to "
