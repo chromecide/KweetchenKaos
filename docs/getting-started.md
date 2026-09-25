@@ -1,7 +1,7 @@
 # Getting started
 
 From a fresh checkout to playing a shift. No coding needed: everything here is
-running two commands and editing a settings file. To build your own rooms, carry
+running a Python script and editing a settings file. To build your own rooms, carry
 on to [authoring.md](authoring.md) afterwards.
 
 ## What you need
@@ -9,11 +9,9 @@ on to [authoring.md](authoring.md) afterwards.
 - **A Hytale server** you can put mods on: a folder with `mods/` in it, which you
   can start and stop. The pack is data only (no plugin code), so any server that
   loads asset-pack mods will do.
-- **Python 3.9 or newer** (`python3 --version`). No extra packages: the build
-  only uses what comes with Python.
-- **A shell** to run `deploy.sh`: Terminal on macOS, any Linux shell, or Git Bash
-  or WSL on Windows. Without one you can still build and copy by hand (see
-  [Installing by hand](#installing-by-hand)).
+- **Python 3.9 or newer** (`python3 --version`; on Windows it may be `py` or
+  `python`). No extra packages: every script, the build and the deploy, only
+  uses what comes with Python, on macOS, Linux or Windows.
 - **The Hytale game**, to play. Its `Assets.zip` is also used to check that
   everything the content names really ships with the game. The build finds it
   in the launcher's usual place, or you can tell it where it is. Without it the
@@ -36,15 +34,15 @@ on to [authoring.md](authoring.md) afterwards.
 ## Build and install
 
 ```
-./deploy.sh
+python3 deploy.py
 ```
 
 This builds the whole game from `content/` into `pack/`, then installs it as
 `mods/Chromecide_KweetchenKaos` in your server folder.
 
-- **If your server folder has a `run.sh`** (a script that starts the server),
-  `deploy.sh` stops the server, installs, starts it again, and then reads the
-  server log for anything the game refused. `Kweetchen Kaos: nothing rejected`
+- **If your server folder has a `run.sh`** (a script that starts the server;
+  macOS and Linux), `deploy.py` stops the server, installs, starts it again, and
+  then reads the server log for anything the game refused. `Kweetchen Kaos: nothing rejected`
   is what you want to see. Anything else lists the file and the reason.
 - **Otherwise** it installs and tells you to restart the server yourself.
 
@@ -64,7 +62,7 @@ finds, naming the file each came from.
 ### Installing by hand
 
 ```
-python3 build/build.py --spike world
+python3 build/build.py
 ```
 
 Then copy the `pack/` folder into your server's `mods/` folder, name it

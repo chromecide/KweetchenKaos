@@ -50,7 +50,7 @@ queue's patience counts only guests inside it, so a seated guest must be outside
 door, ever: a closed door blocks NPC pathfinding.
 
 SAVES ARE RESCUED, then IMPORTED. `prefab save` writes into the DEPLOYED mod folder, which
-every deploy wipes, so deploy.sh copies K2_Save_* home (content/layouts/_saves/) first.
+every deploy wipes, so deploy.py copies K2_Save_* home (content/layouts/_saves/) first.
 Importing turns a save into a layout:
 
     python3 build/layouts.py import 3 corner_pass "Corner pass"

@@ -13,7 +13,7 @@ Hytale asset pack. You build new restaurant rooms by hand, in the game.
 1. Install **Python 3.9+** and have a **Hytale server** you can add mods to.
 2. Copy `local.cfg.example` to `local.cfg` and set `SERVER` to your server's
    folder (the one holding `mods/`).
-3. `./deploy.sh`: builds the game and installs it on the server (restarting the
+3. `python3 deploy.py`: builds the game and installs it on the server (restarting the
    server if it has a `run.sh`; otherwise restart it yourself).
 4. Join the server, in **adventure mode**, and type `/kk hq`.
 5. Step on a portal to start a run.
@@ -42,7 +42,7 @@ content/
 build/              the build: reads content, checks it, writes the pack
   systems/          one system per job (stove, counter, queue, shift...)
 docs/               the docs above
-deploy.sh           build and install
+deploy.py           build and install
 local.cfg.example   where your server is (copy to local.cfg)
 pack/               build output (not committed)
 ```
@@ -53,8 +53,8 @@ pack/               build output (not committed)
 
 | Command | Does |
 |---|---|
-| `./deploy.sh` | build the game and install it |
-| `./deploy.sh <spike> [rules]` | build a test world instead (see [systems.md](docs/systems.md#testing-and-debugging)) |
+| `python3 deploy.py` | build the game and install it |
+| `python3 deploy.py <spike> [rules]` | build a test world instead (see [systems.md](docs/systems.md#testing-and-debugging)) |
 | `python3 build/build.py --check` | check the content and print every dish's chain, crate to plate |
 | `python3 build/layouts.py import <plot> <id> "<Name>"` | turn a saved plot into a layout |
 

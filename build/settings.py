@@ -17,7 +17,7 @@ PACK_GROUP, PACK_NAME = "Chromecide", "KweetchenKaos"
 
 # THIS MACHINE: local.cfg (not committed; copy local.cfg.example) says where the Hytale
 # server is and, optionally, the game's Assets.zip. KK_SERVER / KK_ASSETS in the environment
-# win over it. deploy.sh reads the same file.
+# win over it. deploy.py reads the same file.
 def _local():
     cfg = {}
     path = os.path.join(V2, "local.cfg")

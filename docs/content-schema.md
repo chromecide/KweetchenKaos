@@ -344,7 +344,7 @@ layouts/
   corner_pass/
     layout.json        id, name, the plot it came from, zones drawn
     room.prefab.json   the room as built: floor at y 0, the ground under it below, slots not stations
-  _saves/              raw saves (/kk save), kept by deploy.sh; import turns one into a layout
+  _saves/              raw saves (/kk save), kept by deploy.py; import turns one into a layout
 ```
 
 ```json

@@ -10,7 +10,7 @@ empty world, to test on their own.
 A SPIKE IS A LIST OF STATIONS AND HOW MANY OF EACH, plus "front": True for the queue,
 chairs and guests (SPIKES below). Each station is mounted by whichever system runs its role
 (systems/__init__.py) -- the way a layout will mount it later, so a spike tests exactly what
-ships. Chosen at build time: `build.py --spike NAME`, or `./deploy.sh NAME`.
+ships. Chosen at build time: `build.py --spike NAME`, or `python3 deploy.py NAME`.
 
 THE KIT IS WORKED OUT FROM THE THEME: the setup block, and everything the stations take
 that none of them make (two of raw ingredients and plates, one of the rest).

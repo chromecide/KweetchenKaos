@@ -22,7 +22,7 @@ Set up and deploy once first ([getting-started.md](getting-started.md)).
 5. `/kk save`: save the plots.
 6. `python3 build/layouts.py import <plot> <id> "<Name>"`: turn the save into a layout.
 7. Add a restaurant to `content/world/world.json`.
-8. `./deploy.sh`, then `/kk hq` and step on its portal.
+8. `python3 deploy.py`, then `/kk hq` and step on its portal.
 
 Each step is explained below.
 
@@ -120,7 +120,7 @@ so you can shape the underside of a floating island.
 
 **`/kk save`** saves every plot (`/kk save 14` for the first 14). It flies
 you over each plot as it saves. The saves go into the installed pack, and
-`deploy.sh` copies them back into `content/layouts/_saves/` before it replaces
+`deploy.py` copies them back into `content/layouts/_saves/` before it replaces
 the pack. Nothing is lost between deploys.
 
 **Undo:** `/kk restore 2` puts plot 2 back as it was at its last save, throwing
@@ -173,14 +173,14 @@ python3 build/layouts.py import 2 corner_pass "Corner pass"
 
 A restaurant can override `ground`, `weather` and `border` for itself.
 
-Then `./deploy.sh`, `/kk hq`, and step on the portal.
+Then `python3 deploy.py`, `/kk hq`, and step on the portal.
 
 ## Testing a room on its own
 
 To try a layout without going through HQ:
 
 ```
-./deploy.sh room:corner_pass practice
+python3 deploy.py room:corner_pass practice
 ```
 
 Then, in game: `/kk spike` (the test world, rebuilt fresh each visit), then

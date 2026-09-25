@@ -122,7 +122,7 @@ def main(argv):
     report(model)
     if "--check" in argv:
         return 0
-    name = argv[argv.index("--spike") + 1] if "--spike" in argv else "board"
+    name = argv[argv.index("--spike") + 1] if "--spike" in argv else "world"
     pack.begin()
     n = items.write_all(model)
     # The layout workshop is always there, whatever the spike.
