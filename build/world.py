@@ -4,8 +4,8 @@ THE WORLD: HQ, and the restaurants its portals lead to (content/world/world.json
     /kk hq                  go to HQ (one shared world; everyone who goes is together)
     walk into a portal      you and whoever walks in after you land in THAT restaurant's
                             run -- a fresh one when nobody is in it
-    OUT OF BUSINESS         a few seconds later, everyone goes back to HQ, in front of the
-                            portal they took; the empty restaurant is torn down
+    OUT OF BUSINESS         a few seconds later, everyone goes back to HQ, onto its
+                            arrival spot; the empty restaurant is torn down
 
 HQ IS A LAYOUT, built by hand in the authoring world with two HQ slots: an ARRIVAL slot
 (where players appear) and PORTAL slots 1-4. world.json hangs a restaurant (theme + layout +
@@ -17,7 +17,7 @@ same way):
     into a new instance of that restaurant's world. With no InstanceKey, the BLOCK remembers
     the world it opened, so everyone who steps on the same portal joins the same run while
     it exists; once it is torn down, the next step opens a fresh one. Each player's return
-    point is set in front of the portal (PersonalReturnPoint).
+    point is HQ's ARRIVAL slot (PersonalReturnPoint, each portal's offset to the arrival).
   * Leaving is ExitInstance (shift.py's loss rule), which uses that return point.
   * A RESTAURANT'S WORLD is flat and empty. The first player to arrive triggers a volume that
     pastes the dressed room (restaurant.py) -- which carries all its own systems, so there is

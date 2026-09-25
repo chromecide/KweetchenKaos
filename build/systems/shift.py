@@ -14,8 +14,9 @@ THE SHIFT SYSTEM: the restaurant's day -- open, serve, close, count the takings,
                                  today's offers go out on the pads
     a card is chosen         ->  the dish is on the menu; crates it needs are delivered
     a guest leaves ANGRY, or
-    the whole queue gives up ->  OUT OF BUSINESS (eventually: back to HQ, the world reaped;
-                                 for now the counters reset so a spike can go on)
+    the whole queue gives up ->  OUT OF BUSINESS: a title for everyone, then back to HQ
+                                 (the restaurant's world is torn down); in a spike, the
+                                 counters reset and play goes on from day 1
 
 It HEARS, on the shift channel: served / angry / turned away, what each guest paid, the
 queue's "impatient", and from the pads: short, bought, chose. It TELLS the queue's pool who

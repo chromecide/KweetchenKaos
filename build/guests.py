@@ -19,8 +19,8 @@ and the joins are all that is decided here:
 ONE ROLE PER MENU ENTRY and no role changes ever: the dish is fixed at spawn (an NPC can't
 pick at random and check a plate against it later), and changing role drops queued signals.
 
-LEAVING is a stand-in until the shift and a door exist: walk off towards the pool for a few
-seconds and vanish. The real exit replaces _leaving() and nothing else.
+LEAVING: walk off towards the pool for a few seconds and vanish (layouts have no doors -- a
+closed door blocks NPC pathfinding). A different exit replaces _leaving() and nothing else.
 """
 import npc
 import settings

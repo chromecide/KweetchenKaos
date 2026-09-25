@@ -5,6 +5,7 @@ generator makes".
 Every problem names the file it came from and the id involved, and all problems are
 reported together. A theme that fails here builds nothing.
 """
+import os
 import zipfile
 
 import settings
@@ -17,11 +18,18 @@ _shipped = None
 
 
 def shipped_assets():
+    """Every shipped Common/ path -- or None when the game's Assets.zip isn't found (set
+    ASSETS in local.cfg): the shipped-path check is then skipped."""
     global _shipped
     if _shipped is None:
-        with zipfile.ZipFile(settings.ASSETS_ZIP) as z:
-            _shipped = {n[len("Common/"):] for n in z.namelist() if n.startswith("Common/")}
-    return _shipped
+        if not settings.ASSETS_ZIP or not os.path.exists(settings.ASSETS_ZIP):
+            print("  WARNING: the game's Assets.zip wasn't found (set ASSETS in local.cfg) -- "
+                  "shipped model/texture/icon paths are NOT checked")
+            _shipped = False
+        else:
+            with zipfile.ZipFile(settings.ASSETS_ZIP) as z:
+                _shipped = {n[len("Common/"):] for n in z.namelist() if n.startswith("Common/")}
+    return _shipped or None
 
 
 def check(model):
@@ -103,20 +111,21 @@ def check(model):
 
     # Every path a look names must be a shipped asset.
     shipped = shipped_assets()
+    unshipped = lambda path: shipped is not None and path not in shipped
     looks = [(i["file"], i["id"], i["look"]) for i in items.values()]
     looks += [(s["file"], f"stage {st['id']}", st["look"])
               for s in model["steps"] for st in s.get("stages", [])]
     for where, what, look in looks:
         for field in ("model", "texture", "icon"):
             path = look.get(field)
-            if path and path not in shipped:
+            if path and unshipped(path):
                 problems.append(f"{where}: {what} {field} is not a shipped asset: {path}")
     fixture_looks = [{"file": "fixtures.json", "look": lk}
                      for lk in model["fixtures"].get("looks", {}).values()]
     for s in list(stations.values()) + fixture_looks:
         for field, path in s.get("look", {}).items():
             if isinstance(path, str) and path.endswith((".png", ".blockymodel")) \
-                    and path not in shipped:
+                    and unshipped(path):
                 problems.append(f"{s['file']}: look {field} is not a shipped asset: {path}")
 
     return problems

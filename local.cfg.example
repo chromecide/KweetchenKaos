@@ -1,0 +1,10 @@
+# Copy this file to local.cfg (which is not committed) and set the paths for this machine.
+# Paths may start with ~. No spaces around "=".
+
+# The Hytale server folder: the one that holds mods/ (and, if you use one, run.sh).
+SERVER=~/hytale-server
+
+# Optional: the game's Assets.zip, used to check that every shipped model, texture and icon a
+# theme names really exists. Found by itself in the launcher's usual place on macOS, Windows
+# and Linux; set it here if yours is elsewhere. Without it the build still works, unchecked.
+#ASSETS=~/Library/Application Support/Hytale/install/release/package/game/latest/Assets.zip

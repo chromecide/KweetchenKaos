@@ -135,7 +135,7 @@ station (gallery row "Ingredients at half size").
 
 The candidates below were looked at in the gallery:
 
-The model gallery (`python3 tools/gen_spike.py model-gallery`, tools/probe_models.py)
+The Kitchen POC's model gallery (`../tools/probe_models.py`, run with `python3 ../tools/gen_spike.py model-gallery`)
 lays every candidate below out to choose from.
 
 These are what's missing. Every chopped ingredient and every half-combined dish
@@ -177,7 +177,7 @@ pattern the counter, stove and bin already use, so plating needs no new system.
   Candidates are the dishes that look wrong without a plate (grilled fish,
   cooked meat, roasted corn, kebabs, bread).
 
-Rejected, with the reasons, in `docs/systems.md` under "Food on a plate: what
+Rejected, with the reasons, in the Kitchen POC's `../docs/systems.md` under "Food on a plate: what
 was tried":
 
 - a second block above the plate (it floats a whole block up)

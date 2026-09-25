@@ -1,4 +1,4 @@
-# Content schema: themes, layouts, rules, world (agreed 2026-09-24)
+# Content schema: themes, layouts, rules, world
 
 A **theme** is everything that makes the restaurant *this* restaurant: what the
 stations are called and look like, what is served in what, the ingredients, the
@@ -8,21 +8,19 @@ them. Swapping the kitchen for witchery should mean writing a new theme
 directory and nothing else. If a theme ever needs a code change, the schema is
 wrong.
 
-Themes are JSON. Python (`tools/`) reads a theme, checks it, and turns it into
-game assets. Nothing in a theme is code.
+Content is JSON, under `content/`. The build (`build/`) reads it, checks it, and
+turns it into game assets. Nothing in content is code.
 
 ## Four kinds of content
 
-Surveying everything the generators build (2026-09-24) turned up four separate
-questions, each with its own content. Each gets its own folder of small JSON
-files:
+Four separate questions, each with its own folder of small JSON files:
 
-| Kind | Answers | Today it lives in |
+| Kind | Answers | Folder |
 |---|---|---|
-| **Theme** | *What* the restaurant is: stations, items, recipes, menu, guests, words | ingredients.py, dishes.py, plates.py, the station words inside each `sys_*.py`, guest_roles.py |
-| **Layout** | *Where*: the room, its zones, the starting stations | hand-built prefabs (`Kitchen_Level_0N`), grid.py, named_volumes.py, gen_testroom.py |
-| **Rules** | *How a run plays*: day length, arrivals, offers, prices, recipe cards | shift_rules.py, upgrades.py, the tuning table in dishes.py |
-| **World** | *How you get there*: HQ, which restaurants are offered, the plot grid | gen_hq.py, grid.py |
+| **Theme** | *What* the restaurant is: stations, items, recipes, menu, guests, words | `content/themes/<theme>/` |
+| **Layout** | *Where*: the room, its slots and zones | `content/layouts/<layout>/` (built by hand: [authoring.md](authoring.md)) |
+| **Rules** | *How a run plays*: day length, guests, offers, prices, recipe cards | `content/rules/<rules>/` |
+| **World** | *How you get there*: HQ, and which restaurants its portals lead to | `content/world/world.json` |
 
 A **restaurant** is one of each: a theme, a layout and a rules set, picked in
 HQ. The same layout can be played as a kitchen or as witchery, and the same
@@ -47,7 +45,7 @@ The rest of this doc covers the theme first, then the other three
    whose result can't sit on a counter: the generator refuses, naming the file
    and the field.
 5. **Fixed roles today, room for more.** A station has a *role* (press, heat,
-   combine, wash, bin). Today a theme has exactly one station per role, and the
+   combine, wash, bin, rack, crate). Today a theme has exactly one station per role, and the
    generator enforces it. Steps already name the station they use, so allowing
    a second press station (board *and* mortar) later is a rule change, not a
    format change.
@@ -58,17 +56,17 @@ The rest of this doc covers the theme first, then the other three
 
 ```
 themes/
-  _schema/                 JSON Schema, one per file kind (for editors and agents)
   kitchen/
     theme.json             identity, prefix, tuning defaults, guest look
     vessel.json            what food is served in, clean and dirty
-    stations/              one file per station
-      board.json  stove.json  counter.json  sink.json  bin.json
+    stations/              one file per station (upgrades are stations too)
+      board.json  stove.json  stove_fast.json  stove_safe.json  counter.json
+      sink.json  bin.json  rack.json  crate.json  crate_fast.json
     looks/                 named looks reused by many items (optional)
       pie.json  petal.json
     ladders/               reusable heat-stage ladders
       bake.json
-    fixtures.json          the theme's block for each layout slot (door, queue spot, seat…)
+    fixtures.json          the theme's block for each layout slot (chair, queue spot, pad, sign…)
     ingredients/           one file per ingredient: raw item + how it's prepared
       flour.json  pumpkin.json  apple.json  meat.json  mushroom.json
     dishes/                one file per dish: its steps + what goes on the menu
@@ -335,59 +333,44 @@ Nothing below needs a new field:
 
 ## Layouts
 
-A layout is a room, built by hand in the authoring world and saved as a prefab
-(the existing process: `/kitchen saveprefabs`, then `tools/prefabs_back.py`).
-The creator decides *where* things are; the build decides what they *do*.
-
-**Today's problem: layouts name one theme's blocks.** A saved level contains
-`Kitchen_Stove`, `Kitchen_Prep` and so on, so it only works with the kitchen.
-
-**The fix: slots.** A layout is built with neutral *slot* blocks, one per role
-(a press slot, a heat slot, a combine slot, a seat, a queue spot…). When a
-restaurant is built, each slot is swapped for the theme's station of that role.
-The swap happens in the same step that already re-anchors saved prefabs, so no
-game-side work is needed. The walls and floor can be swapped too, if the theme
-has a palette (below).
+A layout is a room, built by hand in the authoring world with neutral **slot**
+blocks, then saved and imported. The whole process is in
+[authoring.md](authoring.md). The creator decides *where* things are, and the
+build decides what they *are* and *do*: each slot becomes the theme's block for
+it.
 
 ```
 layouts/
   corner_pass/
-    layout.json            name, notes, which slots and zones it has
-    corner_pass.prefab.json  the room as built (slots, not stations)
+    layout.json        id, name, the plot it came from, zones drawn
+    room.prefab.json   the room as built: floor at y 0, the ground under it below, slots not stations
+  _saves/              raw saves (/kk save), kept by deploy.sh; import turns one into a layout
 ```
 
 ```json
-{
-  "id": "corner_pass",
-  "name": "Corner pass",
-  "notes": "pass opening hard left: a long walk to the far end",
-  "zones": ["door", "kitchen", "dining", "queue"],
-  "seats": 4
-}
+{ "id": "corner_pass", "name": "Corner pass", "from_plot": 2, "zones": {} }
 ```
 
-- **Zones** are the named volumes the creator draws (door, kitchen, dining,
-  queue). The build attaches each zone's behaviour, as named_volumes.py does
-  today. Zones belong to the systems, not the theme, so they are the same for
-  every theme.
-- **Slots** use the station roles from the theme schema, plus the fixtures the
-  systems own: seat, queue spot, pool, sign, offer pad. The check is that every
-  role the rules need has at least one slot.
+- **Slots** are the station roles (`station_press`, `station_heat`,
+  `station_combine`, `station_wash`, `station_bin`, `station_rack`) plus the
+  fixtures the systems own: `chair` (with its table in front), `queue_1`–`queue_4`,
+  `pool`, `pad_1`–`pad_4`, `sign`, and `arrival`. HQ adds `portal_1`–`portal_4`.
+  The build warns about any role or pad the room is missing.
+- **Zones** are trigger volumes the creator draws and names. Today there is one:
+  `queue`, the area where guests wait. Without it, the area is worked out around
+  the spots and the pool.
+- **A border** (`"kind": "border"`) is a layout from the border plot: a 64 × 64
+  backdrop with a 32 × 32 hole, pasted around rooms (`world.json` `border`).
 
-**Decided 2026-09-25: no doors.** A closed door stops NPC pathfinding, so no
-layout has one, hand-built or not. Guests leave by walking off (towards the
-pool) and vanishing. There is no door slot, and the door zone is not needed.
+**Decided: no doors.** A closed door stops NPC pathfinding, so no layout has one.
+Guests leave by walking off towards the pool and vanishing.
 
-**Decided 2026-09-24: slots.** Everything a theme might dress differently is a
-slot, not only stations: the door, queue spots, the pool, seats and tables, the
-sign, offer pads. A theme names the block for each (`fixtures.json`), so a
-witch's hut can use any door and any block to mark the queue. The layout
-creator builds with the plain slot blocks and lives with the ugly room until
-it's dressed.
+**Decided: everything a theme might dress is a slot**, not only stations. A
+theme names the block for each fixture in `fixtures.json`.
 
-A theme may add a **palette** (`palette.json`) that swaps building materials
-when its restaurants are built: `{"Wood_Softwood_Planks": "Wood_Dark_Planks"}`.
-Without one, the room keeps what the creator built.
+A theme may later add a **palette** (`palette.json`) that swaps building
+materials when its restaurants are built: `{"Wood_Softwood_Planks": "Wood_Dark_Planks"}`.
+Without one, the room keeps what the creator built. (Not built yet.)
 
 ## Rules
 
@@ -432,37 +415,39 @@ rules/
 
 ```
 world/
-  world.json         the plot grid, and the restaurants HQ offers
+  world.json         HQ, the ground and weather, the border, and the restaurants HQ's portals lead to
 ```
 
 ```json
 {
-  "grid": { "layout_chunks": 2, "pitch_chunks": 6 },
+  "hq": "hq",
+  "ground": "void",
+  "weather": "Zone1_Sunny",
+  "border": "backdrop",
   "restaurants": [
-    { "id": "kitchen_corner", "theme": "kitchen", "layout": "corner_pass", "rules": "standard" },
-    { "id": "witch_corner",   "theme": "witchery", "layout": "corner_pass", "rules": "standard" }
+    { "id": "test_kitchen", "name": "Test kitchen", "theme": "kitchen",
+      "layout": "test_room", "rules": "standard", "portal": 1 }
   ]
 }
 ```
 
-Each restaurant becomes a portal key in HQ (gen_hq.py's model: one key per
-restaurant, all into the same instance, each arriving at its own plot).
+- `hq`: the layout HQ is built from (its arrival and portal slots matter).
+- `ground`: `"void"` (the room floats in the sky) or `"flat"` (grass).
+- `weather`: a shipped weather id held for good; leave it out for none.
+- `border`: a border layout pasted around every room and HQ; `"none"` for none.
+- `restaurants`: each is a theme + a layout + a rules set, hung on an HQ portal
+  by number. A restaurant may set its own `ground`, `weather` and `border`.
 
 ## Not content
 
 These stay in code, because they are how the machinery works, not what a
 restaurant is:
 
-- the systems (`sys_*.py`) and their shared helpers (fx, pressladder, carry,
-  signals, packio)
-- the clock (clock.py: how fast game time runs for growth)
-- debug chat and log lines
-- spike and probe harnesses
-
-**To retire at integration, not convert:** the old kitchen generators (gen_menu,
-gen_volumes, gen_stations, gen_seat, gen_queue, gen_crates, gen_testroom,
-gen_author). The new systems replace them. Their saved levels need rebuilding
-with slots.
+- the systems (`build/systems/`) and their shared infrastructure
+  (see [systems.md](systems.md))
+- the clock (`clock.py`: how fast game time runs for growth)
+- server-log instrumentation
+- the test worlds (`spike.py`) and the authoring world (`layouts.py`)
 
 ## Deliveries, recipe cards and upgrade kits (decided 2026-09-24)
 

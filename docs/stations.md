@@ -1,6 +1,6 @@
 # Station looks (kitchen theme)
 
-Chosen by eye in the texture gallery probe (`~/hytale-mods/texture-gallery`,
+Chosen by eye in the texture gallery probe (a separate project, not in this repo:
 `/tex picks` shows these exact looks) on 2026-09-25. Every texture is a shipped
 one, referenced by path; the pack ships one image of its own (the trim band).
 The data lives in `content/themes/kitchen/stations/*.json` (`look`).

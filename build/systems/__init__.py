@@ -32,8 +32,8 @@ THE RULES that keep systems maintainable:
      model, never into one of them.
   3. A system's game ids all start with its station's id (K2_Kitchen_Counter_...), so no two
      systems can make the same block.
-  4. Instrumented by default: every milestone goes to chat and the server log (the log
-     takes one line a second, so frequent events go to chat only).
+  4. Instrumented by default: every milestone goes to the SERVER LOG (volumes.report; the
+     log takes one line a second, so frequent events are left out). Chat is for players.
   5. The top of each system file says what the player does and what happens, in plain
      words, before any code.
   6. A station's FREE block is movable (blocks.station_block movable=True, carry.py):

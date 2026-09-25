@@ -1,79 +1,83 @@
 # Kweetchen Kaos
 
-A Plate Up–style co-op restaurant for Hytale, built entirely from pack data (no
-plugin code). Restaurants come from **content**: themes now, and later layouts,
-rules and world. All of it is JSON in `content/`, and the build scripts in
-`build/` turn it into a game pack. The format is in `docs/content-schema.md`,
-and the menu decisions in `docs/menu.md`.
+A PlateUp!-style co-op restaurant game for Hytale. Chop, cook, plate and serve
+before your guests lose patience, then spend the takings on new stations and
+upgrades between days.
 
-This started as v2 of the Kitchen POC (`../tools`, `../pack`). That project is
-untouched and still deploys. Kweetchen Kaos loads beside it on the same scratch
-server: every game id here starts with `K2_`, so nothing collides.
+It is built entirely from game data: no plugin code. Restaurants come from
+**content** (JSON in `content/`), which the build in `build/` turns into a
+Hytale asset pack. You build new restaurant rooms by hand, in the game.
 
-## Use
+## Quick start
 
-```
-python3 build/build.py --check    read and check the kitchen theme, print the report
-python3 build/build.py            ...and write pack/
-./deploy.sh [SPIKE] [RULES]       build with SPIKE in the spike world (default board) under
-                                  RULES (default standard), deploy beside the POC, restart,
-                                  report rejections. SPIKE room:<layout> plays a layout; SPIKE world
-                                  builds HQ and the restaurants (then /kk hq).
-python3 build/layouts.py import <plot> <id> "<name>"   a saved plot -> content/layouts/<id>/
-```
+1. Install **Python 3.9+** and have a **Hytale server** you can add mods to.
+2. Copy `local.cfg.example` to `local.cfg` and set `SERVER` to your server's
+   folder (the one holding `mods/`).
+3. `./deploy.sh`: builds the game and installs it on the server (restarting the
+   server if it has a `run.sh`; otherwise restart it yourself).
+4. Join the server, in **adventure mode**, and type `/kk hq`.
+5. Step on a portal to start a run.
 
-The report lists every menu entry and the full chain that makes it, crate to
-plate. If it reads right, the theme is right.
+Full instructions: **[docs/getting-started.md](docs/getting-started.md)**.
 
-## Build
+## Docs
 
-| File | Job |
+| Doc | For |
 |---|---|
-| `settings.py` | paths, the `K2` namespace, how a local id becomes a game id |
-| `content.py` | reads a theme folder into one resolved model (looks, ladders, items) |
-| `check.py` | checks the model as a whole: references, station roles, plating, shipped asset paths |
-| `pack.py` | writes the pack from nothing every build: no stale files, no stale language lines |
-| `items.py` | every item: its look, no right-click placing, no eating, one in hand, hotbar quality |
-| `blocks.py` | block shapes every system uses: an item's look as a block, stations, things sitting on stations |
-| `volumes.py` | the volume rules systems write, plus chat and server-log reporting for debugging |
-| `systems/__init__.py` | the one shape every system has, the rules that keep them separate, and which system runs which station role |
-| `systems/press.py` | press stations: the chopping board, and later the sink |
-| `systems/counter.py` | the counter: holds one thing, combines (assembling and plating) |
-| `systems/heat.py` | the stove: cooks through a ladder of stages by itself, and burns |
-| `systems/crate.py` | crates: an ingredient on top, restocking after a few seconds |
-| `systems/bin.py` | the bin: food goes, plates stay |
-| `clock.py` | the world clock that growth (stove, crates) runs on |
-| `signals.py` | the channels systems talk on: shift, pool arrivals, reset |
-| `npc.py` | NPC behaviour pieces: branches, flags, timers, block-under-feet, roles |
-| `serving.py` | the handshake that hands a plated dish to a guest |
-| `systems/queue.py` | the queue: spots that decide who arrived first, the pool, the held front, one patience clock |
-| `systems/seating.py` | chairs and their own tables, sitting, getting up, the plate left behind |
-| `systems/guest.py` | a seated guest: order, patience pulses, eat, or walk out |
-| `guests.py` | one guest role per menu entry, composed from the three fragments |
-| `glow.py` | upgraded stations glow; stage blocks listening for the glow grow faster (or hold) |
-| `offers.py` | what the pads can carry: the catalogue of offers, and the crates deliveries bring |
-| `systems/pads.py` | offer pads: offers to buy, crates delivered free, recipe cards to choose |
-| `systems/shift.py` | the day: the sign, the clock, arrivals from the menu, the purse, cards and deliveries, losing |
-| `layouts.py` | slot blocks, the authoring world (`/kk author`, `/kk grid`, `/kk slots`, `/kk save`), and importing a save as a layout |
-| `world.py` | HQ and its walk-in portals to the restaurants in `content/world/world.json`; `/kk hq` |
-| `restaurant.py` | a layout's room dressed in a theme: every slot swapped, every system mounted |
-| `spike_front.py` | the service spike's front of house: guest callers and a listener for the shift |
-| `spike.py` | the spike world: stations mounted over an empty world, `/kk spike`, `/kk kit`, and a setup block that lays the stations out |
-| `build.py` | runs it all and prints the report |
+| [getting-started.md](docs/getting-started.md) | setting up, installing, and how to play |
+| [authoring.md](docs/authoring.md) | building restaurant rooms, HQ and the backdrop in game, and putting them in the game |
+| [content-schema.md](docs/content-schema.md) | every content file: themes, stations, ingredients, dishes, rules, world |
+| [systems.md](docs/systems.md) | how the game works inside: each system, and how they're put together |
+| [stations.md](docs/stations.md) | the kitchen theme's station looks, and why |
+| [menu.md](docs/menu.md) | the kitchen theme's menu and food looks, and why |
 
-`pack/` is build output and is not committed.
+## What's where
 
-## State (2026-09-24)
+```
+content/
+  themes/kitchen/   the kitchen theme: stations, ingredients, dishes, looks
+  layouts/          rooms built in game (hq, test_room, backdrop), and raw saves
+  rules/            how a run plays: standard, practice
+  world/world.json  HQ and the restaurants its portals lead to
+build/              the build: reads content, checks it, writes the pack
+  systems/          one system per job (stove, counter, queue, shift...)
+docs/               the docs above
+deploy.sh           build and install
+local.cfg.example   where your server is (copy to local.cfg)
+pack/               build output (not committed)
+```
 
-- The kitchen theme (`content/themes/kitchen/`) reads and checks, and its 33 items
-  build and load in game with nothing rejected.
-- **Board: built and spike-tested** (all five ingredients).
-- **Counter: built and spike-tested** (put down, pick up, assembling, plating both ways).
-- **Batch 1, the whole kitchen: built and spike-tested** (`./deploy.sh kitchen`).
-- **Batch 2, front of house: built and spike-tested** (`./deploy.sh service`).
-- **Batch 3, the run: built, awaiting its spike test** (`./deploy.sh run`): the shift,
-  offer pads, deliveries, recipe cards, upgrade kits (fast crate, fast and safety stove),
-  and the rules content (`content/rules/standard/`).
-- **The other systems are next, rewritten fresh one at a time** (not copied from the POC),
-  each reading its station, words and recipes from the model and each re-spiked:
-  board, stove, counter, sink, bin, then guests, queue, seating, shift.
+## Commands
+
+**On your computer:**
+
+| Command | Does |
+|---|---|
+| `./deploy.sh` | build the game and install it |
+| `./deploy.sh <spike> [rules]` | build a test world instead (see [systems.md](docs/systems.md#testing-and-debugging)) |
+| `python3 build/build.py --check` | check the content and print every dish's chain, crate to plate |
+| `python3 build/layouts.py import <plot> <id> "<Name>"` | turn a saved plot into a layout |
+
+**In game:**
+
+| Command | Does |
+|---|---|
+| `/kk hq` | go to HQ |
+| `/kk author` | go to the authoring world |
+| `/kk grid [n]` | mark the authoring plots' edges |
+| `/kk slots [hq\|plot]` | take the slot blocks |
+| `/kk save [n]` | save the authoring plots |
+| `/kk restore [n]` | put plot *n* back as last saved; with no number, restore the kept layouts to a new authoring world |
+| `/kk spike`, `/kk kit` | (in a test build) open the test world, take its setup kit |
+
+## Status
+
+Playable end to end: HQ, a test kitchen, the full run (days, guests, offers,
+recipe cards, upgrades, losing). One theme (kitchen, with four pies), one
+restaurant room, two rules sets. Every item and system loads with nothing
+rejected, and each system was tested in game on its own before being put
+together.
+
+This started as the second version of the Kitchen POC (`../tools`, `../pack`),
+which is untouched and still loads beside it: every game id here starts with
+`K2_`, so nothing collides.

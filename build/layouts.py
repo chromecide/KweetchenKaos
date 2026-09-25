@@ -92,8 +92,10 @@ RESTORE = {0: "backdrop", 1: "hq", 2: "test_room"}   # plot -> the layout pasted
 AUTHOR = f"{settings.NAMESPACE}_Author"
 SAVE_PREFIX = f"{settings.NAMESPACE}_Save_"
 SAVES = os.path.join(settings.CONTENT, "layouts", "_saves")
-DEPLOYED_PREFABS = os.path.expanduser(
-    f"~/hytale-mods/lowtalk-firstrun/mods/Chromecide_{settings.PACK_NAME}/Server/Prefabs")
+# Where /kk save writes: the server's copy of the pack (local.cfg SERVER).
+DEPLOYED_PREFABS = (os.path.join(settings.SERVER, "mods",
+                                 f"{settings.PACK_GROUP}_{settings.PACK_NAME}", "Server", "Prefabs")
+                    if settings.SERVER else None)
 
 # THE SLOTS, theme-agnostic: a station slot is a ROLE (the theme has one station per role),
 # the rest are fixtures. Tinted by kind so a room reads at a glance.
@@ -310,8 +312,8 @@ def latest_save(plot, quiet=False):
     last deploy is still only in the server's copy of the mod (the deploy rescues it): it is
     taken from there first, or this would give the previous save."""
     src = os.path.join(SAVES, f"{SAVE_PREFIX}{plot:02d}.prefab.json")
-    live = os.path.join(DEPLOYED_PREFABS, os.path.basename(src))
-    if os.path.exists(live) and (not os.path.exists(src)
+    live = os.path.join(DEPLOYED_PREFABS, os.path.basename(src)) if DEPLOYED_PREFABS else ""
+    if live and os.path.exists(live) and (not os.path.exists(src)
                                  or os.path.getmtime(live) > os.path.getmtime(src)):
         shutil.copy2(live, src)
         if not quiet:

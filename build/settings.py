@@ -15,9 +15,39 @@ PACK = os.path.join(V2, "pack")
 NAMESPACE = "K2"
 PACK_GROUP, PACK_NAME = "Chromecide", "KweetchenKaos"
 
+# THIS MACHINE: local.cfg (not committed; copy local.cfg.example) says where the Hytale
+# server is and, optionally, the game's Assets.zip. KK_SERVER / KK_ASSETS in the environment
+# win over it. deploy.sh reads the same file.
+def _local():
+    cfg = {}
+    path = os.path.join(V2, "local.cfg")
+    if os.path.exists(path):
+        for line in open(path):
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                cfg[k.strip()] = os.path.expanduser(v.strip().strip('"'))
+    for k in ("SERVER", "ASSETS"):
+        if os.environ.get(f"KK_{k}"):
+            cfg[k] = os.path.expanduser(os.environ[f"KK_{k}"])
+    return cfg
+
+
+_LOCAL = _local()
+SERVER = _LOCAL.get("SERVER")    # the server folder (holds mods/); None if not set
+
 # The shipped assets, to check every model, texture and icon a theme names really exists.
-ASSETS_ZIP = os.path.expanduser(
-    "~/Library/Application Support/Hytale/install/release/package/game/latest/Assets.zip")
+# Where the launcher keeps them on each system; local.cfg's ASSETS wins. Missing: the check
+# is skipped, with a warning.
+_ASSET_GUESSES = [
+    "~/Library/Application Support/Hytale/install/release/package/game/latest/Assets.zip",
+    os.path.join(os.environ.get("APPDATA", "~"), "Hytale", "install", "release", "package",
+                 "game", "latest", "Assets.zip"),
+    "~/.local/share/Hytale/install/release/package/game/latest/Assets.zip",
+]
+ASSETS_ZIP = _LOCAL.get("ASSETS") or next(
+    (os.path.expanduser(p) for p in _ASSET_GUESSES if os.path.exists(os.path.expanduser(p))),
+    None)
 
 
 def game_id(prefix, local):
