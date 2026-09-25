@@ -11,7 +11,7 @@ it (docs/content-schema.md, Layouts).
 
     /kk author     open the authoring world (creative, and it keeps what you build)
     /kk grid       lay the plots' floors -- ONCE, when the world is new: it is destructive
-    /kk slots      hand over the slot blocks
+    /kk slots      hand over the slot blocks (HQ slots too: portals 1-4 and the arrival)
     /kk save       save every plot as a prefab (K2_Save_01, _02, ...)
 
 THE PLOTS. Each plot is 32 x 32 (two chunks square), a gravel forecourt down the front
@@ -56,6 +56,7 @@ SAVES = os.path.join(settings.CONTENT, "layouts", "_saves")
 # the rest are fixtures. Tinted by kind so a room reads at a glance.
 STATION_TINT, SEAT_TINT, QUEUE_TINT, PAD_TINT, SIGN_TINT = \
     "#e08a30", "#3c7ad0", "#40a060", "#8a6ad0", "#d04040"
+PORTAL_TINT, ARRIVAL_TINT = "#30c8d8", "#f0f0f0"
 SLOTS = (
     [(f"station_{role}", f"Slot: {what}", STATION_TINT)
      for role, what in (("press", "board (press)"), ("combine", "counter (combine)"),
@@ -65,7 +66,12 @@ SLOTS = (
        for i in range(1, 5)]
     + [("pool", "Slot: queue pool (guests arrive here)", QUEUE_TINT)]
     + [(f"pad_{n}", f"Slot: offer pad {n}", PAD_TINT) for n in range(1, 5)]
-    + [("sign", "Slot: open sign", SIGN_TINT)])
+    + [("sign", "Slot: open sign", SIGN_TINT)]
+    # HQ only: a walk-in portal per restaurant (world.json says which), and where players
+    # arrive.
+    + [(f"portal_{n}", f"Slot: HQ portal {n} (restaurant {n} in world.json)", PORTAL_TINT)
+       for n in range(1, 5)]
+    + [("arrival", "Slot: HQ arrival (players appear here)", ARRIVAL_TINT)])
 CHAIR_LOOK = {"model": "Blocks/Decorative_Sets/Tavern/Chair.blockymodel",
               "texture": "Blocks/Decorative_Sets/Tavern/Chair_Texture.png",
               "icon": "Icons/ItemsGenerated/Furniture_Tavern_Chair.png"}
@@ -131,6 +137,29 @@ def write_authoring():
               ("KKSave", "kk save", "Save every authoring plot as a prefab", save),
               ("KKSlots", "kk slots", "Hand over the layout slot blocks",
                [f"give {slot_id(n)}" for n, _, _ in SLOTS for _ in range(4 if n == "chair" else 1)])]
+    # MOVE plot 1's build to plot 2 (so HQ can have plot 1), from its rescued save. A save
+    # is CENTRE-anchored, so it is pasted at the plot's centre cell (+15, +15). paste writes
+    # only into LOADED chunks, so stand in plot 2 first; then plot 1 is cleared and its floor
+    # laid again.
+    raw = os.path.join(SAVES, f"{SAVE_PREFIX}01.prefab.json")
+    if os.path.exists(raw):
+        import shutil
+        shutil.copy(raw, pack.out("Prefabs", f"{SAVE_PREFIX}01.prefab.json"))
+        (x1, z1), (x2, z2) = plot_origin(0), plot_origin(1)
+        half = LAYOUT // 2 - 1
+        macros.append(("KKPlot1to2", "kk plot1to2",
+                       "Move plot 1's saved build to plot 2 and clear plot 1", [
+            f"tp {x2 + LAYOUT // 2} 2 {z2 + LAYOUT // 2}", "wait 5",
+            f"prefab load {SAVE_PREFIX}01", "wait 1",
+            f"paste {x2 + half} 0 {z2 + half}", "wait 5",
+            f"tp {x1 + LAYOUT // 2} 20 {z1 + LAYOUT // 2}", "wait 3",
+            f"pos1 --x={x1} --y=0 --z={z1}",
+            f"pos2 --x={x1 + LAYOUT - 1} --y={AUTHOR_HEIGHT - 1} --z={z1 + LAYOUT - 1}",
+            "set Empty",
+            f"pos1 --x={x1} --y=0 --z={z1}",
+            f"pos2 --x={x1 + LAYOUT - 1} --y=0 --z={z1 + FORECOURT - 1}", "set Soil_Gravel",
+            f"pos1 --x={x1} --y=0 --z={z1 + FORECOURT}",
+            f"pos2 --x={x1 + LAYOUT - 1} --y=0 --z={z1 + LAYOUT - 1}", "set Wood_Softwood_Planks"]))
     for file, name, desc, commands in macros:
         key = f"commands.{name.replace(' ', '.')}.desc"
         pack.say(key, desc)
