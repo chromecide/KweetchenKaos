@@ -1,11 +1,12 @@
 """
-A RESTAURANT: a layout's room, dressed in a theme, running under a rules set.
+A RESTAURANT: a layout's room, dressed in a theme, running under a rules set -- ONE prefab
+that carries everything it needs. Paste it anywhere and it works.
 
     layout (content/layouts/<id>/)   the room as built, with SLOT blocks
     theme                            what each slot becomes
     rules                            how the run plays
 
-This takes the room and SWAPS EVERY SLOT for the theme's block, adding what goes with it:
+The room's SLOTS are swapped for the theme's blocks:
 
     station slot (a role)   the theme's station for that role
     chair slot              a chair facing the same way, and its table in front
@@ -13,33 +14,35 @@ This takes the room and SWAPS EVERY SLOT for the theme's block, adding what goes
     offer pad               the pad, with its own volume
     sign                    the shift's open sign
 
-and mounts every system OVER THE ROOM (room_box: its plot, centred on it): the stations, the queue (its patience over the
-queue ZONE -- drawn in the layout, or worked out from the spots and pool if not), seating,
-the guests, the shift and the pads. What comes out is a room and a list of volumes; the
-spike world pastes and mounts them today, HQ's plots will later.
+and THE ROOM CARRIES ITS OWN VOLUMES: every system -- the stations, the queue, its patience
+area, seating, the shift and its service lock, the pads -- goes into the prefab as a volume
+entity, positioned relative to the room. Nothing lives at fixed world coordinates, so there
+is nothing to line up: wherever the room is pasted (a spike, an HQ plot), its systems come
+with it and sit on it.
 
-A slot the theme has nothing for, or a room missing something the rules need (no stove,
-no pads), is reported -- the room still builds, so you can see it.
+TWO THINGS THAT MAKE THAT WORK:
+  * A pasted volume's rules are INLINE. A volume that names an effect file resolves it only
+    when the world loads, so one pasted later would do nothing. The systems still write their
+    effect files (the spike worlds mount those); here the same rules are read back and put
+    inside each volume.
+  * Each volume's POSITION is the middle of the room. A signal's reach -- 64 blocks -- is
+    measured from the sending volume's position, so every system reaches the whole room.
+
+The queue's patience area is the queue ZONE: drawn in the layout, or worked out round the
+spots and pool if not. A slot the theme has nothing for, or a room missing something the
+rules need, is reported -- the room still builds, so you can see it.
 """
 import json
 import os
 
 import guests
+import pack
 import settings
 import systems
-import volumes as v
 from systems import pads, queue, seating, shift
 
 ZONE_MARGIN = 1          # a worked-out queue zone reaches this far round the spots and pool
 ROOM_SIZE, ROOM_MARGIN = 32, 4
-
-
-def room_box(origin):
-    """Where a room's systems are mounted: its plot and a little round it, centred on the
-    room -- so everything in the room is well within a signal's reach (signals.py)."""
-    ox, oy, oz = origin
-    return ((ox - ROOM_MARGIN, oy - 8, oz - ROOM_MARGIN),
-            (ox + ROOM_SIZE + ROOM_MARGIN, oy + 40, oz + ROOM_SIZE + ROOM_MARGIN))
 
 
 def load_layout(layout_id):
@@ -55,10 +58,26 @@ def _slot(name):
     return name[len(pre):].lower() if name.startswith(pre) else None
 
 
-def build(model, layout_id, origin=(0, 0, 0), debug=True, patience=None):
-    """(room prefab dict, volumes, problems) for the layout at world `origin`."""
+def _carried(name, effect, tags, box, targets=("Player",), extra=None):
+    """A system's volume as a room entity: its rules read back from the effect file the
+    system wrote, inline; positioned at the middle of `box` (room coordinates)."""
+    rules = json.load(open(pack.out("TriggerVolumes", "Effects", f"{effect}.json")))
+    (x0, y0, z0), (x1, y1, z1) = box
+    cx, cy, cz = (x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2
+    tv = {"Shape": {"Type": "Box", "Min": {"X": x0 - cx, "Y": y0 - cy, "Z": z0 - cz},
+                    "Max": {"X": x1 - cx, "Y": y1 - cy, "Z": z1 - cz}},
+          "Conditions": rules["Conditions"], "Effects": rules["Effects"],
+          "Enabled": True, "TargetTypes": list(targets), "Tags": dict(tags),
+          "Name": name, "PrefabIndex": 0, **(extra or {})}
+    return {"Components": {
+        "TriggerVolume": tv,
+        "Transform": {"Position": {"X": cx, "Y": cy, "Z": cz},
+                      "Rotation": {"Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0}}}}
+
+
+def build(model, layout_id, debug=True, patience=None):
+    """(room prefab dict, problems, info): the layout dressed, carrying its systems."""
     meta, room = load_layout(layout_id)
-    ox, oy, oz = origin
     problems = []
     by_role = {st["role"]: sid for sid, st in model["stations"].items()
                if not st.get("upgrade_of") and st["role"] != "crate"}
@@ -67,13 +86,13 @@ def build(model, layout_id, origin=(0, 0, 0), debug=True, patience=None):
     roles = guests.roles(model)
     q = queue.ids(model)
     built_q = queue.build(model, roles, debug, patience=patience)
-    seating.build(model, debug)
+    seating_effect = seating.build(model, debug)
     guests.build(model, debug)
-    tags = shift.build(model, {e["serves"]: guests.role_id(model, e) for e in model["menu"]},
-                       debug)
+    shift_tags = shift.build(model, {e["serves"]: guests.role_id(model, e) for e in model["menu"]},
+                             debug)
     pads.build(model, debug)
 
-    out_blocks, entities, used_roles, queue_cells, pad_numbers = [], [], set(), [], set()
+    out_blocks, entities, used, queue_cells, pad_numbers = [], [], set(), [], set()
     for b in room["blocks"]:
         name = _slot(b["name"])
         if name is None:
@@ -82,9 +101,6 @@ def build(model, layout_id, origin=(0, 0, 0), debug=True, patience=None):
         at = lambda block, dx=0, dz=0, dy=0, rotation=None: dict(
             {"x": b["x"] + dx, "y": b["y"] + dy, "z": b["z"] + dz, "name": block},
             **({"rotation": rotation} if rotation is not None else {}))
-        # Entities in the room are placed relative to it (the paste adds its origin);
-        # the queue zone is in world coordinates.
-        wx, wy, wz = b["x"] + ox, b["y"] + oy, b["z"] + oz
         if name.startswith("station_"):
             role = name[len("station_"):]
             sid = by_role.get(role)
@@ -92,7 +108,7 @@ def build(model, layout_id, origin=(0, 0, 0), debug=True, patience=None):
                 problems.append(f"a {role} slot at ({b['x']}, {b['y']}, {b['z']}), but the "
                                 f"theme has no {role} station")
                 continue
-            used_roles.add(sid)
+            used.add(sid)
             for dy, block in systems.for_station(model, sid).layout(model, sid):
                 out_blocks.append(at(block, dy=dy))
         elif name == "chair":
@@ -100,14 +116,13 @@ def build(model, layout_id, origin=(0, 0, 0), debug=True, patience=None):
             for dx, dz, block, turn in seating.layout(model, facing):
                 out_blocks.append(at(block, dx, dz, rotation=turn))
         elif name.startswith("queue_"):
-            i = int(name.split("_")[1])
-            out_blocks.append(at(q["free"](i)))
+            out_blocks.append(at(q["free"](int(name.split("_")[1]))))
             entities.append(queue.spot_entity(b["x"], b["y"], b["z"]))
-            queue_cells.append((wx, wy, wz))
+            queue_cells.append((b["x"], b["y"], b["z"]))
         elif name == "pool":
             out_blocks.append(at(q["pool"]))
             entities.append(queue.pool_entity(b["x"], b["y"], b["z"]))
-            queue_cells.append((wx, wy, wz))
+            queue_cells.append((b["x"], b["y"], b["z"]))
         elif name.startswith("pad_"):
             n = int(name.split("_")[1])
             pad_numbers.add(n)
@@ -117,37 +132,47 @@ def build(model, layout_id, origin=(0, 0, 0), debug=True, patience=None):
             out_blocks.append(at(shift.ids(model)["sign"]))
 
     for role, sid in by_role.items():
-        if sid not in used_roles:
-            problems.append(f"no {role} slot: the room has no {model['stations'][sid]['label'].lower()}")
+        if sid not in used:
+            problems.append(f"no {role} slot: the room has no "
+                            f"{model['stations'][sid]['label'].lower()}")
     missing = set(pads.numbers(model)) - pad_numbers
     if missing:
         problems.append(f"no offer pad slot for pad(s) {sorted(missing)}")
 
-    # THE QUEUE ZONE: drawn, or worked out round the spots and pool.
+    # THE QUEUE ZONE, in room coordinates: drawn, or worked out round the spots and pool.
     zone = meta.get("zones", {}).get("queue")
     if zone:
         p, sh = zone["position"], zone["shape"]
-        area = ((p["X"] + ox + sh["Min"]["X"], p["Y"] + oy + sh["Min"]["Y"], p["Z"] + oz + sh["Min"]["Z"]),
-                (p["X"] + ox + sh["Max"]["X"], p["Y"] + oy + sh["Max"]["Y"], p["Z"] + oz + sh["Max"]["Z"]))
+        area = tuple(tuple(p[k] + sh[side][k] for k in "XYZ") for side in ("Min", "Max"))
     elif queue_cells:
         xs, ys, zs = zip(*queue_cells)
         area = ((min(xs) - ZONE_MARGIN, min(ys) - 1, min(zs) - ZONE_MARGIN),
                 (max(xs) + 1 + ZONE_MARGIN, max(ys) + 4, max(zs) + 1 + ZONE_MARGIN))
     else:
         problems.append("no queue spots, so no queue")
-        area = ((0, 0, 0), (0, 0, 0))
+        area = None
 
-    # Stations: every one the room uses, and every crate (deliveries bring them).
-    mounted = list(used_roles) + [sid for sid, st in model["stations"].items()
-                                  if st["role"] == "crate" and not st.get("upgrade_of")]
-    box = room_box(origin)
-    volumes = [v.volume(f"restaurant_{sid}",
-                        systems.for_station(model, sid).build(model, sid, debug), {"station": sid},
-                        box=box)
-               for sid in mounted]
-    volumes += queue.volumes(model, area, built_q["patience"], box=box)
-    volumes += seating.volumes(model, box=box)
-    volumes += shift.volumes(model, tags, box=box) + pads.volumes(model, box=box)
+    # THE ROOM'S OWN VOLUMES: every system over the room (its plot and a little round it).
+    box = ((-ROOM_MARGIN, -8, -ROOM_MARGIN),
+           (ROOM_SIZE + ROOM_MARGIN, 40, ROOM_SIZE + ROOM_MARGIN))
+    crates = [sid for sid, st in model["stations"].items()
+              if st["role"] == "crate" and not st.get("upgrade_of")]
+    for sid in sorted(used) + crates:
+        effect = systems.for_station(model, sid).build(model, sid, debug)
+        entities.append(_carried(f"station_{sid}", effect, {"station": sid}, box))
+    qi, si = queue.ids(model), shift.ids(model)
+    entities.append(_carried("queue", qi["world_effect"], {"queue": "system"}, box))
+    if area:
+        entities.append(_carried("queue_area", qi["area_effect"],
+                                 {"queuearea": "1", "qpatience": str(built_q["patience"])},
+                                 area, targets=("Npc",)))
+    entities.append(_carried("seating", seating_effect,
+                             {"seating": "system", "refused": "0", "guestreset": "1"}, box))
+    entities.append(_carried("shift", si["effect"], shift_tags, box))
+    entities.append(_carried("shift_service_lock", si["lock"], {"servicelock": "1"}, box,
+                             extra={"Enabled": False, "RulesActive": True,
+                                    "Rules": [{"Type": "NoBuild"}, {"Type": "NoDestroy"}]}))
+    entities.append(_carried("pads", pads.ids(model)["world_effect"], {"pads": "system"}, box))
 
     prefab = dict(room, blocks=out_blocks, entities=entities)
-    return prefab, volumes, problems, {"name": meta["name"], "area": area}
+    return prefab, problems, {"name": meta["name"], "area": area}

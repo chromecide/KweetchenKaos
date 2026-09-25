@@ -154,19 +154,24 @@ def report(key, text, debug, event="BLOCK_USED", to_log=True):
     return [say(key, text, event)] + ([log(key, text, event)] if to_log else [])
 
 
-# A spike world mounts its systems over this box, centred on the origin. A RESTAURANT
-# mounts them over its own room instead (restaurant.room_box): signals reach 64 blocks from
-# a volume's centre, so a volume must be centred on what it serves -- a room moved away from
-# the origin once left its pool out of the shift's reach, and no guest ever arrived.
+# A spike world mounts its systems over this box, round the origin. A RESTAURANT mounts
+# them over its own room instead (restaurant.room_box): signals reach 64 blocks from a
+# volume's POSITION, so a volume must sit on what it serves (see volume()).
 WORLD_BOX = ((-64.0, -8.0, -64.0), (64.0, 40.0, 64.0))
 
 
 def volume(name, effect, tags, targets=("Player",), box=WORLD_BOX):
     """A system mounted in a box ((min x, y, z), (max x, y, z)) -- by default the whole
     test world."""
+    # POSITION IS THE BOX'S CENTRE, and the shape is drawn round it. A signal's reach (and
+    # a tag read from another volume) is measured from the volume's POSITION -- with every
+    # position at the origin and the box drawn out at the room, a pool 70 blocks from the
+    # origin never heard "arrive", while pads at 62 did.
     (x0, y0, z0), (x1, y1, z1) = box
-    return {"Position": {"X": 0.0, "Y": 0.0, "Z": 0.0},
-            "Shape": {"Type": "Box", "Min": {"X": float(x0), "Y": float(y0), "Z": float(z0)},
-                      "Max": {"X": float(x1), "Y": float(y1), "Z": float(z1)}},
+    cx, cy, cz = (x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2
+    return {"Position": {"X": cx, "Y": cy, "Z": cz},
+            "Shape": {"Type": "Box",
+                      "Min": {"X": x0 - cx, "Y": y0 - cy, "Z": z0 - cz},
+                      "Max": {"X": x1 - cx, "Y": y1 - cy, "Z": z1 - cz}},
             "EffectAsset": effect, "TargetTypes": list(targets), "Enabled": True,
             "KeepLoaded": False, "Tags": dict(tags), "Name": name}

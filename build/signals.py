@@ -15,8 +15,9 @@ Signals are QUEUED: they land a tick or so later, and are dropped if the sending
 by then -- so an NPC that signals and then despawns must wait a beat first.
 
 REACH: a signal (and a tag read from another volume) reaches volumes within 64 blocks of
-their CENTRE. That is a room's reach, so every system is mounted over the room it serves,
-centred on it (restaurant.room_box).
+the sending volume's POSITION. That is a room's reach, so every system is mounted over the
+room it serves with its position at the room's centre (restaurant.room_box,
+volumes.volume).
 """
 SHIFT_KEY, SHIFT_VALUE = "shift", "system"
 LISTENER_TAGS = {SHIFT_KEY: SHIFT_VALUE}

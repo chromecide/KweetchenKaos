@@ -126,10 +126,11 @@ def setup(model, stations, front, debug):
     rules.add(1, [v.at([SETUP]), once("1")],
               [v.say("kk.setup.again", "[setup] already laid out - leave and /kk spike again "
                                        "for a fresh world")])
-    # WORLD position: the layout lands in the same place wherever the block was pressed.
+    # WORLD position (WorldAbsolute: Position IS the spot): the layout lands in the same
+    # place wherever the block was pressed, and wherever the setup volume sits.
     rules.add(2, [v.at([SETUP]), once("0")],
               [{"Type": "PastePrefab", "Event": "BLOCK_USED", "Prefab": f"{SETUP}_Layout",
-                "Origin": "VolumeOrigin", "Position": {"X": 0.0, "Y": 0.0, "Z": 0.0},
+                "Origin": "WorldAbsolute", "Position": {"X": 0.0, "Y": 0.0, "Z": 0.0},
                 "ShowParticles": False},
                {"Type": "ModifyTags", "Event": "BLOCK_USED", "Operation": "Set",
                 "TagKey": "done", "TagValue": "1"}]
@@ -175,48 +176,42 @@ def _world(note, needs_clock, mounted, given, spawn=(8.0, 2.0, 8.0)):
         "Commands": [f"give {item}" for item, n in given for _ in range(n)]})
 
 
-ROOM_AT = (32, 0, 32)     # the room's corner: clear of negative coordinates (see below)
-
-
 def build_room(model, layout_id, debug=True):
-    """A RESTAURANT spike: a layout's room, dressed in the theme, running a real run. The
-    setup block pastes the room at ROOM_AT; you arrive in front of it.
-
-    Everything stays at POSITIVE coordinates: the first room spike put the arrival at
-    z = -4, and the player arrived over missing ground and fell out of the world."""
-    room, volumes, problems, info = restaurant.build(model, layout_id, origin=ROOM_AT,
-                                                     debug=debug,
-                                                     patience=spike_front.SPIKE_PATIENCE)
+    """A RESTAURANT spike: a layout's room, dressed in the theme, carrying its own systems
+    (restaurant.py). Place the setup block anywhere and press it: the room is pasted with
+    its corner one block past the setup block (+x, +z), its floor at the ground the block
+    stands on. The world itself holds nothing but the setup block's volume."""
+    room, problems, info = restaurant.build(model, layout_id, debug=debug,
+                                            patience=spike_front.SPIKE_PATIENCE)
     for p in problems:
         print(f"  LAYOUT: {p}")
     pack.write(pack.out("Prefabs", f"{SETUP}_Layout.prefab.json"),
-               dict(room, **{"$Comment": f"The room '{info['name']}', dressed. See build/restaurant.py."}))
+               dict(room, **{"$Comment": f"The room '{info['name']}', dressed, carrying its "
+                                         f"systems. See build/restaurant.py."}))
     blocks.station_block(SETUP, "Spike setup", {
         "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
         "top": "BlockTextures/Wood_Softwood_Planks_Side.png", "sound": "Wood"},
-        "Press to build the room (once)", "Spike only. See build/spike.py.", tint="#e0c020")
+        "Press to build the room here (once)", "Spike only. See build/spike.py.",
+        tint="#e0c020")
     once = lambda value: {"Type": "TagCondition", "Event": "BLOCK_USED", "Source": "Self",
                           "TagKey": "done", "Comparison": "Exactly", "TagValue": value}
     rules = v.Entries()
     rules.add(1, [v.at([SETUP]), once("1")],
               [v.say("kk.setup.again", "[setup] already built - leave and /kk spike again")])
+    # AT THE BLOCK: a block event's position is its centre, and the paste floors it, so
+    # (1, -1, 1) puts the room's corner one block over and its floor at ground level.
     rules.add(2, [v.at([SETUP]), once("0")],
               [{"Type": "PastePrefab", "Event": "BLOCK_USED", "Prefab": f"{SETUP}_Layout",
-                "Origin": "VolumeOrigin",
-                "Position": {"X": float(ROOM_AT[0]), "Y": float(ROOM_AT[1]),
-                             "Z": float(ROOM_AT[2])},
+                "Origin": "Event", "Position": {"X": 1.0, "Y": -1.0, "Z": 1.0},
                 "ShowParticles": False},
                {"Type": "ModifyTags", "Event": "BLOCK_USED", "Operation": "Set",
                 "TagKey": "done", "TagValue": "1"}]
               + v.report("kk.setup.room", f"[setup] built the room: {info['name']}", debug))
     rules.write(SETUP_EFFECT, "Spike only: the setup block. See build/spike.py.")
-    volumes.append(v.volume("spike_setup", SETUP_EFFECT, {"done": "0"}))
     kits = [(it["game_id"], 1) for i, it in model["items"].items() if i.endswith("_kit")]
     given = [(SETUP, 1), (model["items"][model["vessel"]["clean"]["id"]]["game_id"], 2)] + kits
     note = f"the room {info['name']}"
-    # Arrive in front of the room's forecourt, just outside it.
-    _world(note, True, volumes, given,
-           spawn=(ROOM_AT[0] + 16.0, 2.0, ROOM_AT[2] - 4.0))
+    _world(note, True, [v.volume("spike_setup", SETUP_EFFECT, {"done": "0"})], given)
     return note, given
 
 
