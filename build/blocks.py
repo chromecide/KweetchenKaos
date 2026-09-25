@@ -55,8 +55,10 @@ def hint(game_id, text):
     return f"server.{key}"
 
 
-def station_block(game_id, label, look, hint_text, comment, sides=None, tint=None, use=True):
-    """`use=False`: a block nothing presses (a queue spot works off ENTER and EXIT only)."""
+def station_block(game_id, label, look, hint_text, comment, sides=None, tint=None, use=True,
+                  light=None):
+    """`use=False`: a block nothing presses (a queue spot works off ENTER and EXIT only).
+    `light`: a glow (glow.light) -- an upgraded station."""
     sides = sides or look["sides"]
     block = {"Material": "Solid", "DrawType": "Cube", "Opacity": "Transparent",
              "Textures": [{"Weight": 1, "Sides": sides, "Up": look["top"], "Down": sides}],
@@ -68,6 +70,8 @@ def station_block(game_id, label, look, hint_text, comment, sides=None, tint=Non
         block["Interactions"] = {"Use": NOOP}
     if tint:
         block["Tint"] = [tint]
+    if light:
+        block["Light"] = light
     item(game_id, label, look.get("icon", STATION_ICON), block, comment)
 
 

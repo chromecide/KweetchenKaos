@@ -275,9 +275,9 @@ def build(model, guests, debug=True, patience=None):
     fx_ = model["fixtures"]
     looks, words = fx_["looks"], fx_["words"]
     spot, pool = looks["queue_spot"], looks["pool"]
-    defaults = model["theme"]["defaults"]
-    patience = patience or defaults.get("queue_patience", 60)
-    boost_by = defaults.get("queue_patience_boost", 10)
+    rules = model["rules"]
+    patience = patience or rules["queue_patience"]
+    boost_by = rules["queue_patience_boost"]
     note = "Queue. See build/systems/queue.py."
 
     def spot_block(key, label, tint, hint_text):

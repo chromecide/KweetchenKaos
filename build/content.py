@@ -125,7 +125,9 @@ def load_theme(theme_id):
                 seconds = defaults["heat_seconds"]
             last = k == len(ladder["stages"]) - 1
             stages.append({"id": st["id"], "word": st["word"], "look_spec": look,
-                           "seconds": None if last else seconds, "gives": gives})
+                           "seconds": None if last else seconds, "gives": gives,
+                           # The stage a safety stove holds (it all but stops growing).
+                           "safety": st.get("safety", False)})
         return {"type": "heat", "station": s["station"], "ladder": ladder["id"],
                 "input": s["input"], "owner": owner, "owner_label": owner_label,
                 "stages": stages, "file": at}
@@ -134,9 +136,20 @@ def load_theme(theme_id):
     # per ingredient that comes from it -- the pumpkin crate, the apple crate... Each gets a
     # "source" step (nothing in, the ingredient out) so everything that reads steps (the
     # kit, the report, checks) sees where raw ingredients come from.
+    fixtures = one("fixtures.json")
     templates = {sid: st for sid, st in stations.items() if st.get("per_ingredient")}
     for sid in templates:
         del stations[sid]
+    # UPGRADE KITS: any station (or template) with a "kit" is an upgraded variant of the
+    # station it names in upgrade_of. The kit is an item -- apply it to a free station of
+    # that kind and the station becomes the variant. One kit per variant file, so one
+    # "fast crate kit" upgrades any crate.
+    for sid, st in list(stations.items()) + list(templates.items()):
+        if "kit" in st:
+            kid = define({"id": f"{sid}_kit", "label": st["kit"]["label"],
+                          "look": fixtures["looks"]["kit"], "quality": "Rare",
+                          "bin": "refuse"}, st["file"])
+            st["kit_item"] = kid
     for f, d in many("ingredients"):
         iid = define(d["item"], f)
         source = d.get("source")
@@ -153,13 +166,22 @@ def load_theme(theme_id):
                                      words={k: fill(w) for k, w in t["words"].items()},
                                      file=t["file"])
                 steps.append({"type": "source", "station": cid, "output": iid, "file": f})
+                # ...and each upgrade of the template, for this ingredient.
+                for vid, vt in templates.items():
+                    if vt.get("upgrade_of") == source:
+                        stations[f"{vid}_{iid}"] = dict(
+                            vt, id=f"{vid}_{iid}", label=fill(vt["label"]), ingredient=iid,
+                            upgrade_of=cid, words={k: fill(w) for k, w in vt["words"].items()},
+                            file=vt["file"])
         read_steps(iid, d["item"]["label"], d.get("steps", []), f)
 
     # PLATING IS BUILT IN. A dish only lists what it serves; for each, the build makes the
     # plated item (the food's own look, Legendary so it stands out in the hotbar, leaves a
     # dirty plate if binned), the step that plates it at the combine station, and the menu
     # entry. No recipe can forget its plating or get it wrong.
-    combine_stations = [sid for sid, st in stations.items() if st["role"] == "combine"]
+    combine_stations = [sid for sid, st in stations.items()
+                        if st["role"] == "combine" and not st.get("upgrade_of")]
+    dishes = {}
     clean, dirty = vessel["clean"]["id"], vessel["dirty"]["id"]
     serving = []
     for f, d in many("dishes"):
@@ -167,6 +189,9 @@ def load_theme(theme_id):
             define(raw, f)
         if "id" not in d:
             continue
+        dishes[d["id"]] = {"id": d["id"], "label": d["label"], "file": f,
+                           "unlock": d.get("unlock", "start"),
+                           "serves": [e["item"] for e in d.get("serve", [])]}
         read_steps(d["id"], d["label"], d.get("steps", []), f)
         for e in d.get("serve", []):
             serving.append((f, d, e))
@@ -227,8 +252,52 @@ def load_theme(theme_id):
         for st in s.get("stages", []):
             st["look"] = resolve(st["look_spec"], s["file"])
 
-    fixtures = one("fixtures.json")
+    # WHAT EACH DISH NEEDS: the crates its chain starts from, walked back through the
+    # steps -- so a recipe card knows which crates to deliver, with nobody listing them.
+    made_by = {}
+    for s in steps:
+        outs = [s["output"]] if "output" in s else [st["gives"] for st in s["stages"]
+                                                   if st["gives"] != s["input"]]
+        for o in outs:
+            made_by.setdefault(o, s)
+
+    def crates_for(iid, seen):
+        if iid in seen:
+            return []
+        seen.add(iid)
+        s = made_by.get(iid)
+        if s is None:
+            return []
+        if s["type"] == "source":
+            return [s["station"]]
+        ins = s.get("inputs", []) + ([s["input"]] if "input" in s else [])
+        return [c for i in ins for c in crates_for(i, seen)]
+    for d in dishes.values():
+        seen, needs = set(), []
+        for food in d["serves"]:
+            for c in crates_for(food, seen):
+                if c not in needs:
+                    needs.append(c)
+        d["needs"] = needs
+
     if problems:
         raise ContentError(problems)
     return {"theme": theme, "vessel": vessel, "stations": stations, "items": items,
-            "steps": steps, "menu": menu, "ladders": ladders, "fixtures": fixtures}
+            "steps": steps, "menu": menu, "ladders": ladders, "fixtures": fixtures,
+            "dishes": dishes}
+
+
+def load_rules(rules_id):
+    """A rules set: rules.json, offers.json, cards.json, as one dict."""
+    root = os.path.join(settings.CONTENT, "rules", rules_id)
+    out = _read(os.path.join(root, "rules.json"))
+    out["offers"] = _read(os.path.join(root, "offers.json"))
+    out["cards"] = _read(os.path.join(root, "cards.json"))
+    return out
+
+
+def load(theme_id, rules_id="standard"):
+    """A restaurant's content: the theme, with the rules it runs under."""
+    model = load_theme(theme_id)
+    model["rules"] = load_rules(rules_id)
+    return model

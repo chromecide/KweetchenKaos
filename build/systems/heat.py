@@ -16,9 +16,14 @@ stages, their times and what you get at each. The stove knows no food.
 THE CLOCK IS THE ENGINE'S OWN GROWTH (clock.py): every stage is a block, and growth swaps
 each for the next after its time -- nothing ticks, nothing can drift, and a pie keeps
 cooking whether anyone is near or not. A world with a stove must run its clock.
+
+UPGRADES (fast stove, safety stove) are the theme's variants of this station: the same
+dishes on the same stage blocks, only the stove block differs -- it GLOWS (glow.py), and
+the stage blocks listen. Hold the kit and press a FREE stove: it becomes the upgrade.
 """
 import blocks
 import clock
+import glow
 import settings
 import volumes as v
 
@@ -26,10 +31,17 @@ ROLES = ("heat",)
 NEEDS_CLOCK = True
 
 
+def variants(model, station_id):
+    """The station and its upgrades: [(station id, station)] -- the station first."""
+    return [(station_id, model["stations"][station_id])] + [
+        (sid, s) for sid, s in model["stations"].items() if s.get("upgrade_of") == station_id]
+
+
 def ids(model, station_id):
     prefix = model["theme"]["prefix"]
     gid = lambda local: settings.game_id(prefix, local)
     return {"free": gid(station_id), "busy": gid(f"{station_id}_busy"),
+            "free_of": lambda sid: gid(sid), "busy_of": lambda sid: gid(f"{sid}_busy"),
             "on": lambda step, stage: gid(f"{station_id}_{step['owner']}_{stage}"),
             "effect": gid(f"{station_id}_system")}
 
@@ -51,15 +63,30 @@ def build(model, station_id, debug=True):
     note = f"{label}. See build/systems/heat.py."
     heats = [s for s in model["steps"] if s["type"] == "heat" and s["station"] == station_id]
 
-    blocks.station_block(b["free"], label, look, words["free"], note)
-    blocks.station_block(b["busy"], f"{label} (in use)", look, words["busy"], note,
-                         sides=look.get("busy_sides"))
+    mods = glow.write(model)
+    kinds = variants(model, station_id)
+    for sid, vs in kinds:
+        lit = glow.light(model, vs["glow"]) if vs.get("glow") else None
+        blocks.station_block(b["free_of"](sid), vs["label"], vs["look"], vs["words"]["free"],
+                             note, tint=vs["look"].get("tint"), light=lit)
+        blocks.station_block(b["busy_of"](sid), f"{vs['label']} (in use)", vs["look"],
+                             vs["words"]["busy"], note, sides=vs["look"].get("busy_sides"),
+                             tint=vs["look"].get("tint"), light=lit)
+    frees = [b["free_of"](sid) for sid, _ in kinds]
+    busies = [b["busy_of"](sid) for sid, _ in kinds]
+    # Every free -> busy (and back) pair; only the one matching the block present applies.
+    to_busy = lambda dy=0.0: [v.cell([f], bz, dy=dy) for f, bz in zip(frees, busies)]
+    to_free = lambda dy=0.0: [v.cell([bz], f, dy=dy) for f, bz in zip(frees, busies)]
 
     on_top = []
     for h in heats:
         stage_blocks = [b["on"](h, st_["id"]) for st_ in h["stages"]]
-        grow = clock.growth(stage_blocks, [st_["seconds"] for st_ in h["stages"]])
         for st_, block in zip(h["stages"], stage_blocks):
+            # Every stage speeds up on a fast stove; the safety stage holds on a safe one.
+            listen = [mods[k] for k in ("fast",) if k in mods] + (
+                [mods["safe"]] if st_.get("safety") and "safe" in mods else [])
+            grow = clock.growth(stage_blocks, [x["seconds"] for x in h["stages"]],
+                                modifiers=listen)
             text = words["on_top"].format(label=h["owner_label"], stage=st_["word"])
             blocks.display_block(block, f"{h['owner_label']} ({st_['word']}, on the "
                                         f"{label.lower()})", dict(st_["look"],
@@ -80,28 +107,35 @@ def build(model, station_id, debug=True):
         starts = [(h["input"], stages[0])] + [
             (st_["gives"], st_) for st_ in stages[1:-1] if st_["gives"] != h["input"]]
         for held, st_ in starts:
-            rules.add(next(n), [v.at([b["free"]]), v.holding(game(held))],
-                      [v.cell([b["free"]], b["busy"]), v.place(b["on"](h, st_["id"])),
+            rules.add(next(n), [v.at(frees), v.holding(game(held))],
+                      [*to_busy(), v.place(b["on"](h, st_["id"])),
                        v.sound(1.2, 0.8, "SFX_Campfire_Processing")]
                       + rep(f"on.{held}", f"{name(held)} on - {st_['word']}"))
         # TAKE OFF at any stage: press what's on top, or the stove under it.
         for st_ in stages:
             block = b["on"](h, st_["id"])
-            for dy, where in ((0.0, [v.at([block]), v.at([b["busy"]], dy=-1)]),
-                              (1.0, [v.at([b["busy"]]), v.at([block], dy=1)])):
+            for dy, where in ((0.0, [v.at([block]), v.at(busies, dy=-1)]),
+                              (1.0, [v.at(busies), v.at([block], dy=1)])):
                 rules.add(next(n), where,
                           [v.give(game(st_["gives"])),
                            v.cell([block], "Empty", dy=dy),
-                           v.cell([b["busy"]], b["free"], dy=dy - 1),
+                           *to_free(dy - 1),
                            v.sound(0.9)]
                           + rep(f"off.{h['owner']}.{st_['id']}",
                                 f"{h['owner_label']} taken off {st_['word']} -> "
                                 f"{name(st_['gives'])}"))
 
+    # UPGRADE: hold a kit and press a free stove (the plain one) -- it becomes the upgrade.
+    for sid, vs in kinds[1:]:
+        kit = items[vs["kit_item"]]
+        rules.add(next(n), [v.at([b["free"]]), v.holding(kit["game_id"])],
+                  [v.cell([b["free"]], b["free_of"](sid)), v.sound(1.5)]
+                  + rep(f"upgraded.{sid}", f"upgraded to a {vs['label'].lower()}"))
+
     # BREAKING: a dish broken frees its stove; a stove broken takes its dish.
     rules.add(90, [v.at(on_top, event="BLOCK_BROKEN")],
-              [v.cell([b["busy"]], b["free"], dy=-1, event="BLOCK_BROKEN")])
-    rules.add(91, [v.at([b["free"], b["busy"]], event="BLOCK_BROKEN")],
+              [dict(c, Event="BLOCK_BROKEN") for c in to_free(-1)])
+    rules.add(91, [v.at(frees + busies, event="BLOCK_BROKEN")],
               [v.cell(on_top, "Empty", dy=1, event="BLOCK_BROKEN")])
 
     rules.write(b["effect"], f"The {label.lower()}: cooks and burns by itself. "

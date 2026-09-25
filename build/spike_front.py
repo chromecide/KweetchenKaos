@@ -1,6 +1,11 @@
 """
-SPIKE ONLY: the front of house for a service spike -- the queue, chairs, guests, and two
-things only a spike needs:
+SPIKE ONLY: the front of house -- the queue, chairs and guests -- for a service spike or a
+full run.
+
+A RUN spike adds the shift (the open sign) and the offer pads: the shift runs the day,
+sends guests, delivers the starting crates and puts out offers and recipe cards.
+
+A SERVICE spike has no shift, so it adds two things only it needs:
 
   * GUEST CALLERS, one per menu entry: press one and a guest who wants that dish arrives at
     the pool. In a restaurant the shift will send arrivals at random; here you choose, which
@@ -16,11 +21,12 @@ import guests
 import settings
 import signals
 import volumes as v
-from systems import queue, seating
+from systems import pads, queue, seating, shift
 
 QUEUE_X, SPOT_Z, POOL_Z = 2, (8, 10, 12, 14), 18   # spot 1 (the front) first
 CHAIRS_X, CHAIRS_Z = (12, 14, 16), 4
 CALLERS_X, CALLERS_Z = 12, 22
+PADS_X, PADS_Z, SIGN_X = 12, 26, 10
 QUEUE_AREA = ((-64.0, -8.0, -64.0), (8.0, 40.0, 64.0))
 SPIKE_PATIENCE = 600
 
@@ -29,7 +35,7 @@ def caller_id(model, entry):
     return settings.game_id(model["theme"]["prefix"], f"spike_call_{entry['serves']}")
 
 
-def build(model, ground, debug=True):
+def build(model, ground, debug=True, run=False):
     """Write the front of house; return (volumes, (layout blocks, layout entities))."""
     roles = guests.roles(model)
     built = queue.build(model, roles, debug, patience=SPIKE_PATIENCE)
@@ -48,6 +54,18 @@ def build(model, ground, debug=True):
             if turn is not None:
                 b["rotation"] = turn
             layout.append(b)
+
+    base = (queue.volumes(model, QUEUE_AREA, built["patience"]) + seating.volumes(model))
+    if run:
+        tags = shift.build(model, {e["serves"]: guests.role_id(model, e) for e in model["menu"]},
+                           debug)
+        pads.build(model, debug)
+        layout.append({"x": SIGN_X, "y": ground, "z": PADS_Z, "name": shift.ids(model)["sign"]})
+        for k, n in enumerate(pads.numbers(model)):
+            layout.append({"x": PADS_X + 2 * k, "y": ground, "z": PADS_Z,
+                           "name": pads.ids(model)["pad"](n)})
+            entities.append(pads.pad_entity(n, PADS_X + 2 * k, ground, PADS_Z))
+        return base + shift.volumes(model, tags) + pads.volumes(model), (layout, entities)
 
     # Callers and the listener.
     effect = settings.game_id(model["theme"]["prefix"], "spike_front")
@@ -78,7 +96,5 @@ def build(model, ground, debug=True):
     rules.write(effect, "Spike only: guest callers and a listener standing in for the shift. "
                         "See build/spike_front.py.")
 
-    volumes = (queue.volumes(model, QUEUE_AREA, built["patience"])
-               + seating.volumes(model)
-               + [v.volume("spike_front", effect, signals.LISTENER_TAGS)])
+    volumes = base + [v.volume("spike_front", effect, signals.LISTENER_TAGS)]
     return volumes, (layout, entities)

@@ -1,0 +1,23 @@
+{
+  "$comment": "A TEMPLATE upgrade of every crate: apply the kit to a crate and it restocks twice as fast.",
+  "id": "crate_fast",
+  "role": "crate",
+  "per_ingredient": true,
+  "upgrade_of": "crate",
+  "label": "Fast {ingredient} crate",
+  "glow": "fast",
+  "look": {
+    "sides": "BlockTextures/Furniture_Village_Crate.png",
+    "top": "BlockTextures/Furniture_Village_Crate.png",
+    "sound": "Wood",
+    "tint": "#9fb8ff"
+  },
+  "words": {
+    "free": "{ingredient} crate - press to take one",
+    "on_top": "{ingredient} - press to take it",
+    "restocking": "{ingredient} crate - restocking"
+  },
+  "kit": {
+    "label": "Fast crate kit"
+  }
+}

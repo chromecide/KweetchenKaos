@@ -1,0 +1,23 @@
+{
+  "$comment": "An upgrade of the stove: apply the kit to a free stove and it becomes this. Same dishes; the glow does the rest.",
+  "id": "stove_fast",
+  "role": "heat",
+  "upgrade_of": "stove",
+  "label": "Fast stove",
+  "glow": "fast",
+  "look": {
+    "sides": "BlockTextures/Metal_Bronze.png",
+    "busy_sides": "BlockTextures/Metal_Bronze_Decorative.png",
+    "top": "BlockTextures/Calcite_Brick_Top.png",
+    "sound": "Stone",
+    "tint": "#6080ff"
+  },
+  "words": {
+    "free": "Stove - put something on to cook",
+    "busy": "Stove - in use",
+    "on_top": "{label} - {stage}. Press to take it off"
+  },
+  "kit": {
+    "label": "Fast stove kit"
+  }
+}

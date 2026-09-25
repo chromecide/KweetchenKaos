@@ -366,6 +366,10 @@ layouts/
   systems own: seat, queue spot, pool, sign, offer pad. The check is that every
   role the rules need has at least one slot.
 
+**Decided 2026-09-25: no doors.** A closed door stops NPC pathfinding, so no
+layout has one, hand-built or not. Guests leave by walking off (towards the
+pool) and vanishing. There is no door slot, and the door zone is not needed.
+
 **Decided 2026-09-24: slots.** Everything a theme might dress differently is a
 slot, not only stations: the door, queue spots, the pool, seats and tables, the
 sign, offer pads. A theme names the block for each (`fixtures.json`), so a
@@ -379,26 +383,33 @@ Without one, the room keeps what the creator built.
 
 ## Rules
 
-How a run plays, independent of what it looks like. Today split across
-shift_rules.py, upgrades.py and the tuning table in dishes.py.
+How a run plays, independent of what it looks like. Built 2026-09-25.
 
 ```
 rules/
   standard/
-    rules.json       day length, stages of a run, arrivals per stage, loss conditions
-    offers.json      what can be offered between days: by station role, price, weights
-    cards.json       recipe cards: every N days, how many to pick from, difficulty
+    rules.json       day length, stages of a run, arrivals per stage, queue patience
+    offers.json      what the pads can offer (stations and upgrade kits), prices, weights,
+                     and from which day each pad offers
+    cards.json       recipe cards: every N days, how many to choose from
 ```
 
-- Rules name **roles and menu entries by id**, never blocks, so the same rules
-  work for any theme. `offers.json` says "a heat station, price 14, weights
-  1/5/10". The theme says what a heat station is.
-- **Upgraded stations** (fast stove, safety stove, sharp board) are an offer
-  kind here plus a station variant in the theme. The rules decide when they
-  appear and what they cost; the theme decides what they look like.
+```json
+{ "id": "standard", "name": "Standard", "day_seconds": 90,
+  "stages": [ { "id": "early", "from": 1, "to": 3 }, { "id": "mid", "from": 4, "to": 6 },
+              { "id": "late", "from": 7, "to": 999 } ],
+  "arrival_every": { "early": 15, "mid": 11, "late": 8 },
+  "queue_patience": 60, "queue_patience_boost": 10 }
+```
+
+- Rules name **stations and kits by id**, never blocks, so the same rules
+  work for any theme. `offers.json` says "stove, price 14, weights 1/5/10";
+  the theme says what a stove is.
+- **Upgrade kits** are offered as `{"kit": "stove_fast", ...}`. The kit is made
+  from the theme's variant station file, which has `upgrade_of`, `glow` and
+  `kit`.
 - The theme's `defaults` (times, patience, prices) stay in the theme, because
-  they belong to the dishes. The rules can scale them, for example
-  "patience x0.8 from day 7".
+  they belong to the dishes.
 
 ## World
 

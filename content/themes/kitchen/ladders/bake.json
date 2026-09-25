@@ -18,7 +18,8 @@
       "word": "well done",
       "gives": "new",
       "seconds": 6,
-      "tint": "#6a4020"
+      "tint": "#6a4020",
+      "safety": true
     },
     {
       "id": "burnt",

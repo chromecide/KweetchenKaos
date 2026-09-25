@@ -31,14 +31,42 @@ def check(model):
 
     # One station per role -- today's rule. Steps already name their station, so lifting
     # this later is a rule change, not a format change.
+    base = {sid: s for sid, s in stations.items() if not s.get("upgrade_of")}
     for role in ROLES:
-        have = [s["id"] for s in stations.values() if s["role"] == role]
+        have = [s["id"] for s in base.values() if s["role"] == role]
         if len(have) != 1:
             problems.append(f"stations/: exactly one '{role}' station is needed, found "
                             f"{have or 'none'}")
     for s in stations.values():
         if s["role"] not in ROLES + MANY_ROLES:
             problems.append(f"{s['file']}: unknown role '{s['role']}'")
+
+    # Upgrades: each names a station of its own role.
+    for s in stations.values():
+        up = s.get("upgrade_of")
+        if up and (up not in stations or stations[up]["role"] != s["role"]):
+            problems.append(f"{s['file']}: '{s['id']}' upgrades '{up}', which isn't a "
+                            f"{s['role']} station")
+
+    # Rules: offers name real stations and kits; at least one dish starts on the menu.
+    rules = model.get("rules")
+    if rules:
+        kits = {i[:-len("_kit")] for i in items if i.endswith("_kit")}
+        for o in rules["offers"]["catalogue"]:
+            if "station" in o and o["station"] not in base:
+                problems.append(f"rules offers.json: unknown station '{o['station']}'")
+            if "kit" in o and o["kit"] not in kits:
+                problems.append(f"rules offers.json: unknown kit '{o['kit']}'")
+            for st in rules["stages"]:
+                if st["id"] not in o["weights"]:
+                    problems.append(f"rules offers.json: '{o.get('station') or o.get('kit')}' "
+                                    f"has no weight for stage '{st['id']}'")
+    dishes = model.get("dishes", {})
+    if dishes and not any(d["unlock"] == "start" for d in dishes.values()):
+        problems.append("dishes/: no dish is on the menu from the start")
+    for d in dishes.values():
+        if d["unlock"] not in ("start", "card"):
+            problems.append(f"{d['file']}: unlock must be 'start' or 'card'")
 
     for step in model["steps"]:
         where, kind = step["file"], step["type"]

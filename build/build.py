@@ -83,6 +83,14 @@ def report(model):
     print(f"THEME {t['name']}: {len(model['items'])} items, {len(model['steps'])} steps, "
           f"{len(model['menu'])} menu entries, stations: "
           + ", ".join(f"{s['label']} ({s['role']})" for s in model["stations"].values()))
+    r = model["rules"]
+    print(f"RULES {r['name']}: {r['day_seconds']}s days; a guest every "
+          + ", ".join(f"{r['arrival_every'][s['id']]}s ({s['id']}, days {s['from']}-"
+                      f"{s['to']})" for s in r["stages"])
+          + f"; recipe cards every {r['cards']['every_days']} days")
+    for d in model["dishes"].values():
+        print(f"DISH {d['label']}: {'on the menu from day 1' if d['unlock'] == 'start' else 'a recipe card'}"
+              f"; needs " + ", ".join(model["stations"][c]["label"].lower() for c in d["needs"]))
     for e in model["menu"]:
         print(f"\n  {e['label']}: {e['price']} coins, waits {e['order_patience']}s to "
               f"order and {e['food_patience']}s for food, eats for {e['eat_seconds']}s")
@@ -93,7 +101,7 @@ def report(model):
 def main(argv):
     theme = argv[argv.index("--theme") + 1] if "--theme" in argv else "kitchen"
     try:
-        model = content.load_theme(theme)
+        model = content.load(theme)
     except content.ContentError as e:
         print(f"THEME {theme} could not be read:")
         print("\n".join(f"  - {p}" for p in e.problems))

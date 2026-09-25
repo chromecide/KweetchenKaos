@@ -1,0 +1,5 @@
+{
+  "$comment": "Recipe cards: every N days the pads show this many cards (dishes not yet on the menu) INSTEAD of offers. Choosing one puts it on the menu; crates it needs that the restaurant doesn't own are delivered on the pads.",
+  "every_days": 3,
+  "choices": 2
+}

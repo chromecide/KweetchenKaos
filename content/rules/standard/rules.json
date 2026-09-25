@@ -1,0 +1,30 @@
+{
+  "$comment": "How a run plays, for any theme. Times are real seconds.",
+  "id": "standard",
+  "name": "Standard",
+  "day_seconds": 90,
+  "stages": [
+    {
+      "id": "early",
+      "from": 1,
+      "to": 3
+    },
+    {
+      "id": "mid",
+      "from": 4,
+      "to": 6
+    },
+    {
+      "id": "late",
+      "from": 7,
+      "to": 999
+    }
+  ],
+  "arrival_every": {
+    "early": 15,
+    "mid": 11,
+    "late": 8
+  },
+  "queue_patience": 60,
+  "queue_patience_boost": 10
+}

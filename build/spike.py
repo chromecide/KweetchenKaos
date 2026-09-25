@@ -50,8 +50,12 @@ SPIKES = {
     "board": {"stations": {"board": 2}},
     "counter": {"stations": {"counter": 3, "board": 2}},
     "kitchen": {"stations": KITCHEN},
-    # A full service: the kitchen, the queue, chairs and guests.
+    # A full service: the kitchen, the queue, chairs and guests, called by hand.
     "service": {"stations": KITCHEN, "front": True},
+    # A full RUN: the shift runs the days. The crates aren't laid out -- the run delivers
+    # them on day 1, and more with recipe cards.
+    # Crates at 0: mounted (so delivered ones work) but not laid out.
+    "run": {"stations": dict(KITCHEN, crates=0), "front": True, "run": True},
 }
 SETUP = f"{settings.NAMESPACE}_Spike_Setup"
 SETUP_EFFECT = f"{SETUP}_System"
@@ -65,7 +69,7 @@ def stations_of(model, name):
     for st, count in SPIKES[name]["stations"].items():
         if st == "crates":
             out.update({sid: count for sid, s in model["stations"].items()
-                        if s["role"] == "crate"})
+                        if s["role"] == "crate" and not s.get("upgrade_of")})
         else:
             out[st] = count
     return out
@@ -141,11 +145,14 @@ def build(model, name, debug=True):
                         {"spike": st}) for st in stations]
     front = None
     if spike.get("front"):
-        front_volumes, front_layout = spike_front.build(model, GROUND, debug)
+        front_volumes, front_layout = spike_front.build(model, GROUND, debug,
+                                                        run=spike.get("run", False))
         mounted += front_volumes
         front = front_layout
     mounted.append(setup(model, stations, front, debug))
-    given = kit(model, stations)
+    # A run needs only plates: the run delivers the crates, which make everything else.
+    given = ([(SETUP, 1), (model["items"][model["vessel"]["clean"]["id"]]["game_id"], 2)]
+             if spike.get("run") else kit(model, stations))
     note = " + ".join(model["stations"][st]["label"].lower() for st in stations)
     if front:
         note += " + the front of house"
@@ -164,7 +171,7 @@ def build(model, name, debug=True):
         "GameTime": "0001-01-01T12:00:00Z",
         "IsGameTimePaused": True,
         # A timed station (stove, crates) needs the clock running.
-        **(clock.WORLD_TIME if needs_clock else {}),
+        **(clock.WORLD_TIME if needs_clock or spike.get("run") else {}),
         "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False,
         "IsBlockSpawnersEnabled": False,
         "DeleteOnRemove": True, "DeleteOnUniverseStart": True,

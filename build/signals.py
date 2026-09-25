@@ -27,6 +27,44 @@ RESET_KEY, RESET_VALUE, RESET = "guestreset", "1", "reset"
 RESET_TAGS = {RESET_KEY: RESET_VALUE}
 
 
+# THE SHIFT'S STATE, which other volumes read and pay from: the purse and the day are tags
+# on the shift's volume. A pad reads them (TagCondition, Source Radius) and changes them
+# (ModifyTags by tag) -- instant, so two presses in a tick can't overspend.
+MONEY, DAY = "money", "day"
+_SHIFT = {"MatchKey": SHIFT_KEY, "MatchValue": SHIFT_VALUE, "Radius": 64.0, "Center": "Volume"}
+
+# THE PADS: the shift tells every pad to PLACE today's offers or CLEAR them; tells ONE pad
+# (by its number) to take a DELIVERY (a crate) or show a CARD (a dish). A pad tells the
+# shift a buyer was SHORT or BOUGHT something (only the shift can print the purse), and
+# which card was CHOSEN.
+PADS_KEY, PADS_VALUE, PAD_KEY = "offerpad", "1", "pad"
+OFFERS, PLACE, CLEAR = "offers", "place", "clear"
+DELIVER, CARD = "deliver", "card"
+SHORT, BOUGHT, CHOSE = "short", "bought", "chose"
+
+
+def shift_reads(event, key, comparison, value):
+    """A condition on the shift's tag `key`, read from another volume."""
+    return dict(_SHIFT, Type="TagCondition", Event=event, Source="Radius", TagKey=key,
+                Comparison=comparison, TagValue=str(value))
+
+
+def shift_changes(event, key, operation, value):
+    """An effect changing the shift's tag `key`, from another volume. Instant."""
+    return dict(_SHIFT, Type="ModifyTags", Event=event, Operation=operation, TagKey=key,
+                TagValue=str(value))
+
+
+def to_pads(event, value, delay=None):
+    e = from_volume(event, OFFERS, value, match=(PADS_KEY, PADS_VALUE))
+    return dict(e, Delay=delay) if delay else e
+
+
+def to_pad(event, n, key, value, delay=None):
+    e = from_volume(event, key, value, match=(PAD_KEY, str(n)))
+    return dict(e, Delay=delay) if delay else e
+
+
 def from_npc(key, value, tag=SHIFT_KEY):
     """The ACTION an NPC runs to send on a channel (by default, to the shift)."""
     return {"Type": "SignalTaggedVolumes", "MatchTag": tag, "Radius": 64.0,

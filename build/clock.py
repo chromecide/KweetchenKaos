@@ -29,7 +29,8 @@ def game_seconds(real):
     return round(real * GAME_PER_REAL)
 
 
-def growth(stage_blocks, durations, final_sound="SFX_Crops_Grow_Stage_Complete"):
+def growth(stage_blocks, durations, final_sound="SFX_Crops_Grow_Stage_Complete",
+           modifiers=None):
     """A growth config that walks a block through `stage_blocks`, each lasting its REAL
     seconds (None: stays). Every stage's block carries the SAME config -- a stage swaps the
     block for the next type, and growth carries on reading the stages from whatever block
@@ -44,6 +45,11 @@ def growth(stage_blocks, durations, final_sound="SFX_Crops_Grow_Stage_Complete")
         stages.append(s)
     if final_sound:
         stages[-1]["SoundEventId"] = final_sound
-    return {"Farming": {"Stages": {"Default": stages}, "StartingStageSet": "Default"},
+    farming = {"Stages": {"Default": stages}, "StartingStageSet": "Default"}
+    if modifiers:
+        # What speeds this block's growth (glow.py). Read from the CURRENT stage's block,
+        # so stages can differ -- a safety stove's hold is on the well-done block only.
+        farming["ActiveGrowthModifiers"] = list(modifiers)
+    return {"Farming": farming,
             # What makes the engine track a block's growth at all.
             "BlockEntity": {"Components": {"FarmingBlock": {}}}}

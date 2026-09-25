@@ -30,13 +30,42 @@
       "top": "BlockTextures/Wood_Softwood_Planks_Side.png",
       "sound": "Stone",
       "tint": "#7a5cc0"
+    },
+    "sign": {
+      "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+      "top": "BlockTextures/Wood_Softwood_Planks_Side.png",
+      "sound": "Wood",
+      "closed_tint": "#6a4a3a",
+      "open_tint": "#3c8a5c"
+    },
+    "pad": {
+      "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+      "top": "BlockTextures/Wood_Softwood_Planks_Side.png",
+      "sound": "Wood",
+      "tint": "#8a7ac0"
+    },
+    "card": {
+      "model": "Items/Consumables/Recipes/Recipe.blockymodel",
+      "texture": "Items/Consumables/Recipes/Recipe_Texture.png",
+      "icon": "Icons/ItemsGenerated/Recipe_Page.png"
+    },
+    "kit": {
+      "model": "Items/Tools/Repair_Kit/Repair_Kit_Iron.blockymodel",
+      "texture": "Items/Tools/Repair_Kit/Repair_Kit_Iron_Texture.png",
+      "icon": "Icons/ItemsGenerated/Tool_Repair_Kit_Iron.png"
     }
   },
   "words": {
     "order": "Take their order",
     "clear_plate": "Press to clear the table",
     "queue_spot": "Queue - {where}",
-    "pool": "Queue pool"
+    "pool": "Queue pool",
+    "sign_closed": "CLOSED - press to open for the day",
+    "sign_open": "OPEN - the day ends at closing time",
+    "pad": "Offer pad {n}",
+    "offer": "{label} - {price} coins. Press to buy",
+    "delivery": "{label} - free. Press to take it",
+    "card": "Recipe: {label} - press to put it on the menu"
   },
   "slots": {}
 }

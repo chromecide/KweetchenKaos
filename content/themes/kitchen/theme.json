@@ -13,5 +13,20 @@
   },
   "guest": {
     "appearance": "Klops"
+  },
+  "glow": {
+    "$comment": "Upgraded stations glow; a stage block listening for that glow grows faster (fast) or all but stops (safe). Light fades about a level a block, so a neighbour at 13 gets nothing.",
+    "fast": {
+      "colour": "#00f",
+      "channel": "Blue",
+      "min": 14,
+      "times": 2.0
+    },
+    "safe": {
+      "colour": "#0f0",
+      "channel": "Green",
+      "min": 14,
+      "times": 0.0001
+    }
   }
 }

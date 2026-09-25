@@ -47,6 +47,10 @@ plate. If it reads right, the theme is right.
 | `systems/seating.py` | chairs and their own tables, sitting, getting up, the plate left behind |
 | `systems/guest.py` | a seated guest: order, patience pulses, eat, or walk out |
 | `guests.py` | one guest role per menu entry, composed from the three fragments |
+| `glow.py` | upgraded stations glow; stage blocks listening for the glow grow faster (or hold) |
+| `offers.py` | what the pads can carry: the catalogue of offers, and the crates deliveries bring |
+| `systems/pads.py` | offer pads: offers to buy, crates delivered free, recipe cards to choose |
+| `systems/shift.py` | the day: the sign, the clock, arrivals from the menu, the purse, cards and deliveries, losing |
 | `spike_front.py` | the service spike's front of house: guest callers and a listener for the shift |
 | `spike.py` | the spike world: stations mounted over an empty world, `/kk spike`, `/kk kit`, and a setup block that lays the stations out |
 | `build.py` | runs it all and prints the report |
@@ -60,8 +64,10 @@ plate. If it reads right, the theme is right.
 - **Board: built and spike-tested** (all five ingredients).
 - **Counter: built and spike-tested** (put down, pick up, assembling, plating both ways).
 - **Batch 1, the whole kitchen: built and spike-tested** (`./deploy.sh kitchen`).
-- **Batch 2, front of house: built, awaiting its spike test** (`./deploy.sh service`):
-  queue, seating, guests, on top of the kitchen.
+- **Batch 2, front of house: built and spike-tested** (`./deploy.sh service`).
+- **Batch 3, the run: built, awaiting its spike test** (`./deploy.sh run`): the shift,
+  offer pads, deliveries, recipe cards, upgrade kits (fast crate, fast and safety stove),
+  and the rules content (`content/rules/standard/`).
 - **The other systems are next, rewritten fresh one at a time** (not copied from the POC),
   each reading its station, words and recipes from the model and each re-spiked:
   board, stove, counter, sink, bin, then guests, queue, seating, shift.
