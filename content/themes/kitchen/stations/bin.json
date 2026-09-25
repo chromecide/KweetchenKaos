@@ -3,10 +3,10 @@
   "role": "bin",
   "label": "Bin",
   "look": {
-    "sides": "BlockTextures/Metal_Iron.png",
-    "top": "BlockTextures/Metal_Bronze.png",
+    "sides": "BlockTextures/Furniture_Village_Crate.png",
+    "top": "BlockTextures/Wood_Village_Wall_Black_Full.png",
     "busy_tint": "#4a4038",
-    "sound": "Stone"
+    "sound": "Wood"
   },
   "words": {
     "free": "Bin - press holding food to throw it away",
