@@ -4,9 +4,9 @@
   "label": "Sink",
   "look": {
     "sides": "BlockTextures/Metal_Iron.png",
-    "top": "BlockTextures/Fluid_Water.png",
+    "top": "BlockTextures/Mushroom_Block_Blue_Trunk_Top.png",
     "sound": "Stone",
-    "trim": "#4a8fd8"
+    "trim": "#d0d0d0"
   },
   "words": {
     "free": "Sink - put a dirty plate in",
