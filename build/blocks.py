@@ -63,7 +63,7 @@ def hint(game_id, text):
 # one plain white band, the only image the pack ships, coloured per station. The catch, taken
 # knowingly: TintUp colours the station's TOP as well (proven in the texture gallery probe).
 TRIM_MASK = "BlockTextures/K2_Trim_Band.png"
-TRIM_PIXELS = 6                 # of the texture's 32
+TRIM_PIXELS = 2                 # of the texture's 32: a hint of an edge, not a stripe
 
 
 def write_trim_mask():

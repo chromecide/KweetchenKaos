@@ -9,7 +9,8 @@
     "sides": "BlockTextures/Metal_Iron.png",
     "top": "BlockTextures/Metal_Zinc_Decorative_Top.png",
     "sound": "Stone",
-    "busy_top": "BlockTextures/Metal_Copper_Decorative_Top.png"
+    "busy_top": "BlockTextures/Metal_Copper_Decorative_Top.png",
+    "trim": "#60e080"
   },
   "words": {
     "free": "Stove - put something on to cook",
