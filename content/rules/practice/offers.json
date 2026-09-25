@@ -35,6 +35,15 @@
       }
     },
     {
+      "station": "rack",
+      "price": 6,
+      "weights": {
+        "early": 4,
+        "mid": 4,
+        "late": 3
+      }
+    },
+    {
       "station": "sink",
       "price": 10,
       "weights": {

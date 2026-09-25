@@ -60,7 +60,8 @@ PORTAL_TINT, ARRIVAL_TINT = "#30c8d8", "#f0f0f0"
 SLOTS = (
     [(f"station_{role}", f"Slot: {what}", STATION_TINT)
      for role, what in (("press", "board (press)"), ("combine", "counter (combine)"),
-                        ("heat", "stove (heat)"), ("wash", "sink (wash)"), ("bin", "bin"))]
+                        ("heat", "stove (heat)"), ("wash", "sink (wash)"), ("bin", "bin"),
+                        ("rack", "plate rack (starts with plates)"))]
     + [("chair", "Slot: chair (its table goes in front)", SEAT_TINT)]
     + [(f"queue_{i}", f"Slot: queue spot {i}" + (" (the front)" if i == 1 else ""), QUEUE_TINT)
        for i in range(1, 5)]

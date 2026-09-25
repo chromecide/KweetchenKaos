@@ -1,0 +1,19 @@
+{
+  "$comment": "Where clean plates are kept. Its count IS its block (0..capacity), so each rack keeps its own; a layout's rack starts with `start` plates. More plates means more racks.",
+  "id": "rack",
+  "role": "rack",
+  "label": "Plate rack",
+  "capacity": 12,
+  "start": 6,
+  "look": {
+    "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+    "top": "BlockTextures/Calcite_Brick_Smooth.png",
+    "sound": "Wood",
+    "icon": "Icons/ItemsGenerated/Deco_Plate.png"
+  },
+  "words": {
+    "free": "Plate rack - {n} plate{s}. Press to take one; press holding a clean plate to put it back",
+    "empty": "Plate rack - empty. Wash plates at the sink and put them back",
+    "full": "Plate rack - full ({n} plates). Press to take one"
+  }
+}

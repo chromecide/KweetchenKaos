@@ -46,7 +46,8 @@ import systems
 import volumes as v
 
 INSTANCE = f"{settings.NAMESPACE}_Spike"
-KITCHEN = {"crates": 1, "board": 2, "counter": 3, "stove": 2, "bin": 1, "sink": 1}
+KITCHEN = {"crates": 1, "board": 2, "counter": 3, "stove": 2, "bin": 1, "sink": 1,
+           "rack": 1}
 SPIKES = {
     "board": {"stations": {"board": 2}},
     "counter": {"stations": {"counter": 3, "board": 2}},
