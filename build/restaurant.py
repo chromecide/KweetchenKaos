@@ -35,6 +35,7 @@ rules need, is reported -- the room still builds, so you can see it.
 import json
 import os
 
+import blocks
 import guests
 import layouts
 import pack
@@ -114,8 +115,10 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
                                 f"theme has no {role} station")
                 continue
             used.add(sid)
+            turn = blocks.turn_index(model["stations"][sid]["look"])
             for dy, block in systems.for_station(model, sid).layout(model, sid):
-                out_blocks.append(at(block, dy=dy))
+                # The station itself stands turned if its look says so; what sits on it doesn't.
+                out_blocks.append(at(block, dy=dy, rotation=turn if dy == 0 else None))
         elif name == "chair":
             facing = turns[b.get("rotation", 0) % 4]
             for dx, dz, block, turn in seating.layout(model, facing):

@@ -107,10 +107,12 @@ def kit(model, stations):
 def setup(model, stations, front, debug):
     """The setup block, the layout it pastes, and the rule that pastes it once. Returns
     the setup volume."""
-    row = [systems.for_station(model, st).layout(model, st)
+    row = [(systems.for_station(model, st).layout(model, st),
+            blocks.turn_index(model["stations"][st]["look"]))
            for st, count in stations.items() for _ in range(count)]
-    layout = [{"x": ROW_X + GAP * k, "y": GROUND + dy, "z": ROW_Z, "name": block}
-              for k, column in enumerate(row) for dy, block in column]
+    layout = [dict({"x": ROW_X + GAP * k, "y": GROUND + dy, "z": ROW_Z, "name": block},
+                   **({"rotation": turn} if turn is not None and dy == 0 else {}))
+              for k, (column, turn) in enumerate(row) for dy, block in column]
     entities = []
     if front:
         more, entities = front

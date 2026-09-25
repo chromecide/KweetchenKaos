@@ -107,6 +107,13 @@ def build(model, station_id, debug=True):
     # CARRIED: put down with plates, it shows its plate; picked up, the plate goes with it.
     rules.add(5000, [v.at(racks[1:], event="BLOCK_PLACED")],
               [v.place(b["top"], event="BLOCK_PLACED")])
+    # A TURNED rack (look "turn"): put down, the client picks a rotation from how the player
+    # faces -- so it is swapped for itself with the look's turn set. Every other swap keeps
+    # the rotation it has.
+    if look.get("turn"):
+        rules.add(5002, [v.at(racks, event="BLOCK_PLACED")],
+                  [dict(v.cell([r], r, dy=0.0, event="BLOCK_PLACED"), **blocks.turn_fields(look))
+                   for r in racks])
     rules.add(5001, [v.at(racks, event="BLOCK_BROKEN")],
               [v.cell([b["top"]], "Empty", dy=1, event="BLOCK_BROKEN")])
     rules.write(b["effect"], f"The {st['label'].lower()}: clean plates, one on show. "

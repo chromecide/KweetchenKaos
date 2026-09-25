@@ -71,6 +71,27 @@ def write_trim_mask():
                    lambda x, y: (255, 255, 255, 255) if y < TRIM_PIXELS else (0, 0, 0, 0))
 
 
+# THE TURN: a station can stand turned over (look "turn": quarter turns of yaw, pitch and
+# roll) -- a face's texture can't be rotated on its own, so the whole block is. It must allow
+# any rotation (VariantRotation All) and hold what sits on it whichever face ends up on top.
+# Whatever places it sets the turn (turn_index, turn_effect); a block SWAP keeps the block's
+# rotation, so a station's states follow it.
+ROTATIONS = ("None", "Ninety", "OneEighty", "TwoSeventy")
+
+
+def turn_index(look):
+    """The prefab rotation index of a look's turn (16 x roll + 4 x pitch + yaw), or None."""
+    t = look.get("turn")
+    return None if not t else 16 * t.get("roll", 0) + 4 * t.get("pitch", 0) + t.get("yaw", 0)
+
+
+def turn_fields(look):
+    """The Rotation / Pitch / Roll settings a PlaceBlock or ReplaceBlockType takes."""
+    t = look.get("turn") or {}
+    return {"Rotation": ROTATIONS[t.get("yaw", 0)], "Pitch": ROTATIONS[t.get("pitch", 0)],
+            "Roll": ROTATIONS[t.get("roll", 0)]}
+
+
 def station_block(game_id, label, look, hint_text, comment, sides=None, tint=None, use=True,
                   light=None, movable=False, top=None):
     """`use=False`: a block nothing presses (a queue spot works off ENTER and EXIT only).
@@ -89,6 +110,10 @@ def station_block(game_id, label, look, hint_text, comment, sides=None, tint=Non
         block["Tint"] = [tint]
     if light:
         block["Light"] = light
+    if look.get("turn"):
+        block["VariantRotation"] = "All"
+        block["Supporting"] = {face: [{"FaceType": "Full"}]
+                               for face in ("Up", "Down", "North", "South", "East", "West")}
     if look.get("trim"):
         write_trim_mask()
         block["TextureSideMask"] = TRIM_MASK

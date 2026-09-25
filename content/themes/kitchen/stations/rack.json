@@ -6,10 +6,14 @@
   "capacity": 12,
   "start": 6,
   "look": {
-    "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
-    "top": "BlockTextures/Calcite_Brick_Smooth.png",
-    "sound": "Wood",
-    "icon": "Icons/ItemsGenerated/Deco_Plate.png"
+    "sides": "BlockTextures/Metal_Iron_Ornate.png",
+    "top": "BlockTextures/Metal_Iron_Ornate.png",
+    "sound": "Stone",
+    "icon": "Icons/ItemsGenerated/Deco_Plate.png",
+    "turn": {
+      "yaw": 1,
+      "roll": 1
+    }
   },
   "words": {
     "free": "Plate rack - {n} plate{s}. Press to take one; press holding a clean plate to put it back",

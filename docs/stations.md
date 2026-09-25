@@ -13,9 +13,10 @@ The data lives in `content/themes/kitchen/stations/*.json` (`look`).
 | Chopping board | `Metal_Iron` | `Wood_Softwood_Planks_Top` | same | `#b07850` warm brown |
 | Sink | `Metal_Iron` | `Mushroom_Block_Blue_Trunk_Top` (the water) | same | `#d0d0d0` grey (the rim) |
 | Bin | `Furniture_Village_Crate` | `Wood_Village_Wall_Black_Full` | same, tinted `#4a4038` with a plate on it | none |
+| Plate rack | `Metal_Iron_Ornate`, the block TURNED (roll 90, yaw 90) so the bars lie flat -- a stack of plates | same | a plate on top while it holds any | none |
 | Produce crate | `Wood_Village_Wall_RedDark_Full` | same | | none (the fast crate is tinted `#9fb8ff`) |
 
-Not yet reviewed: the counter and the plate rack (still first-iteration looks).
+Not yet reviewed: the counter (still its first-iteration look).
 
 ## The rules behind them
 
@@ -29,6 +30,12 @@ Not yet reviewed: the counter and the plate rack (still first-iteration looks).
   gives the sink its rim.
 - **No painted textures.** A band painted with a plank pattern looked great,
   but it starts down the road of custom art; a strip and a tint is enough.
+
+- **A turned station** (`look.turn`, quarter turns of yaw/pitch/roll): a cube
+  face's texture can't be rotated, so the whole block is. It allows any rotation
+  and holds what sits on it on every face; the room paste sets the turn, block
+  swaps keep it, and the rack sets it again whenever one is put down (the client
+  picks a rotation from how the player faces).
 
 ## Tried and set aside
 
