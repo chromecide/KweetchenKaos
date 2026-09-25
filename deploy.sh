@@ -34,6 +34,13 @@ if lsof -nP -iUDP:5520 >/dev/null 2>&1; then
   pkill -f "tail -f console.in" 2>/dev/null || true
 fi
 
+# RESCUE LAYOUT SAVES first: /kk save writes them into the DEPLOYED mod folder, which the
+# next line wipes. Losing a hand-built room to that is the trap v1 fell into.
+if ls "mods/$MOD/Server/Prefabs/"K2_Save_*.prefab.json >/dev/null 2>&1; then
+  mkdir -p "$V2/content/layouts/_saves"
+  cp "mods/$MOD/Server/Prefabs/"K2_Save_*.prefab.json "$V2/content/layouts/_saves/"
+  echo "rescued layout saves: $(ls "mods/$MOD/Server/Prefabs/"K2_Save_*.prefab.json | wc -l | tr -d ' ')"
+fi
 rm -rf "mods/$MOD"
 cp -R "$V2/pack" "mods/$MOD"
 echo "deployed $MOD"

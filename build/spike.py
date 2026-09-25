@@ -39,6 +39,7 @@ What was learned in the POC and is built in here:
 import blocks
 import clock
 import pack
+import restaurant
 import settings
 import spike_front
 import systems
@@ -138,7 +139,81 @@ def setup(model, stations, front, debug):
     return v.volume("spike_setup", SETUP_EFFECT, {"done": "0"})
 
 
+def _world(note, needs_clock, mounted, given, spawn=(8.0, 2.0, 8.0)):
+    """The spike instance, its volumes, and /kk spike and /kk kit."""
+    pack.write(pack.out("Instances", INSTANCE, "instance.bson"), {
+        "$Comment": f"KwitchenKaos spike world, mounting: {note}. See build/spike.py.",
+        "Version": 2,
+        "WorldGen": {"Type": "Flat",
+                     "Layers": [{"From": 0, "To": 1, "BlockType": "Soil_Grass"}]},
+        "SpawnProvider": {"Id": "Global",
+                          "SpawnPoint": {"X": spawn[0], "Y": spawn[1], "Z": spawn[2],
+                                         "Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0}},
+        "GameMode": "Adventure",
+        "GameTime": "0001-01-01T12:00:00Z",
+        "IsGameTimePaused": True,
+        # A timed station (stove, crates) needs the clock running.
+        **(clock.WORLD_TIME if needs_clock else {}),
+        "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False,
+        "IsBlockSpawnersEnabled": False,
+        "DeleteOnRemove": True, "DeleteOnUniverseStart": True,
+        "Plugin": {"Instance": {
+            "InstanceKey": INSTANCE.lower(),
+            "RemovalConditions": [{"Type": "WorldEmpty", "TimeoutSeconds": 10.0}]}}})
+    pack.write(pack.out("Instances", INSTANCE, "resources", "TriggerVolumeData.json"),
+               {"Volumes": {f"5b1ce000-0000-4000-8000-{i:012d}": vol
+                            for i, vol in enumerate(mounted, start=1)}})
+    pack.say("commands.kk.spike.desc", "Open the KwitchenKaos spike world")
+    pack.say("commands.kk.kit.desc", "Hand over what the spiked stations need")
+    pack.write(pack.out("MacroCommands", "KKSpike.json"), {
+        "$Comment": f"Open the spike world (mounting: {note}). Not from inside it.",
+        "Name": "kk spike", "Description": "server.commands.kk.spike.desc",
+        "Commands": [f"instances spawn {INSTANCE}", "wait 4", "gamemode adventure"]})
+    pack.write(pack.out("MacroCommands", "KKKit.json"), {
+        "$Comment": "What the spiked stations need. One item per line.",
+        "Name": "kk kit", "Description": "server.commands.kk.kit.desc",
+        "Commands": [f"give {item}" for item, n in given for _ in range(n)]})
+
+
+def build_room(model, layout_id, debug=True):
+    """A RESTAURANT spike: a layout's room, dressed in the theme, running a real run. The
+    setup block pastes the room at the world's origin; you arrive in front of it."""
+    room, volumes, problems, info = restaurant.build(model, layout_id, debug=debug,
+                                                     patience=spike_front.SPIKE_PATIENCE)
+    for p in problems:
+        print(f"  LAYOUT: {p}")
+    pack.write(pack.out("Prefabs", f"{SETUP}_Layout.prefab.json"),
+               dict(room, **{"$Comment": f"The room '{info['name']}', dressed. See build/restaurant.py."}))
+    blocks.station_block(SETUP, "Spike setup", {
+        "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+        "top": "BlockTextures/Wood_Softwood_Planks_Side.png", "sound": "Wood"},
+        "Press to build the room (once)", "Spike only. See build/spike.py.", tint="#e0c020")
+    once = lambda value: {"Type": "TagCondition", "Event": "BLOCK_USED", "Source": "Self",
+                          "TagKey": "done", "Comparison": "Exactly", "TagValue": value}
+    rules = v.Entries()
+    rules.add(1, [v.at([SETUP]), once("1")],
+              [v.say("kk.setup.again", "[setup] already built - leave and /kk spike again")])
+    rules.add(2, [v.at([SETUP]), once("0")],
+              [{"Type": "PastePrefab", "Event": "BLOCK_USED", "Prefab": f"{SETUP}_Layout",
+                "Origin": "VolumeOrigin", "Position": {"X": 0.0, "Y": 0.0, "Z": 0.0},
+                "ShowParticles": False},
+               {"Type": "ModifyTags", "Event": "BLOCK_USED", "Operation": "Set",
+                "TagKey": "done", "TagValue": "1"}]
+              + v.report("kk.setup.room", f"[setup] built the room: {info['name']}", debug))
+    rules.write(SETUP_EFFECT, "Spike only: the setup block. See build/spike.py.")
+    volumes.append(v.volume("spike_setup", SETUP_EFFECT, {"done": "0"}))
+    kits = [(it["game_id"], 1) for i, it in model["items"].items() if i.endswith("_kit")]
+    given = [(SETUP, 1), (model["items"][model["vessel"]["clean"]["id"]]["game_id"], 2)] + kits
+    note = f"the room {info['name']}"
+    # Arrive in front of the room's forecourt, outside it.
+    _world(note, True, volumes, given, spawn=(16.0, 2.0, -4.0))
+    return note, given
+
+
+
 def build(model, name, debug=True):
+    if name.startswith("room:"):
+        return build_room(model, name[len("room:"):], debug)
     spike = SPIKES[name]
     stations = stations_of(model, name)
     mounted = [v.volume(f"spike_{st}", systems.for_station(model, st).build(model, st, debug),
@@ -159,39 +234,6 @@ def build(model, name, debug=True):
     if front:
         note += " + the front of house"
     needs_clock = any(getattr(systems.for_station(model, st), "NEEDS_CLOCK", False)
-                      for st in stations)
-
-    pack.write(pack.out("Instances", INSTANCE, "instance.bson"), {
-        "$Comment": f"KwitchenKaos spike world, mounting: {note}. See build/spike.py.",
-        "Version": 2,
-        "WorldGen": {"Type": "Flat",
-                     "Layers": [{"From": 0, "To": 1, "BlockType": "Soil_Grass"}]},
-        "SpawnProvider": {"Id": "Global",
-                          "SpawnPoint": {"X": 8.0, "Y": 2.0, "Z": 8.0,
-                                         "Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0}},
-        "GameMode": "Adventure",
-        "GameTime": "0001-01-01T12:00:00Z",
-        "IsGameTimePaused": True,
-        # A timed station (stove, crates) needs the clock running.
-        **(clock.WORLD_TIME if needs_clock or spike.get("run") else {}),
-        "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False,
-        "IsBlockSpawnersEnabled": False,
-        "DeleteOnRemove": True, "DeleteOnUniverseStart": True,
-        "Plugin": {"Instance": {
-            "InstanceKey": INSTANCE.lower(),
-            "RemovalConditions": [{"Type": "WorldEmpty", "TimeoutSeconds": 10.0}]}}})
-    pack.write(pack.out("Instances", INSTANCE, "resources", "TriggerVolumeData.json"),
-               {"Volumes": {f"5b1ce000-0000-4000-8000-{i:012d}": vol
-                            for i, vol in enumerate(mounted, start=1)}})
-
-    pack.say("commands.kk.spike.desc", "Open the KwitchenKaos spike world")
-    pack.say("commands.kk.kit.desc", "Hand over what the spiked stations need")
-    pack.write(pack.out("MacroCommands", "KKSpike.json"), {
-        "$Comment": f"Open the spike world (mounting: {note}). Not from inside it.",
-        "Name": "kk spike", "Description": "server.commands.kk.spike.desc",
-        "Commands": [f"instances spawn {INSTANCE}", "wait 4", "gamemode adventure"]})
-    pack.write(pack.out("MacroCommands", "KKKit.json"), {
-        "$Comment": "What the spiked stations need. One item per line.",
-        "Name": "kk kit", "Description": "server.commands.kk.kit.desc",
-        "Commands": [f"give {item}" for item, n in given for _ in range(n)]})
+                      for st in stations) or spike.get("run", False)
+    _world(note, needs_clock, mounted, given)
     return note, given

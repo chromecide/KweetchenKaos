@@ -15,8 +15,10 @@ server: every game id here starts with `K2_`, so nothing collides.
 ```
 python3 build/build.py --check    read and check the kitchen theme, print the report
 python3 build/build.py            ...and write pack/
-./deploy.sh [SPIKE]               build with SPIKE in the spike world (default board),
-                                  deploy beside the POC, restart, report rejections
+./deploy.sh [SPIKE] [RULES]       build with SPIKE in the spike world (default board) under
+                                  RULES (default standard), deploy beside the POC, restart,
+                                  report rejections. SPIKE room:<layout> plays a layout.
+python3 build/layouts.py import <plot> <id> "<name>"   a saved plot -> content/layouts/<id>/
 ```
 
 The report lists every menu entry and the full chain that makes it, crate to
@@ -51,6 +53,8 @@ plate. If it reads right, the theme is right.
 | `offers.py` | what the pads can carry: the catalogue of offers, and the crates deliveries bring |
 | `systems/pads.py` | offer pads: offers to buy, crates delivered free, recipe cards to choose |
 | `systems/shift.py` | the day: the sign, the clock, arrivals from the menu, the purse, cards and deliveries, losing |
+| `layouts.py` | slot blocks, the authoring world (`/kk author`, `/kk grid`, `/kk slots`, `/kk save`), and importing a save as a layout |
+| `restaurant.py` | a layout's room dressed in a theme: every slot swapped, every system mounted |
 | `spike_front.py` | the service spike's front of house: guest callers and a listener for the shift |
 | `spike.py` | the spike world: stations mounted over an empty world, `/kk spike`, `/kk kit`, and a setup block that lays the stations out |
 | `build.py` | runs it all and prints the report |

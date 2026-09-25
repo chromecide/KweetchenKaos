@@ -19,6 +19,7 @@ import sys
 import check
 import content
 import items
+import layouts
 import pack
 import spike
 
@@ -119,6 +120,9 @@ def main(argv):
     name = argv[argv.index("--spike") + 1] if "--spike" in argv else "board"
     pack.begin()
     n = items.write_all(model)
+    # The layout workshop is always there, whatever the spike.
+    layouts.write_slots()
+    layouts.write_authoring()
     note, kit = spike.build(model, name)
     pack.finish()
     print(f"\nwrote pack: {n} items; spike world mounts {note}; kit: "
