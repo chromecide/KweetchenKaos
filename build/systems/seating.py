@@ -53,6 +53,11 @@ LEAVING, RISE_TIMER = "seating_leaving", "seating_rise"
 RISE = 0.6          # after signalling it is getting up, how long the guest stays put
 SETTLE = 1.5        # after sitting, before "my chair isn't taken" can mean "I've gone"
 REACH_CHAIR = 2.0
+TABLE_REACH = 1.6   # a chair's own table is 1 away; this reaches it, not the next one's first
+# THE POSE: sitting is only an animation (the Status slot); standing up clears it -- BEFORE
+# anything else changes the guest, as the queue/role notes warn.
+SIT = {"Type": "PlayAnimation", "Slot": "Status", "Animation": "Sit"}
+STAND_UP = {"Type": "PlayAnimation", "Slot": "Status"}
 
 
 def ids(model):
@@ -62,6 +67,7 @@ def ids(model):
             "table": lambda rot: gid(f"table_{rot.lower()}"),
             "plate": gid("table_plate"),
             "set_free": gid("chair_free"), "set_in_use": gid("chair_in_use"),
+            "set_tables": gid("chair_tables"),
             "effect": gid("seating_system")}
 
 
@@ -74,7 +80,7 @@ def chair_free(model):
 
 def _get_up(value):
     return [signals.from_npc(SIGNAL_KEY, value, tag=SIGNAL_TAG),
-            npc.set_flag(LEAVING), *npc.timer(RISE_TIMER, RISE)]
+            npc.set_flag(LEAVING), *npc.timer(RISE_TIMER, RISE), STAND_UP]
 
 
 def left_fed():
@@ -113,6 +119,13 @@ def guest_fragment(model, on_sat=(), while_seated=(), on_unseated=(), on_lost=()
                    motion=None if while_seated else npc.STILL),
         dict(npc.branch("Sitting, settled, and our chair isn't taken any more: we got up, "
                         "or it went.", npc.all_of(seated, npc.stopped(SETTLE_TIMER))), **after),
+        # FACING THE TABLE, while it settles: a chair's own table is the block right in front
+        # of it (1 away; a neighbour's is further), so facing the nearest table is facing the
+        # way the chair does -- the Feran civilian's pattern, MatchLook + Watch. The teleport
+        # can't set it: its UseTarget needs an entity, and a chair is a block.
+        dict(npc.branch("Just sat down: turn to face this chair's table.",
+                        npc.all_of(npc.near(s["set_tables"], TABLE_REACH), seated),
+                        {"Type": "MatchLook"}), HeadMotion={"Type": "Watch"}),
         npc.branch("Just sat down; the chair hasn't turned taken yet.", seated, npc.STILL),
         npc.branch("At a free chair: sit, claim it, remember where it is. The chair sensor "
                    "comes FIRST: the teleport and StorePosition use its position.",
@@ -120,7 +133,7 @@ def guest_fragment(model, on_sat=(), while_seated=(), on_unseated=(), on_lost=()
                    {"Type": "Teleport", "OffsetRange": [0.0, 0.0], "MaxYOffset": 1.5,
                     "Orientation": "Unchanged"},
                    [signals.from_npc(SIGNAL_KEY, SAT, tag=SIGNAL_TAG),
-                    {"Type": "StorePosition", "Slot": CHAIR_SLOT}, npc.set_flag(SEATED),
+                    {"Type": "StorePosition", "Slot": CHAIR_SLOT}, npc.set_flag(SEATED), SIT,
                     *npc.timer(SETTLE_TIMER, SETTLE), *on_sat], "Seated", debug),
         npc.branch("Walking to the nearest free chair.", chair_free(model),
                    {"Type": "Seek", "StopDistance": 1.0, "SlowDownDistance": 3}, (),
@@ -195,6 +208,8 @@ def build(model, debug=True):
                   "Chairs a guest may sit on: clean ones only. Absence is the interlock.")
     npc.block_set(s["set_in_use"], [s["taken"]],
                   "Taken chairs: how a seated guest checks its own chair is still its own.")
+    npc.block_set(s["set_tables"], [s["table"](rot) for rot, _ in TABLE_AT],
+                  "Every chair's table: what a guest who has just sat down turns to face.")
 
     rules = v.Entries()
     rep = lambda key, text, event: v.report(f"kk.seating.{key}", f"[seating] {text}", debug,
