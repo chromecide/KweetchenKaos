@@ -80,6 +80,7 @@ EVERY_TICK = {"Type": "ModifyTags", "Event": "ENTER", "Operation": "Set", "TagKe
 
 EXIT = f"{settings.NAMESPACE}_Exit_Instance"
 EXIT_AFTER = 4.0        # seconds to read "out of business" before going back to HQ
+ANNOUNCE_SECONDS = 3    # how long an announcement runs: every player inside sees it in that time
 
 
 def write_exit():
@@ -123,6 +124,20 @@ def build(model, roles, debug=True, exit_on_lose=False):
         if debug:
             out.append(v.log(f"kk.shift.{key}", re.sub(r"\{\w+\}", "?", text), event))
         return out
+
+    def logged(event, key, text):
+        """The log line alone (the words go on screen as a title instead)."""
+        return [v.log(f"kk.shift.{key}", re.sub(r"\{\w+\}", "?", text), event)] if debug else []
+
+    # ANNOUNCEMENTS: a title for EVERY player in the restaurant. A title only reaches the
+    # player an event belongs to, but TICK runs once per player inside -- so an event just
+    # starts an announcement (a countdown tag), and each player's tick shows it to them once
+    # (a PER-PLAYER cooldown, longer than the countdown) until it runs out.
+    announcements = {}
+
+    def announce(event, key, title, sub):
+        announcements[key] = (title, sub)
+        return [_set(event, f"t_{key}", ANNOUNCE_SECONDS)]
 
     def deliver(event, crate, pad, delay=None):
         return [signals.to_pad(event, pad, signals.DELIVER, crate, delay),
@@ -217,8 +232,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
     rules.add(5999, [v.at([s["sign"]]), _t("BLOCK_USED", "open", 1)],
               say("BLOCK_USED", "opened", "[shift] Day {day} - OPEN. Expecting {expected} "
                                           "guests. Purse: {money} coins.")
-              + [v.title("kk.shift.title_open", "Day {day}", "kk.shift.title_expected",
-                         "Expecting {expected} guests")])
+              + announce("BLOCK_USED", "open", "Day {day}", "Expecting {expected} guests"))
 
     def fair_pick(base, gate, options):
         """The fair chain over `options` while `gate` holds: sets choice = k + 1."""
@@ -251,9 +265,10 @@ def build(model, roles, debug=True, exit_on_lose=False):
                {"Type": "DisableVolume", "Event": "TICK", "MatchKey": "servicelock",
                 "MatchValue": "1", "Radius": 128.0, "Center": "Volume"},
                signals.to_pads("TICK", signals.CLEAR), EVERY_TICK]
-              + say("TICK", "dayover", "[shift] The last guest has gone - {served} of "
-                                       "{expected} served. Purse: {money} coins. Tomorrow is "
-                                       "day {day}."))
+              + announce("TICK", "dayover", "Day over",
+                         "{served} of {expected} served - {money} coins")
+              + logged("TICK", "dayover", "[shift] The last guest has gone - {served} of "
+                                          "{expected} served. Purse: {money} coins."))
     # 51: a card day (and something left to learn) -- cards INSTEAD of offers.
     rules.add(51, [_t("TICK", "dayover", 1), _t("TICK", "cards_in", 0, "AtMost"),
                    _t("TICK", "locked", 1, "AtLeast")],
@@ -329,9 +344,12 @@ def build(model, roles, debug=True, exit_on_lose=False):
     # OUT OF BUSINESS: an angry guest, or the queue giving up. The message FIRST (it prints
     # the tags as they are); the guests go LAST, half a second later -- the signals above are
     # queued with the reporting guest as their actor, and dropped if it has gone.
-    lose = (say("SIGNAL_RECEIVED", "lost", "[shift] OUT OF BUSINESS on day {day}, with "
-                                           "{money} coins. (Later: back to HQ, the world "
-                                           "reaped.)")
+    # A real run (exit_on_lose) keeps the day and purse for the title and goes back to HQ;
+    # a spike starts again from day 1 so it can play on.
+    lose = (announce("SIGNAL_RECEIVED", "lost", "OUT OF BUSINESS",
+                     "Day {day} - {money} coins" if exit_on_lose else "Starting again from day 1")
+            + logged("SIGNAL_RECEIVED", "lost", "[shift] OUT OF BUSINESS on day {day}, with "
+                                                "{money} coins.")
             + [_set("SIGNAL_RECEIVED", "lost", 1), _set("SIGNAL_RECEIVED", "open", 0),
                _set("SIGNAL_RECEIVED", "closing", 0), _set("SIGNAL_RECEIVED", "time_left", 0),
                {"Type": "ReplaceBlockType", "Event": "SIGNAL_RECEIVED",
@@ -343,9 +361,9 @@ def build(model, roles, debug=True, exit_on_lose=False):
                {"Type": "RemoveEntities", "Event": "SIGNAL_RECEIVED", "IncludeNpcs": True,
                 "IncludePlayers": False, "IgnoreInvulnerability": True, "Roles": guests,
                 "Delay": 0.5},
-               # Until HQ exists: start again from day 1 so a spike can play on.
-               _set("SIGNAL_RECEIVED", signals.DAY, 1), _set("SIGNAL_RECEIVED", signals.MONEY, 0),
-               _set("SIGNAL_RECEIVED", "cards_in", every)])
+               _set("SIGNAL_RECEIVED", "cards_in", every)]
+            + ([] if exit_on_lose else [_set("SIGNAL_RECEIVED", signals.DAY, 1),
+                                        _set("SIGNAL_RECEIVED", signals.MONEY, 0)]))
     rules.add(900, [signals.heard(signals.GUEST, signals.ANGRY),
                     _t("SIGNAL_RECEIVED", "lost", 0)], lose)
     rules.add(901, [signals.heard(signals.QUEUE, signals.IMPATIENT),
@@ -371,6 +389,19 @@ def build(model, roles, debug=True, exit_on_lose=False):
                       + ("" if c["cube"] else " Hold it and press a free station it fits "
                                               "to upgrade it.")))
 
+    # 9000+: THE ANNOUNCEMENTS (see announce): every player's tick shows a running one to
+    # them once; a whole-volume beat counts it down.
+    for k, (key, (title, sub)) in enumerate(sorted(announcements.items())):
+        tag = f"t_{key}"
+        rules.add(9000 + 2 * k,
+                  [_t("TICK", tag, 1, "AtLeast"),
+                   {"Type": "CooldownCondition", "Event": "TICK",
+                    "Cooldown": float(ANNOUNCE_SECONDS + 4), "Scope": "PerPlayer"}],
+                  [v.title(f"kk.shift.title.{key}", title, f"kk.shift.title.{key}.sub", sub,
+                           event="TICK"), EVERY_TICK])
+        rules.add(9001 + 2 * k, [_t("TICK", tag, 1, "AtLeast"), _every(1.0)],
+                  [_set("TICK", tag, -1, op="Increment"), EVERY_TICK])
+
     rules.write(s["effect"], "The shift: the day, arrivals, the purse, the menu, deliveries. "
                              "See build/systems/shift.py.")
     # The service lock: its Rules stop building and breaking, and its one effect marks
@@ -383,7 +414,8 @@ def build(model, roles, debug=True, exit_on_lose=False):
             "closing": "0", "time_left": "0", "beat": "0", "picked": "0", "choice": "0",
             "lost": "0", "started": "0", "dayover": "0", "cardpick": "0",
             "cards_in": str(every), "locked": str(locked), "onmenu": "0",
-            "to_arrive": "0", "expected": "0", "served": "0", "cards": "0"}
+            "to_arrive": "0", "expected": "0", "served": "0", "cards": "0",
+            **{f"t_{k}": "0" for k in announcements}}
     tags.update({f"has_{d}": "0" for d in dishes})
     tags.update({f"offered_{d}": "0" for d in dishes})
     tags.update({f"own_{c}": "0" for c in offers.crates(model)})
