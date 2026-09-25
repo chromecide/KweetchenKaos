@@ -2,7 +2,7 @@
 SERVING: how a dish in a player's hand reaches a guest. Infrastructure -- the one handshake
 the items and the guest system both use, so neither has to know the other.
 
-The mechanism the shipped shears and sheep use: right-clicking (or left-clicking) an NPC
+The mechanism the shipped shears and sheep use: F (or either click) on an NPC
 with a served dish runs ContextualUseNPC, which posts the dish's CONTEXT to the NPC; the
 guest senses it (InteractionContext) and decides what it means. The dish is ALWAYS taken if
 the guest is interactable at all -- it never learns whether the guest wanted it -- which is
@@ -20,9 +20,24 @@ def context(item):
     return f"{settings.NAMESPACE}_Serve_{item['game_id']}"
 
 
+def _serve(then=None):
+    step = {"Type": "ContextualUseNPC", "Context": None,
+            "Effects": {"WorldSoundEventId": "SFX_Player_Pickup_Item"},
+            "Next": {"Type": "ModifyInventory", "AdjustHeldItemQuantity": -1}}
+    if then:
+        step["Failed"] = then
+    return step
+
+
 def interactions(item):
-    use = {"Interactions": [
-        {"Type": "ContextualUseNPC", "Context": context(item),
-         "Effects": {"WorldSoundEventId": "SFX_Player_Pickup_Item"},
-         "Next": {"Type": "ModifyInventory", "AdjustHeldItemQuantity": -1}}]}
-    return {"Primary": use, "Secondary": use}
+    """Serve with F (like every other step), or either click.
+
+    F, SPIKE: an item's own Use has no shipped example -- F on an NPC is normally the NPC's.
+    So F tries the guest first and, when there is no guest to take it, falls back to the
+    block's own F (UseBlock) -- the shipped place-block right-click does the same the other
+    way round (UseBlock, else place). Without the fallback a dish in hand would make every
+    counter, stove and bin deaf to F."""
+    serve = lambda then=None: dict(_serve(then), Context=context(item))
+    click = {"Interactions": [serve()]}
+    return {"Primary": click, "Secondary": click,
+            "Use": {"Interactions": [serve({"Type": "UseBlock"})]}}
