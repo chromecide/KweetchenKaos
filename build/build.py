@@ -7,6 +7,7 @@ BUILD v2: read a theme, check it, report it, write the pack.
     python3 build/build.py --theme NAME    another theme
     python3 build/build.py --spike NAME    which system the spike world mounts (default board)
     python3 build/build.py --rules NAME    which rules set (default standard; "practice" to test)
+    python3 build/build.py --spike world   build HQ and the restaurants (content/world/world.json)
 
 The REPORT is the point for a person: every menu entry, and the whole chain that makes
 it, from crate to plate, in plain words. If the report reads right, the theme is right.
@@ -22,6 +23,7 @@ import items
 import layouts
 import pack
 import spike
+import world
 
 
 def producers(model):
@@ -123,6 +125,16 @@ def main(argv):
     # The layout workshop is always there, whatever the spike.
     layouts.write_slots()
     layouts.write_authoring()
+    if name == "world":
+        # HQ and the restaurants in content/world/world.json -- /kk hq to go.
+        summary, notes = world.build()
+        pack.finish()
+        print(f"\nwrote pack: {n} items; the WORLD: /kk hq")
+        for line in summary:
+            print(f"  {line}")
+        for line in notes:
+            print(f"  NOTE: {line}")
+        return 0
     note, kit = spike.build(model, name)
     pack.finish()
     print(f"\nwrote pack: {n} items; spike world mounts {note}; kit: "

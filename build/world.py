@@ -1,0 +1,169 @@
+"""
+THE WORLD: HQ, and the restaurants its portals lead to (content/world/world.json).
+
+    /kk hq                  go to HQ (one shared world; everyone who goes is together)
+    walk into a portal      you and whoever walks in after you land in THAT restaurant's
+                            run -- a fresh one when nobody is in it
+    OUT OF BUSINESS         a few seconds later, everyone goes back to HQ, in front of the
+                            portal they took; the empty restaurant is torn down
+
+HQ IS A LAYOUT, built by hand in the authoring world with two HQ slots: an ARRIVAL slot
+(where players appear) and PORTAL slots 1-4. world.json hangs a restaurant (theme + layout +
+rules) on a portal number.
+
+HOW THE GAME DOES IT (the Instances plugin; the shipped Forgotten Temple portal works the
+same way):
+  * A PORTAL is a block whose CollisionEnter runs TeleportInstance: stepping on it sends you
+    into a new instance of that restaurant's world. With no InstanceKey, the BLOCK remembers
+    the world it opened, so everyone who steps on the same portal joins the same run while
+    it exists; once it is torn down, the next step opens a fresh one. Each player's return
+    point is set in front of the portal (PersonalReturnPoint).
+  * Leaving is ExitInstance (shift.py's loss rule), which uses that return point.
+  * A RESTAURANT'S WORLD is flat and empty. The first player to arrive triggers a volume that
+    pastes the dressed room (restaurant.py) -- which carries all its own systems, so there is
+    nothing else to set up. The world is removed once it has been empty a little while.
+  * HQ is built the same way: pasted when the first player arrives.
+"""
+import json
+import os
+
+import blocks
+import clock
+import content
+import layouts
+import pack
+import restaurant
+import settings
+import volumes as v
+
+NS = settings.NAMESPACE
+HQ = f"{NS}_HQ"
+AT = (32, 0, 32)             # where a room or HQ is pasted in its own world
+FRONT = (16.0, 2.0, -4.0)    # a restaurant's arrival, relative to its room: in front of it
+PORTAL_LOOK = {"model": "Blocks/Miscellaneous/Platform_Magic_Exit.blockymodel",
+               "texture": "Blocks/Miscellaneous/Platform_Magic_Blue2.png",
+               "icon": "Icons/ItemsGenerated/Portal_Return.png"}
+
+
+def load():
+    return json.load(open(os.path.join(settings.CONTENT, "world", "world.json")))
+
+
+def _instance(name, spawn, volumes_, comment, clock_on, keep_key=None, empty_after=20.0):
+    pack.write(pack.out("Instances", name, "instance.bson"), {
+        "$Comment": comment, "Version": 2,
+        "WorldGen": {"Type": "Flat", "Layers": [{"From": 0, "To": 1, "BlockType": "Soil_Grass"}]},
+        "SpawnProvider": {"Id": "Global", "SpawnPoint": {
+            "X": spawn[0], "Y": spawn[1], "Z": spawn[2], "Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0}},
+        "GameMode": "Adventure", "GameTime": "0001-01-01T12:00:00Z", "IsGameTimePaused": True,
+        **(clock.WORLD_TIME if clock_on else {}),
+        "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False, "IsBlockSpawnersEnabled": False,
+        "DeleteOnRemove": True, "DeleteOnUniverseStart": True,
+        "Plugin": {"Instance": dict(
+            {"RemovalConditions": [{"Type": "WorldEmpty", "TimeoutSeconds": empty_after}]},
+            **({"InstanceKey": keep_key} if keep_key else {}))}})
+    pack.write(pack.out("Instances", name, "resources", "TriggerVolumeData.json"),
+               {"Volumes": {f"5b1ce000-0000-4000-8000-{i:012d}": vol
+                            for i, vol in enumerate(volumes_, start=1)}})
+
+
+def _paste_on_arrival(name, prefab, text):
+    """A volume that pastes `prefab` at AT the first time a player is in the world."""
+    effect = f"{name}_Arrival"
+    rules = v.Entries()
+    rules.add(1, [{"Type": "TagCondition", "Event": "ENTER", "Source": "Self", "TagKey": "built",
+                   "Comparison": "Exactly", "TagValue": "0"}],
+              [{"Type": "PastePrefab", "Event": "ENTER", "Prefab": prefab,
+                "Origin": "WorldAbsolute",
+                "Position": {"X": float(AT[0]), "Y": float(AT[1]), "Z": float(AT[2])},
+                "ShowParticles": False},
+               {"Type": "ModifyTags", "Event": "ENTER", "Operation": "Set", "TagKey": "built",
+                "TagValue": "1"},
+               v.say(f"kk.world.{name.lower()}", text, event="ENTER")])
+    rules.write(effect, "Pastes the room when the first player arrives. See build/world.py.")
+    return v.volume(f"{name}_arrival", effect, {"built": "0"})
+
+
+def _instance_name(r):
+    return f"{NS}_R_" + "_".join(p.capitalize() for p in r["id"].split("_"))
+
+
+def build(debug=True):
+    """Write HQ, its portals, and every restaurant's world. Returns a summary."""
+    world = load()
+    notes = []
+    portal_of = {}
+    for r in world["restaurants"]:
+        model = content.load(r["theme"], r["rules"])
+        room, problems, info = restaurant.build(model, r["layout"], debug=debug,
+                                                exit_on_lose=True)
+        notes += [f"{r['name']}: {p}" for p in problems]
+        inst = _instance_name(r)
+        prefab = f"{inst}_Room"
+        pack.write(pack.out("Prefabs", f"{prefab}.prefab.json"),
+                   dict(room, **{"$Comment": f"{r['name']}: {info['name']} in {r['theme']}, "
+                                             f"{r['rules']} rules. See build/world.py."}))
+        spawn = (AT[0] + FRONT[0], AT[1] + FRONT[1], AT[2] + FRONT[2])
+        _instance(inst, spawn, [_paste_on_arrival(inst, prefab, f"[{r['name']}] welcome!")],
+                  f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True)
+        portal_of[r["portal"]] = (r, inst)
+
+    # THE PORTALS: one block per restaurant, stepped on to go.
+    for n, (r, inst) in portal_of.items():
+        key = f"{NS}_Portal_{n}"
+        block = dict(blocks.block_for(PORTAL_LOOK), Material="Solid", HitboxType="Pad_Portal",
+                     AmbientSoundEventId="SFX_Portal_Neutral",
+                     InteractionHint=blocks.hint(key, f"{r['name']} - step on to play"),
+                     Interactions={"CollisionEnter": {"Interactions": [{
+                         "Type": "TeleportInstance", "InstanceName": inst,
+                         # The return point: two blocks in front of the portal, towards
+                         # the arrival.
+                         "OriginSource": "Block",
+                         "PositionOffset": {"X": 0.0, "Y": 1.0, "Z": -2.0},
+                         "Rotation": {"Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0},
+                         "PersonalReturnPoint": True, "CloseOnBlockRemove": False,
+                         "Next": {"Type": "Simple", "Effects": {
+                             "LocalSoundEventId": "SFX_Portal_Neutral_Teleport_Local"}}}]}})
+        blocks.item(key, f"Portal: {r['name']}", PORTAL_LOOK["icon"], block,
+                    f"HQ portal to {r['name']}. See build/world.py.")
+
+    # HQ: its layout with the HQ slots swapped: portals on the floor above their slots,
+    # the arrival marked by where players spawn.
+    meta = json.load(open(os.path.join(settings.CONTENT, "layouts", world["hq"], "layout.json")))
+    room = json.load(open(os.path.join(settings.CONTENT, "layouts", world["hq"], "room.prefab.json")))
+    out, arrival = [], None
+    for b in room["blocks"]:
+        name = b["name"]
+        if name == layouts.slot_id("arrival"):
+            arrival = (b["x"], b["y"], b["z"])
+            out.append(dict(b, name="Wood_Softwood_Planks"))
+        elif name.startswith(layouts.slot_id("portal_")[:-1]):
+            n = int(name.rsplit("_", 1)[1])
+            out.append(dict(b, name="Wood_Softwood_Planks"))
+            if n in portal_of:
+                out.append({"x": b["x"], "y": b["y"] + 1, "z": b["z"], "name": f"{NS}_Portal_{n}"})
+            else:
+                notes.append(f"HQ: portal slot {n} has no restaurant in world.json")
+        else:
+            out.append(b)
+    for n in portal_of:
+        if not any(b["name"] == f"{NS}_Portal_{n}" for b in out):
+            notes.append(f"HQ: no portal slot {n} for '{portal_of[n][0]['name']}'")
+    if arrival is None:
+        notes.append("HQ: no arrival slot -- players arrive at the plot's front")
+        arrival = (16, 0, 2)
+    pack.write(pack.out("Prefabs", f"{HQ}_Room.prefab.json"),
+               dict(room, blocks=out, entities=[], fluids=[],
+                    **{"$Comment": f"HQ: {meta['name']}. See build/world.py."}))
+    spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + 2.0, AT[2] + arrival[2] + 0.5)
+    _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", "[HQ] welcome - step on a "
+                                                               "portal to play")],
+              "HQ: where runs start. One shared world. See build/world.py.", clock_on=False,
+              keep_key=HQ.lower(), empty_after=60.0)
+    pack.say("commands.kk.hq.desc", "Go to KwitchenKaos HQ")
+    pack.write(pack.out("MacroCommands", "KKHq.json"), {
+        "$Comment": "Go to HQ. See build/world.py.", "Name": "kk hq",
+        "Description": "server.commands.kk.hq.desc",
+        "Commands": [f"instances spawn {HQ}", "wait 4", "gamemode adventure"]})
+    return [f"{r['name']} on portal {n}: {r['layout']} in {r['theme']}, {r['rules']} rules"
+            for n, (r, _) in sorted(portal_of.items())], notes

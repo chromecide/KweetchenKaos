@@ -2379,7 +2379,7 @@
       "x": -3,
       "y": 0,
       "z": -4,
-      "name": "Wood_Softwood_Planks"
+      "name": "K2_Slot_Portal_3"
     },
     {
       "x": -3,
@@ -2403,7 +2403,7 @@
       "x": -3,
       "y": 0,
       "z": 0,
-      "name": "Wood_Softwood_Planks"
+      "name": "K2_Slot_Portal_4"
     },
     {
       "x": -3,
@@ -2931,7 +2931,7 @@
       "x": 0,
       "y": 0,
       "z": -8,
-      "name": "Wood_Softwood_Planks"
+      "name": "K2_Slot_Arrival"
     },
     {
       "x": 0,
@@ -3531,7 +3531,7 @@
       "x": 3,
       "y": 0,
       "z": -4,
-      "name": "Wood_Softwood_Planks"
+      "name": "K2_Slot_Portal_1"
     },
     {
       "x": 3,
@@ -3555,7 +3555,7 @@
       "x": 3,
       "y": 0,
       "z": 0,
-      "name": "Wood_Softwood_Planks"
+      "name": "K2_Slot_Portal_2"
     },
     {
       "x": 3,
@@ -3855,25 +3855,25 @@
       "x": 5,
       "y": 0,
       "z": -14,
-      "name": "K2_Slot_Pad_4"
+      "name": "Soil_Gravel"
     },
     {
       "x": 5,
       "y": 0,
       "z": -13,
-      "name": "K2_Slot_Pad_3"
+      "name": "Soil_Gravel"
     },
     {
       "x": 5,
       "y": 0,
       "z": -12,
-      "name": "K2_Slot_Pad_2"
+      "name": "Soil_Gravel"
     },
     {
       "x": 5,
       "y": 0,
       "z": -11,
-      "name": "K2_Slot_Pad_1"
+      "name": "Soil_Gravel"
     },
     {
       "x": 5,
@@ -3937,57 +3937,9 @@
     },
     {
       "x": 5,
-      "y": 1,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
       "y": 0,
       "z": 0,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 5,
-      "y": 1,
-      "z": 0,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 0,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 0,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": 0,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 5,
@@ -3997,57 +3949,9 @@
     },
     {
       "x": 5,
-      "y": 1,
-      "z": 1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 1,
-      "name": "K2_Slot_Sign"
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": 1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
       "y": 0,
       "z": 2,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 5,
-      "y": 1,
-      "z": 2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": 2,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 5,
@@ -4057,57 +3961,9 @@
     },
     {
       "x": 5,
-      "y": 1,
-      "z": 3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": 3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
       "y": 0,
       "z": 4,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 5,
-      "y": 1,
-      "z": 4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": 4,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 5,
@@ -4117,57 +3973,9 @@
     },
     {
       "x": 5,
-      "y": 1,
-      "z": 5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": 5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
       "y": 0,
       "z": 6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 5,
-      "y": 1,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 5,
@@ -4273,57 +4081,9 @@
     },
     {
       "x": 6,
-      "y": 1,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Decorative"
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": -8,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 6,
-      "y": 1,
-      "z": -8,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -8,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -8,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -8,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 6,
@@ -4333,57 +4093,9 @@
     },
     {
       "x": 6,
-      "y": 1,
-      "z": -7,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -7,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -7,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -7,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": -6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 6,
-      "y": 1,
-      "z": -6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -6,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 6,
@@ -4393,57 +4105,9 @@
     },
     {
       "x": 6,
-      "y": 1,
-      "z": -5,
-      "name": "Rock_Stone_Brick_Decorative"
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": -4,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 6,
-      "y": 1,
-      "z": -4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -4,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 6,
@@ -4453,87 +4117,15 @@
     },
     {
       "x": 6,
-      "y": 1,
-      "z": -3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": -2,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 6,
-      "y": 1,
-      "z": -2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 6,
-      "y": 1,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Decorative"
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 6,
@@ -4543,23 +4135,9 @@
     },
     {
       "x": 6,
-      "y": 4,
-      "z": 0,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": 1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": 1,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 6,
@@ -4569,30 +4147,9 @@
     },
     {
       "x": 6,
-      "y": 4,
-      "z": 2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": 3,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": 3,
-      "name": "Wood_Torch_Wall",
-      "rotation": 1
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": 3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 6,
@@ -4602,53 +4159,15 @@
     },
     {
       "x": 6,
-      "y": 4,
-      "z": 4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": 5,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 6,
-      "y": 4,
-      "z": 5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 1,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
+      "name": "Wood_Softwood_Planks"
     },
     {
       "x": 6,
@@ -4754,28 +4273,9 @@
     },
     {
       "x": 7,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 7,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": -8,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 4,
-      "z": -8,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 7,
@@ -4785,23 +4285,9 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": -7,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": -6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 4,
-      "z": -6,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 7,
@@ -4811,23 +4297,9 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": -5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": -4,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 4,
-      "z": -4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 7,
@@ -4837,47 +4309,15 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": -3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": -2,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 7,
-      "y": 4,
-      "z": -2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 1,
-      "z": -1,
-      "name": "K2_Slot_Station_Combine"
-    },
-    {
-      "x": 7,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 7,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 7,
@@ -4887,23 +4327,9 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": 0,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": 1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 4,
-      "z": 1,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 7,
@@ -4913,23 +4339,9 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": 2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": 3,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 4,
-      "z": 3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 7,
@@ -4939,53 +4351,15 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": 4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": 5,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 7,
-      "y": 4,
-      "z": 5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": 6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 1,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 7,
-      "y": 2,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 7,
-      "y": 3,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 7,
-      "y": 4,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 7,
@@ -5091,46 +4465,9 @@
     },
     {
       "x": 8,
-      "y": 1,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Decorative"
-    },
-    {
-      "x": 8,
-      "y": 2,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 8,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": -8,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 8,
-      "y": 3,
-      "z": -8,
-      "name": "Wood_Torch_Wall"
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": -8,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 8,
@@ -5140,23 +4477,9 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": -7,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": -6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": -6,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 8,
@@ -5166,23 +4489,9 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": -5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": -4,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": -4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 8,
@@ -5192,47 +4501,15 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": -3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": -2,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 8,
-      "y": 4,
-      "z": -2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 8,
-      "y": 1,
-      "z": -1,
-      "name": "K2_Slot_Station_Combine"
-    },
-    {
-      "x": 8,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 8,
@@ -5242,23 +4519,9 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": 0,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": 1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": 1,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 8,
@@ -5268,23 +4531,9 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": 2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": 3,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": 3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 8,
@@ -5294,59 +4543,15 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": 4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": 5,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 8,
-      "y": 1,
-      "z": 5,
-      "name": "K2_Slot_Station_Bin"
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": 5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": 6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 8,
-      "y": 1,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 8,
-      "y": 2,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 8,
-      "y": 3,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 8,
@@ -5442,31 +4647,13 @@
       "x": 9,
       "y": 0,
       "z": -10,
-      "name": "K2_Slot_Queue_1"
+      "name": "Soil_Gravel"
     },
     {
       "x": 9,
       "y": 0,
       "z": -9,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 9,
-      "y": 1,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 9,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 9,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 9,
@@ -5476,23 +4663,9 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": -8,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 9,
       "y": 0,
       "z": -7,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 9,
-      "y": 4,
-      "z": -7,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 9,
@@ -5502,23 +4675,9 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": -6,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 9,
       "y": 0,
       "z": -5,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 9,
-      "y": 4,
-      "z": -5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 9,
@@ -5528,23 +4687,9 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": -4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 9,
       "y": 0,
       "z": -3,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 9,
-      "y": 4,
-      "z": -3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 9,
@@ -5554,34 +4699,9 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": -2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 9,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 9,
-      "y": 1,
-      "z": -1,
-      "name": "K2_Slot_Station_Combine"
-    },
-    {
-      "x": 9,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 9,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 9,
@@ -5591,23 +4711,9 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": 0,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 9,
       "y": 0,
       "z": 1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 9,
-      "y": 4,
-      "z": 1,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 9,
@@ -5617,23 +4723,9 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": 2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 9,
       "y": 0,
       "z": 3,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 9,
-      "y": 4,
-      "z": 3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 9,
@@ -5643,53 +4735,15 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": 4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 9,
       "y": 0,
       "z": 5,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 9,
-      "y": 4,
-      "z": 5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 9,
       "y": 0,
       "z": 6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 9,
-      "y": 1,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 9,
-      "y": 2,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 9,
-      "y": 3,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 9,
-      "y": 4,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 9,
@@ -5795,34 +4849,9 @@
     },
     {
       "x": 10,
-      "y": 1,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 10,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": -8,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": -8,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 10,
@@ -5832,23 +4861,9 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": -7,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": -6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": -6,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 10,
@@ -5858,23 +4873,9 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": -5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": -4,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": -4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 10,
@@ -5884,60 +4885,15 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": -3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": -2,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 10,
-      "y": 3,
-      "z": -2,
-      "name": "Wood_Torch_Wall",
-      "rotation": 2
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": -2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 10,
-      "y": 1,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Decorative"
-    },
-    {
-      "x": 10,
-      "y": 2,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 10,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 10,
@@ -5947,48 +4903,15 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": 0,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": 1,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 10,
-      "y": 1,
-      "z": 1,
-      "name": "K2_Slot_Station_Press"
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": 1,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": 2,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 10,
-      "y": 1,
-      "z": 2,
-      "name": "K2_Slot_Station_Heat"
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": 2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 10,
@@ -5998,29 +4921,9 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": 3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": 4,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 10,
-      "y": 1,
-      "z": 4,
-      "name": "K2_Slot_Station_Wash"
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": 4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 10,
@@ -6030,40 +4933,9 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": 5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": 6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 10,
-      "y": 1,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 10,
-      "y": 2,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 10,
-      "y": 3,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 10,
@@ -6159,31 +5031,13 @@
       "x": 11,
       "y": 0,
       "z": -10,
-      "name": "K2_Slot_Queue_2"
+      "name": "Soil_Gravel"
     },
     {
       "x": 11,
       "y": 0,
       "z": -9,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 11,
@@ -6193,23 +5047,9 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": -8,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 11,
       "y": 0,
       "z": -7,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 11,
-      "y": 4,
-      "z": -7,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 11,
@@ -6219,23 +5059,9 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": -6,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 11,
       "y": 0,
       "z": -5,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 11,
-      "y": 4,
-      "z": -5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 11,
@@ -6245,23 +5071,9 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": -4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 11,
       "y": 0,
       "z": -3,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 11,
-      "y": 4,
-      "z": -3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 11,
@@ -6271,28 +5083,9 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": -2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 11,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 11,
@@ -6302,43 +5095,15 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": 0,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 11,
       "y": 0,
       "z": 1,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 11,
-      "y": 4,
-      "z": 1,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 11,
       "y": 0,
       "z": 2,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 2,
-      "name": "Wood_Torch_Wall",
-      "rotation": 3
-    },
-    {
-      "x": 11,
-      "y": 4,
-      "z": 2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 11,
@@ -6348,23 +5113,9 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": 3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 11,
       "y": 0,
       "z": 4,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 11,
-      "y": 4,
-      "z": 4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 11,
@@ -6374,40 +5125,9 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": 5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 11,
       "y": 0,
       "z": 6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 4,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 11,
@@ -6513,46 +5233,9 @@
     },
     {
       "x": 12,
-      "y": 1,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Decorative"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
       "y": 0,
       "z": -8,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -8,
-      "name": "Wood_Torch_Wall"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": -8,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 12,
@@ -6562,23 +5245,9 @@
     },
     {
       "x": 12,
-      "y": 4,
-      "z": -7,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 12,
       "y": 0,
       "z": -6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": -6,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 12,
@@ -6588,30 +5257,9 @@
     },
     {
       "x": 12,
-      "y": 4,
-      "z": -5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 12,
       "y": 0,
       "z": -4,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -4,
-      "name": "K2_Slot_Chair",
-      "rotation": 1
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": -4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 12,
@@ -6621,60 +5269,15 @@
     },
     {
       "x": 12,
-      "y": 4,
-      "z": -3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 12,
       "y": 0,
       "z": -2,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 12,
-      "y": 3,
-      "z": -2,
-      "name": "Wood_Torch_Wall",
-      "rotation": 2
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": -2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 12,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Decorative"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 12,
@@ -6684,57 +5287,9 @@
     },
     {
       "x": 12,
-      "y": 1,
-      "z": 0,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 0,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 0,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 0,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
       "y": 0,
       "z": 1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": 1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 12,
@@ -6744,57 +5299,9 @@
     },
     {
       "x": 12,
-      "y": 1,
-      "z": 2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
       "y": 0,
       "z": 3,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": 3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 3,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 12,
@@ -6804,87 +5311,15 @@
     },
     {
       "x": 12,
-      "y": 1,
-      "z": 4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
       "y": 0,
       "z": 5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": 5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 5,
-      "name": "Rock_Stone_Brick_Smooth"
+      "name": "Wood_Softwood_Planks"
     },
     {
       "x": 12,
       "y": 0,
       "z": 6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 6,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 12,
@@ -6980,31 +5415,13 @@
       "x": 13,
       "y": 0,
       "z": -10,
-      "name": "K2_Slot_Queue_3"
+      "name": "Soil_Gravel"
     },
     {
       "x": 13,
       "y": 0,
       "z": -9,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 13,
-      "y": 1,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 13,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 13,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 13,
@@ -7014,42 +5431,15 @@
     },
     {
       "x": 13,
-      "y": 4,
-      "z": -8,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 13,
       "y": 0,
       "z": -7,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 13,
-      "y": 4,
-      "z": -7,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 13,
       "y": 0,
       "z": -6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 13,
-      "y": 1,
-      "z": -6,
-      "name": "K2_Slot_Chair"
-    },
-    {
-      "x": 13,
-      "y": 4,
-      "z": -6,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 13,
@@ -7059,23 +5449,9 @@
     },
     {
       "x": 13,
-      "y": 4,
-      "z": -5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 13,
       "y": 0,
       "z": -4,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 13,
-      "y": 4,
-      "z": -4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 13,
@@ -7085,53 +5461,15 @@
     },
     {
       "x": 13,
-      "y": 4,
-      "z": -3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 13,
       "y": 0,
       "z": -2,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 13,
-      "y": 4,
-      "z": -2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 13,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 13,
-      "y": 1,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 13,
-      "y": 2,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 13,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 13,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 13,
@@ -7251,7 +5589,7 @@
       "x": 14,
       "y": 0,
       "z": -13,
-      "name": "K2_Slot_Pool"
+      "name": "Soil_Gravel"
     },
     {
       "x": 14,
@@ -7279,34 +5617,9 @@
     },
     {
       "x": 14,
-      "y": 1,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 14,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 14,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 14,
       "y": 0,
       "z": -8,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 14,
-      "y": 4,
-      "z": -8,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 14,
@@ -7316,23 +5629,9 @@
     },
     {
       "x": 14,
-      "y": 4,
-      "z": -7,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 14,
       "y": 0,
       "z": -6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 14,
-      "y": 4,
-      "z": -6,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 14,
@@ -7342,43 +5641,15 @@
     },
     {
       "x": 14,
-      "y": 4,
-      "z": -5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 14,
       "y": 0,
       "z": -4,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 14,
-      "y": 4,
-      "z": -4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 14,
       "y": 0,
       "z": -3,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 14,
-      "y": 1,
-      "z": -3,
-      "name": "K2_Slot_Chair",
-      "rotation": 2
-    },
-    {
-      "x": 14,
-      "y": 4,
-      "z": -3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 14,
@@ -7388,40 +5659,9 @@
     },
     {
       "x": 14,
-      "y": 4,
-      "z": -2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 14,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 14,
-      "y": 1,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 14,
-      "y": 2,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 14,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 14,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 14,
@@ -7559,31 +5799,13 @@
       "x": 15,
       "y": 0,
       "z": -10,
-      "name": "K2_Slot_Queue_4"
+      "name": "Soil_Gravel"
     },
     {
       "x": 15,
       "y": 0,
       "z": -9,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 15,
-      "y": 1,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 15,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 15,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 15,
@@ -7593,23 +5815,9 @@
     },
     {
       "x": 15,
-      "y": 4,
-      "z": -8,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 15,
       "y": 0,
       "z": -7,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 15,
-      "y": 4,
-      "z": -7,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 15,
@@ -7619,30 +5827,9 @@
     },
     {
       "x": 15,
-      "y": 4,
-      "z": -6,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 15,
       "y": 0,
       "z": -5,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 15,
-      "y": 1,
-      "z": -5,
-      "name": "K2_Slot_Chair",
-      "rotation": 3
-    },
-    {
-      "x": 15,
-      "y": 4,
-      "z": -5,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 15,
@@ -7652,23 +5839,9 @@
     },
     {
       "x": 15,
-      "y": 4,
-      "z": -4,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 15,
       "y": 0,
       "z": -3,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 15,
-      "y": 4,
-      "z": -3,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
     },
     {
       "x": 15,
@@ -7678,40 +5851,9 @@
     },
     {
       "x": 15,
-      "y": 4,
-      "z": -2,
-      "name": "Wood_Hardwood_Planks_Half",
-      "rotation": 8
-    },
-    {
-      "x": 15,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 15,
-      "y": 1,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 15,
-      "y": 2,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 15,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 15,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 15,
@@ -7859,57 +6001,9 @@
     },
     {
       "x": 16,
-      "y": 1,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Decorative"
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -9,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
       "y": 0,
       "z": -8,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 16,
-      "y": 1,
-      "z": -8,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -8,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -8,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -8,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 16,
@@ -7919,57 +6013,9 @@
     },
     {
       "x": 16,
-      "y": 1,
-      "z": -7,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -7,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -7,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -7,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
       "y": 0,
       "z": -6,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 16,
-      "y": 1,
-      "z": -6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -6,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -6,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 16,
@@ -7979,57 +6025,9 @@
     },
     {
       "x": 16,
-      "y": 1,
-      "z": -5,
-      "name": "Rock_Stone_Brick_Decorative"
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -5,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
       "y": 0,
       "z": -4,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 16,
-      "y": 1,
-      "z": -4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -4,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -4,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 16,
@@ -8039,87 +6037,15 @@
     },
     {
       "x": 16,
-      "y": 1,
-      "z": -3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -3,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
       "y": 0,
       "z": -2,
       "name": "Wood_Softwood_Planks"
     },
     {
       "x": 16,
-      "y": 1,
-      "z": -2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -2,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
       "y": 0,
       "z": -1,
       "name": "Wood_Softwood_Planks"
-    },
-    {
-      "x": 16,
-      "y": 1,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Decorative"
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -1,
-      "name": "Rock_Stone_Brick_Smooth"
     },
     {
       "x": 16,
@@ -12812,63 +10738,7 @@
     },
     {
       "x": 5,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
       "y": 0,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 1,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 4,
       "z": 0,
       "name": "Empty",
       "level": 0
@@ -12882,63 +10752,7 @@
     },
     {
       "x": 5,
-      "y": 1,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
       "y": 0,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 1,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 4,
       "z": 2,
       "name": "Empty",
       "level": 0
@@ -12952,63 +10766,7 @@
     },
     {
       "x": 5,
-      "y": 1,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
       "y": 0,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 1,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 4,
       "z": 4,
       "name": "Empty",
       "level": 0
@@ -13022,63 +10780,7 @@
     },
     {
       "x": 5,
-      "y": 1,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 4,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
       "y": 0,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 1,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 2,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 3,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 4,
       "z": 6,
       "name": "Empty",
       "level": 0
@@ -13204,63 +10906,7 @@
     },
     {
       "x": 6,
-      "y": 1,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 1,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -13274,63 +10920,7 @@
     },
     {
       "x": 6,
-      "y": 1,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
       "y": 0,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 1,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -13344,63 +10934,7 @@
     },
     {
       "x": 6,
-      "y": 1,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
       "y": 0,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 1,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
       "z": -4,
       "name": "Empty",
       "level": 0
@@ -13414,34 +10948,6 @@
     },
     {
       "x": 6,
-      "y": 1,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": -2,
       "name": "Empty",
@@ -13449,63 +10955,7 @@
     },
     {
       "x": 6,
-      "y": 1,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0
@@ -13519,21 +10969,7 @@
     },
     {
       "x": 6,
-      "y": 4,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
       "y": 0,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
       "z": 1,
       "name": "Empty",
       "level": 0
@@ -13547,28 +10983,7 @@
     },
     {
       "x": 6,
-      "y": 4,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
       "y": 0,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
       "z": 3,
       "name": "Empty",
       "level": 0
@@ -13582,13 +10997,6 @@
     },
     {
       "x": 6,
-      "y": 4,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
       "y": 0,
       "z": 5,
       "name": "Empty",
@@ -13596,42 +11004,7 @@
     },
     {
       "x": 6,
-      "y": 4,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
       "y": 0,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 1,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 2,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 3,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 6,
-      "y": 4,
       "z": 6,
       "name": "Empty",
       "level": 0
@@ -13757,28 +11130,7 @@
     },
     {
       "x": 7,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -13792,21 +11144,7 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
       "y": 0,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 4,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -13820,21 +11158,7 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
       "y": 0,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 4,
       "z": -4,
       "name": "Empty",
       "level": 0
@@ -13848,13 +11172,6 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": -2,
       "name": "Empty",
@@ -13862,35 +11179,7 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0
@@ -13904,21 +11193,7 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
       "y": 0,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 4,
       "z": 1,
       "name": "Empty",
       "level": 0
@@ -13932,21 +11207,7 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
       "y": 0,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 4,
       "z": 3,
       "name": "Empty",
       "level": 0
@@ -13960,13 +11221,6 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
       "y": 0,
       "z": 5,
       "name": "Empty",
@@ -13974,42 +11228,7 @@
     },
     {
       "x": 7,
-      "y": 4,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
       "y": 0,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 1,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 2,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 3,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 4,
       "z": 6,
       "name": "Empty",
       "level": 0
@@ -14135,49 +11354,7 @@
     },
     {
       "x": 8,
-      "y": 1,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 2,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 3,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -14191,21 +11368,7 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
       "y": 0,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 4,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -14219,21 +11382,7 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
       "y": 0,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 4,
       "z": -4,
       "name": "Empty",
       "level": 0
@@ -14247,13 +11396,6 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": -2,
       "name": "Empty",
@@ -14261,35 +11403,7 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0
@@ -14303,21 +11417,7 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
       "y": 0,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 4,
       "z": 1,
       "name": "Empty",
       "level": 0
@@ -14331,21 +11431,7 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
       "y": 0,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 4,
       "z": 3,
       "name": "Empty",
       "level": 0
@@ -14359,13 +11445,6 @@
     },
     {
       "x": 8,
-      "y": 4,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
       "y": 0,
       "z": 5,
       "name": "Empty",
@@ -14373,49 +11452,7 @@
     },
     {
       "x": 8,
-      "y": 1,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 4,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
       "y": 0,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 1,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 2,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 3,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 8,
-      "y": 4,
       "z": 6,
       "name": "Empty",
       "level": 0
@@ -14541,35 +11578,7 @@
     },
     {
       "x": 9,
-      "y": 1,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -14583,21 +11592,7 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
       "y": 0,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 4,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -14611,21 +11606,7 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
       "y": 0,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 4,
       "z": -4,
       "name": "Empty",
       "level": 0
@@ -14639,13 +11620,6 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
       "y": 0,
       "z": -2,
       "name": "Empty",
@@ -14653,35 +11627,7 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0
@@ -14695,21 +11641,7 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
       "y": 0,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 4,
       "z": 1,
       "name": "Empty",
       "level": 0
@@ -14723,21 +11655,7 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
       "y": 0,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 4,
       "z": 3,
       "name": "Empty",
       "level": 0
@@ -14751,13 +11669,6 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
       "y": 0,
       "z": 5,
       "name": "Empty",
@@ -14765,42 +11676,7 @@
     },
     {
       "x": 9,
-      "y": 4,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
       "y": 0,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 1,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 2,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 3,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 9,
-      "y": 4,
       "z": 6,
       "name": "Empty",
       "level": 0
@@ -14926,35 +11802,7 @@
     },
     {
       "x": 10,
-      "y": 1,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -14968,21 +11816,7 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
       "y": 0,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 4,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -14996,21 +11830,7 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
       "y": 0,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 4,
       "z": -4,
       "name": "Empty",
       "level": 0
@@ -15024,13 +11844,6 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": -2,
       "name": "Empty",
@@ -15038,49 +11851,7 @@
     },
     {
       "x": 10,
-      "y": 3,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 2,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0
@@ -15094,13 +11865,6 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
       "y": 0,
       "z": 1,
       "name": "Empty",
@@ -15108,35 +11872,7 @@
     },
     {
       "x": 10,
-      "y": 1,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
       "y": 0,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 1,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 4,
       "z": 2,
       "name": "Empty",
       "level": 0
@@ -15150,28 +11886,7 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
       "y": 0,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 1,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 4,
       "z": 4,
       "name": "Empty",
       "level": 0
@@ -15185,42 +11900,7 @@
     },
     {
       "x": 10,
-      "y": 4,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
       "y": 0,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 1,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 2,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 3,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 10,
-      "y": 4,
       "z": 6,
       "name": "Empty",
       "level": 0
@@ -15346,35 +12026,7 @@
     },
     {
       "x": 11,
-      "y": 1,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -15388,21 +12040,7 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
       "y": 0,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 4,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -15416,21 +12054,7 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
       "y": 0,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 4,
       "z": -4,
       "name": "Empty",
       "level": 0
@@ -15444,13 +12068,6 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
       "y": 0,
       "z": -2,
       "name": "Empty",
@@ -15458,28 +12075,7 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0
@@ -15493,13 +12089,6 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
       "y": 0,
       "z": 1,
       "name": "Empty",
@@ -15507,28 +12096,7 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
       "y": 0,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 4,
       "z": 2,
       "name": "Empty",
       "level": 0
@@ -15542,21 +12110,7 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
       "y": 0,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 4,
       "z": 4,
       "name": "Empty",
       "level": 0
@@ -15570,42 +12124,7 @@
     },
     {
       "x": 11,
-      "y": 4,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
       "y": 0,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 11,
-      "y": 4,
       "z": 6,
       "name": "Empty",
       "level": 0
@@ -15731,49 +12250,7 @@
     },
     {
       "x": 12,
-      "y": 1,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -15787,21 +12264,7 @@
     },
     {
       "x": 12,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
       "y": 0,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -15815,28 +12278,7 @@
     },
     {
       "x": 12,
-      "y": 4,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
       "y": 0,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
       "z": -4,
       "name": "Empty",
       "level": 0
@@ -15850,13 +12292,6 @@
     },
     {
       "x": 12,
-      "y": 4,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
       "y": 0,
       "z": -2,
       "name": "Empty",
@@ -15864,49 +12299,7 @@
     },
     {
       "x": 12,
-      "y": 3,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0
@@ -15920,63 +12313,7 @@
     },
     {
       "x": 12,
-      "y": 1,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
       "y": 0,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
       "z": 1,
       "name": "Empty",
       "level": 0
@@ -15990,63 +12327,7 @@
     },
     {
       "x": 12,
-      "y": 1,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
       "y": 0,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
       "z": 3,
       "name": "Empty",
       "level": 0
@@ -16060,34 +12341,6 @@
     },
     {
       "x": 12,
-      "y": 1,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
       "y": 0,
       "z": 5,
       "name": "Empty",
@@ -16095,63 +12348,7 @@
     },
     {
       "x": 12,
-      "y": 1,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
       "y": 0,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": 6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 4,
       "z": 6,
       "name": "Empty",
       "level": 0
@@ -16277,35 +12474,7 @@
     },
     {
       "x": 13,
-      "y": 1,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -16319,28 +12488,7 @@
     },
     {
       "x": 13,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
       "y": 0,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
-      "y": 1,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
-      "y": 4,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -16354,21 +12502,7 @@
     },
     {
       "x": 13,
-      "y": 4,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
       "y": 0,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
-      "y": 4,
       "z": -4,
       "name": "Empty",
       "level": 0
@@ -16382,13 +12516,6 @@
     },
     {
       "x": 13,
-      "y": 4,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
       "y": 0,
       "z": -2,
       "name": "Empty",
@@ -16396,42 +12523,7 @@
     },
     {
       "x": 13,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
-      "y": 2,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 13,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0
@@ -16606,35 +12698,7 @@
     },
     {
       "x": 14,
-      "y": 1,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -16648,21 +12712,7 @@
     },
     {
       "x": 14,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
       "y": 0,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
-      "y": 4,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -16676,13 +12726,6 @@
     },
     {
       "x": 14,
-      "y": 4,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
       "y": 0,
       "z": -4,
       "name": "Empty",
@@ -16690,28 +12733,7 @@
     },
     {
       "x": 14,
-      "y": 4,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
       "y": 0,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
-      "y": 1,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
-      "y": 4,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -16725,42 +12747,7 @@
     },
     {
       "x": 14,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
-      "y": 2,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 14,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0
@@ -16935,35 +12922,7 @@
     },
     {
       "x": 15,
-      "y": 1,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -16977,13 +12936,6 @@
     },
     {
       "x": 15,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
       "y": 0,
       "z": -6,
       "name": "Empty",
@@ -16991,28 +12943,7 @@
     },
     {
       "x": 15,
-      "y": 4,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
       "y": 0,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
-      "y": 1,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
-      "y": 4,
       "z": -5,
       "name": "Empty",
       "level": 0
@@ -17026,21 +12957,7 @@
     },
     {
       "x": 15,
-      "y": 4,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
       "y": 0,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
-      "y": 4,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -17054,42 +12971,7 @@
     },
     {
       "x": 15,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
-      "y": 2,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 15,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0
@@ -17264,63 +13146,7 @@
     },
     {
       "x": 16,
-      "y": 1,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
       "y": 0,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 1,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -17334,63 +13160,7 @@
     },
     {
       "x": 16,
-      "y": 1,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
       "y": 0,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 1,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 4,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -17404,63 +13174,7 @@
     },
     {
       "x": 16,
-      "y": 1,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
       "y": 0,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 1,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 4,
       "z": -4,
       "name": "Empty",
       "level": 0
@@ -17474,34 +13188,6 @@
     },
     {
       "x": 16,
-      "y": 1,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -3,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
       "y": 0,
       "z": -2,
       "name": "Empty",
@@ -17509,63 +13195,7 @@
     },
     {
       "x": 16,
-      "y": 1,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 4,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
       "y": 0,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 1,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 2,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 3,
-      "z": -1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 16,
-      "y": 4,
       "z": -1,
       "name": "Empty",
       "level": 0

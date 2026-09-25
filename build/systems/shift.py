@@ -76,8 +76,25 @@ EVERY_TICK = {"Type": "ModifyTags", "Event": "ENTER", "Operation": "Set", "TagKe
               "TagValue": "1"}
 
 
-def build(model, roles, debug=True):
-    """`roles`: {menu entry serves-id: guest role} -- who can arrive."""
+EXIT = f"{settings.NAMESPACE}_Exit_Instance"
+EXIT_AFTER = 4.0        # seconds to read "out of business" before going back to HQ
+
+
+def write_exit():
+    """The interaction that sends a player back where they came from (HQ): the game's
+    ExitInstance, which uses the return point set when they walked through the portal."""
+    import pack
+    pack.write(pack.out("Item", "Interactions", settings.NAMESPACE, f"{EXIT}_Go.json"),
+               {"$Comment": "Back to where you came from. See build/systems/shift.py.",
+                "Type": "ExitInstance"})
+    pack.write(pack.out("Item", "RootInteractions", settings.NAMESPACE, f"{EXIT}.json"),
+               {"Interactions": [f"{EXIT}_Go"]})
+    return EXIT
+
+
+def build(model, roles, debug=True, exit_on_lose=False):
+    """`roles`: {menu entry serves-id: guest role} -- who can arrive. `exit_on_lose`: a
+    real run (from HQ) sends everyone back to HQ when it's lost; a spike just starts again."""
     s, rules_, looks, words = ids(model), model["rules"], model["fixtures"]["looks"], \
         model["fixtures"]["words"]
     menu, dishes, stations = model["menu"], model["dishes"], model["stations"]
@@ -280,6 +297,13 @@ def build(model, roles, debug=True):
                     _t("SIGNAL_RECEIVED", "lost", 0)], lose)
     rules.add(901, [signals.heard(signals.QUEUE, signals.IMPATIENT),
                     _t("SIGNAL_RECEIVED", "lost", 0)], lose)
+    if exit_on_lose:
+        # 902: lost -- every player inside goes back to HQ a few seconds later (TICK runs per
+        # player; the effect's Interval keeps it to one try each). The empty world is reaped.
+        write_exit()
+        rules.add(902, [_t("TICK", "lost", 1)],
+                  [{"Type": "RunRootInteraction", "Event": "TICK", "RootInteraction": EXIT,
+                    "Delay": EXIT_AFTER, "Interval": EXIT_AFTER + 2}, EVERY_TICK])
 
     # The pads ask it to speak: only it can print the purse.
     for c in offers.catalogue(model):

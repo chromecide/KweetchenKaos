@@ -17,7 +17,8 @@ python3 build/build.py --check    read and check the kitchen theme, print the re
 python3 build/build.py            ...and write pack/
 ./deploy.sh [SPIKE] [RULES]       build with SPIKE in the spike world (default board) under
                                   RULES (default standard), deploy beside the POC, restart,
-                                  report rejections. SPIKE room:<layout> plays a layout.
+                                  report rejections. SPIKE room:<layout> plays a layout; SPIKE world
+                                  builds HQ and the restaurants (then /kk hq).
 python3 build/layouts.py import <plot> <id> "<name>"   a saved plot -> content/layouts/<id>/
 ```
 
@@ -54,6 +55,7 @@ plate. If it reads right, the theme is right.
 | `systems/pads.py` | offer pads: offers to buy, crates delivered free, recipe cards to choose |
 | `systems/shift.py` | the day: the sign, the clock, arrivals from the menu, the purse, cards and deliveries, losing |
 | `layouts.py` | slot blocks, the authoring world (`/kk author`, `/kk grid`, `/kk slots`, `/kk save`), and importing a save as a layout |
+| `world.py` | HQ and its walk-in portals to the restaurants in `content/world/world.json`; `/kk hq` |
 | `restaurant.py` | a layout's room dressed in a theme: every slot swapped, every system mounted |
 | `spike_front.py` | the service spike's front of house: guest callers and a listener for the shift |
 | `spike.py` | the spike world: stations mounted over an empty world, `/kk spike`, `/kk kit`, and a setup block that lays the stations out |

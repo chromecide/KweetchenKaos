@@ -75,7 +75,7 @@ def _carried(name, effect, tags, box, targets=("Player",), extra=None):
                       "Rotation": {"Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0}}}}
 
 
-def build(model, layout_id, debug=True, patience=None):
+def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     """(room prefab dict, problems, info): the layout dressed, carrying its systems."""
     meta, room = load_layout(layout_id)
     problems = []
@@ -89,7 +89,7 @@ def build(model, layout_id, debug=True, patience=None):
     seating_effect = seating.build(model, debug)
     guests.build(model, debug)
     shift_tags = shift.build(model, {e["serves"]: guests.role_id(model, e) for e in model["menu"]},
-                             debug)
+                             debug, exit_on_lose=exit_on_lose)
     pads.build(model, debug)
 
     out_blocks, entities, used, queue_cells, pad_numbers = [], [], set(), [], set()

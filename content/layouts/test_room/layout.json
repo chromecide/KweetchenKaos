@@ -1,6 +1,6 @@
 {
   "id": "test_room",
   "name": "Test room",
-  "from_plot": 1,
+  "from_plot": 2,
   "zones": {}
 }
