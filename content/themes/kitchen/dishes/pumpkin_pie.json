@@ -34,6 +34,11 @@
         "raw": {
           "tint": "#a8b0c4"
         }
+      },
+      "stage_seconds": {
+        "raw": 6,
+        "cooked": 8,
+        "well": 6
       }
     }
   ],

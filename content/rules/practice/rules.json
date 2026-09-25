@@ -27,5 +27,9 @@
   },
   "queue_patience": 180,
   "queue_patience_boost": 10,
-  "guest_patience_scale": 2.5
+  "guest_patience_scale": 1.5,
+  "day_growth": {
+    "every_days": 3,
+    "seconds": 0
+  }
 }

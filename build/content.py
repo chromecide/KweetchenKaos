@@ -120,7 +120,10 @@ def load_theme(theme_id):
             elif gives == "new":
                 gives = define({"id": f"{owner}_{st['id']}",
                                 "label": f"{owner_label} ({st['word']})", "look": look}, at)
-            seconds = st.get("seconds")
+            # How long this stage lasts before the next: the dish's own time for it
+            # ("stage_seconds" on its heat step), else the ladder's, else the theme default
+            # (first stage only).
+            seconds = s.get("stage_seconds", {}).get(st["id"], st.get("seconds"))
             if seconds is None and k == 0:
                 seconds = defaults["heat_seconds"]
             last = k == len(ladder["stages"]) - 1

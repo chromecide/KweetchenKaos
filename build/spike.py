@@ -50,6 +50,8 @@ KITCHEN = {"crates": 1, "board": 2, "counter": 3, "stove": 2, "bin": 1, "sink": 
            "rack": 1}
 SPIKES = {
     "board": {"stations": {"board": 2}},
+    # Per-dish cook times: four stoves, one unbaked pie of each kind, side by side.
+    "stove": {"stations": {"stove": 4}},
     # The plate rack on its own, with a sink to wash a dirty plate to put back.
     "rack": {"stations": {"rack": 2, "sink": 1}},
     "counter": {"stations": {"counter": 3, "board": 2}},

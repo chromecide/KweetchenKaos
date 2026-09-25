@@ -1,8 +1,8 @@
 {
-  "$comment": "How a run plays, for any theme. Times are real seconds.",
+  "$comment": "How a run plays, for any theme. Times are real seconds. Tuned to PlateUp's solo numbers (wiki.plateupgame.com): a 100 s day growing 25 s every 3 days, a 120 s queue.",
   "id": "standard",
   "name": "Standard",
-  "day_seconds": 90,
+  "day_seconds": 100,
   "stages": [
     {
       "id": "early",
@@ -22,10 +22,14 @@
   ],
   "arrival_every": {
     "early": 15,
-    "mid": 11,
-    "late": 8
+    "mid": 12,
+    "late": 10
   },
-  "queue_patience": 60,
+  "queue_patience": 120,
   "queue_patience_boost": 10,
-  "guest_patience_scale": 1.0
+  "guest_patience_scale": 1.0,
+  "day_growth": {
+    "every_days": 3,
+    "seconds": 25
+  }
 }

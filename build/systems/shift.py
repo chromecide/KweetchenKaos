@@ -153,6 +153,19 @@ def build(model, roles, debug=True, exit_on_lose=False):
                 "MatchValue": "1", "Radius": 128.0, "Center": "Volume"},
                signals.to_pads("BLOCK_USED", signals.CLEAR)]
               + say("BLOCK_USED", "opened", "[shift] Day {day} - OPEN. Purse: {money} coins."))
+    # 13+: THE DAY GROWS (rules day_growth): every few days it's longer -- more room for the
+    # same kind of rush, as PlateUp does. Rule 10 has just set `open` (tags are instant) and
+    # the sign block itself only turns at the end of the tick, so these see "just opened".
+    growth = rules_.get("day_growth") or {}
+    if growth.get("seconds"):
+        every_n = growth["every_days"]
+        for k in range(1, 15):
+            first, last = 1 + every_n * k, every_n * (k + 1)
+            rules.add(13 + k, [v.at([s["sign"]]), _t("BLOCK_USED", "open", 1),
+                               _t("BLOCK_USED", signals.DAY, first, "AtLeast")]
+                      + ([_t("BLOCK_USED", signals.DAY, last, "AtMost")] if k < 14 else []),
+                      [_set("BLOCK_USED", "time_left",
+                            rules_["day_seconds"] + growth["seconds"] * k)])
     rules.add(11, [v.at([s["sign_open"]])],
               say("BLOCK_USED", "stillopen", "[shift] Open - {time_left}s to closing time."))
     rules.add(12, [v.at([s["sign"]]), _t("BLOCK_USED", "onmenu", 0)],

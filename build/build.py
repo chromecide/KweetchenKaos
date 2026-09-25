@@ -74,7 +74,8 @@ def chain(model, target):
                          f"-> {name(iid)}")
         else:
             walk(s["input"])
-            ladder = " -> ".join(x["word"] for x in s["stages"])
+            ladder = " -> ".join(x["word"] + (f" {x['seconds']:g}s" if x["seconds"] else "")
+                                 for x in s["stages"])
             lines.append(f"{station(s)} ({ladder}): {name(s['input'])}, taken off "
                          f"{st['word']} -> {name(iid)}")
 
@@ -88,8 +89,10 @@ def report(model):
           f"{len(model['menu'])} menu entries, stations: "
           + ", ".join(f"{s['label']} ({s['role']})" for s in model["stations"].values()))
     r = model["rules"]
-    print(f"RULES {r['name']}: {r['day_seconds']}s days; a guest every "
-          + ", ".join(f"{r['arrival_every'][s['id']]}s ({s['id']}, days {s['from']}-"
+    grow = r.get("day_growth") or {}
+    print(f"RULES {r['name']}: {r['day_seconds']}s days"
+          + (f" (+{grow['seconds']}s every {grow['every_days']} days)" if grow.get("seconds") else "")
+          + "; a guest every " + ", ".join(f"{r['arrival_every'][s['id']]}s ({s['id']}, days {s['from']}-"
                       f"{s['to']})" for s in r["stages"])
           + f"; recipe cards every {r['cards']['every_days']} days")
     for d in model["dishes"].values():
