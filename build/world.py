@@ -158,30 +158,11 @@ def build(debug=True):
                   weather=r.get("weather", world.get("weather")))
         portal_of[r["portal"]] = (r, inst)
 
-    # THE PORTALS: one block per restaurant, stepped on to go.
-    for n, (r, inst) in portal_of.items():
-        key = f"{NS}_Portal_{n}"
-        block = dict(blocks.block_for(PORTAL_LOOK), Material="Solid", HitboxType="Pad_Portal",
-                     AmbientSoundEventId="SFX_Portal_Neutral",
-                     InteractionHint=blocks.hint(key, f"{r['name']} - step on to play"),
-                     Interactions={"CollisionEnter": {"Interactions": [{
-                         "Type": "TeleportInstance", "InstanceName": inst,
-                         # The return point: two blocks in front of the portal, towards
-                         # the arrival.
-                         "OriginSource": "Block",
-                         "PositionOffset": {"X": 0.0, "Y": 1.0, "Z": -2.0},
-                         "Rotation": {"Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0},
-                         "PersonalReturnPoint": True, "CloseOnBlockRemove": False,
-                         "Next": {"Type": "Simple", "Effects": {
-                             "LocalSoundEventId": "SFX_Portal_Neutral_Teleport_Local"}}}]}})
-        blocks.item(key, f"Portal: {r['name']}", PORTAL_LOOK["icon"], block,
-                    f"HQ portal to {r['name']}. See build/world.py.")
-
     # HQ: its layout with the HQ slots swapped: portals on the floor above their slots,
     # the arrival marked by where players spawn.
     meta = json.load(open(os.path.join(settings.CONTENT, "layouts", world["hq"], "layout.json")))
     room = json.load(open(os.path.join(settings.CONTENT, "layouts", world["hq"], "room.prefab.json")))
-    out, arrival = [], None
+    out, arrival, portal_at = [], None, {}
     for b in room["blocks"]:
         name = b["name"]
         if name == layouts.slot_id("arrival"):
@@ -192,6 +173,7 @@ def build(debug=True):
             out.append(dict(b, name=layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
             if n in portal_of:
                 out.append({"x": b["x"], "y": b["y"] + 1, "z": b["z"], "name": f"{NS}_Portal_{n}"})
+                portal_at[n] = (b["x"], b["y"] + 1, b["z"])
             else:
                 notes.append(f"HQ: portal slot {n} has no restaurant in world.json")
         else:
@@ -202,6 +184,26 @@ def build(debug=True):
     if arrival is None:
         notes.append("HQ: no arrival slot -- players arrive at the plot's front")
         arrival = (16, 0, 2)
+    # THE PORTALS: one block per restaurant, stepped on to go. Each remembers where its
+    # players come back to -- the ARRIVAL, where HQ's own spawn is: a return point is the
+    # portal block (its hitbox middle) plus PositionOffset, so each portal's offset is the
+    # way from it to the arrival.
+    for n, (r, inst) in portal_of.items():
+        key = f"{NS}_Portal_{n}"
+        px, py, pz = portal_at.get(n, arrival)
+        back = {"X": float(arrival[0] - px), "Y": 0.1, "Z": float(arrival[2] - pz)}
+        block = dict(blocks.block_for(PORTAL_LOOK), Material="Solid", HitboxType="Pad_Portal",
+                     AmbientSoundEventId="SFX_Portal_Neutral",
+                     InteractionHint=blocks.hint(key, f"{r['name']} - step on to play"),
+                     Interactions={"CollisionEnter": {"Interactions": [{
+                         "Type": "TeleportInstance", "InstanceName": inst,
+                         "OriginSource": "Block", "PositionOffset": back,
+                         "Rotation": {"Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0},
+                         "PersonalReturnPoint": True, "CloseOnBlockRemove": False,
+                         "Next": {"Type": "Simple", "Effects": {
+                             "LocalSoundEventId": "SFX_Portal_Neutral_Teleport_Local"}}}]}})
+        blocks.item(key, f"Portal: {r['name']}", PORTAL_LOOK["icon"], block,
+                    f"HQ portal to {r['name']}. See build/world.py.")
     pack.write(pack.out("Prefabs", f"{HQ}_Room.prefab.json"),
                dict(room, blocks=out, entities=[], fluids=[],
                     **{"$Comment": f"HQ: {meta['name']}. See build/world.py."}))
