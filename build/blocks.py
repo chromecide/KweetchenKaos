@@ -16,6 +16,7 @@ import pack
 import settings
 
 NOOP = f"{settings.NAMESPACE}_Noop"
+
 STATION_ICON = "Icons/ItemsGenerated/Bench_Cooking.png"
 
 
@@ -81,5 +82,11 @@ def display_block(game_id, label, look, hint_text, comment, extra=None):
     """`extra`: more BlockType settings (a growth config, for things that change by
     themselves)."""
     block = dict(block_for(look), InteractionHint=hint(game_id, hint_text),
-                 Interactions={"Use": NOOP}, **(extra or {}))
+                 Interactions={"Use": NOOP},
+                 # When what it stands on goes (a crate or a rack picked up), it VANISHES.
+                 # The default is to break the ordinary way and drop its own item on the
+                 # floor -- "Plate (on the rack)" lying about. (A drop list that drops nothing
+                 # isn't allowed: it must drop something.)
+                 SupportDropType="Destroy",
+                 **(extra or {}))
     item(game_id, label, look["icon"], block, comment)

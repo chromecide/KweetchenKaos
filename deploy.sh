@@ -50,8 +50,8 @@ clean() { sed 's/\x1b\[[0-9;]*m//g'; }
 bad=$(grep -E "SEVERE.*(FAIL:|Failed to decode asset|Failed to validate asset)" server.log | clean | grep -E "KweetchenKaos|K2_" || true)
 dropped=$(grep -E "Skipping unrecognized trigger (effect|condition|rule)" server.log | clean | grep -E "KweetchenKaos|K2_" || true)
 missing=$(grep -E "Failed to find block '" server.log | clean | grep "K2_" | sort -u || true)
-[ -n "$bad" ] && { echo "KWITCHENKAOS ASSETS REJECTED:"; echo "$bad" | sed 's/^/  /'; }
-[ -n "$dropped" ] && { echo "KWITCHENKAOS TRIGGER EFFECTS DROPPED:"; echo "$dropped" | sed 's/^/  /'; }
-[ -n "$missing" ] && { echo "KWITCHENKAOS PREFAB BLOCKS MISSING:"; echo "$missing" | sed 's/^/  /'; }
+[ -n "$bad" ] && { echo "KWEETCHEN KAOS ASSETS REJECTED:"; echo "$bad" | sed 's/^/  /'; }
+[ -n "$dropped" ] && { echo "KWEETCHEN KAOS TRIGGER EFFECTS DROPPED:"; echo "$dropped" | sed 's/^/  /'; }
+[ -n "$missing" ] && { echo "KWEETCHEN KAOS PREFAB BLOCKS MISSING:"; echo "$missing" | sed 's/^/  /'; }
 [ -z "$bad$dropped$missing" ] && echo "Kweetchen Kaos: nothing rejected"
 exit 0
