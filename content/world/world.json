@@ -12,6 +12,14 @@
       "layout": "test_room",
       "rules": "standard",
       "portal": 1
+    },
+    {
+      "id": "second_room",
+      "name": "Second room",
+      "theme": "kitchen",
+      "layout": "second_room",
+      "rules": "standard",
+      "portal": 2
     }
   ]
 }

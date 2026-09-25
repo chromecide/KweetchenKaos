@@ -149,6 +149,17 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     missing = set(pads.numbers(model)) - pad_numbers
     if missing:
         problems.append(f"no offer pad slot for pad(s) {sorted(missing)}")
+    # The fixtures a run can't do without.
+    names = [_slot(b["name"]) for b in room["blocks"]]
+    if "chair" not in names:
+        problems.append("no chair slots: guests will queue but have nowhere to sit")
+    spots = {n for n in names if n and n.startswith("queue_")}
+    if len(spots) < 4:
+        problems.append(f"queue spots missing: {sorted({f'queue_{i}' for i in range(1, 5)} - spots)}")
+    if "pool" not in names:
+        problems.append("no queue pool slot: guests have nowhere to arrive")
+    if "sign" not in names:
+        problems.append("no open sign slot: the day can't be opened")
 
     # THE QUEUE ZONE, in room coordinates: drawn, or worked out round the spots and pool.
     zone = meta.get("zones", {}).get("queue")

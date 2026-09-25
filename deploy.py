@@ -86,7 +86,10 @@ def build(spike, rules):
     if code:
         print(text)
         sys.exit(code)
-    print(text.rstrip().splitlines()[-1])
+    # The summary and every note -- a room with no chairs, say -- from "wrote pack" on.
+    lines = text.rstrip().splitlines()
+    start = next((i for i, ln in enumerate(lines) if ln.startswith("wrote pack")), len(lines) - 1)
+    print("\n".join(lines[start:]))
 
 
 def install(server):
