@@ -50,6 +50,7 @@ def load():
 
 
 def _instance(name, spawn, volumes_, comment, clock_on, keep_key=None, empty_after=20.0):
+    """`empty_after`: seconds empty before the world is removed; None: never removed."""
     pack.write(pack.out("Instances", name, "instance.bson"), {
         "$Comment": comment, "Version": 2,
         "WorldGen": {"Type": "Flat", "Layers": [{"From": 0, "To": 1, "BlockType": "Soil_Grass"}]},
@@ -60,7 +61,8 @@ def _instance(name, spawn, volumes_, comment, clock_on, keep_key=None, empty_aft
         "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False, "IsBlockSpawnersEnabled": False,
         "DeleteOnRemove": True, "DeleteOnUniverseStart": True,
         "Plugin": {"Instance": dict(
-            {"RemovalConditions": [{"Type": "WorldEmpty", "TimeoutSeconds": empty_after}]},
+            {"RemovalConditions": ([] if empty_after is None else
+                                   [{"Type": "WorldEmpty", "TimeoutSeconds": empty_after}])},
             **({"InstanceKey": keep_key} if keep_key else {}))}})
     pack.write(pack.out("Instances", name, "resources", "TriggerVolumeData.json"),
                {"Volumes": {f"5b1ce000-0000-4000-8000-{i:012d}": vol
@@ -159,7 +161,10 @@ def build(debug=True):
     _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", "[HQ] welcome - step on a "
                                                                "portal to play")],
               "HQ: where runs start. One shared world. See build/world.py.", clock_on=False,
-              keep_key=HQ.lower(), empty_after=60.0)
+              # NEVER REMOVED: a run's players come back to it. With an "empty" timeout it was
+              # removed the moment the last player stepped through a portal, and losing then
+              # sent everyone to the default world instead.
+              keep_key=HQ.lower(), empty_after=None)
     pack.say("commands.kk.hq.desc", "Go to Kweetchen Kaos HQ")
     pack.write(pack.out("MacroCommands", "KKHq.json"), {
         "$Comment": "Go to HQ. See build/world.py.", "Name": "kk hq",
