@@ -81,13 +81,37 @@ def _instance(name, spawn, volumes_, comment, clock_on, ground, weather=None, ke
                             for i, vol in enumerate(volumes_, start=1)}})
 
 
-def _paste_on_arrival(name, prefab, text):
-    """A volume that pastes `prefab` at AT the first time a player is in the world."""
+def _border(world, r=None):
+    """The border prefab for a world (world.json "border", a restaurant may override; "none"
+    for none): written once, returned with its ring width. (None, 0) when there is none."""
+    bid = (r or {}).get("border", world.get("border"))
+    if not bid or bid == "none":
+        return None, 0
+    folder = os.path.join(settings.CONTENT, "layouts", bid)
+    meta = json.load(open(os.path.join(folder, "layout.json")))
+    if meta.get("kind") != "border":
+        raise SystemExit(f"world.json: border '{bid}' is not a border plot's layout")
+    name = f"{NS}_Border_" + "_".join(p.capitalize() for p in bid.split("_"))
+    room = json.load(open(os.path.join(folder, "room.prefab.json")))
+    pack.write(pack.out("Prefabs", f"{name}.prefab.json"),
+               dict(room, entities=[], **{"$Comment": f"Border: {meta['name']}. "
+                                                      f"See build/world.py."}))
+    return name, meta["ring"]
+
+
+def _paste_on_arrival(name, prefab, text, border=(None, 0)):
+    """A volume that pastes `prefab` at AT the first time a player is in the world -- and
+    its BORDER first, round it (the border's hole is the room's plot)."""
     effect = f"{name}_Arrival"
     rules = v.Entries()
     rules.add(1, [{"Type": "TagCondition", "Event": "ENTER", "Source": "Self", "TagKey": "built",
                    "Comparison": "Exactly", "TagValue": "0"}],
-              [{"Type": "PastePrefab", "Event": "ENTER", "Prefab": prefab,
+              ([{"Type": "PastePrefab", "Event": "ENTER", "Prefab": border[0],
+                 "Origin": "WorldAbsolute",
+                 "Position": {"X": float(AT[0] - border[1]), "Y": float(AT[1]),
+                              "Z": float(AT[2] - border[1])},
+                 "ShowParticles": False}] if border[0] else [])
+              + [{"Type": "PastePrefab", "Event": "ENTER", "Prefab": prefab,
                 "Origin": "WorldAbsolute",
                 "Position": {"X": float(AT[0]), "Y": float(AT[1]), "Z": float(AT[2])},
                 "ShowParticles": False},
@@ -123,7 +147,8 @@ def build(debug=True):
         else:
             notes.append(f"{r['name']}: no arrival slot -- players arrive in front of the room")
             spawn = (AT[0] + FRONT[0], AT[1] + FRONT[1], AT[2] + FRONT[2])
-        _instance(inst, spawn, [_paste_on_arrival(inst, prefab, f"[{r['name']}] welcome!")],
+        _instance(inst, spawn, [_paste_on_arrival(inst, prefab, f"[{r['name']}] welcome!",
+                                                  _border(world, r))],
                   f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True,
                   ground=r.get("ground", world.get("ground", "flat")),
                   weather=r.get("weather", world.get("weather")))
@@ -178,7 +203,8 @@ def build(debug=True):
                     **{"$Comment": f"HQ: {meta['name']}. See build/world.py."}))
     spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + STAND, AT[2] + arrival[2] + 0.5)
     _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", "[HQ] welcome - step on a "
-                                                               "portal to play")],
+                                                               "portal to play",
+                                            _border(world))],
               "HQ: where runs start. One shared world. See build/world.py.", clock_on=False,
               ground=world.get("ground", "flat"), weather=world.get("weather"),
               # NEVER REMOVED: a run's players come back to it. With an "empty" timeout it was
