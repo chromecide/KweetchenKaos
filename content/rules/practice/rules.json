@@ -1,0 +1,30 @@
+{
+  "$comment": "For testing a run: short days, few guests, patient queue -- so a spike reaches the offers and the recipe cards in minutes. Not for play.",
+  "id": "practice",
+  "name": "Practice",
+  "day_seconds": 60,
+  "stages": [
+    {
+      "id": "early",
+      "from": 1,
+      "to": 3
+    },
+    {
+      "id": "mid",
+      "from": 4,
+      "to": 6
+    },
+    {
+      "id": "late",
+      "from": 7,
+      "to": 999
+    }
+  ],
+  "arrival_every": {
+    "early": 30,
+    "mid": 25,
+    "late": 20
+  },
+  "queue_patience": 180,
+  "queue_patience_boost": 10
+}

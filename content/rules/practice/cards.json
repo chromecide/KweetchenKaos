@@ -1,0 +1,5 @@
+{
+  "$comment": "Cards every other day, so offers and cards both come round quickly.",
+  "every_days": 2,
+  "choices": 2
+}

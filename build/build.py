@@ -6,6 +6,7 @@ BUILD v2: read a theme, check it, report it, write the pack.
     python3 build/build.py --check         read and check only; write nothing
     python3 build/build.py --theme NAME    another theme
     python3 build/build.py --spike NAME    which system the spike world mounts (default board)
+    python3 build/build.py --rules NAME    which rules set (default standard; "practice" to test)
 
 The REPORT is the point for a person: every menu entry, and the whole chain that makes
 it, from crate to plate, in plain words. If the report reads right, the theme is right.
@@ -101,7 +102,8 @@ def report(model):
 def main(argv):
     theme = argv[argv.index("--theme") + 1] if "--theme" in argv else "kitchen"
     try:
-        model = content.load(theme)
+        rules = argv[argv.index("--rules") + 1] if "--rules" in argv else "standard"
+        model = content.load(theme, rules)
     except content.ContentError as e:
         print(f"THEME {theme} could not be read:")
         print("\n".join(f"  - {p}" for p in e.problems))
