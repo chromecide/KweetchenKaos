@@ -26,6 +26,8 @@ is an answer to a bug that was seen (kitchen-poc/docs/systems.md, QueueSystem):
     spot, and only the holder releases it.
   * ONE PATIENCE CLOCK for the whole queue, on an area volume that covers only where guests
     wait. TICK fires once per guest inside, so it drains faster the longer the line -- free.
+    It SHOWS the way a seated guest's patience does: below half, every queued guest pulses
+    amber; below a quarter, red -- the whole line together, as it would walk out together.
 
 A queue is a FIXTURE, not a station: its spots and pool are placed by a layout (or the spike
 setup), each carrying its own volume. A spot placed by hand gets its volume pasted on by the
@@ -45,6 +47,9 @@ JOIN_PAUSE = (0.05, 1.5)              # the random pause before a pool guest joi
 BUMP_SECONDS = 2.0
 LEAVE_BEAT = 0.6                      # between asking for the front to be held and stepping off
 TICK_SECONDS = 1.0                    # the patience drain: once a second per queued guest
+# colour: (bottom tint, top tint, seconds on, every) -- the seated guest's pulses, so a
+# worried guest looks the same in the line and at a table.
+PULSES = {"amber": ("#d08a20", "#f0b040", 1.5, 3.0), "red": ("#d01810", "#f03020", 0.75, 1.5)}
 SPOT_TAG, SIGNAL_KEY, LEAVING, RELEASE = "queuespot", "queue", "leaving", "release"
 
 # Flags and timers a guest carries while it is the queue's -- all prefixed "queue_".
@@ -66,6 +71,7 @@ def ids(model):
             "set_held": gid("queue_held"),
             "set_pool": gid("queue_pool_marker"),
             "bumped": gid("queue_bumped"),
+            "pulse": lambda colour: gid(f"queue_pulse_{colour}"),
             "world_effect": gid("queue_system"),
             "area_effect": gid("queue_area")}
 
@@ -304,6 +310,9 @@ def build(model, guests, debug=True, patience=None):
     npc.block_set(q["set_pool"], [q["pool"]], "Where guests arrive and wait.")
     npc.entity_effect(q["bumped"], BUMP_SECONDS, "#d03020", "#f07050",
                       "Put on a guest by a spot that already had someone: back to the pool.")
+    for colour, (bottom, top, on, _) in PULSES.items():
+        npc.entity_effect(q["pulse"](colour), on, bottom, top,
+                          "The queue's impatience, on every queued guest. See build/systems/queue.py.")
 
     spot_rules = _spot_rules(q, boost_by, debug)
     pool_rules = _pool_rules(q, guests, debug)
@@ -348,6 +357,19 @@ def build(model, guests, debug=True, patience=None):
                "TagKey": "qpatience", "TagValue": str(patience)}]
              + v.report("kk.queue.impatient", "[queue] out of patience - the queue gave up",
                         debug, event="TICK"))
+    # 40, 41: IT SHOWS. Below half, amber on every queued guest; below a quarter, red. TICK
+    # runs per guest and the effect's Interval is per guest, so each pulses on its own beat.
+    # The ENTER effect keeps an all-TICK rule from skipping its first tick.
+    tag = lambda cmp, value: {"Type": "TagCondition", "Event": "TICK", "Source": "Self",
+                              "TagKey": "qpatience", "Comparison": cmp, "TagValue": str(value)}
+    half, quarter = patience // 2, patience // 4
+    for n, (colour, lo, hi) in enumerate((("amber", quarter + 1, half), ("red", 1, quarter))):
+        bottom, top, on, every = PULSES[colour]
+        area.add(40 + n, [tag("AtMost", hi), tag("AtLeast", lo)],
+                 [{"Type": "EntityEffect", "Event": "TICK", "Effect": q["pulse"](colour),
+                   "Mode": "Apply", "Duration": on, "Interval": every},
+                  {"Type": "ModifyTags", "Event": "ENTER", "Operation": "Set",
+                   "TagKey": "entered", "TagValue": "1"}])
     # The last guest left: patience back to full (on EXIT -- TICK can't fire when empty).
     area.add(30, [{"Type": "EntityCountCondition", "Event": "EXIT", "EntityType": list(guests),
                    "Comparison": "AtMost", "Count": 1}],
