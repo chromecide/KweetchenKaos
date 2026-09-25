@@ -77,3 +77,20 @@ def finish():
     path = out("Languages", "en-US", "server.lang")
     with open(path, "w") as fh:
         fh.write("\n".join(f"{k} = {v}" for k, v in sorted(_lang.items())) + "\n")
+    _check_prefabs()
+
+
+def _check_prefabs():
+    """ONE BLOCK A CELL, in every prefab written: the game refuses a whole prefab that has two
+    ("Block is already present in column") -- and only when it is pasted, in play."""
+    import collections
+    import glob
+    bad = []
+    for f in glob.glob(os.path.join(settings.PACK, "Server", "Prefabs", "*.prefab.json")):
+        cells = collections.Counter((b["x"], b["y"], b["z"])
+                                    for b in json.load(open(f)).get("blocks") or [])
+        twice = [c for c, n in cells.items() if n > 1]
+        if twice:
+            bad.append(f"{os.path.basename(f)}: two blocks in {len(twice)} cell(s), e.g. {twice[0]}")
+    if bad:
+        raise SystemExit("PREFABS THE GAME WOULD REFUSE:\n" + "\n".join(f"  - {b}" for b in bad))

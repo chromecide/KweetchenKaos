@@ -97,12 +97,16 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
                              debug, exit_on_lose=exit_on_lose)
     pads.build(model, debug)
 
-    out_blocks, entities, used, queue_cells, pad_numbers = [], [], set(), [], set()
+    # `built` is the room as the creator left it; `out_blocks` what the slots became. One
+    # cell holds ONE block, or the game refuses the whole prefab ("Block is already present
+    # in column") -- so what the slots make wins, and each block it displaces is noted: a
+    # chair's table put where a rug lay, say.
+    built, out_blocks, entities, used, queue_cells, pad_numbers = [], [], [], set(), [], set()
     arrival = None
     for b in room["blocks"]:
         name = _slot(b["name"])
         if name is None:
-            out_blocks.append(b)
+            built.append(b)
             continue
         at = lambda block, dx=0, dz=0, dy=0, rotation=None: dict(
             {"x": b["x"] + dx, "y": b["y"] + dy, "z": b["z"] + dz, "name": block},
@@ -197,5 +201,11 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
                                     "Rules": [{"Type": "NoBuild"}, {"Type": "NoDestroy"}]}))
     entities.append(_carried("pads", pads.ids(model)["world_effect"], {"pads": "system"}, box))
 
+    taken = {(b["x"], b["y"], b["z"]) for b in out_blocks}
+    for b in built:
+        if (b["x"], b["y"], b["z"]) in taken:
+            problems.append(f"{b['name']} at ({b['x']}, {b['y']}, {b['z']}) was replaced by "
+                            f"what a slot makes there (a chair's table, or on top of a station)")
+    out_blocks = [b for b in built if (b["x"], b["y"], b["z"]) not in taken] + out_blocks
     prefab = dict(room, blocks=out_blocks, entities=entities)
     return prefab, problems, {"name": meta["name"], "area": area, "arrival": arrival}
