@@ -53,7 +53,7 @@ LEAVING, RISE_TIMER = "seating_leaving", "seating_rise"
 RISE = 0.6          # after signalling it is getting up, how long the guest stays put
 SETTLE = 1.5        # after sitting, before "my chair isn't taken" can mean "I've gone"
 REACH_CHAIR = 2.0
-FACE_TIMER, FACE = "seating_face", 1.2   # how long a new sitter turns to its table
+FACE_TIMER, FACE = "seating_face", 3.0   # how long a new sitter turns to its table (a half turn takes a while)
 TABLE_REACH = 1.2   # a chair's own table is ~1.05 away (seat height); a neighbour's, diagonally, ~1.4 -- out of reach
 # THE POSE: sitting is only an animation (the Status slot); standing up clears it -- BEFORE
 # anything else changes the guest, as the queue/role notes warn.
