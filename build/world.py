@@ -55,7 +55,9 @@ def load():
 # THE GROUND a world stands on (world.json "ground"): grass to the horizon, or nothing at all
 # -- the room floats in the sky (the game's own Void generator: no blocks, only sky).
 GROUNDS = {"flat": {"Type": "Flat", "Layers": [{"From": 0, "To": 1, "BlockType": "Soil_Grass"}]},
-           "void": {"Type": "Void"}}
+           # TINT: the colour grass (and anything else tinted by its chunk) takes. Void's is
+           # none -- black -- so a border's grass came out black; this is Flat's own default.
+           "void": {"Type": "Void", "Tint": "#5b9e28"}}
 
 
 def _instance(name, spawn, volumes_, comment, clock_on, ground, weather=None, keep_key=None,
