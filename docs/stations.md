@@ -14,7 +14,7 @@ The data lives in `content/themes/kitchen/stations/*.json` (`look`).
 | Sink | `Metal_Iron` | `Mushroom_Block_Blue_Trunk_Top` (the water) | same | `#d0d0d0` grey (the rim) |
 | Bin | `Furniture_Village_Crate` | `Wood_Village_Wall_Black_Full` | same, tinted `#4a4038` with a plate on it | none |
 | Plate rack | `Metal_Iron_Ornate`, the block TURNED (roll 90, yaw 90) so the bars lie flat -- a stack of plates | same | a plate on top while it holds any | none |
-| Counter | `Wood_Softwood_Planks_Side` | `Soil_Snow`, greyed by the trim's tint to read as marble | same | `#8e8e98` grey |
+| Counter | `Wood_Softwood_Planks_Side` | `Soil_Snow`, darkened by the trim's tint to read as black marble | same | `#2a2a30` near-black (black marble) |
 | Produce crate | `Wood_Village_Wall_RedDark_Full` | same | | none (the fast crate is tinted `#9fb8ff`) |
 
 Every station has been reviewed. The first theme is Hytale Kweebec: softwood and snow-marble suit it.

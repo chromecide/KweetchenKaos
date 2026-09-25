@@ -6,7 +6,7 @@
     "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
     "top": "BlockTextures/Soil_Snow.png",
     "sound": "Wood",
-    "trim": "#8e8e98"
+    "trim": "#2a2a30"
   },
   "words": {
     "free": "Counter - put anything down here",
