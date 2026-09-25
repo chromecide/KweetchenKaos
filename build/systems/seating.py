@@ -54,7 +54,6 @@ RISE = 0.6          # after signalling it is getting up, how long the guest stay
 SETTLE = 1.5        # after sitting, before "my chair isn't taken" can mean "I've gone"
 REACH_CHAIR = 2.0
 FACE_TIMER, FACE = "seating_face", 3.0   # how long a new sitter turns to its table (a half turn takes a while)
-TABLE_REACH = 1.2   # a chair's own table is ~1.05 away (seat height); a neighbour's, diagonally, ~1.4 -- out of reach
 # THE POSE: sitting is only an animation (the Status slot); standing up clears it -- BEFORE
 # anything else changes the guest, as the queue/role notes warn.
 SIT = {"Type": "PlayAnimation", "Slot": "Status", "Animation": "Sit"}
@@ -94,6 +93,14 @@ def left_unfed():
     return _get_up(STOOD)
 
 
+def _beside(block_set, dx, dz):
+    """A sensor: the block beside me (dx, dz), at seat height, is in this set -- its position
+    (that point) is what a Watch then looks at."""
+    return {"Type": "BlockType", "BlockSet": block_set,
+            "Sensor": {"Type": "AdjustPosition", "Offset": [float(dx), -0.3, float(dz)],
+                       "Sensor": {"Type": "Self", "Filters": []}}}
+
+
 def guest_fragment(model, on_sat=(), while_seated=(), on_unseated=(), on_lost=(), debug=False):
     """From setting off for a chair to getting up from it.
 
@@ -116,13 +123,17 @@ def guest_fragment(model, on_sat=(), while_seated=(), on_unseated=(), on_lost=()
                    leaving, npc.STILL),
         # FACING THE TABLE, for a moment after sitting -- and BEFORE the seated branches: the
         # chair turns taken almost at once, so a branch after them never ran. A chair's own
-        # table is the block right in front of it (1 away; a neighbour's is further), so
-        # facing the nearest table is facing the way the chair does -- the Feran civilian's
-        # pattern, MatchLook + Watch. The teleport can't set it: UseTarget needs an entity.
-        dict(npc.branch("Just sat down: turn to face this chair's table.",
-                        npc.all_of(npc.near(s["set_tables"], TABLE_REACH), seated,
-                                   {"Type": "Timer", "Name": FACE_TIMER, "State": "Running"}),
-                        {"Type": "MatchLook"}), HeadMotion={"Type": "Watch"}),
+        # table is the block right BESIDE it, on its front; nothing else beside a chair is a
+        # table (a neighbour's is diagonal). So: is there a table in the block beside me, this
+        # way? -- one branch per side -- and face that point (MatchLook + Watch, the Feran
+        # civilian's pattern). Not a distance: a Block sensor measures to a block's corner,
+        # so a table on a chair's -x/-z side read 1.5 away and was never found.
+        *[dict(npc.branch(f"Just sat down, my table is {side}: turn to face it.",
+                          npc.all_of(_beside(s["set_tables"], dx, dz), seated,
+                                     {"Type": "Timer", "Name": FACE_TIMER, "State": "Running"}),
+                          {"Type": "MatchLook"}), HeadMotion={"Type": "Watch"},
+               Tag=f"FACE_TABLE_{side.upper()}")
+          for side, dx, dz in (("east", 1, 0), ("west", -1, 0), ("south", 0, 1), ("north", 0, -1))],
         npc.branch("Sitting, and the chair we remembered is still taken: the guest's own "
                    "seated behaviour.", npc.all_of(seated, mine),
                    instructions=list(while_seated) or None,

@@ -29,6 +29,11 @@ from systems import guest, queue, seating
 WALK_OFF = 4.0
 
 
+# The engine's decision log on every guest (npc.role trace): ON only while chasing a
+# behaviour bug -- it logs every instruction of every guest, every tick.
+TRACE = False
+
+
 def role_id(model, entry):
     return settings.game_id(model["theme"]["prefix"], f"guest_{entry['serves']}")
 
@@ -70,4 +75,5 @@ def build(model, debug=True):
                  {"Queue": queue_state, "Seat": seat_state}, interactions,
                  appearance=model["theme"]["guest"]["appearance"], display="Arriving",
                  comment=f"A guest who wants {entry['label']}, composed from the queue's, "
-                         f"seating's and the guest system's fragments. See build/guests.py.")
+                         f"seating's and the guest system's fragments. See build/guests.py.",
+                 trace=TRACE)

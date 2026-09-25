@@ -164,9 +164,9 @@ def build(model, roles, debug=True, exit_on_lose=False):
                _set("BLOCK_USED", "open", 1), _set("BLOCK_USED", "closing", 0),
                _set("BLOCK_USED", "lost", 0),
                _set("BLOCK_USED", "time_left", rules_["day_seconds"]),
-               # The first guest comes the moment the day opens, not a whole beat later: a
-               # day that starts with nothing happening looks broken.
-               _set("BLOCK_USED", "beat", 1),
+               # No beat set here: the day's beat rule (6000+) fires the moment the day opens --
+               # its cooldown was last spent the day before -- so the first guest still comes at
+               # once. Setting one here as well brought TWO guests at opening.
                {"Type": "EnableVolume", "Event": "BLOCK_USED", "MatchKey": "servicelock",
                 "MatchValue": "1", "Radius": 128.0, "Center": "Volume"},
                signals.to_pads("BLOCK_USED", signals.CLEAR)]
@@ -202,7 +202,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
     # EXPECTED GUESTS AND THEIR PACE, for every day and number of cards chosen (tags can't do
     # arithmetic, so each combination is its own rule). 5000+: at opening -- rule 10 has just
     # set `open` -- the count is set; 6000+: the beat spreads them over the day, the first
-    # arriving the moment it opens (rule 10 starts a beat).
+    # arriving the moment it opens (its cooldown is long spent by then).
     g, growth = rules_["guests"], rules_.get("day_growth") or {}
     card_dishes = sum(1 for d in dishes.values() if d["unlock"] != "start") + 1
     last_day = 30

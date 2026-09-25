@@ -100,7 +100,7 @@ def branch(note, sensor, motion=None, actions=(), tag=None, debug=False, instruc
 
 
 def role(game_id, label, start_state, states, interactions=None, appearance="Klops",
-         display=None, comment=""):
+         display=None, comment="", trace=False):
     """Write an NPC role: `states` is {state: [branches]}. The standard kitchen body:
     unkillable, unshovable, walking at guest pace, ignoring other NPCs."""
     pack.say(f"npcRoles.{game_id}.name", label)
@@ -118,6 +118,9 @@ def role(game_id, label, start_state, states, interactions=None, appearance="Klo
              for s, b in states.items()]}]}
     if display:
         r["DisplayNames"] = [display]
+    if trace:
+        # The engine's own decision log: every instruction matched or failed, by its Tag.
+        r["Debug"] = "TraceSuccess,TraceFail"
     if interactions is not None:
         r["InteractionInstruction"] = {"Instructions": list(interactions)}
     pack.write(pack.out("NPC", "Roles", settings.NAMESPACE, f"{game_id}.json"), r)
