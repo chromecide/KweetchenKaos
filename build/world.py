@@ -103,11 +103,17 @@ def _border(world, r=None):
     return name, meta["ring"]
 
 
-def _paste_on_arrival(name, prefab, text, border=(None, 0)):
+def _paste_on_arrival(name, prefab, text, border=(None, 0), welcome=None):
     """A volume that pastes `prefab` at AT the first time a player is in the world -- and
-    its BORDER first, round it (the border's hole is the room's plot)."""
+    its BORDER first, round it (the border's hole is the room's plot). `text`: a chat line
+    then (None: none). `welcome` (title, subtitle): shown to EVERY player as they arrive --
+    ENTER is the arriving player's own event, so the title reaches them."""
     effect = f"{name}_Arrival"
     rules = v.Entries()
+    if welcome:
+        rules.add(2, [], [v.title(f"kk.world.{name.lower()}.title", welcome[0],
+                                  f"kk.world.{name.lower()}.title.sub", welcome[1],
+                                  event="ENTER", seconds=5.0)])
     rules.add(1, [{"Type": "TagCondition", "Event": "ENTER", "Source": "Self", "TagKey": "built",
                    "Comparison": "Exactly", "TagValue": "0"}],
               ([{"Type": "PastePrefab", "Event": "ENTER", "Prefab": border[0],
@@ -121,7 +127,7 @@ def _paste_on_arrival(name, prefab, text, border=(None, 0)):
                 "ShowParticles": False},
                {"Type": "ModifyTags", "Event": "ENTER", "Operation": "Set", "TagKey": "built",
                 "TagValue": "1"},
-               v.say(f"kk.world.{name.lower()}", text, event="ENTER")])
+              ] + ([v.say(f"kk.world.{name.lower()}", text, event="ENTER")] if text else []))
     rules.write(effect, "Pastes the room when the first player arrives. See build/world.py.")
     return v.volume(f"{name}_arrival", effect, {"built": "0"})
 
@@ -208,9 +214,9 @@ def build(debug=True):
                dict(room, blocks=out, entities=[], fluids=[],
                     **{"$Comment": f"HQ: {meta['name']}. See build/world.py."}))
     spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + STAND, AT[2] + arrival[2] + 0.5)
-    _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", "Welcome to HQ - step on a "
-                                                               "portal to play",
-                                            _border(world))],
+    _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", None, _border(world),
+                                            welcome=("Welcome to Kweetchen Kaos",
+                                                     "Step on a portal to play"))],
               "HQ: where runs start. One shared world. See build/world.py.", clock_on=False,
               ground=world.get("ground", "flat"), weather=world.get("weather"),
               # NEVER REMOVED: a run's players come back to it. With an "empty" timeout it was
