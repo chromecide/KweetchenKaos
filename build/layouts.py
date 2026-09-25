@@ -10,27 +10,32 @@ stove in the kitchen and a cauldron in witchery. You live with the ugly room whi
 it (docs/content-schema.md, Layouts).
 
     /kk author     open the authoring world (creative, and it keeps what you build)
-    /kk grid       lay the plots' floors -- ONCE, when the world is new: it is destructive
+    /kk grid       mark every plot's edges -- OUTSIDE what is saved, so it never touches a
+                   build: safe to run again, and after adding plots
     /kk slots      hand over the slot blocks (the arrival, and HQ portals 1-4)
-    /kk save       save every plot as a prefab (K2_Save_01, _02, ...)
-    /kk restore    paste the kept rooms back into their plots (RESTORE below) -- after a
-                   fresh /kk grid
+    /kk save       save every plot as a prefab (K2_Save_00, _01, ...)
+    /kk restore    paste the kept layouts back into their plots (RESTORE below) -- for a
+                   new authoring world
 
-THE PLOTS. Each plot is 32 x 32 (two chunks square), a gravel forecourt down the front
-edge for the queue and a plank floor behind it for the room, plots six chunks apart so no
-guest can see or walk into the next. Build inside a plot; everything above the floor up to
-AUTHOR_HEIGHT is saved.
+THE PLOTS, in a row along x, six chunks apart so no guest can see or walk into the next:
 
-A BORDER PLOT (plot 2) is a BACKDROP: a ring one chunk thick round a room-sized hole --
-64 x 64 in all, the hole laid like an ordinary plot so you can see where the room will
-stand. Build scenery on the ring (up to BORDER_HEIGHT); the hole is left out when it is
+    plot 0         the BORDER plot (below)
+    plot 1         HQ
+    plots 2-9      restaurant layouts
+
+A room plot is 32 x 32 (two chunks square); build inside it, floor and all -- everything
+from the floor up to AUTHOR_HEIGHT is saved. /kk grid draws a line of EDGE blocks round each
+plot one block OUTSIDE it, so the markers are never saved and the grid never touches what
+is inside: more plots can be added (PLOTS) and the grid run again at any time.
+
+THE BORDER PLOT is a BACKDROP: a ring one chunk thick round a room-sized hole, 64 x 64 in
+all. Build scenery on the ring (up to BORDER_HEIGHT); its edge line runs outside the ring,
+and a second one marks the hole from just inside it. The hole is left out when the border is
 imported, and every world pastes the border round its room (world.json "border"):
 
-    python3 build/layouts.py import 2 meadow "Meadow"      -> content/layouts/meadow/
+    python3 build/layouts.py import 0 meadow "Meadow"      -> content/layouts/meadow/
 
 Nothing can go below the floor: the authoring world's floor is the bottom of the world.
-/kk grid marks a border plot with EDGE blocks only -- round the outside of the ring and round
-the hole -- and leaves the grass between; importing turns any edge block left back into grass.
 
 RESTORE: the imported layouts named in RESTORE are pasted back into their plots by
 /kk restore (they are corner-anchored, so each goes at its plot's corner).
@@ -44,7 +49,7 @@ SAVES ARE RESCUED, then IMPORTED. `prefab save` writes into the DEPLOYED mod fol
 every deploy wipes, so deploy.sh copies K2_Save_* home (content/layouts/_saves/) first.
 Importing turns a save into a layout:
 
-    python3 build/layouts.py import 1 corner_pass "Corner pass"
+    python3 build/layouts.py import 3 corner_pass "Corner pass"
 
 which re-anchors it (a save comes back CENTRE-anchored; everything else is corner-anchored
 0..31, so it is shifted), keeps the zones you drew, lists the slots it found, and writes
@@ -62,15 +67,14 @@ import settings
 CHUNK = 16
 LAYOUT = 2 * CHUNK            # a plot is 32 x 32 blocks
 PITCH = 6 * CHUNK             # plots are 96 blocks apart on x
-FORECOURT = 6                 # the front 6 rows of a plot: where the queue goes
 AUTHOR_HEIGHT = 16
-PLOTS = 4
+PLOTS = 10                    # plot 0 the border, 1 HQ, 2-9 layouts; more can be added
 BORDER = CHUNK                # a border plot's ring is one chunk thick
-BORDER_PLOTS = {2}            # 1-based: which plots are borders
+BORDER_PLOTS = {0}            # which plots are borders
 BORDER_HEIGHT = 48
 BORDER_EDGE = f"{settings.NAMESPACE}_Border_Edge"
 EDGE_TINT = "#e0c020"
-RESTORE = {1: "hq", 3: "test_room"}     # plot (1-based) -> the layout pasted back into it
+RESTORE = {1: "hq", 2: "test_room"}     # plot -> the layout pasted back into it
 AUTHOR = f"{settings.NAMESPACE}_Author"
 SAVE_PREFIX = f"{settings.NAMESPACE}_Save_"
 SAVES = os.path.join(settings.CONTENT, "layouts", "_saves")
@@ -119,44 +123,43 @@ def slot_id(name):
 
 
 def plot_origin(i):
-    """The corner of plot i (0-based) -- for a border plot, the corner of its HOLE."""
+    """The corner of plot i -- for a border plot, the corner of its HOLE."""
     return i * PITCH, 0
 
 
 def plot_box(i):
-    """(x1, z1, x2, z2, height): what plot i (0-based) saves -- a border plot, its ring too."""
+    """(x1, z1, x2, z2, height): what plot i saves -- a border plot, its ring too."""
     x, z = plot_origin(i)
-    if i + 1 in BORDER_PLOTS:
+    if i in BORDER_PLOTS:
         return x - BORDER, z - BORDER, x + LAYOUT + BORDER - 1, z + LAYOUT + BORDER - 1, \
             BORDER_HEIGHT
     return x, z, x + LAYOUT - 1, z + LAYOUT - 1, AUTHOR_HEIGHT
 
 
-def _lay_edges(i):
-    """Commands marking border plot i (0-based): an edge line round the ring's outside and
-    round its hole, nothing else."""
-    x1, z1, x2, z2, _ = plot_box(i)
-    hx, hz = plot_origin(i)
+def _rect(a, b, c, d):
+    """Commands drawing a line of edge blocks round the rectangle (a, b)-(c, d), on the floor."""
     out = []
-    for (a, b, c, d) in ((x1, z1, x2, z2), (hx - 1, hz - 1, hx + LAYOUT, hz + LAYOUT)):
-        for p1, p2 in (((a, b), (c, b)), ((a, d), (c, d)), ((a, b), (a, d)), ((c, b), (c, d))):
-            out += [f"pos1 --x={p1[0]} --y=0 --z={p1[1]}", f"pos2 --x={p2[0]} --y=0 --z={p2[1]}",
-                    f"set {BORDER_EDGE}"]
+    for p1, p2 in (((a, b), (c, b)), ((a, d), (c, d)), ((a, b), (a, d)), ((c, b), (c, d))):
+        out += [f"pos1 --x={p1[0]} --y=0 --z={p1[1]}", f"pos2 --x={p2[0]} --y=0 --z={p2[1]}",
+                f"set {BORDER_EDGE}"]
     return out
 
 
-def _lay_floor(x, z):
-    """Commands laying a plot's floor at corner (x, z): gravel forecourt, planks behind."""
-    return [f"pos1 --x={x} --y=0 --z={z}",
-            f"pos2 --x={x + LAYOUT - 1} --y=0 --z={z + FORECOURT - 1}", "set Soil_Gravel",
-            f"pos1 --x={x} --y=0 --z={z + FORECOURT}",
-            f"pos2 --x={x + LAYOUT - 1} --y=0 --z={z + LAYOUT - 1}", "set Wood_Softwood_Planks"]
+def _lay_edges(i):
+    """Commands marking plot i: a line one block OUTSIDE what it saves -- and for a border
+    plot, a second just inside its hole (the hole is dropped on import)."""
+    x1, z1, x2, z2, _ = plot_box(i)
+    out = _rect(x1 - 1, z1 - 1, x2 + 1, z2 + 1)
+    if i in BORDER_PLOTS:
+        hx, hz = plot_origin(i)
+        out += _rect(hx, hz, hx + LAYOUT - 1, hz + LAYOUT - 1)
+    return out
 
 
 def write_slots():
-    blocks.station_block(BORDER_EDGE, "Border plot edge", SLOT_LOOK,
-                         "Border plot edge (turns back into grass when imported)",
-                         "Marks a border plot's ring. See build/layouts.py.", tint=EDGE_TINT,
+    blocks.station_block(BORDER_EDGE, "Plot edge", SLOT_LOOK,
+                         "Plot edge (outside what is saved)",
+                         "Marks a plot's edge. See build/layouts.py.", tint=EDGE_TINT,
                          use=False)
     for name, label, tint in SLOTS:
         if name == "chair":
@@ -183,7 +186,8 @@ def write_authoring():
         "Version": 2,
         "WorldGen": {"Type": "Flat", "Layers": [{"From": 0, "To": 1, "BlockType": "Soil_Grass"}]},
         "SpawnProvider": {"Id": "Global", "SpawnPoint": {
-            "X": LAYOUT / 2, "Y": 2.0, "Z": FORECOURT / 2, "Pitch": 0.0, "Yaw": 0.0,
+            # In front of HQ's plot (plot 1), outside its edge.
+            "X": PITCH + LAYOUT / 2, "Y": 2.0, "Z": -4.0, "Pitch": 0.0, "Yaw": 0.0,
             "Roll": 0.0}},
         "GameMode": "Creative", "GameTime": "0001-01-01T12:00:00Z", "IsGameTimePaused": True,
         "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False, "IsBlockSpawnersEnabled": False,
@@ -192,13 +196,14 @@ def write_authoring():
     enter = [f"instances spawn {AUTHOR}", "wait 4", "gamemode creative"]
     grid, save = list(enter), []
     for i in range(PLOTS):
-        grid += _lay_edges(i) if i + 1 in BORDER_PLOTS else _lay_floor(*plot_origin(i))
         x1, z1, x2, z2, height = plot_box(i)
+        # set writes only into LOADED chunks: stand over each plot first.
+        grid += [f"tp {(x1 + x2) // 2} 30 {(z1 + z2) // 2}", "wait 3", *_lay_edges(i)]
         save += [f"pos1 --x={x1} --y=0 --z={z1}", f"pos2 --x={x2} --y={height - 1} --z={z2}",
                  # --entities, or the zones you drew are left out of the save.
-                 f"prefab save {SAVE_PREFIX}{i + 1:02d} --overwrite --entities --pack={pack_id}"]
+                 f"prefab save {SAVE_PREFIX}{i:02d} --overwrite --entities --pack={pack_id}"]
     macros = [("KKAuthor", "kk author", "Open the layout authoring world", enter),
-              ("KKGrid", "kk grid", "Lay the authoring plots' floors (destructive: once)", grid),
+              ("KKGrid", "kk grid", "Mark the authoring plots' edges (safe to rerun)", grid),
               ("KKSave", "kk save", "Save every authoring plot as a prefab", save),
               ("KKSlots", "kk slots", "Hand over the layout slot blocks",
                [f"give {slot_id(n)}" for n, _, _ in SLOTS for _ in range(4 if n == "chair" else 1)])]
@@ -211,7 +216,7 @@ def write_authoring():
         pack.write(pack.out("Prefabs", f"{name}.prefab.json"),
                    dict(json.load(open(src)), **{"$Comment": f"Layout {lid}, for /kk restore. "
                                                             f"See build/layouts.py."}))
-        x, z = plot_origin(plot - 1)
+        x, z = plot_origin(plot)
         restore += [f"tp {x + LAYOUT // 2} 2 {z + LAYOUT // 2}", "wait 5",
                     f"prefab load {name}", "wait 1", f"paste {x} 0 {z}", "wait 3"]
     macros.append(("KKRestore", "kk restore",
