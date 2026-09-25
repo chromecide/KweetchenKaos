@@ -139,7 +139,7 @@ def build(model, station_id, debug=True):
         rules.add(next(n), [v.at([x for x in frees + busies if x != b["free"]]),
                             v.has(kit["game_id"])],
                   [v.say(f"kk.{station_id}.kit_wrong",
-                         f"[{label.lower()}] A kit upgrades a FREE, plain {label.lower()} "
+                         f"A kit upgrades a FREE, plain {label.lower()} "
                          f"- nothing on it, not already upgraded.")])
 
     # BREAKING: a dish broken frees its stove; a stove broken takes its dish.

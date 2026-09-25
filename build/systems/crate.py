@@ -92,7 +92,7 @@ def build(model, station_id, debug=True):
         if in_run:
             rules.add(90 + n, where + [signals.shift_reads("BLOCK_USED", "open", "Exactly", 0)],
                       [v.say(f"kk.{station_id}.closed",
-                             f"[{label.lower()}] Closed - crates open when the day does.")])
+                             f"The {label.lower()} is closed - crates open when the day does.")])
         rules.add(100 + n, where + open_now,
                   [v.give(item["game_id"]), v.place(b["restocking"], dy=dy), v.sound(1.1)]
                   + rep("take", f"{item['label']} taken - restocking"))
@@ -108,7 +108,7 @@ def build(model, station_id, debug=True):
     for k, (sid, vs) in enumerate(kinds[1:]):
         kit = items[vs["kit_item"]]
         rules.add(170 + k, [v.at(crates[1:]), v.has(kit["game_id"])],
-                  [v.say("kk.crate.kit_wrong", "[crate] That crate is already upgraded.")])
+                  [v.say("kk.crate.kit_wrong", "That crate is already upgraded.")])
     # A crate put down grows its own top; a crate picked up (broken) takes its top.
     rules.add(200, [v.at(crates, event="BLOCK_PLACED")],
               [v.place(b["restocking"], event="BLOCK_PLACED")]

@@ -119,8 +119,9 @@ def build(model, roles, debug=True, exit_on_lose=False):
     num = iter(range(1000, 100000))
 
     def say(event, key, text):
-        """Chat (which can print this volume's tags) -- and the log, without the numbers."""
-        out = [v.say(f"kk.shift.{key}", text, event)]
+        """Chat for the players (which can print this volume's tags; the "[shift]" tag is
+        the log's only) -- and the log, without the numbers."""
+        out = [v.say(f"kk.shift.{key}", text.replace("[shift] ", "", 1), event)]
         if debug:
             out.append(v.log(f"kk.shift.{key}", re.sub(r"\{\w+\}", "?", text), event))
         return out
@@ -250,8 +251,8 @@ def build(model, roles, debug=True, exit_on_lose=False):
                             _t("TICK", f"has_{e['dish']}", 1)],
                   [signals.to_pool("TICK", roles[e["serves"]]), _set("TICK", "beat", 0),
                    _set("TICK", "to_arrive", -1, op="Increment"), EVERY_TICK]
-                  + (say("TICK", f"arrive.{k}", f"[shift] a guest arrives (wants "
-                                                f"{e['label']})") if debug else []))
+                  + logged("TICK", f"arrive.{k}", f"[shift] a guest arrives (wants "
+                                                   f"{e['label']})"))
 
     # 50-52: the day ends (after closing time, the last guest gone).
     rules.add(50, [_t("TICK", "open", 1), _t("TICK", "closing", 1),
@@ -327,14 +328,15 @@ def build(model, roles, debug=True, exit_on_lose=False):
                                   _t("SIGNAL_RECEIVED", f"own_{c}", 0)],
                       deliver("SIGNAL_RECEIVED", c, pads[j % len(pads)], delay=AFTER_CLEAR)
                       + say("SIGNAL_RECEIVED", f"deliver.{d}.{c}",
-                            f"[shift] A {stations[c]['label'].lower()} is delivered."))
+                            f"[shift] {'An' if stations[c]['label'][0].lower() in 'aeiou' else 'A'} "
+                            f"{stations[c]['label'].lower()} is delivered."))
 
     # PAYMENTS. A wrong dish pays nothing, and isn't a loss.
     for e in menu:
         rules.add(next(num), [signals.heard(signals.PAID, e["serves"])],
                   [_set("SIGNAL_RECEIVED", signals.MONEY, e["price"], op="Increment")]
-                  + say("SIGNAL_RECEIVED", f"paid.{e['serves']}",
-                        f"[shift] +{e['price']} coins ({e['label']}) - purse: {{money}}"))
+                  + logged("SIGNAL_RECEIVED", f"paid.{e['serves']}",
+                           f"[shift] +{e['price']} coins ({e['label']}) - purse: {{money}}"))
     rules.add(next(num), [signals.heard(signals.GUEST, signals.SERVED)],
               [_set("SIGNAL_RECEIVED", "served", 1, op="Increment")])
     rules.add(next(num), [signals.heard(signals.GUEST, signals.TURNED_AWAY)],

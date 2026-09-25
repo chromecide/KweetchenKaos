@@ -157,13 +157,14 @@ def log(key, text, event="BLOCK_USED"):
 
 
 def report(key, text, debug, event="BLOCK_USED", to_log=True):
-    """Instrumentation: chat AND server log when debugging, nothing otherwise.
+    """Instrumentation: the server log when debugging, nothing otherwise. NEVER chat -- chat
+    is for players (say); a station's every move in chat was debug noise.
 
-    to_log=False keeps a line to chat only. The log takes ONE line a second, so frequent
-    events (every press) crowd out the milestones that matter; log the milestones."""
-    if not debug:
+    to_log=False drops a line: the log takes ONE line a second, so frequent events (every
+    press) would crowd out the milestones that matter; log the milestones."""
+    if not debug or not to_log:
         return []
-    return [say(key, text, event)] + ([log(key, text, event)] if to_log else [])
+    return [log(key, text, event)]
 
 
 # A spike world mounts its systems over this box, round the origin. A RESTAURANT mounts

@@ -151,7 +151,7 @@ def build(debug=True):
         else:
             notes.append(f"{r['name']}: no arrival slot -- players arrive in front of the room")
             spawn = (AT[0] + FRONT[0], AT[1] + FRONT[1], AT[2] + FRONT[2])
-        _instance(inst, spawn, [_paste_on_arrival(inst, prefab, f"[{r['name']}] welcome!",
+        _instance(inst, spawn, [_paste_on_arrival(inst, prefab, f"Welcome to the {r['name'].lower()}!",
                                                   _border(world, r))],
                   f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True,
                   ground=r.get("ground", world.get("ground", "flat")),
@@ -208,7 +208,7 @@ def build(debug=True):
                dict(room, blocks=out, entities=[], fluids=[],
                     **{"$Comment": f"HQ: {meta['name']}. See build/world.py."}))
     spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + STAND, AT[2] + arrival[2] + 0.5)
-    _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", "[HQ] welcome - step on a "
+    _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", "Welcome to HQ - step on a "
                                                                "portal to play",
                                             _border(world))],
               "HQ: where runs start. One shared world. See build/world.py.", clock_on=False,
