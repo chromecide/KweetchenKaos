@@ -83,9 +83,12 @@ def check(model):
             path = look.get(field)
             if path and path not in shipped:
                 problems.append(f"{where}: {what} {field} is not a shipped asset: {path}")
-    for s in stations.values():
+    fixture_looks = [{"file": "fixtures.json", "look": lk}
+                     for lk in model["fixtures"].get("looks", {}).values()]
+    for s in list(stations.values()) + fixture_looks:
         for field, path in s.get("look", {}).items():
-            if path.endswith(".png") and path not in shipped:
+            if isinstance(path, str) and path.endswith((".png", ".blockymodel")) \
+                    and path not in shipped:
                 problems.append(f"{s['file']}: look {field} is not a shipped asset: {path}")
 
     return problems

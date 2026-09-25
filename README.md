@@ -40,6 +40,14 @@ plate. If it reads right, the theme is right.
 | `systems/crate.py` | crates: an ingredient on top, restocking after a few seconds |
 | `systems/bin.py` | the bin: food goes, plates stay |
 | `clock.py` | the world clock that growth (stove, crates) runs on |
+| `signals.py` | the channels systems talk on: shift, pool arrivals, reset |
+| `npc.py` | NPC behaviour pieces: branches, flags, timers, block-under-feet, roles |
+| `serving.py` | the handshake that hands a plated dish to a guest |
+| `systems/queue.py` | the queue: spots that decide who arrived first, the pool, the held front, one patience clock |
+| `systems/seating.py` | chairs and their own tables, sitting, getting up, the plate left behind |
+| `systems/guest.py` | a seated guest: order, patience pulses, eat, or walk out |
+| `guests.py` | one guest role per menu entry, composed from the three fragments |
+| `spike_front.py` | the service spike's front of house: guest callers and a listener for the shift |
 | `spike.py` | the spike world: stations mounted over an empty world, `/kk spike`, `/kk kit`, and a setup block that lays the stations out |
 | `build.py` | runs it all and prints the report |
 
@@ -51,8 +59,9 @@ plate. If it reads right, the theme is right.
   build and load in game with nothing rejected.
 - **Board: built and spike-tested** (all five ingredients).
 - **Counter: built and spike-tested** (put down, pick up, assembling, plating both ways).
-- **Batch 1, the whole kitchen: built, awaiting its spike test** (`./deploy.sh kitchen`):
-  crates, board, counter, stove, bin, sink.
+- **Batch 1, the whole kitchen: built and spike-tested** (`./deploy.sh kitchen`).
+- **Batch 2, front of house: built, awaiting its spike test** (`./deploy.sh service`):
+  queue, seating, guests, on top of the kitchen.
 - **The other systems are next, rewritten fresh one at a time** (not copied from the POC),
   each reading its station, words and recipes from the model and each re-spiked:
   board, stove, counter, sink, bin, then guests, queue, seating, shift.

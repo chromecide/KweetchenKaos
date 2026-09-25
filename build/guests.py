@@ -1,0 +1,73 @@
+"""
+THE GUEST, COMPOSED: one NPC role per menu entry, built from three systems' fragments.
+
+WIRING, not a system: the one place that knows the queue, seating and the guest system all
+exist, and joins them. Every rule a guest follows still belongs to a system:
+
+    Queue state  ->  queue.guest_fragment     pool, one-spot moves, bumps, holding the front
+    Seat state   ->  seating.guest_fragment   walk to a chair, sit, get up
+                     while seated: guest.fragment   order, wait, eat or walk out
+
+and the joins are all that is decided here:
+
+    somewhere to go       a free chair                  (seating.chair_free)
+    on sitting            release the queue's front     (queue.release)
+    getting up            seating.left_fed / left_unfed (handed to the guest system)
+    after getting up      walk off, then go -- see _leaving
+    chair lost en route   back to the held front         (queue.return_fragment)
+
+ONE ROLE PER MENU ENTRY and no role changes ever: the dish is fixed at spawn (an NPC can't
+pick at random and check a plate against it later), and changing role drops queued signals.
+
+LEAVING is a stand-in until the shift and a door exist: walk off towards the pool for a few
+seconds and vanish. The real exit replaces _leaving() and nothing else.
+"""
+import npc
+import settings
+from systems import guest, queue, seating
+
+WALK_OFF = 4.0
+
+
+def role_id(model, entry):
+    return settings.game_id(model["theme"]["prefix"], f"guest_{entry['serves']}")
+
+
+def roles(model):
+    return [role_id(model, e) for e in model["menu"]]
+
+
+def _leaving(model):
+    going = npc.flag("guests_going")
+    return [
+        npc.branch("Walked off long enough: go (stands in for leaving by the door).",
+                   npc.all_of(going, npc.stopped("guests_walk")), None, [{"Type": "Despawn"}]),
+        npc.branch("Walking off towards the pool: away from the tables.",
+                   npc.all_of(npc.near(queue.ids(model)["set_pool"]), going),
+                   {"Type": "Seek", "StopDistance": 3.0, "SlowDownDistance": 4.0}),
+        npc.branch("Walking off.", going, npc.STILL),
+        npc.branch("Just got up: start walking off.", {"Type": "Any"}, npc.STILL,
+                   [npc.set_flag("guests_going"), *npc.timer("guests_walk", WALK_OFF)]),
+    ]
+
+
+def build(model, debug=True):
+    """Write every guest role for the model's menu."""
+    guest.build(model, debug)
+    for entry in model["menu"]:
+        seated, interactions = guest.fragment(model, entry, on_fed=seating.left_fed(),
+                                              on_unfed=seating.left_unfed())
+        queue_state = queue.guest_fragment(model, ready=seating.chair_free(model),
+                                           next_state="Seat", debug=debug)
+        seat_state = seating.guest_fragment(
+            model, on_sat=[queue.release()], while_seated=seated,
+            on_unseated=_leaving(model),
+            on_lost=queue.return_fragment(model, "Queue", debug) + [
+                npc.branch("No chair and no held front to go back to: just go.",
+                           {"Type": "Any"}, None, [{"Type": "Despawn"}])],
+            debug=debug)
+        npc.role(role_id(model, entry), f"Guest - wants {entry['label']}", "Queue",
+                 {"Queue": queue_state, "Seat": seat_state}, interactions,
+                 appearance=model["theme"]["guest"]["appearance"], display="Arriving",
+                 comment=f"A guest who wants {entry['label']}, composed from the queue's, "
+                         f"seating's and the guest system's fragments. See build/guests.py.")

@@ -38,7 +38,8 @@ def block_for(look):
     return block
 
 
-def _item(game_id, label, icon, block, comment):
+def item(game_id, label, icon, block, comment):
+    """Any block item: its name, icon and block."""
     pack.say(f"items.{game_id}.name", label)
     pack.write_item(game_id, {
         "$Comment": comment,
@@ -54,18 +55,20 @@ def hint(game_id, text):
     return f"server.{key}"
 
 
-def station_block(game_id, label, look, hint_text, comment, sides=None, tint=None):
+def station_block(game_id, label, look, hint_text, comment, sides=None, tint=None, use=True):
+    """`use=False`: a block nothing presses (a queue spot works off ENTER and EXIT only)."""
     sides = sides or look["sides"]
     block = {"Material": "Solid", "DrawType": "Cube", "Opacity": "Transparent",
              "Textures": [{"Weight": 1, "Sides": sides, "Up": look["top"], "Down": sides}],
              "BlockSoundSetId": look.get("sound", "Stone"),
              "PhysicalMaterialId": look.get("sound", "Stone"),
              "InteractionHint": hint(game_id, hint_text),
-             "Interactions": {"Use": NOOP},
              "Supporting": {"Up": [{"FaceType": "Full"}]}}
+    if use:
+        block["Interactions"] = {"Use": NOOP}
     if tint:
         block["Tint"] = [tint]
-    _item(game_id, label, look.get("icon", STATION_ICON), block, comment)
+    item(game_id, label, look.get("icon", STATION_ICON), block, comment)
 
 
 def display_block(game_id, label, look, hint_text, comment, extra=None):
@@ -73,4 +76,4 @@ def display_block(game_id, label, look, hint_text, comment, extra=None):
     themselves)."""
     block = dict(block_for(look), InteractionHint=hint(game_id, hint_text),
                  Interactions={"Use": NOOP}, **(extra or {}))
-    _item(game_id, label, look["icon"], block, comment)
+    item(game_id, label, look["icon"], block, comment)

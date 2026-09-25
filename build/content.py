@@ -227,7 +227,8 @@ def load_theme(theme_id):
         for st in s.get("stages", []):
             st["look"] = resolve(st["look_spec"], s["file"])
 
+    fixtures = one("fixtures.json")
     if problems:
         raise ContentError(problems)
     return {"theme": theme, "vessel": vessel, "stations": stations, "items": items,
-            "steps": steps, "menu": menu, "ladders": ladders}
+            "steps": steps, "menu": menu, "ladders": ladders, "fixtures": fixtures}

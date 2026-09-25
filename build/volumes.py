@@ -154,10 +154,15 @@ def report(key, text, debug, event="BLOCK_USED", to_log=True):
     return [say(key, text, event)] + ([log(key, text, event)] if to_log else [])
 
 
-def volume(name, effect, tags, box=64.0):
-    """A system mounted over a whole test world."""
+WORLD_BOX = ((-64.0, -8.0, -64.0), (64.0, 40.0, 64.0))
+
+
+def volume(name, effect, tags, targets=("Player",), box=WORLD_BOX):
+    """A system mounted in a box ((min x, y, z), (max x, y, z)) -- by default the whole
+    test world."""
+    (x0, y0, z0), (x1, y1, z1) = box
     return {"Position": {"X": 0.0, "Y": 0.0, "Z": 0.0},
-            "Shape": {"Type": "Box", "Min": {"X": -box, "Y": -8.0, "Z": -box},
-                      "Max": {"X": box, "Y": 40.0, "Z": box}},
-            "EffectAsset": effect, "TargetTypes": ["Player"], "Enabled": True,
+            "Shape": {"Type": "Box", "Min": {"X": float(x0), "Y": float(y0), "Z": float(z0)},
+                      "Max": {"X": float(x1), "Y": float(y1), "Z": float(z1)}},
+            "EffectAsset": effect, "TargetTypes": list(targets), "Enabled": True,
             "KeepLoaded": False, "Tags": dict(tags), "Name": name}

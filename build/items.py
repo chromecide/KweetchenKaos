@@ -17,16 +17,18 @@ What every item is, whatever the theme:
     (made so by content.py when it builds plating in), a dirty plate is Junk; everything
     else is Common.
 
-Serving (a guest taking a dish) is added by the guest system when it exists; nothing here
-knows about guests yet.
+  * SERVED DISHES ARE HANDED OVER, not placed: their clicks run serving.py's handshake,
+    which a seated guest senses.
 """
 import blocks
 import pack
+import serving
 
 
 def write_all(model):
     blocks.write_noop()
     stack = model["theme"]["defaults"].get("max_stack", 1)
+    served = {e["serves"] for e in model["menu"]}
     for iid, item in model["items"].items():
         gid = item["game_id"]
         quality = item["quality"] or "Common"
@@ -38,7 +40,9 @@ def write_all(model):
             "Quality": quality,
             "MaxStack": stack,
             "PlayerAnimationsId": "Block",
-            "Interactions": {"Secondary": blocks.NOOP},
+            # Served dishes are handed to guests (serving.py); everything else does nothing.
+            "Interactions": (serving.interactions(item) if iid in served
+                             else {"Secondary": blocks.NOOP}),
             "BlockType": blocks.block_for(item["look"]),
         })
     return len(model["items"])

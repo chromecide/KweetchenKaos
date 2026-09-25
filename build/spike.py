@@ -1,65 +1,74 @@
 """
-THE SPIKE WORLD: a few stations, mounted over an empty world, to test on their own.
+THE SPIKE WORLD: stations (and, for a service spike, the front of house) mounted over an
+empty world, to test on their own.
 
     /kk spike    open the spike world (rebuilt fresh every visit)
     /kk kit      hand over the SETUP block and what the mounted stations take
-    SETUP block  place it anywhere and press it once: the stations are laid out in a row
-                 in front of spawn, so nobody has to set a spike up by hand
+    SETUP block  place it anywhere and press it once: everything is laid out at fixed
+                 places (see the map below), so nobody sets a spike up by hand
 
-A SPIKE IS JUST A LIST OF STATIONS AND HOW MANY OF EACH (SPIKES below). Each is mounted by whichever system runs
-its role (systems/__init__.py) -- the same way a layout will mount it later, so a spike
-tests exactly what ships. Chosen at build time: `build.py --spike NAME`, `./deploy.sh NAME`.
+A SPIKE IS A LIST OF STATIONS AND HOW MANY OF EACH, plus "front": True for the queue,
+chairs and guests (SPIKES below). Each station is mounted by whichever system runs its role
+(systems/__init__.py) -- the way a layout will mount it later, so a spike tests exactly what
+ships. Chosen at build time: `build.py --spike NAME`, or `./deploy.sh NAME`.
 
 THE KIT IS WORKED OUT FROM THE THEME: the setup block, and everything the stations take
 that none of them make (two of raw ingredients and plates, one of the rest).
-A board + counter spike hands over raw ingredients (the board makes the dough and pieces),
-plates, and cooked pies (the stove isn't mounted, so those can't be made here) --
-everything needed to try every combine.
+
+THE MAP (spawn is 8, 2, 8):
+
+        x:  2              12 ...
+    z  4                   chairs, tables at z 5        (front)
+       8   queue spot 1
+      10   spot 2
+      12   spot 3          stations and crates in a row
+      14   spot 4
+      18   pool
+      22                   guest callers, one per menu entry   (front)
+
+The queue's patience area covers x <= 8 only: a seated guest inside it would drain the
+line's patience.
 
 What was learned in the POC and is built in here:
-  * ADVENTURE MODE. NPCs ignore interactions from a creative player, and every system
-    eventually talks to NPCs.
-  * THE WORLD IS GONE once the last player leaves (WorldEmpty removal), so every visit
-    starts clean.
-  * THE KIT IS A SEPARATE COMMAND. Moving between worlds rebuilds the player entity, and
-    items handed over around that go to something about to stop existing.
-  * ONE ITEM PER LINE in the kit: "give <item> <count>" is read as giving to a player.
-  * Don't run /kk spike from inside the spike world: it rebuilds the world you're in and
-    has crashed the server. Leave first.
+  * ADVENTURE MODE. NPCs ignore interactions from a creative player.
+  * THE WORLD IS GONE once the last player leaves, so every visit starts clean.
+  * THE KIT IS A SEPARATE COMMAND: moving between worlds rebuilds the player entity, and
+    items handed over around that are lost. ONE ITEM PER LINE ("give x 2" means a player).
+  * Don't run /kk spike from inside the spike world: it has crashed the server.
 """
 import blocks
 import clock
 import pack
 import settings
+import spike_front
 import systems
 import volumes as v
 
 INSTANCE = f"{settings.NAMESPACE}_Spike"
-
-# name -> {station: how many the setup block lays out}
+KITCHEN = {"crates": 1, "board": 2, "counter": 3, "stove": 2, "bin": 1, "sink": 1}
 SPIKES = {
-    "board": {"board": 2},
-    "counter": {"counter": 3, "board": 2},
-    # The whole kitchen: every crate, and every station the pies pass through.
-    "kitchen": {"crates": 1, "board": 2, "counter": 3, "stove": 2, "bin": 1, "sink": 1},
+    "board": {"stations": {"board": 2}},
+    "counter": {"stations": {"counter": 3, "board": 2}},
+    "kitchen": {"stations": KITCHEN},
+    # A full service: the kitchen, the queue, chairs and guests.
+    "service": {"stations": KITCHEN, "front": True},
 }
+SETUP = f"{settings.NAMESPACE}_Spike_Setup"
+SETUP_EFFECT = f"{SETUP}_System"
+GROUND = 1              # the flat spike world's surface: blocks stand at y 1
+ROW_Z, ROW_X, GAP = 12, 12, 2
 
 
 def stations_of(model, name):
     """A spike's stations; "crates" means one of every crate the theme has."""
     out = {}
-    for st, count in SPIKES[name].items():
+    for st, count in SPIKES[name]["stations"].items():
         if st == "crates":
             out.update({sid: count for sid, s in model["stations"].items()
                         if s["role"] == "crate"})
         else:
             out[st] = count
     return out
-
-SETUP = f"{settings.NAMESPACE}_Spike_Setup"
-SETUP_EFFECT = f"{SETUP}_System"
-GROUND = 1              # the flat spike world's surface: blocks stand at y 1
-ROW_Z, ROW_X, GAP = 12, 4, 2   # spawn is (8, 2, 8); the row runs along x, in front of it
 
 
 def kit(model, stations):
@@ -72,37 +81,42 @@ def kit(model, stations):
         for iid in s.get("inputs", []) + ([s["input"]] if "input" in s else []):
             if iid not in made and iid not in needed:
                 needed.append(iid)
-    # Items stack one to a slot, so keep it lean: two of anything used up in quantity
-    # (raw ingredients, plates), one of the rest.
-    plate = model["vessel"]["clean"]["id"]
     # The restaurant's plates: the sink makes clean ones from dirty, but a restaurant
     # starts with a stack, so a spike that plates always gets some.
+    plate = model["vessel"]["clean"]["id"]
     if any(plate in s.get("inputs", []) for s in steps) and plate not in needed:
         needed.append(plate)
+    # Items stack one to a slot: two of anything used up in quantity, one of the rest.
     many = lambda i: model["items"][i].get("source") or i == plate
     return ([(SETUP, 1)]
             + [(model["items"][i]["game_id"], 2 if many(i) else 1) for i in needed])
 
 
-def setup(model, stations, debug):
+def setup(model, stations, front, debug):
     """The setup block, the layout it pastes, and the rule that pastes it once. Returns
     the setup volume."""
     row = [systems.for_station(model, st).layout(model, st)
            for st, count in stations.items() for _ in range(count)]
+    layout = [{"x": ROW_X + GAP * k, "y": GROUND + dy, "z": ROW_Z, "name": block}
+              for k, column in enumerate(row) for dy, block in column]
+    entities = []
+    if front:
+        more, entities = front
+        layout += more
     pack.write(pack.out("Prefabs", f"{SETUP}_Layout.prefab.json"), {
-        "$Comment": "The spike world's stations, in a row in front of spawn. See build/spike.py.",
+        "$Comment": "The spike world's layout. See build/spike.py for the map.",
         "version": 8, "blockIdVersion": 11, "anchorX": 0, "anchorY": 0, "anchorZ": 0,
-        "blocks": [{"x": ROW_X + GAP * k, "y": GROUND + dy, "z": ROW_Z, "name": block}
-                   for k, column in enumerate(row) for dy, block in column],
-        "entities": []})
+        "blocks": layout, "entities": entities})
     blocks.station_block(SETUP, "Spike setup", {
         "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
         "top": "BlockTextures/Wood_Softwood_Planks_Side.png", "sound": "Wood"},
-        "Press to lay out the stations (once)",
-        "Spike only: press to lay out the stations. See build/spike.py.", tint="#e0c020")
+        "Press to lay everything out (once)",
+        "Spike only: press to lay everything out. See build/spike.py.", tint="#e0c020")
 
     once = lambda value: {"Type": "TagCondition", "Event": "BLOCK_USED", "Source": "Self",
                           "TagKey": "done", "Comparison": "Exactly", "TagValue": value}
+    what = ", ".join(f"{n}x {model['stations'][st]['label'].lower()}"
+                     for st, n in stations.items() if model["stations"][st]["role"] != "crate")
     rules = v.Entries()
     rules.add(1, [v.at([SETUP]), once("1")],
               [v.say("kk.setup.again", "[setup] already laid out - leave and /kk spike again "
@@ -114,21 +128,29 @@ def setup(model, stations, debug):
                 "ShowParticles": False},
                {"Type": "ModifyTags", "Event": "BLOCK_USED", "Operation": "Set",
                 "TagKey": "done", "TagValue": "1"}]
-              + v.report("kk.setup.done", "[setup] stations laid out: " + ", ".join(
-                  f"{n}x {model['stations'][st]['label'].lower()}" for st, n in stations.items()
-                  if model["stations"][st]["role"] != "crate") + ", and the crates",
-                         debug))
+              + v.report("kk.setup.done", f"[setup] laid out: {what}, the crates"
+                         + (", the queue, chairs and guest callers" if front else ""), debug))
     rules.write(SETUP_EFFECT, "Spike only: the setup block. See build/spike.py.")
     return v.volume("spike_setup", SETUP_EFFECT, {"done": "0"})
 
 
 def build(model, name, debug=True):
+    spike = SPIKES[name]
     stations = stations_of(model, name)
     mounted = [v.volume(f"spike_{st}", systems.for_station(model, st).build(model, st, debug),
                         {"spike": st}) for st in stations]
-    mounted.append(setup(model, stations, debug))
+    front = None
+    if spike.get("front"):
+        front_volumes, front_layout = spike_front.build(model, GROUND, debug)
+        mounted += front_volumes
+        front = front_layout
+    mounted.append(setup(model, stations, front, debug))
     given = kit(model, stations)
     note = " + ".join(model["stations"][st]["label"].lower() for st in stations)
+    if front:
+        note += " + the front of house"
+    needs_clock = any(getattr(systems.for_station(model, st), "NEEDS_CLOCK", False)
+                      for st in stations)
 
     pack.write(pack.out("Instances", INSTANCE, "instance.bson"), {
         "$Comment": f"KwitchenKaos spike world, mounting: {note}. See build/spike.py.",
@@ -142,8 +164,7 @@ def build(model, name, debug=True):
         "GameTime": "0001-01-01T12:00:00Z",
         "IsGameTimePaused": True,
         # A timed station (stove, crates) needs the clock running.
-        **(clock.WORLD_TIME if any(getattr(systems.for_station(model, st), "NEEDS_CLOCK",
-                                           False) for st in stations) else {}),
+        **(clock.WORLD_TIME if needs_clock else {}),
         "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False,
         "IsBlockSpawnersEnabled": False,
         "DeleteOnRemove": True, "DeleteOnUniverseStart": True,

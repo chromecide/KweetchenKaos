@@ -1,4 +1,42 @@
 {
-  "$comment": "The theme's block for each layout slot. Filled in when layouts move to v2; empty means the slot keeps its plain slot block.",
+  "$comment": "Front-of-house fixtures: what the queue and seating build their blocks from. Layout slots (later) name the block each slot becomes.",
+  "looks": {
+    "chair": {
+      "model": "Blocks/Decorative_Sets/Tavern/Chair.blockymodel",
+      "texture": "Blocks/Decorative_Sets/Tavern/Chair_Texture.png",
+      "icon": "Icons/ItemsGenerated/Furniture_Tavern_Chair.png",
+      "sound": "Wood"
+    },
+    "table": {
+      "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+      "top": "BlockTextures/Wood_Softwood_Planks_Top.png",
+      "sound": "Wood"
+    },
+    "queue_spot": {
+      "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+      "top": "BlockTextures/Wood_Softwood_Planks_Side.png",
+      "sound": "Stone",
+      "shades": [
+        "#e8e2d2",
+        "#c9c0aa",
+        "#a79d85",
+        "#857c66"
+      ],
+      "taken_tint": "#4c4639",
+      "held_tint": "#c08a2e"
+    },
+    "pool": {
+      "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+      "top": "BlockTextures/Wood_Softwood_Planks_Side.png",
+      "sound": "Stone",
+      "tint": "#7a5cc0"
+    }
+  },
+  "words": {
+    "order": "Take their order",
+    "clear_plate": "Press to clear the table",
+    "queue_spot": "Queue - {where}",
+    "pool": "Queue pool"
+  },
   "slots": {}
 }
