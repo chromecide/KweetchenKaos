@@ -154,6 +154,14 @@ def import_save(plot, layout_id, name):
         b["z"] += shift
     assert all(0 <= b["x"] < LAYOUT and 0 <= b["z"] < LAYOUT for b in placed), \
         "blocks fall outside the plot after re-anchoring: the save anchor isn't where assumed"
+    # FLUIDS TOO. A save lists a fluid for every block -- "Empty" for nearly all of them --
+    # and the first import shifted the blocks but not these: the paste then wrote "no
+    # fluid" over a room-sized patch half a plot away, clearing the ground there (the hole
+    # a player fell through). Real fluids are shifted with the blocks; empty ones carry
+    # nothing and are dropped.
+    fluids = [dict(f, x=f["x"] + shift, z=f["z"] + shift)
+              for f in data.get("fluids") or [] if f.get("name") != "Empty"]
+    data["fluids"] = fluids
     zones = {}
     for e in data.get("entities", []):
         tv, tr = e.get("Components", {}).get("TriggerVolume"), e.get("Components", {}).get("Transform")
