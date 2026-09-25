@@ -5,8 +5,10 @@ THE SHIFT SYSTEM: the restaurant's day -- open, serve, close, count the takings,
                                  pads: choose one -- it's on the menu, its crates delivered
     press the SIGN (closed)  ->  the day opens: the clock starts, guests arrive, the service
                                  lock goes on, unbought offers and unchosen cards vanish
-    ...the day runs          ->  a guest every few seconds (faster as the run goes on),
-                                 wanting a dish that is ON THE MENU
+    ...the day runs          ->  the day's EXPECTED GUESTS arrive evenly spread over it, each
+                                 wanting a dish that is ON THE MENU. How many: the rules'
+                                 day_1, +per_day each day, +per_card for each recipe card
+                                 chosen -- more dishes, more customers
     CLOSING TIME             ->  no more guests; the day ends when the last one has left
     the day ends             ->  every few days, recipe cards INSTEAD of offers; otherwise
                                  today's offers go out on the pads
@@ -152,7 +154,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
                {"Type": "EnableVolume", "Event": "BLOCK_USED", "MatchKey": "servicelock",
                 "MatchValue": "1", "Radius": 128.0, "Center": "Volume"},
                signals.to_pads("BLOCK_USED", signals.CLEAR)]
-              + say("BLOCK_USED", "opened", "[shift] Day {day} - OPEN. Purse: {money} coins."))
+              )
     # 13+: THE DAY GROWS (rules day_growth): every few days it's longer -- more room for the
     # same kind of rush, as PlateUp does. Rule 10 has just set `open` (tags are instant) and
     # the sign block itself only turns at the end of the tick, so these see "just opened".
@@ -167,7 +169,8 @@ def build(model, roles, debug=True, exit_on_lose=False):
                       [_set("BLOCK_USED", "time_left",
                             rules_["day_seconds"] + growth["seconds"] * k)])
     rules.add(11, [v.at([s["sign_open"]])],
-              say("BLOCK_USED", "stillopen", "[shift] Open - {time_left}s to closing time."))
+              say("BLOCK_USED", "stillopen", "[shift] Open - {time_left}s to closing time; "
+                                             "{to_arrive} guests still to come, {served} served."))
     rules.add(12, [v.at([s["sign"]]), _t("BLOCK_USED", "onmenu", 0)],
               say("BLOCK_USED", "nomenu", "[shift] Nothing on the menu yet - choose a "
                                           "starting recipe on the pads."))
@@ -180,13 +183,40 @@ def build(model, roles, debug=True, exit_on_lose=False):
               [_set("TICK", "closing", 1), EVERY_TICK]
               + say("TICK", "closing", "[shift] Closing time - no more guests today."))
 
-    # 30+: the beat, one rule per stage of the run, each at its own pace.
-    for k, stage in enumerate(rules_["stages"]):
-        rules.add(30 + k, [_t("TICK", "open", 1), _t("TICK", "closing", 0), _t("TICK", "beat", 0),
-                           _t("TICK", signals.DAY, stage["from"], "AtLeast"),
-                           _t("TICK", signals.DAY, stage["to"], "AtMost"),
-                           _every(rules_["arrival_every"][stage["id"]])],
-                  [_set("TICK", "beat", 1), EVERY_TICK])
+    # EXPECTED GUESTS AND THEIR PACE, for every day and number of cards chosen (tags can't do
+    # arithmetic, so each combination is its own rule). 5000+: at opening -- rule 10 has just
+    # set `open` -- the count is set; 6000+: the beat spreads them over the day, the first
+    # arriving the moment it opens (rule 10 starts a beat).
+    g, growth = rules_["guests"], rules_.get("day_growth") or {}
+    card_dishes = sum(1 for d in dishes.values() if d["unlock"] != "start") + 1
+    last_day = 30
+
+    def expected(day, cards):
+        return g["day_1"] + g["per_day"] * (day - 1) + g["per_card"] * cards
+
+    def day_length(day):
+        steps = (day - 1) // growth["every_days"] if growth.get("seconds") else 0
+        return rules_["day_seconds"] + growth.get("seconds", 0) * steps
+
+    for day in range(1, last_day + 1):
+        on_day = [_t("BLOCK_USED", signals.DAY, day, "AtLeast" if day == last_day else "Exactly")]
+        on_tick = [_t("TICK", signals.DAY, day, "AtLeast" if day == last_day else "Exactly")]
+        for cards in range(card_dishes):
+            n = expected(day, cards)
+            rules.add(5000 + day * 10 + cards,
+                      [v.at([s["sign"]]), _t("BLOCK_USED", "open", 1), *on_day,
+                       _t("BLOCK_USED", "cards", cards)],
+                      [_set("BLOCK_USED", "to_arrive", n), _set("BLOCK_USED", "expected", n),
+                       _set("BLOCK_USED", "served", 0)])
+            gap = round(day_length(day) / n, 1)
+            rules.add(6000 + day * 10 + cards,
+                      [_t("TICK", "open", 1), _t("TICK", "closing", 0), _t("TICK", "beat", 0),
+                       _t("TICK", "to_arrive", 1, "AtLeast"), *on_tick,
+                       _t("TICK", "cards", cards), _every(gap)],
+                      [_set("TICK", "beat", 1), EVERY_TICK])
+    rules.add(5999, [v.at([s["sign"]]), _t("BLOCK_USED", "open", 1)],
+              say("BLOCK_USED", "opened", "[shift] Day {day} - OPEN. Expecting {expected} "
+                                          "guests. Purse: {money} coins."))
 
     def fair_pick(base, gate, options):
         """The fair chain over `options` while `gate` holds: sets choice = k + 1."""
@@ -203,7 +233,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
         rules.add(200 + k, [_t("TICK", "beat", 1), _t("TICK", "choice", k + 1),
                             _t("TICK", f"has_{e['dish']}", 1)],
                   [signals.to_pool("TICK", roles[e["serves"]]), _set("TICK", "beat", 0),
-                   EVERY_TICK]
+                   _set("TICK", "to_arrive", -1, op="Increment"), EVERY_TICK]
                   + (say("TICK", f"arrive.{k}", f"[shift] a guest arrives (wants "
                                                 f"{e['label']})") if debug else []))
 
@@ -219,8 +249,9 @@ def build(model, roles, debug=True, exit_on_lose=False):
                {"Type": "DisableVolume", "Event": "TICK", "MatchKey": "servicelock",
                 "MatchValue": "1", "Radius": 128.0, "Center": "Volume"},
                signals.to_pads("TICK", signals.CLEAR), EVERY_TICK]
-              + say("TICK", "dayover", "[shift] The last guest has gone. Purse: {money} "
-                                       "coins. Tomorrow is day {day}."))
+              + say("TICK", "dayover", "[shift] The last guest has gone - {served} of "
+                                       "{expected} served. Purse: {money} coins. Tomorrow is "
+                                       "day {day}."))
     # 51: a card day (and something left to learn) -- cards INSTEAD of offers.
     rules.add(51, [_t("TICK", "dayover", 1), _t("TICK", "cards_in", 0, "AtMost"),
                    _t("TICK", "locked", 1, "AtLeast")],
@@ -262,6 +293,11 @@ def build(model, roles, debug=True, exit_on_lose=False):
     # 700+: a card was chosen: the dish is on the menu, the other card goes, and any crate
     # it needs that the restaurant doesn't own is delivered.
     for d, dish in dishes.items():
+        # A recipe card (not the starter: nothing is on the menu yet) brings more guests.
+        # FIRST, before the menu count below goes up.
+        rules.add(next(num), [signals.heard(signals.CHOSE, d),
+                              _t("SIGNAL_RECEIVED", "onmenu", 1, "AtLeast")],
+                  [_set("SIGNAL_RECEIVED", "cards", 1, op="Increment")])
         rules.add(next(num), [signals.heard(signals.CHOSE, d)],
                   [_set("SIGNAL_RECEIVED", f"has_{d}", 1),
                    _set("SIGNAL_RECEIVED", "locked", -1, op="Increment"),
@@ -282,6 +318,8 @@ def build(model, roles, debug=True, exit_on_lose=False):
                   [_set("SIGNAL_RECEIVED", signals.MONEY, e["price"], op="Increment")]
                   + say("SIGNAL_RECEIVED", f"paid.{e['serves']}",
                         f"[shift] +{e['price']} coins ({e['label']}) - purse: {{money}}"))
+    rules.add(next(num), [signals.heard(signals.GUEST, signals.SERVED)],
+              [_set("SIGNAL_RECEIVED", "served", 1, op="Increment")])
     rules.add(next(num), [signals.heard(signals.GUEST, signals.TURNED_AWAY)],
               say("SIGNAL_RECEIVED", "turnedaway",
                   "[shift] A guest got the wrong dish and left without paying."))
@@ -342,7 +380,8 @@ def build(model, roles, debug=True, exit_on_lose=False):
     tags = {**signals.LISTENER_TAGS, signals.MONEY: "0", signals.DAY: "1", "open": "0",
             "closing": "0", "time_left": "0", "beat": "0", "picked": "0", "choice": "0",
             "lost": "0", "started": "0", "dayover": "0", "cardpick": "0",
-            "cards_in": str(every), "locked": str(locked), "onmenu": "0"}
+            "cards_in": str(every), "locked": str(locked), "onmenu": "0",
+            "to_arrive": "0", "expected": "0", "served": "0", "cards": "0"}
     tags.update({f"has_{d}": "0" for d in dishes})
     tags.update({f"offered_{d}": "0" for d in dishes})
     tags.update({f"own_{c}": "0" for c in offers.crates(model)})

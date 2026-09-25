@@ -20,16 +20,17 @@
       "to": 999
     }
   ],
-  "arrival_every": {
-    "early": 15,
-    "mid": 12,
-    "late": 10
-  },
   "queue_patience": 120,
   "queue_patience_boost": 10,
   "guest_patience_scale": 1.0,
   "day_growth": {
     "every_days": 3,
     "seconds": 25
+  },
+  "guests": {
+    "$comment": "Guests expected each day: day_1, +per_day each day, +per_card for each recipe card chosen (not the starter). They arrive evenly spread over the day.",
+    "day_1": 3,
+    "per_day": 1,
+    "per_card": 2
   }
 }

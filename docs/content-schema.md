@@ -388,20 +388,28 @@ How a run plays, independent of what it looks like. Built 2026-09-25.
 ```
 rules/
   standard/
-    rules.json       day length, stages of a run, arrivals per stage, queue patience
+    rules.json       day length, stages of a run, expected guests, queue patience
     offers.json      what the pads can offer (stations and upgrade kits), prices, weights,
                      and from which day each pad offers
     cards.json       recipe cards: every N days, how many to choose from
 ```
 
 ```json
-{ "id": "standard", "name": "Standard", "day_seconds": 90,
+{ "id": "standard", "name": "Standard", "day_seconds": 100,
+  "day_growth": { "every_days": 3, "seconds": 25 },
   "stages": [ { "id": "early", "from": 1, "to": 3 }, { "id": "mid", "from": 4, "to": 6 },
               { "id": "late", "from": 7, "to": 999 } ],
-  "arrival_every": { "early": 15, "mid": 11, "late": 8 },
-  "queue_patience": 60, "queue_patience_boost": 10, "guest_patience_scale": 1.0 }
+  "guests": { "day_1": 3, "per_day": 1, "per_card": 2 },
+  "queue_patience": 120, "queue_patience_boost": 10, "guest_patience_scale": 1.0 }
 ```
 
+- **Expected guests** each day are `day_1`, plus `per_day` for every day
+  after the first, plus `per_card` for every recipe card chosen (the starter
+  recipe doesn't count). They arrive evenly spread over the day, the first as
+  it opens. The shift says how many to expect when it opens, how many are
+  still to come and how many were served when the sign is pressed, and the
+  served count at the end of the day. Counts are worked out for days 1-30;
+  from day 30 on they stop growing.
 - Rules name **stations and kits by id**, never blocks, so the same rules
   work for any theme. `offers.json` says "stove, price 14, weights 1/5/10";
   the theme says what a stove is.

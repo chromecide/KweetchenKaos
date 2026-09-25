@@ -92,8 +92,8 @@ def report(model):
     grow = r.get("day_growth") or {}
     print(f"RULES {r['name']}: {r['day_seconds']}s days"
           + (f" (+{grow['seconds']}s every {grow['every_days']} days)" if grow.get("seconds") else "")
-          + "; a guest every " + ", ".join(f"{r['arrival_every'][s['id']]}s ({s['id']}, days {s['from']}-"
-                      f"{s['to']})" for s in r["stages"])
++ f"; guests: {r['guests']['day_1']} on day 1, +{r['guests']['per_day']} a day, "
+          f"+{r['guests']['per_card']} per recipe card"
           + f"; recipe cards every {r['cards']['every_days']} days")
     for d in model["dishes"].values():
         print(f"DISH {d['label']}: {'a starter (chosen on day 0)' if d['unlock'] == 'start' else 'a recipe card'}"
