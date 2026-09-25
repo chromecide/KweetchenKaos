@@ -1,8 +1,16 @@
 {
-  "$comment": "The world: HQ (a layout), and the restaurants its portals lead to. Each restaurant is a theme + a layout + a rules set, hung on an HQ portal slot by number.",
   "hq": "hq",
+  "ground": "void",
+  "weather": "Zone1_Sunny",
+  "$comment": "The world: HQ (a layout), and the restaurants its portals lead to. Each restaurant is a theme + a layout + a rules set, hung on an HQ portal slot by number.",
   "restaurants": [
-    {"id": "test_kitchen", "name": "Test kitchen", "theme": "kitchen", "layout": "test_room",
-     "rules": "standard", "portal": 1}
+    {
+      "id": "test_kitchen",
+      "name": "Test kitchen",
+      "theme": "kitchen",
+      "layout": "test_room",
+      "rules": "standard",
+      "portal": 1
+    }
   ]
 }

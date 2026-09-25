@@ -40,6 +40,9 @@ NS = settings.NAMESPACE
 HQ = f"{NS}_HQ"
 AT = (32, 0, 32)             # where a room or HQ is pasted in its own world
 FRONT = (16.0, 2.0, -4.0)    # a restaurant's arrival, relative to its room: in front of it
+# Feet on top of the arrival block. The room is pasted only once a player is in the world, so
+# over a void there is nothing under them for a moment: arrive standing, not dropping in.
+STAND = 1.0
 PORTAL_LOOK = {"model": "Blocks/Miscellaneous/Platform_Magic_Exit.blockymodel",
                "texture": "Blocks/Miscellaneous/Platform_Magic_Blue2.png",
                "icon": "Icons/ItemsGenerated/Portal_Return.png"}
@@ -49,11 +52,20 @@ def load():
     return json.load(open(os.path.join(settings.CONTENT, "world", "world.json")))
 
 
-def _instance(name, spawn, volumes_, comment, clock_on, keep_key=None, empty_after=20.0):
+# THE GROUND a world stands on (world.json "ground"): grass to the horizon, or nothing at all
+# -- the room floats in the sky (the game's own Void generator: no blocks, only sky).
+GROUNDS = {"flat": {"Type": "Flat", "Layers": [{"From": 0, "To": 1, "BlockType": "Soil_Grass"}]},
+           "void": {"Type": "Void"}}
+
+
+def _instance(name, spawn, volumes_, comment, clock_on, ground, weather=None, keep_key=None,
+              empty_after=20.0):
     """`empty_after`: seconds empty before the world is removed; None: never removed."""
     pack.write(pack.out("Instances", name, "instance.bson"), {
         "$Comment": comment, "Version": 2,
-        "WorldGen": {"Type": "Flat", "Layers": [{"From": 0, "To": 1, "BlockType": "Soil_Grass"}]},
+        "WorldGen": GROUNDS[ground],
+        # world.json "weather": one shipped weather, held for good (no rain rolling in).
+        **({"ForcedWeather": weather} if weather else {}),
         "SpawnProvider": {"Id": "Global", "SpawnPoint": {
             "X": spawn[0], "Y": spawn[1], "Z": spawn[2], "Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0}},
         "GameMode": "Adventure", "GameTime": "0001-01-01T12:00:00Z", "IsGameTimePaused": True,
@@ -107,12 +119,14 @@ def build(debug=True):
                                              f"{r['rules']} rules. See build/world.py."}))
         if info["arrival"]:
             ax, ay, az = info["arrival"]
-            spawn = (AT[0] + ax + 0.5, AT[1] + ay + 2.0, AT[2] + az + 0.5)
+            spawn = (AT[0] + ax + 0.5, AT[1] + ay + STAND, AT[2] + az + 0.5)
         else:
             notes.append(f"{r['name']}: no arrival slot -- players arrive in front of the room")
             spawn = (AT[0] + FRONT[0], AT[1] + FRONT[1], AT[2] + FRONT[2])
         _instance(inst, spawn, [_paste_on_arrival(inst, prefab, f"[{r['name']}] welcome!")],
-                  f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True)
+                  f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True,
+                  ground=r.get("ground", world.get("ground", "flat")),
+                  weather=r.get("weather", world.get("weather")))
         portal_of[r["portal"]] = (r, inst)
 
     # THE PORTALS: one block per restaurant, stepped on to go.
@@ -162,10 +176,11 @@ def build(debug=True):
     pack.write(pack.out("Prefabs", f"{HQ}_Room.prefab.json"),
                dict(room, blocks=out, entities=[], fluids=[],
                     **{"$Comment": f"HQ: {meta['name']}. See build/world.py."}))
-    spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + 2.0, AT[2] + arrival[2] + 0.5)
+    spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + STAND, AT[2] + arrival[2] + 0.5)
     _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", "[HQ] welcome - step on a "
                                                                "portal to play")],
               "HQ: where runs start. One shared world. See build/world.py.", clock_on=False,
+              ground=world.get("ground", "flat"), weather=world.get("weather"),
               # NEVER REMOVED: a run's players come back to it. With an "empty" timeout it was
               # removed the moment the last player stepped through a portal, and losing then
               # sent everyone to the default world instead.
