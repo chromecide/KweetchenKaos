@@ -17,11 +17,17 @@ a crate) glows, and the restocking top listens for the glow and grows twice as f
 
 A crate a player puts down gets its top by itself (BLOCK_PLACED); a crate picked up takes
 its top with it. The spike setup and layouts place the top with the crate.
+
+ONLY DURING SERVICE, in a run: between days a crate gives nothing (and says so), or players
+could cook the whole next day's food before opening. It reads the shift's "open" tag the way
+the pads read the purse (signals.shift_reads) -- naming no shift. A crate that isn't part of
+a run (a kitchen spike with no shift) is always open.
 """
 import blocks
 import clock
 import glow
 import settings
+import signals
 import volumes as v
 
 ROLES = ("crate",)
@@ -79,9 +85,15 @@ def build(model, station_id, debug=True):
 
     # TAKE: press what's on top, or the crate under it. The top goes back to restocking,
     # placed fresh so its growth starts again.
+    in_run = model.get("in_run", False)
+    open_now = [signals.shift_reads("BLOCK_USED", "open", "Exactly", 1)] if in_run else []
     for n, (dy, where) in enumerate(((1.0, [v.at(crates), v.at([b["ready"]], dy=1)]),
                                      (0.0, [v.at([b["ready"]]), v.at(crates, dy=-1)]))):
-        rules.add(100 + n, where,
+        if in_run:
+            rules.add(90 + n, where + [signals.shift_reads("BLOCK_USED", "open", "Exactly", 0)],
+                      [v.say(f"kk.{station_id}.closed",
+                             f"[{label.lower()}] Closed - crates open when the day does.")])
+        rules.add(100 + n, where + open_now,
                   [v.give(item["game_id"]), v.place(b["restocking"], dy=dy), v.sound(1.1)]
                   + rep("take", f"{item['label']} taken - restocking"))
 

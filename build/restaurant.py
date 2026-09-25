@@ -79,6 +79,9 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     """(room prefab dict, problems, info): the layout dressed, carrying its systems."""
     meta, room = load_layout(layout_id)
     problems = []
+    # Built as part of a run: stations that behave differently between days (crates) read
+    # the shift.
+    model["in_run"] = True
     by_role = {st["role"]: sid for sid, st in model["stations"].items()
                if not st.get("upgrade_of") and st["role"] != "crate"}
     turns = [rot for rot, _ in seating.TABLE_AT]
