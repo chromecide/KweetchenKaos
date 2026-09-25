@@ -1,0 +1,43 @@
+# Station looks (kitchen theme)
+
+Chosen by eye in the texture gallery probe (`~/hytale-mods/texture-gallery`,
+`/tex picks` shows these exact looks) on 2026-09-25. Every texture is a shipped
+one, referenced by path; the pack ships one image of its own (the trim band).
+The data lives in `content/themes/kitchen/stations/*.json` (`look`).
+
+| Station | Sides | Top | Top while in use | Trim |
+|---|---|---|---|---|
+| Stove | `Metal_Iron` | `Metal_Iron_Decorative_Top` | `Metal_Copper_Decorative_Top` | `#d0d0d0` grey |
+| Fast stove | `Metal_Iron` | `Metal_Iron_Decorative_Top` | `Metal_Copper_Decorative_Top` | `#6080ff` blue (blue glow) |
+| Safety stove | `Metal_Iron` | `Metal_Zinc_Decorative_Top` | `Metal_Copper_Decorative_Top` | `#60e080` green (green glow) |
+| Chopping board | `Metal_Iron` | `Wood_Softwood_Planks_Top` | same | `#b07850` warm brown |
+| Sink | `Metal_Iron` | `Mushroom_Block_Blue_Trunk_Top` (the water) | same | `#d0d0d0` grey (the rim) |
+| Bin | `Furniture_Village_Crate` | `Wood_Village_Wall_Black_Full` | same, tinted `#4a4038` with a plate on it | none |
+| Produce crate | `Wood_Village_Wall_RedDark_Full` | same | | none (the fast crate is tinted `#9fb8ff`) |
+
+Not yet reviewed: the counter and the plate rack (still first-iteration looks).
+
+## The rules behind them
+
+- **Copper means cooking.** Every stove's top turns copper while something is
+  on it, whatever its free top is.
+- **Iron sides** run through the stoves, sink and board: one line of kitchen units.
+- **The trim** is a 2px band round the top of the sides (`look.trim`), kept
+  subtle on purpose. It is a side mask: one plain white band, coloured by the
+  game's top tint -- which tints the station's TOP too. Taken knowingly: it
+  colour-codes the stove upgrades (their tops take the glow's colour) and
+  gives the sink its rim.
+- **No painted textures.** A band painted with a plank pattern looked great,
+  but it starts down the road of custom art; a strip and a tint is enough.
+
+## Tried and set aside
+
+- **Transition textures** as a trim: a transition is only a shape, drawn in
+  the SPILLING block's own top texture onto a neighbour's top -- never on the
+  block itself. Useless for a station's own edge.
+- **Shipped models** for the sink (alchemy cauldron) and bin (a scaled-up
+  bucket): didn't work out in the gallery; stations stay cubes.
+- **Whole-block tints** on the stove upgrades: they tinted the iron too; the
+  trim and glow do the job.
+- **Fluid_Water** as the sink top: it is greyscale (real water takes the
+  environment's tint), so it shows white on a cube.
