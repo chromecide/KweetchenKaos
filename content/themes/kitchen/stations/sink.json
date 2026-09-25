@@ -5,7 +5,8 @@
   "look": {
     "sides": "BlockTextures/Metal_Iron.png",
     "top": "BlockTextures/Fluid_Water.png",
-    "sound": "Stone"
+    "sound": "Stone",
+    "trim": "#4a8fd8"
   },
   "words": {
     "free": "Sink - put a dirty plate in",
