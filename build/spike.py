@@ -85,7 +85,9 @@ def kit(model, stations):
     steps = [s for s in model["steps"] if s["station"] in stations]
     made = set()
     for s in steps:
-        made.update([s["output"]] if "output" in s else [x["gives"] for x in s["stages"]])
+        # A stove "gives back" what went on (taken off before cooking): that isn't making it.
+        made.update([s["output"]] if "output" in s
+                    else [x["gives"] for x in s["stages"] if x["gives"] != s["input"]])
     needed = []
     for s in steps:
         for iid in s.get("inputs", []) + ([s["input"]] if "input" in s else []):
