@@ -11,7 +11,7 @@ it (docs/content-schema.md, Layouts).
 
     /kk author     open the authoring world (creative, and it keeps what you build)
     /kk grid       lay the plots' floors -- ONCE, when the world is new: it is destructive
-    /kk slots      hand over the slot blocks (HQ slots too: portals 1-4 and the arrival)
+    /kk slots      hand over the slot blocks (the arrival, and HQ portals 1-4)
     /kk save       save every plot as a prefab (K2_Save_01, _02, ...)
 
 THE PLOTS. Each plot is 32 x 32 (two chunks square), a gravel forecourt down the front
@@ -68,16 +68,25 @@ SLOTS = (
     + [("pool", "Slot: queue pool (guests arrive here)", QUEUE_TINT)]
     + [(f"pad_{n}", f"Slot: offer pad {n}", PAD_TINT) for n in range(1, 5)]
     + [("sign", "Slot: open sign", SIGN_TINT)]
-    # HQ only: a walk-in portal per restaurant (world.json says which), and where players
-    # arrive.
+    # Any layout: where players appear (HQ or a restaurant; it becomes the floor round it).
+    + [("arrival", "Slot: arrival (players appear here)", ARRIVAL_TINT)]
+    # HQ only: a walk-in portal per restaurant (world.json says which).
     + [(f"portal_{n}", f"Slot: HQ portal {n} (restaurant {n} in world.json)", PORTAL_TINT)
-       for n in range(1, 5)]
-    + [("arrival", "Slot: HQ arrival (players appear here)", ARRIVAL_TINT)])
+       for n in range(1, 5)])
 CHAIR_LOOK = {"model": "Blocks/Decorative_Sets/Tavern/Chair.blockymodel",
               "texture": "Blocks/Decorative_Sets/Tavern/Chair_Texture.png",
               "icon": "Icons/ItemsGenerated/Furniture_Tavern_Chair.png"}
 SLOT_LOOK = {"sides": "BlockTextures/Calcite_Brick_Smooth.png",
              "top": "BlockTextures/Calcite_Brick_Decorative_Top.png", "sound": "Stone"}
+
+
+def floor_at(blocks_, x, y, z, default="Wood_Softwood_Planks"):
+    """What a floor slot becomes: the commonest block beside it on the same level, so the
+    slot disappears into the floor it was set in."""
+    near = {(x + dx, y, z + dz) for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1))}
+    names = [b["name"] for b in blocks_ if (b["x"], b["y"], b["z"]) in near
+             and not b["name"].startswith(f"{settings.NAMESPACE}_Slot_")]
+    return max(set(names), key=names.count) if names else default
 
 
 def slot_id(name):

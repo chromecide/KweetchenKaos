@@ -105,7 +105,12 @@ def build(debug=True):
         pack.write(pack.out("Prefabs", f"{prefab}.prefab.json"),
                    dict(room, **{"$Comment": f"{r['name']}: {info['name']} in {r['theme']}, "
                                              f"{r['rules']} rules. See build/world.py."}))
-        spawn = (AT[0] + FRONT[0], AT[1] + FRONT[1], AT[2] + FRONT[2])
+        if info["arrival"]:
+            ax, ay, az = info["arrival"]
+            spawn = (AT[0] + ax + 0.5, AT[1] + ay + 2.0, AT[2] + az + 0.5)
+        else:
+            notes.append(f"{r['name']}: no arrival slot -- players arrive in front of the room")
+            spawn = (AT[0] + FRONT[0], AT[1] + FRONT[1], AT[2] + FRONT[2])
         _instance(inst, spawn, [_paste_on_arrival(inst, prefab, f"[{r['name']}] welcome!")],
                   f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True)
         portal_of[r["portal"]] = (r, inst)
@@ -138,10 +143,10 @@ def build(debug=True):
         name = b["name"]
         if name == layouts.slot_id("arrival"):
             arrival = (b["x"], b["y"], b["z"])
-            out.append(dict(b, name="Wood_Softwood_Planks"))
+            out.append(dict(b, name=layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
         elif name.startswith(layouts.slot_id("portal_")[:-1]):
             n = int(name.rsplit("_", 1)[1])
-            out.append(dict(b, name="Wood_Softwood_Planks"))
+            out.append(dict(b, name=layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
             if n in portal_of:
                 out.append({"x": b["x"], "y": b["y"] + 1, "z": b["z"], "name": f"{NS}_Portal_{n}"})
             else:

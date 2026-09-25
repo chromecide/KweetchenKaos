@@ -36,6 +36,7 @@ import json
 import os
 
 import guests
+import layouts
 import pack
 import settings
 import systems
@@ -96,6 +97,7 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     pads.build(model, debug)
 
     out_blocks, entities, used, queue_cells, pad_numbers = [], [], set(), [], set()
+    arrival = None
     for b in room["blocks"]:
         name = _slot(b["name"])
         if name is None:
@@ -133,6 +135,9 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
             entities.append(pads.pad_entity(n, b["x"], b["y"], b["z"]))
         elif name == "sign":
             out_blocks.append(at(shift.ids(model)["sign"]))
+        elif name == "arrival":
+            arrival = (b["x"], b["y"], b["z"])
+            out_blocks.append(at(layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
 
     for role, sid in by_role.items():
         if sid not in used:
@@ -179,4 +184,4 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     entities.append(_carried("pads", pads.ids(model)["world_effect"], {"pads": "system"}, box))
 
     prefab = dict(room, blocks=out_blocks, entities=entities)
-    return prefab, problems, {"name": meta["name"], "area": area}
+    return prefab, problems, {"name": meta["name"], "area": area, "arrival": arrival}
