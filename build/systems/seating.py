@@ -151,16 +151,19 @@ def guest_fragment(model, on_sat=(), while_seated=(), on_unseated=(), on_lost=()
 # THE SEAT HEIGHT. A seated guest is moved onto its chair, and the engine stands it on the
 # chair's HIGHEST hitbox (translateToAccessiblePosition: "highest y value wins") -- the shipped
 # Chair_Small has a backrest box up to 1.0, which stood the guest a whole block up. So the
-# chair stands on a hitbox of our own: Chair_Small's SEAT alone (0.5 high), and the guest sits
-# at seat height, as it did on the old stool. Aiming keeps the whole chair (the interaction
+# chair stands on a hitbox of our own: Chair_Small's SEAT alone (SEAT_HEIGHT high), and the
+# guest sits at seat height. Aiming keeps the whole chair (the interaction
 # hitbox), so picking it up still works on the backrest.
 SEAT_HITBOX = f"{settings.NAMESPACE}_Chair_Seat"
+# Higher than the seat itself (0.5): the Sit pose drops the body below the feet, so at 0.5 a
+# guest sank into the chair. Tuned by eye in game.
+SEAT_HEIGHT = 0.8
 
 
 def _write_seat_hitbox():
     pack.write(pack.out("Item", "Block", "Hitboxes", settings.NAMESPACE, f"{SEAT_HITBOX}.json"),
                {"Boxes": [{"Min": {"X": 0.1, "Y": 0.0, "Z": 0.05},
-                           "Max": {"X": 0.9, "Y": 0.5, "Z": 0.9}}]})
+                           "Max": {"X": 0.9, "Y": SEAT_HEIGHT, "Z": 0.9}}]})
 
 
 def _chair_block(game_id, label, look, tint=None, movable=False):
