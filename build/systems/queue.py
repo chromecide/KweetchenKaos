@@ -374,13 +374,13 @@ def _placed(entity, x, y, z):
     return e
 
 
-def volumes(model, area_box, patience):
+def volumes(model, area_box, patience, box=v.WORLD_BOX):
     """The queue mounted: the world volume (hand-placed spots get their volumes) over
     everything, and the patience area over `area_box` ((min xyz, max xyz): only where
     guests wait -- a seated guest inside it would drain the line's patience)."""
     q = ids(model)
     (x0, y0, z0), (x1, y1, z1) = area_box
-    return [v.volume("queue", q["world_effect"], {"queue": "system"}),
+    return [v.volume("queue", q["world_effect"], {"queue": "system"}, box=box),
             v.volume("queue_area", q["area_effect"],
                      {"queuearea": "1", "qpatience": str(patience)}, targets=["Npc"],
                      box=((x0, y0, z0), (x1, y1, z1)))]

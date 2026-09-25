@@ -13,6 +13,10 @@ else. A sender and a listener share an address and the words below -- never each
 A volume sends with an EFFECT (SendSignal); an NPC with an ACTION (SignalTaggedVolumes).
 Signals are QUEUED: they land a tick or so later, and are dropped if the sending NPC is gone
 by then -- so an NPC that signals and then despawns must wait a beat first.
+
+REACH: a signal (and a tag read from another volume) reaches volumes within 64 blocks of
+their CENTRE. That is a room's reach, so every system is mounted over the room it serves,
+centred on it (restaurant.room_box).
 """
 SHIFT_KEY, SHIFT_VALUE = "shift", "system"
 LISTENER_TAGS = {SHIFT_KEY: SHIFT_VALUE}

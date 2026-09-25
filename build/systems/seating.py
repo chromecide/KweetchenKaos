@@ -262,6 +262,6 @@ def build(model, debug=True):
     return s["effect"]
 
 
-def volumes(model):
+def volumes(model, box=v.WORLD_BOX):
     return [v.volume("seating", ids(model)["effect"],
-                     {"seating": "system", "refused": "0", **signals.RESET_TAGS})]
+                     {"seating": "system", "refused": "0", **signals.RESET_TAGS}, box=box)]

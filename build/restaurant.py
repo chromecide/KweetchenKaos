@@ -13,7 +13,7 @@ This takes the room and SWAPS EVERY SLOT for the theme's block, adding what goes
     offer pad               the pad, with its own volume
     sign                    the shift's open sign
 
-and mounts every system over the room: the stations, the queue (its patience over the
+and mounts every system OVER THE ROOM (room_box: its plot, centred on it): the stations, the queue (its patience over the
 queue ZONE -- drawn in the layout, or worked out from the spots and pool if not), seating,
 the guests, the shift and the pads. What comes out is a room and a list of volumes; the
 spike world pastes and mounts them today, HQ's plots will later.
@@ -31,6 +31,15 @@ import volumes as v
 from systems import pads, queue, seating, shift
 
 ZONE_MARGIN = 1          # a worked-out queue zone reaches this far round the spots and pool
+ROOM_SIZE, ROOM_MARGIN = 32, 4
+
+
+def room_box(origin):
+    """Where a room's systems are mounted: its plot and a little round it, centred on the
+    room -- so everything in the room is well within a signal's reach (signals.py)."""
+    ox, oy, oz = origin
+    return ((ox - ROOM_MARGIN, oy - 8, oz - ROOM_MARGIN),
+            (ox + ROOM_SIZE + ROOM_MARGIN, oy + 40, oz + ROOM_SIZE + ROOM_MARGIN))
 
 
 def load_layout(layout_id):
@@ -131,11 +140,14 @@ def build(model, layout_id, origin=(0, 0, 0), debug=True, patience=None):
     # Stations: every one the room uses, and every crate (deliveries bring them).
     mounted = list(used_roles) + [sid for sid, st in model["stations"].items()
                                   if st["role"] == "crate" and not st.get("upgrade_of")]
+    box = room_box(origin)
     volumes = [v.volume(f"restaurant_{sid}",
-                        systems.for_station(model, sid).build(model, sid, debug), {"station": sid})
+                        systems.for_station(model, sid).build(model, sid, debug), {"station": sid},
+                        box=box)
                for sid in mounted]
-    volumes += queue.volumes(model, area, built_q["patience"]) + seating.volumes(model)
-    volumes += shift.volumes(model, tags) + pads.volumes(model)
+    volumes += queue.volumes(model, area, built_q["patience"], box=box)
+    volumes += seating.volumes(model, box=box)
+    volumes += shift.volumes(model, tags, box=box) + pads.volumes(model, box=box)
 
     prefab = dict(room, blocks=out_blocks, entities=entities)
     return prefab, volumes, problems, {"name": meta["name"], "area": area}

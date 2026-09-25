@@ -154,7 +154,11 @@ def report(key, text, debug, event="BLOCK_USED", to_log=True):
     return [say(key, text, event)] + ([log(key, text, event)] if to_log else [])
 
 
-WORLD_BOX = ((-128.0, -8.0, -128.0), (128.0, 40.0, 128.0))
+# A spike world mounts its systems over this box, centred on the origin. A RESTAURANT
+# mounts them over its own room instead (restaurant.room_box): signals reach 64 blocks from
+# a volume's centre, so a volume must be centred on what it serves -- a room moved away from
+# the origin once left its pool out of the shift's reach, and no guest ever arrived.
+WORLD_BOX = ((-64.0, -8.0, -64.0), (64.0, 40.0, 64.0))
 
 
 def volume(name, effect, tags, targets=("Player",), box=WORLD_BOX):

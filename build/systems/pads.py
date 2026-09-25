@@ -213,5 +213,5 @@ def pad_entity(n, x, y, z):
     return e
 
 
-def volumes(model):
-    return [v.volume("pads", ids(model)["world_effect"], {"pads": "system"})]
+def volumes(model, box=v.WORLD_BOX):
+    return [v.volume("pads", ids(model)["world_effect"], {"pads": "system"}, box=box)]
