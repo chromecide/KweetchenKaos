@@ -146,7 +146,7 @@ def setup(model, stations, front, debug):
 def _world(note, needs_clock, mounted, given, spawn=(8.0, 2.0, 8.0)):
     """The spike instance, its volumes, and /kk spike and /kk kit."""
     pack.write(pack.out("Instances", INSTANCE, "instance.bson"), {
-        "$Comment": f"KwitchenKaos spike world, mounting: {note}. See build/spike.py.",
+        "$Comment": f"Kweetchen Kaos spike world, mounting: {note}. See build/spike.py.",
         "Version": 2,
         "WorldGen": {"Type": "Flat",
                      "Layers": [{"From": 0, "To": 1, "BlockType": "Soil_Grass"}]},
@@ -167,7 +167,7 @@ def _world(note, needs_clock, mounted, given, spawn=(8.0, 2.0, 8.0)):
     pack.write(pack.out("Instances", INSTANCE, "resources", "TriggerVolumeData.json"),
                {"Volumes": {f"5b1ce000-0000-4000-8000-{i:012d}": vol
                             for i, vol in enumerate(mounted, start=1)}})
-    pack.say("commands.kk.spike.desc", "Open the KwitchenKaos spike world")
+    pack.say("commands.kk.spike.desc", "Open the Kweetchen Kaos spike world")
     pack.say("commands.kk.kit.desc", "Hand over what the spiked stations need")
     pack.write(pack.out("MacroCommands", "KKSpike.json"), {
         "$Comment": f"Open the spike world (mounting: {note}). Not from inside it.",

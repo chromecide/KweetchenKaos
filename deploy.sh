@@ -16,7 +16,7 @@
 set -e
 V2="$(cd "$(dirname "$0")" && pwd)"
 SERVER="$HOME/hytale-mods/lowtalk-firstrun"
-MOD="Chromecide_KwitchenKaos"
+MOD="Chromecide_KweetchenKaos"
 
 python3 "$V2/build/build.py" --spike "${1:-board}" --rules "${2:-standard}" > /tmp/kwitchenkaos_build.txt || { cat /tmp/kwitchenkaos_build.txt; exit 1; }
 tail -1 /tmp/kwitchenkaos_build.txt
@@ -47,11 +47,11 @@ echo "deployed $MOD"
 
 ./run.sh | tail -1
 clean() { sed 's/\x1b\[[0-9;]*m//g'; }
-bad=$(grep -E "SEVERE.*(FAIL:|Failed to decode asset|Failed to validate asset)" server.log | clean | grep -E "KwitchenKaos|K2_" || true)
-dropped=$(grep -E "Skipping unrecognized trigger (effect|condition|rule)" server.log | clean | grep -E "KwitchenKaos|K2_" || true)
+bad=$(grep -E "SEVERE.*(FAIL:|Failed to decode asset|Failed to validate asset)" server.log | clean | grep -E "KweetchenKaos|K2_" || true)
+dropped=$(grep -E "Skipping unrecognized trigger (effect|condition|rule)" server.log | clean | grep -E "KweetchenKaos|K2_" || true)
 missing=$(grep -E "Failed to find block '" server.log | clean | grep "K2_" | sort -u || true)
 [ -n "$bad" ] && { echo "KWITCHENKAOS ASSETS REJECTED:"; echo "$bad" | sed 's/^/  /'; }
 [ -n "$dropped" ] && { echo "KWITCHENKAOS TRIGGER EFFECTS DROPPED:"; echo "$dropped" | sed 's/^/  /'; }
 [ -n "$missing" ] && { echo "KWITCHENKAOS PREFAB BLOCKS MISSING:"; echo "$missing" | sed 's/^/  /'; }
-[ -z "$bad$dropped$missing" ] && echo "KwitchenKaos: nothing rejected"
+[ -z "$bad$dropped$missing" ] && echo "Kweetchen Kaos: nothing rejected"
 exit 0

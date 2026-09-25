@@ -160,7 +160,7 @@ def build(debug=True):
                                                                "portal to play")],
               "HQ: where runs start. One shared world. See build/world.py.", clock_on=False,
               keep_key=HQ.lower(), empty_after=60.0)
-    pack.say("commands.kk.hq.desc", "Go to KwitchenKaos HQ")
+    pack.say("commands.kk.hq.desc", "Go to Kweetchen Kaos HQ")
     pack.write(pack.out("MacroCommands", "KKHq.json"), {
         "$Comment": "Go to HQ. See build/world.py.", "Name": "kk hq",
         "Description": "server.commands.kk.hq.desc",

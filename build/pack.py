@@ -21,7 +21,7 @@ def begin():
     _lang.clear()
     write(os.path.join(settings.PACK, "manifest.json"), {
         "Group": settings.PACK_GROUP, "Name": settings.PACK_NAME, "Version": "0.0.1",
-        "Description": "KwitchenKaos: co-op restaurants built from theme content.",
+        "Description": "Kweetchen Kaos: co-op restaurants built from theme content.",
         "Authors": [{"Name": "Chromecide"}], "Website": "https://chromecide.com",
         "ServerVersion": ">=0.6.8 <0.8.0", "Dependencies": {"Hytale:AssetModule": "*"},
         "OptionalDependencies": {}, "DisabledByDefault": False,

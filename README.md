@@ -1,4 +1,4 @@
-# KwitchenKaos
+# Kweetchen Kaos
 
 A Plate Up–style co-op restaurant for Hytale, built entirely from pack data (no
 plugin code). Restaurants come from **content**: themes now, and later layouts,
@@ -7,7 +7,7 @@ rules and world. All of it is JSON in `content/`, and the build scripts in
 and the menu decisions in `docs/menu.md`.
 
 This started as v2 of the Kitchen POC (`../tools`, `../pack`). That project is
-untouched and still deploys. KwitchenKaos loads beside it on the same scratch
+untouched and still deploys. Kweetchen Kaos loads beside it on the same scratch
 server: every game id here starts with `K2_`, so nothing collides.
 
 ## Use

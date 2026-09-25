@@ -13,7 +13,7 @@ CONTENT = os.path.join(V2, "content")
 PACK = os.path.join(V2, "pack")
 
 NAMESPACE = "K2"
-PACK_GROUP, PACK_NAME = "Chromecide", "KwitchenKaos"
+PACK_GROUP, PACK_NAME = "Chromecide", "KweetchenKaos"
 
 # The shipped assets, to check every model, texture and icon a theme names really exists.
 ASSETS_ZIP = os.path.expanduser(
