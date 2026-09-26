@@ -32,5 +32,9 @@
     "day_1": 4,
     "per_day": 1,
     "per_card": 2
+  },
+  "hazards": {
+    "$comment": "Chance (0-1) that any guest leaves a mess round its chair as it gets up. A messy guest (a customer card, later) always does.",
+    "guest_mess_chance": 0.05
   }
 }

@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- **Messes and spills** (PlateUp's): any guest may leave a mess by its chair as it
+  gets up (5%), and the sink spills water now and then (25% a scrub). They slow you
+  down, grow from small to large, and spilt water spreads if it's left. Clean them
+  with the mop: hold F for a second, once per size.
+- **Mop stand:** every room needs one (a new "mop stand" slot) -- it keeps the mop.
+- Recipe spikes: `python3 deploy.py dish:<dish>` lays out one dish's kitchen.
+
 ## 0.2.0 (2026-09-26)
 
 - **The Kweebec menu:** ten dishes instead of four pies. New: berry salad, roasted

@@ -52,7 +52,7 @@ import volumes as v
 
 INSTANCE = f"{settings.NAMESPACE}_Spike"
 KITCHEN = {"crates": 1, "board": 2, "counter": 3, "stove": 2, "bin": 1, "sink": 1,
-           "rack": 1}
+           "rack": 1, "mop_stand": 1}
 SPIKES = {
     "board": {"stations": {"board": 2}},
     # Per-dish cook times: four stoves, one unbaked pie of each kind, side by side.
@@ -66,8 +66,8 @@ SPIKES = {
     # PROBE: the service spike, with half of all guests arriving impatient (the queue's
     # spots mark them at random; half patience, "(impatient)" on the name tag).
     "impatient": {"stations": KITCHEN, "front": True, "moods": {"impatient": 0.5}},
-    # PROBE: messes. Every guest is messy (leaves a mess as it walks off); a dispenser drops
-    # one where you stand; a mop in the kit. See build/systems/hazards.py.
+    # PROBE: messes. Every guest is messy (leaves a mess round its chair as it gets up); a
+    # dispenser drops one round you. The mop is on the mop stand. See build/systems/hazards.py.
     "hazards": {"stations": KITCHEN, "front": True, "moods": {"messy": 1.0}, "hazards": True},
     # A full RUN: the shift runs the days. The crates aren't laid out -- the run delivers
     # them on day 1, and more with recipe cards.
@@ -83,8 +83,8 @@ ROW_Z, ROW_X, GAP = 12, 12, 2
 
 # A recipe spike's stations beyond its chain, and how many of each: two stoves (one to
 # watch through well done while the other cooks), two counters (assemble on one, plate on
-# the other), one of the rest.
-DISH_EXTRAS = ("sink", "rack", "bin")
+# the other), one of the rest -- the mop stand among them, for the sink's spills.
+DISH_EXTRAS = ("sink", "rack", "bin", "mop_stand")
 DISH_COUNTS = {"stove": 2, "counter": 2}
 
 
@@ -283,8 +283,9 @@ def build(model, name, debug=True):
     else:
         spike = SPIKES[name]
         stations = stations_of(model, name)
-    # Before the stations: a station that causes a hazard (a sink's spill) needs to know.
-    model["hazards"] = spike.get("hazards", False)
+    # HAZARDS ARE ON in every spike, as in the game. Before the stations: a station that
+    # causes one (a sink's spill) needs to know.
+    model["hazards"] = True
     mounted = [v.volume(f"spike_{st}", systems.for_station(model, st).build(model, st, debug),
                         systems.tags_for(model, st, {"spike": st})) for st in stations]
     front = None
@@ -298,10 +299,10 @@ def build(model, name, debug=True):
                                                         run=spike.get("run", False))
         mounted += front_volumes
         front = front_layout
+    from systems import hazards
+    hazards.build(model, debug, dispenser=spike.get("hazards", False))
+    mounted += hazards.volumes(model)
     if spike.get("hazards"):
-        from systems import hazards
-        hazards.build(model, debug, dispenser=True)
-        mounted += hazards.volumes(model)
         more, ents = front
         more.append({"x": HAZARD_DISPENSER[0], "y": GROUND, "z": HAZARD_DISPENSER[1],
                      "name": hazards.ids(model)["dispenser"]})
@@ -317,8 +318,6 @@ def build(model, name, debug=True):
         given = plates + [(model["items"][model["vessel"]["dirty"]["id"]]["game_id"], 1)]
     else:
         given = kit(model, stations)
-    if spike.get("hazards"):
-        given = given + [(model["items"]["mop"]["game_id"], 1)]
     note = " + ".join(model["stations"][st]["label"].lower() for st in stations)
     if front:
         note += " + the front of house"

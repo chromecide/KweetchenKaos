@@ -196,7 +196,11 @@ A station's role, name, look and words. The role decides which words it needs.
 ```
 
 Roles today: `press` (board), `heat` (stove), `combine` (counter), `wash`
-(sink), `bin` (bin). Each has one station.
+(sink), `bin` (bin), `rack` (plate rack), `call` (booking desk), `tool` (mop
+stand: `holds` the item it keeps, `on_top` how it shows). Each has one station.
+
+A station may cause a hazard: `"spills": 0.25` is the chance each press spills
+water round it (the sink). See `docs/systems.md`, Hazards.
 
 A `look` may also say how the station looks while in use: `busy_sides` and
 `busy_top` (the stove's top turns copper while something cooks), and `tint` /
@@ -394,8 +398,12 @@ rules/
   "stages": [ { "id": "early", "from": 1, "to": 3 }, { "id": "mid", "from": 4, "to": 6 },
               { "id": "late", "from": 7, "to": 999 } ],
   "guests": { "day_1": 4, "per_day": 1, "per_card": 2 },
-  "queue_patience": 120, "queue_patience_boost": 10, "guest_patience_scale": 1.0 }
+  "queue_patience": 120, "queue_patience_boost": 10, "guest_patience_scale": 1.0,
+  "hazards": { "guest_mess_chance": 0.05 } }
 ```
+
+- **Hazards:** `guest_mess_chance` is the chance (0-1) any guest leaves a mess
+  round its chair as it gets up.
 
 - **Expected guests** each day are `day_1`, plus `per_day` for every day
   after the first, plus what each dish on the menu brings. A dish's `guests`

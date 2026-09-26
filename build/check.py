@@ -10,7 +10,7 @@ import zipfile
 
 import settings
 
-ROLES = ("press", "heat", "combine", "wash", "bin", "rack", "call")  # exactly one station each
+ROLES = ("press", "heat", "combine", "wash", "bin", "rack", "call", "tool")  # exactly one station each
 MANY_ROLES = ("crate",)                                       # one per ingredient
 STEP_ROLES = {"press": ("press", "wash"), "combine": ("combine",), "heat": ("heat",),
               "source": ("crate",)}

@@ -17,6 +17,7 @@ The data lives in `content/themes/kitchen/stations/*.json` (`look`).
 | Plate rack | `Metal_Iron_Ornate`, the block TURNED (roll 90, yaw 90) so the bars lie flat -- a stack of plates | `Metal_Iron` (the stove's plain side) | a plate on top while it holds any | none |
 | Counter | `Wood_Softwood_Planks_Side` | `Soil_Snow`, greyed by the trim's tint to read as marble | same | `#aaaaaa` grey (step 6 of 16 on the gallery's snow ramp) |
 | Booking desk | `Wood_Softwood_Planks_Side` | `Soil_Snow` (like the counter), with the brown book (`Blocks/Dungeons/Book.blockymodel`, `Book_Brown.png`) at 75% on top | same | `#aaaaaa` grey |
+| Mop stand | `Wood_Softwood_Planks_Side` | same, with the mop (the Halloween broomstick model) at 80% on top | same | `#3a78b8` blue |
 | Produce crate | `Wood_Village_Wall_RedDark_Full` | same | | none (the fast crate is tinted `#9fb8ff`) |
 
 Every station has been reviewed. The first theme is Hytale Kweebec: softwood and snow-marble suit it.

@@ -53,6 +53,12 @@ def _leaving(model):
                    None, [signals.from_npc(signals.HAZARD_KEY, signals.MESS,
                                            tag=signals.HAZARD_KEY),
                           npc.set_flag("guests_messed")], cont=True),
+        npc.branch("Just got up (still on its chair): say so, once -- any guest may leave a "
+                   "mess (hazards.py rolls the rules' chance).",
+                   npc.no(npc.flag("guests_messed")),
+                   None, [signals.from_npc(signals.HAZARD_KEY, signals.GOT_UP,
+                                           tag=signals.HAZARD_KEY),
+                          npc.set_flag("guests_messed")], cont=True),
         npc.branch("Walked off long enough, and not on a queue spot: go (stands in for "
                    "leaving by the door). Never ON a spot -- see queue.off_the_line.",
                    npc.all_of(going, npc.stopped("guests_walk"), queue.off_the_line(model)),

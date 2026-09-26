@@ -40,8 +40,9 @@ import guests
 import layouts
 import pack
 import settings
+import signals
 import systems
-from systems import pads, queue, seating, shift
+from systems import hazards, pads, queue, seating, shift
 
 ZONE_MARGIN = 1          # a worked-out queue zone reaches this far round the spots and pool
 ROOM_SIZE, ROOM_MARGIN = 32, 4
@@ -84,6 +85,9 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     # Built as part of a run: stations that behave differently between days (crates) read
     # the shift.
     model["in_run"] = True
+    # Hazards are on in every restaurant: a station that causes one (a sink's spill) needs
+    # to know before it's built.
+    model["hazards"] = True
     by_role = {st["role"]: sid for sid, st in model["stations"].items()
                if not st.get("upgrade_of") and st["role"] != "crate"}
     turns = [rot for rot, _ in seating.TABLE_AT]
@@ -96,6 +100,7 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     shift_tags = shift.build(model, {e["serves"]: guests.role_id(model, e) for e in model["menu"]},
                              debug, exit_on_lose=exit_on_lose)
     pads.build(model, debug)
+    hazards_effect = hazards.build(model, debug)
 
     # `built` is the room as the creator left it; `out_blocks` what the slots became. One
     # cell holds ONE block, or the game refuses the whole prefab ("Block is already present
@@ -202,6 +207,8 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
                              extra={"Enabled": False, "RulesActive": True,
                                     "Rules": [{"Type": "NoBuild"}, {"Type": "NoDestroy"}]}))
     entities.append(_carried("pads", pads.ids(model)["world_effect"], {"pads": "system"}, box))
+    entities.append(_carried("hazards", hazards_effect,
+                             {signals.HAZARD_KEY: "system", **signals.RESET_TAGS}, box))
 
     taken = {(b["x"], b["y"], b["z"]) for b in out_blocks}
     for b in built:

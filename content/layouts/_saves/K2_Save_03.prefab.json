@@ -15782,6 +15782,13 @@
     },
     {
       "x": -7,
+      "y": 5,
+      "z": 3,
+      "name": "Wood_Torch_Wall",
+      "rotation": 2
+    },
+    {
+      "x": -7,
       "y": 7,
       "z": 3,
       "name": "Rock_Basalt"
@@ -19032,7 +19039,14 @@
       "x": -6,
       "y": 4,
       "z": -2,
-      "name": "K2_Slot_Station_Combine"
+      "name": "Wood_Redwood_Trunk",
+      "support": 15
+    },
+    {
+      "x": -6,
+      "y": 5,
+      "z": -2,
+      "name": "Furniture_Kweebec_Candle"
     },
     {
       "x": -6,
@@ -22731,6 +22745,13 @@
     },
     {
       "x": -5,
+      "y": 5,
+      "z": 3,
+      "name": "Wood_Torch_Wall",
+      "rotation": 2
+    },
+    {
+      "x": -5,
       "y": 7,
       "z": 3,
       "name": "Rock_Basalt"
@@ -25353,6 +25374,12 @@
       "y": 3,
       "z": 2,
       "name": "Rock_Basalt"
+    },
+    {
+      "x": -4,
+      "y": 4,
+      "z": 2,
+      "name": "K2_Slot_Station_Tool"
     },
     {
       "x": -4,
@@ -79336,6 +79363,13 @@
     },
     {
       "x": -7,
+      "y": 5,
+      "z": 3,
+      "name": "Empty",
+      "level": 0
+    },
+    {
+      "x": -7,
       "y": 7,
       "z": 3,
       "name": "Empty",
@@ -82738,6 +82772,13 @@
     },
     {
       "x": -6,
+      "y": 5,
+      "z": -2,
+      "name": "Empty",
+      "level": 0
+    },
+    {
+      "x": -6,
       "y": 6,
       "z": -2,
       "name": "Empty",
@@ -86616,6 +86657,13 @@
     },
     {
       "x": -5,
+      "y": 5,
+      "z": 3,
+      "name": "Empty",
+      "level": 0
+    },
+    {
+      "x": -5,
       "y": 7,
       "z": 3,
       "name": "Empty",
@@ -89368,6 +89416,13 @@
     {
       "x": -4,
       "y": 3,
+      "z": 2,
+      "name": "Empty",
+      "level": 0
+    },
+    {
+      "x": -4,
+      "y": 4,
       "z": 2,
       "name": "Empty",
       "level": 0
@@ -129627,52 +129682,68 @@
     {
       "Components": {
         "Nameplate": {
-          "Text": "Kweebec_Razorleaf_Patrol"
+          "Text": "0.Z3Kweebec_P2~5 #1 [Wait 10.0s] <Rotate 90.00deg>"
+        },
+        "PatrolPathMarker": {
+          "Version": 5,
+          "DisplayName": "0.Z3Kweebec_P2~5 #1 [Wait 10.0s] <Rotate 90.00deg>",
+          "UUID": {
+            "$binary": "nrx3Wr/EMBGRTnxOOxsLIg==",
+            "$type": "04"
+          },
+          "PathId": {
+            "$binary": "rU+ou++wS7Wko8V+cU8UUg==",
+            "$type": "04"
+          },
+          "PathName": "Z3Kweebec_P2",
+          "PathLength": 0,
+          "Order": 0,
+          "PauseTime": 10.0,
+          "ObsvAngle": 1.5707963705062866
         },
         "HiddenFromAdventurePlayer": {},
-        "SpawnMarkerComponent": {
-          "SpawnMarker": "Kweebec_Razorleaf_Patrol",
-          "RespawnTime": 0.0,
-          "SpawnCount": 0,
-          "NPCReferences": [],
-          "PersistedFlock": {},
-          "SpawnPosition": {
+        "Transform": {
+          "Position": {
+            "X": -1.6868209838867188,
+            "Y": 18.15174102783203,
+            "Z": -7.325439453125
+          },
+          "Rotation": {
+            "Pitch": 0.0,
+            "Yaw": -0.9993232488632202,
+            "Roll": 0.0
+          }
+        },
+        "Velocity": {
+          "Velocity": {
             "X": 0.0,
             "Y": 0.0,
             "Z": 0.0
           }
         },
-        "Transform": {
-          "Position": {
-            "X": -1.5925264282226408,
-            "Y": 32.0,
-            "Z": -2.186547265624995
-          },
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 0.542616069316864,
-            "Roll": 0.0
-          }
-        },
-        "Intangible": {},
         "PrefabCopyable": {},
         "Model": {
           "Model": {
-            "Id": "NPC_Spawn_Marker",
+            "Id": "NPC_Path_Marker",
             "Scale": 1.0,
             "Static": false
           }
         },
         "UUID": {
           "UUID": {
-            "$binary": "DSfUukoPM/CdSjvQGWUoNQ==",
+            "$binary": "nrx3Wr/EMBGRTnxOOxsLIg==",
             "$type": "04"
+          }
+        },
+        "PersistentDisplayName": {
+          "DisplayName": {
+            "RawText": "0.Z3Kweebec_P2~5 #1 [Wait 10.0s] <Rotate 90.00deg>"
           }
         },
         "HeadRotation": {
           "Rotation": {
             "Pitch": 0.0,
-            "Yaw": -2.59897780418396,
+            "Yaw": -2.0689587593078613,
             "Roll": 0.0
           }
         }
@@ -129681,53 +129752,279 @@
     {
       "Components": {
         "Nameplate": {
-          "Text": "Kweebec_Razorleaf_Patrol"
+          "Text": "0.Z3Kweebec_P2~6 #2 [Wait 0.0s] <Rotate 0.00deg>"
+        },
+        "PatrolPathMarker": {
+          "Version": 5,
+          "DisplayName": "0.Z3Kweebec_P2~6 #2 [Wait 0.0s] <Rotate 0.00deg>",
+          "UUID": {
+            "$binary": "BCetq2c6MA2Udbhn3YznDg==",
+            "$type": "04"
+          },
+          "PathId": {
+            "$binary": "akEz4lChNvaDuJ47g06JZw==",
+            "$type": "04"
+          },
+          "PathName": "Z3Kweebec_P2",
+          "PathLength": 0,
+          "Order": 2,
+          "PauseTime": 0.0,
+          "ObsvAngle": 0.0
         },
         "HiddenFromAdventurePlayer": {},
-        "SpawnMarkerComponent": {
-          "SpawnMarker": "Kweebec_Razorleaf_Patrol",
-          "RespawnTime": 0.0,
-          "SpawnCount": 0,
-          "NPCReferences": [],
-          "PersistedFlock": {},
-          "SpawnPosition": {
+        "Transform": {
+          "Position": {
+            "X": -4.998782568359388,
+            "Y": 32.0,
+            "Z": -2.4642984375000196
+          },
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 0.5473591685295105,
+            "Roll": 0.0
+          }
+        },
+        "Velocity": {
+          "Velocity": {
             "X": 0.0,
             "Y": 0.0,
             "Z": 0.0
           }
         },
-        "Transform": {
-          "Position": {
-            "X": -3.7734451293945312,
-            "Y": 18.066993713378906,
-            "Z": -8.4345703125
-          },
-          "Rotation": {
-            "Pitch": 0.0,
-            "Yaw": -3.0270557403564453,
-            "Roll": 0.0
-          }
-        },
-        "Intangible": {},
         "PrefabCopyable": {},
         "Model": {
           "Model": {
-            "Id": "NPC_Spawn_Marker",
+            "Id": "NPC_Path_Marker",
             "Scale": 1.0,
             "Static": false
           }
         },
         "UUID": {
           "UUID": {
-            "$binary": "IIH5DMlQN8mbAU6Ep5xp1w==",
+            "$binary": "BCetq2c6MA2Udbhn3YznDg==",
             "$type": "04"
+          }
+        },
+        "PersistentDisplayName": {
+          "DisplayName": {
+            "RawText": "0.Z3Kweebec_P2~6 #2 [Wait 0.0s] <Rotate 0.00deg>"
           }
         },
         "HeadRotation": {
           "Rotation": {
             "Pitch": -0.0,
-            "Yaw": 0.11453573405742645,
+            "Yaw": 0.5473591685295105,
             "Roll": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Components": {
+        "Nameplate": {
+          "Text": "0.Z3Kweebec_P2~6 #3 [Wait 10.0s] <Rotate 90.00deg>"
+        },
+        "PatrolPathMarker": {
+          "Version": 5,
+          "DisplayName": "0.Z3Kweebec_P2~6 #3 [Wait 10.0s] <Rotate 90.00deg>",
+          "UUID": {
+            "$binary": "408MeMzNOxahSlU8v5sSqg==",
+            "$type": "04"
+          },
+          "PathId": {
+            "$binary": "rU+ou++wS7Wko8V+cU8UUg==",
+            "$type": "04"
+          },
+          "PathName": "Z3Kweebec_P2",
+          "PathLength": 0,
+          "Order": 3,
+          "PauseTime": 10.0,
+          "ObsvAngle": 1.5707963705062866
+        },
+        "HiddenFromAdventurePlayer": {},
+        "Transform": {
+          "Position": {
+            "X": -9.574501037597656,
+            "Y": 32.39378356933594,
+            "Z": -2.43212890625
+          },
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 1.5163122415542603,
+            "Roll": 0.0
+          }
+        },
+        "Velocity": {
+          "Velocity": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        },
+        "PrefabCopyable": {},
+        "Model": {
+          "Model": {
+            "Id": "NPC_Path_Marker",
+            "Scale": 1.0,
+            "Static": false
+          }
+        },
+        "UUID": {
+          "UUID": {
+            "$binary": "408MeMzNOxahSlU8v5sSqg==",
+            "$type": "04"
+          }
+        },
+        "PersistentDisplayName": {
+          "DisplayName": {
+            "RawText": "0.Z3Kweebec_P2~6 #3 [Wait 10.0s] <Rotate 90.00deg>"
+          }
+        },
+        "HeadRotation": {
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 1.5163122415542603,
+            "Roll": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Components": {
+        "Nameplate": {
+          "Text": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>"
+        },
+        "PatrolPathMarker": {
+          "Version": 5,
+          "DisplayName": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>",
+          "UUID": {
+            "$binary": "cot/5edbOt2IVdwocxzFbA==",
+            "$type": "04"
+          },
+          "PathId": {
+            "$binary": "rU+ou++wS7Wko8V+cU8UUg==",
+            "$type": "04"
+          },
+          "PathName": "Z3Kweebec_P2",
+          "PathLength": 0,
+          "Order": 1,
+          "PauseTime": 10.0,
+          "ObsvAngle": 1.919862151145935
+        },
+        "HiddenFromAdventurePlayer": {},
+        "Transform": {
+          "Position": {
+            "X": -1.659393310546875,
+            "Y": 18.136817932128906,
+            "Z": -4.4326171875
+          },
+          "Rotation": {
+            "Pitch": 0.0,
+            "Yaw": -2.0561389923095703,
+            "Roll": 0.0
+          }
+        },
+        "Velocity": {
+          "Velocity": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        },
+        "PrefabCopyable": {},
+        "Model": {
+          "Model": {
+            "Id": "NPC_Path_Marker",
+            "Scale": 1.0,
+            "Static": false
+          }
+        },
+        "UUID": {
+          "UUID": {
+            "$binary": "cot/5edbOt2IVdwocxzFbA==",
+            "$type": "04"
+          }
+        },
+        "PersistentDisplayName": {
+          "DisplayName": {
+            "RawText": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>"
+          }
+        },
+        "HeadRotation": {
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 2.03071665763855,
+            "Roll": -0.0
+          }
+        }
+      }
+    },
+    {
+      "Components": {
+        "Nameplate": {
+          "Text": "0.Z3Kweebec_P2~6 #1 [Wait 10.0s] <Rotate 90.00deg>"
+        },
+        "PatrolPathMarker": {
+          "Version": 5,
+          "DisplayName": "0.Z3Kweebec_P2~6 #1 [Wait 10.0s] <Rotate 90.00deg>",
+          "UUID": {
+            "$binary": "Qx2j9wYZMgmLjs1a4E1BkA==",
+            "$type": "04"
+          },
+          "PathId": {
+            "$binary": "akEz4lChNvaDuJ47g06JZw==",
+            "$type": "04"
+          },
+          "PathName": "Z3Kweebec_P2",
+          "PathLength": 0,
+          "Order": 1,
+          "PauseTime": 10.0,
+          "ObsvAngle": 1.5707963705062866
+        },
+        "HiddenFromAdventurePlayer": {},
+        "Transform": {
+          "Position": {
+            "X": -4.346893310546875,
+            "Y": 32.07903289794922,
+            "Z": -0.64404296875
+          },
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 2.948532819747925,
+            "Roll": -0.0
+          }
+        },
+        "Velocity": {
+          "Velocity": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        },
+        "PrefabCopyable": {},
+        "Model": {
+          "Model": {
+            "Id": "NPC_Path_Marker",
+            "Scale": 1.0,
+            "Static": false
+          }
+        },
+        "UUID": {
+          "UUID": {
+            "$binary": "Qx2j9wYZMgmLjs1a4E1BkA==",
+            "$type": "04"
+          }
+        },
+        "PersistentDisplayName": {
+          "DisplayName": {
+            "RawText": "0.Z3Kweebec_P2~6 #1 [Wait 10.0s] <Rotate 90.00deg>"
+          }
+        },
+        "HeadRotation": {
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 2.948532819747925,
+            "Roll": -0.0
           }
         }
       }
@@ -129871,356 +130168,6 @@
     {
       "Components": {
         "Nameplate": {
-          "Text": "0.Z3Kweebec_P2~6 #3 [Wait 10.0s] <Rotate 90.00deg>"
-        },
-        "PatrolPathMarker": {
-          "Version": 5,
-          "DisplayName": "0.Z3Kweebec_P2~6 #3 [Wait 10.0s] <Rotate 90.00deg>",
-          "UUID": {
-            "$binary": "408MeMzNOxahSlU8v5sSqg==",
-            "$type": "04"
-          },
-          "PathId": {
-            "$binary": "rU+ou++wS7Wko8V+cU8UUg==",
-            "$type": "04"
-          },
-          "PathName": "Z3Kweebec_P2",
-          "PathLength": 0,
-          "Order": 3,
-          "PauseTime": 10.0,
-          "ObsvAngle": 1.5707963705062866
-        },
-        "HiddenFromAdventurePlayer": {},
-        "Transform": {
-          "Position": {
-            "X": -9.574501037597656,
-            "Y": 32.39378356933594,
-            "Z": -2.43212890625
-          },
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 1.5163122415542603,
-            "Roll": 0.0
-          }
-        },
-        "Velocity": {
-          "Velocity": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          }
-        },
-        "PrefabCopyable": {},
-        "Model": {
-          "Model": {
-            "Id": "NPC_Path_Marker",
-            "Scale": 1.0,
-            "Static": false
-          }
-        },
-        "UUID": {
-          "UUID": {
-            "$binary": "408MeMzNOxahSlU8v5sSqg==",
-            "$type": "04"
-          }
-        },
-        "PersistentDisplayName": {
-          "DisplayName": {
-            "RawText": "0.Z3Kweebec_P2~6 #3 [Wait 10.0s] <Rotate 90.00deg>"
-          }
-        },
-        "HeadRotation": {
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 1.5163122415542603,
-            "Roll": 0.0
-          }
-        }
-      }
-    },
-    {
-      "Components": {
-        "Nameplate": {
-          "Text": "0.Z3Kweebec_P2~5 #1 [Wait 10.0s] <Rotate 90.00deg>"
-        },
-        "PatrolPathMarker": {
-          "Version": 5,
-          "DisplayName": "0.Z3Kweebec_P2~5 #1 [Wait 10.0s] <Rotate 90.00deg>",
-          "UUID": {
-            "$binary": "nrx3Wr/EMBGRTnxOOxsLIg==",
-            "$type": "04"
-          },
-          "PathId": {
-            "$binary": "rU+ou++wS7Wko8V+cU8UUg==",
-            "$type": "04"
-          },
-          "PathName": "Z3Kweebec_P2",
-          "PathLength": 0,
-          "Order": 0,
-          "PauseTime": 10.0,
-          "ObsvAngle": 1.5707963705062866
-        },
-        "HiddenFromAdventurePlayer": {},
-        "Transform": {
-          "Position": {
-            "X": -1.6868209838867188,
-            "Y": 18.15174102783203,
-            "Z": -7.325439453125
-          },
-          "Rotation": {
-            "Pitch": 0.0,
-            "Yaw": -0.9993232488632202,
-            "Roll": 0.0
-          }
-        },
-        "Velocity": {
-          "Velocity": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          }
-        },
-        "PrefabCopyable": {},
-        "Model": {
-          "Model": {
-            "Id": "NPC_Path_Marker",
-            "Scale": 1.0,
-            "Static": false
-          }
-        },
-        "UUID": {
-          "UUID": {
-            "$binary": "nrx3Wr/EMBGRTnxOOxsLIg==",
-            "$type": "04"
-          }
-        },
-        "PersistentDisplayName": {
-          "DisplayName": {
-            "RawText": "0.Z3Kweebec_P2~5 #1 [Wait 10.0s] <Rotate 90.00deg>"
-          }
-        },
-        "HeadRotation": {
-          "Rotation": {
-            "Pitch": 0.0,
-            "Yaw": -2.0689587593078613,
-            "Roll": 0.0
-          }
-        }
-      }
-    },
-    {
-      "Components": {
-        "Nameplate": {
-          "Text": "0.Z3Kweebec_P2~6 #2 [Wait 0.0s] <Rotate 0.00deg>"
-        },
-        "PatrolPathMarker": {
-          "Version": 5,
-          "DisplayName": "0.Z3Kweebec_P2~6 #2 [Wait 0.0s] <Rotate 0.00deg>",
-          "UUID": {
-            "$binary": "BCetq2c6MA2Udbhn3YznDg==",
-            "$type": "04"
-          },
-          "PathId": {
-            "$binary": "akEz4lChNvaDuJ47g06JZw==",
-            "$type": "04"
-          },
-          "PathName": "Z3Kweebec_P2",
-          "PathLength": 0,
-          "Order": 2,
-          "PauseTime": 0.0,
-          "ObsvAngle": 0.0
-        },
-        "HiddenFromAdventurePlayer": {},
-        "Transform": {
-          "Position": {
-            "X": -4.998782568359388,
-            "Y": 32.0,
-            "Z": -2.4642984375000196
-          },
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 0.5473591685295105,
-            "Roll": 0.0
-          }
-        },
-        "Velocity": {
-          "Velocity": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          }
-        },
-        "PrefabCopyable": {},
-        "Model": {
-          "Model": {
-            "Id": "NPC_Path_Marker",
-            "Scale": 1.0,
-            "Static": false
-          }
-        },
-        "UUID": {
-          "UUID": {
-            "$binary": "BCetq2c6MA2Udbhn3YznDg==",
-            "$type": "04"
-          }
-        },
-        "PersistentDisplayName": {
-          "DisplayName": {
-            "RawText": "0.Z3Kweebec_P2~6 #2 [Wait 0.0s] <Rotate 0.00deg>"
-          }
-        },
-        "HeadRotation": {
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 0.5473591685295105,
-            "Roll": 0.0
-          }
-        }
-      }
-    },
-    {
-      "Components": {
-        "Nameplate": {
-          "Text": "0.Z3Kweebec_P2~6 #1 [Wait 10.0s] <Rotate 90.00deg>"
-        },
-        "PatrolPathMarker": {
-          "Version": 5,
-          "DisplayName": "0.Z3Kweebec_P2~6 #1 [Wait 10.0s] <Rotate 90.00deg>",
-          "UUID": {
-            "$binary": "Qx2j9wYZMgmLjs1a4E1BkA==",
-            "$type": "04"
-          },
-          "PathId": {
-            "$binary": "akEz4lChNvaDuJ47g06JZw==",
-            "$type": "04"
-          },
-          "PathName": "Z3Kweebec_P2",
-          "PathLength": 0,
-          "Order": 1,
-          "PauseTime": 10.0,
-          "ObsvAngle": 1.5707963705062866
-        },
-        "HiddenFromAdventurePlayer": {},
-        "Transform": {
-          "Position": {
-            "X": -4.346893310546875,
-            "Y": 32.07903289794922,
-            "Z": -0.64404296875
-          },
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 2.948532819747925,
-            "Roll": -0.0
-          }
-        },
-        "Velocity": {
-          "Velocity": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          }
-        },
-        "PrefabCopyable": {},
-        "Model": {
-          "Model": {
-            "Id": "NPC_Path_Marker",
-            "Scale": 1.0,
-            "Static": false
-          }
-        },
-        "UUID": {
-          "UUID": {
-            "$binary": "Qx2j9wYZMgmLjs1a4E1BkA==",
-            "$type": "04"
-          }
-        },
-        "PersistentDisplayName": {
-          "DisplayName": {
-            "RawText": "0.Z3Kweebec_P2~6 #1 [Wait 10.0s] <Rotate 90.00deg>"
-          }
-        },
-        "HeadRotation": {
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 2.948532819747925,
-            "Roll": -0.0
-          }
-        }
-      }
-    },
-    {
-      "Components": {
-        "Nameplate": {
-          "Text": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>"
-        },
-        "PatrolPathMarker": {
-          "Version": 5,
-          "DisplayName": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>",
-          "UUID": {
-            "$binary": "cot/5edbOt2IVdwocxzFbA==",
-            "$type": "04"
-          },
-          "PathId": {
-            "$binary": "rU+ou++wS7Wko8V+cU8UUg==",
-            "$type": "04"
-          },
-          "PathName": "Z3Kweebec_P2",
-          "PathLength": 0,
-          "Order": 1,
-          "PauseTime": 10.0,
-          "ObsvAngle": 1.919862151145935
-        },
-        "HiddenFromAdventurePlayer": {},
-        "Transform": {
-          "Position": {
-            "X": -1.659393310546875,
-            "Y": 18.136817932128906,
-            "Z": -4.4326171875
-          },
-          "Rotation": {
-            "Pitch": 0.0,
-            "Yaw": -2.0561389923095703,
-            "Roll": 0.0
-          }
-        },
-        "Velocity": {
-          "Velocity": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          }
-        },
-        "PrefabCopyable": {},
-        "Model": {
-          "Model": {
-            "Id": "NPC_Path_Marker",
-            "Scale": 1.0,
-            "Static": false
-          }
-        },
-        "UUID": {
-          "UUID": {
-            "$binary": "cot/5edbOt2IVdwocxzFbA==",
-            "$type": "04"
-          }
-        },
-        "PersistentDisplayName": {
-          "DisplayName": {
-            "RawText": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>"
-          }
-        },
-        "HeadRotation": {
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 2.03071665763855,
-            "Roll": -0.0
-          }
-        }
-      }
-    },
-    {
-      "Components": {
-        "Nameplate": {
           "Text": "0.Z3Kweebec_P2~5 #0 [Wait 10.0s] <Rotate 90.00deg>"
         },
         "PatrolPathMarker": {
@@ -130283,6 +130230,114 @@
           "Rotation": {
             "Pitch": 0.0,
             "Yaw": -0.2592894732952118,
+            "Roll": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Components": {
+        "Nameplate": {
+          "Text": "Kweebec_Razorleaf_Patrol"
+        },
+        "HiddenFromAdventurePlayer": {},
+        "SpawnMarkerComponent": {
+          "SpawnMarker": "Kweebec_Razorleaf_Patrol",
+          "RespawnTime": 0.0,
+          "SpawnCount": 0,
+          "NPCReferences": [],
+          "PersistedFlock": {},
+          "SpawnPosition": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        },
+        "Transform": {
+          "Position": {
+            "X": -3.7734451293945312,
+            "Y": 18.066993713378906,
+            "Z": -8.4345703125
+          },
+          "Rotation": {
+            "Pitch": 0.0,
+            "Yaw": -3.0270557403564453,
+            "Roll": 0.0
+          }
+        },
+        "Intangible": {},
+        "PrefabCopyable": {},
+        "Model": {
+          "Model": {
+            "Id": "NPC_Spawn_Marker",
+            "Scale": 1.0,
+            "Static": false
+          }
+        },
+        "UUID": {
+          "UUID": {
+            "$binary": "IIH5DMlQN8mbAU6Ep5xp1w==",
+            "$type": "04"
+          }
+        },
+        "HeadRotation": {
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 0.11453573405742645,
+            "Roll": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Components": {
+        "Nameplate": {
+          "Text": "Kweebec_Razorleaf_Patrol"
+        },
+        "HiddenFromAdventurePlayer": {},
+        "SpawnMarkerComponent": {
+          "SpawnMarker": "Kweebec_Razorleaf_Patrol",
+          "RespawnTime": 0.0,
+          "SpawnCount": 0,
+          "NPCReferences": [],
+          "PersistedFlock": {},
+          "SpawnPosition": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        },
+        "Transform": {
+          "Position": {
+            "X": -1.5925264282226408,
+            "Y": 32.0,
+            "Z": -2.186547265624995
+          },
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 0.542616069316864,
+            "Roll": 0.0
+          }
+        },
+        "Intangible": {},
+        "PrefabCopyable": {},
+        "Model": {
+          "Model": {
+            "Id": "NPC_Spawn_Marker",
+            "Scale": 1.0,
+            "Static": false
+          }
+        },
+        "UUID": {
+          "UUID": {
+            "$binary": "DSfUukoPM/CdSjvQGWUoNQ==",
+            "$type": "04"
+          }
+        },
+        "HeadRotation": {
+          "Rotation": {
+            "Pitch": 0.0,
+            "Yaw": -2.59897780418396,
             "Roll": 0.0
           }
         }

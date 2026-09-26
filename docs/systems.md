@@ -149,6 +149,37 @@ left to come, it calls closing time. It asks the shift on the `call` channel,
 since the shift holds the day's count and the purse. No cooldown: the day's
 expected guests are the limit.
 
+### Mop stand (`tools.py`)
+
+The stand keeps the mop. Press it (or the mop on it) to take the mop; press the
+empty stand holding the mop to put it back. Only a stand with its mop on it can be
+picked up and moved. The station file names the item it keeps (`holds`) and how
+it shows on top (`on_top`).
+
+## Hazards (`hazards.py`)
+
+Things that go wrong on the floor, PlateUp's messes. On in every restaurant and
+spike.
+
+- **Where they come from:** any guest, as it gets up, has a small chance of
+  leaving a **mess** (the rules' `hazards.guest_mess_chance`, 5%); a messy guest
+  always does. A station with `"spills"` (the sink: 25% a scrub) spills **water**.
+  Each lands in a random empty cell of the eight round its source (the guest's
+  chair, the station) -- never on a table, chair or station.
+- **Sizes:** small, medium, large. A new one landing where one of its kind already
+  is makes it a size bigger. The bigger, the slower you walk through it (80%,
+  65%, 50%) and the weaker your jump.
+- **Spreading** (water only: its look's `"spreads": 3`): one landing on a large
+  spill makes that spill spread -- a drop round *it* -- which can land on another
+  large one and spread again, up to 3 hops from where it began.
+- **Cleaning:** hold F with the mop for a second; each hold makes it a size
+  smaller, so a large one takes three.
+- How a random empty cell is found (`volumes.drop_around`): a rule can't ask "is
+  this cell empty?", but placing a block only into an empty cell works, and the
+  block is there at once -- so each cell is tried at a fair chance, and checked.
+  A spill spreads because placing a block is a "block placed" event at that
+  cell, which the hazard system answers with a drop round it.
+
 ## Front of house
 
 ### Queue (`queue.py`)

@@ -1,7 +1,8 @@
 """
 THE HAZARD SYSTEM: things that go wrong on the floor, and what clears them (PlateUp's messes).
 
-    a messy guest gets up    ->  a MESS on the floor, in an empty cell round its chair
+    any guest gets up        ->  at the rules' guest_mess_chance (small), a MESS on the floor,
+                                 in an empty cell round its chair; a MESSY guest always
     a sink spills (its
     station's "spills"
     chance, each scrub)      ->  a SPILL (water) in an empty cell round the sink -- dropped
@@ -13,8 +14,9 @@ THE HAZARD SYSTEM: things that go wrong on the floor, and what clears them (Plat
     hold F with a mop (1s)   ->  it's cleaned up (the mop's own hold: items.py)
     press it without one     ->  it says so
 
-A PROBE for now (the `hazards` spike): whether a walk-through floor block slows a player,
-whether a flat one can be aimed at and pressed, and what guests do about one in their way.
+Mounted in every restaurant and spike (a sink spills only where it is). The `hazards` spike
+makes every guest messy and adds a dispenser that drops a mess by hand. The mop lives on a
+mop stand (systems/tools.py).
 
   * THE MESS IS A WALK-THROUGH BLOCK ON THE FLOOR, whatever the floor is: the shipped petals
     (flat, lying on the ground), tinted brown, with the web's MovementSettings. The web
@@ -95,6 +97,14 @@ def build(model, debug=True, dispenser=False):
     mess = blocks.hazard_drop(model, "mess")
     v.drop_around(rules, 100, "mess", mess["sizes"], heard, "SIGNAL_RECEIVED", origin="Entity",
                   large=mess["large"], on_large=mess["on_large"])
+    # 150+: ANY guest got up -- a mess round its chair at the rules' chance.
+    chance = model["rules"].get("hazards", {}).get("guest_mess_chance", 0)
+    if chance:
+        got_up = [signals.heard(signals.HAZARD_KEY, signals.GOT_UP),
+                  {"Type": "RandomChanceCondition", "Event": "SIGNAL_RECEIVED",
+                   "Chance": float(chance)}]
+        v.drop_around(rules, 150, "gotup", mess["sizes"], got_up, "SIGNAL_RECEIVED",
+                      origin="Entity", large=mess["large"], on_large=mess["on_large"])
     # 300+: SPREADING. A drop that lands on a large one puts a spreading one over it (hop 1);
     # placing it is a BLOCK_PLACED at ITS cell, answered here with a drop round it -- which
     # can land on another large one and put the next hop over that. The last hop's drop
