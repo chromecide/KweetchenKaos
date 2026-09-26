@@ -41,6 +41,9 @@ no guest can see or walk into the next one:
 | 1 | **HQ** | 32 × 32 |
 | 2–9 | **restaurant layouts** | 32 × 32 each |
 
+**`/kk plot 3`** takes you to plot 3 (standing just in front of it); any plot
+number works.
+
 **`/kk grid`** draws a yellow line of edge blocks one block **outside** each
 plot. The line is never saved and never touches what's inside, so it is safe to
 run any time. `/kk grid 14` marks the first 14 plots, if you want more than the

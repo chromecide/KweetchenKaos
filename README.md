@@ -65,6 +65,7 @@ pack/               build output (not committed)
 |---|---|
 | `/kk hq` | go to HQ |
 | `/kk author` | go to the authoring world |
+| `/kk plot <n>` | go to authoring plot *n* (0 the border, 1 HQ, 2+ layouts) |
 | `/kk grid [n]` | mark the authoring plots' edges |
 | `/kk slots [hq\|plot]` | take the slot blocks |
 | `/kk save [n]` | save the authoring plots |

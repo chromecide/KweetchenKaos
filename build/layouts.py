@@ -12,6 +12,7 @@ it (docs/content-schema.md, Layouts).
     /kk author     open the authoring world (creative, and it keeps what you build)
     /kk grid [n]   mark the plots' edges (the first n; PLOTS without) -- OUTSIDE what is
                    saved, so it never touches a build: safe to run again, and to add plots
+    /kk plot n     go to plot n (in front of its edge)
     /kk slots      hand over the slot blocks -- all of them; "/kk slots hq" just HQ's
                    (the arrival, portals 1-8), "/kk slots plot" just a restaurant plot's
     /kk save [n]   save the plots as prefabs (K2_Save_00, _01, ...; the first n)
@@ -263,6 +264,11 @@ def write_authoring():
                _give(SLOTS, "hq")),
               ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant plot's slot blocks",
                _give(SLOTS, "plot"))]
+    # "/kk plot 3": go and stand just in front of plot 3's edge, looking in (+z).
+    for n in range(MAX_PLOTS):
+        x1, z1, x2, _, _, _ = plot_box(n)
+        macros.append((f"KKPlot{n}", f"kk plot {n}", f"Go to authoring plot {n}",
+                       enter + [f"tp {(x1 + x2) // 2} {FLOOR + 3} {z1 - 5}"]))
     # "/kk grid 20", "/kk save 20": the same for the first n plots -- a macro can't loop,
     # so each count is its own subcommand.
     for n in range(1, MAX_PLOTS + 1):
