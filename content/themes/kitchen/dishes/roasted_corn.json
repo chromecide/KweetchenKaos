@@ -1,0 +1,37 @@
+{
+  "id": "roasted_corn",
+  "label": "Roasted corn",
+  "steps": [
+    {
+      "type": "heat",
+      "station": "stove",
+      "ladder": "bake",
+      "input": "corn",
+      "look": {
+        "model": "Items/Consumables/Food/Corn_Roasted.blockymodel",
+        "texture": "Resources/Ingredients/Corn_Texture.png",
+        "icon": "Icons/ItemsGenerated/Food_Roasted_Corn.png"
+      },
+      "stage_looks": {
+        "raw": {
+          "model": "Resources/Ingredients/Corn.blockymodel",
+          "texture": "Resources/Ingredients/Corn_Texture.png",
+          "icon": "Icons/ItemsGenerated/Plant_Crop_Corn.png",
+          "scale": 0.75
+        }
+      },
+      "stage_seconds": {
+        "raw": 5,
+        "cooked": 6,
+        "well": 5
+      }
+    }
+  ],
+  "serve": [
+    {
+      "item": "roasted_corn_cooked",
+      "price": 4
+    }
+  ],
+  "unlock": "start"
+}

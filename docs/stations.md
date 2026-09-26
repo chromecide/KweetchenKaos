@@ -12,6 +12,7 @@ The data lives in `content/themes/kitchen/stations/*.json` (`look`).
 | Safety stove | `Metal_Iron` | `Metal_Zinc_Decorative_Top` | `Metal_Copper_Decorative_Top` | `#60e080` green (green glow) |
 | Chopping board | `Metal_Iron` | `Wood_Softwood_Planks_Top` | same | `#b07850` warm brown |
 | Sink | `Metal_Iron` | `Mushroom_Block_Blue_Trunk_Top` (the water) | same | `#d0d0d0` grey (the rim) |
+| Dishwasher (sink upgrade) | `Metal_Iron` | `Metal_Iron_Ornate` | same | `#40c0d0` teal; a dirty plate goes in and comes out clean by itself after 4s |
 | Bin | `Furniture_Village_Crate` | `Wood_Village_Wall_Black_Full` | same, tinted `#4a4038` with a plate on it | none |
 | Plate rack | `Metal_Iron_Ornate`, the block TURNED (roll 90, yaw 90) so the bars lie flat -- a stack of plates | `Metal_Iron` (the stove's plain side) | a plate on top while it holds any | none |
 | Counter | `Wood_Softwood_Planks_Side` | `Soil_Snow`, greyed by the trim's tint to read as marble | same | `#aaaaaa` grey (step 6 of 16 on the gallery's snow ramp) |

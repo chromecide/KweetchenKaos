@@ -25,10 +25,12 @@ Once something is on, it is pressed through: taking it back half done would need
 to mean something else.
 """
 import blocks
+import clock
 import settings
 import volumes as v
 
 ROLES = ("press", "wash")
+NEEDS_CLOCK = True      # an AUTO upgrade (the dishwasher) washes by growth
 
 
 def ids(model, station_id):
@@ -153,5 +155,64 @@ def build(model, station_id, debug=True):
     rules.add(901, [v.at([b["free"]] + ladder, event="BLOCK_BROKEN")],
               [v.cell(shown_in + shown_out, "Empty", dy=1, event="BLOCK_BROKEN")])
 
+    _auto_variants(model, station_id, table, rules, debug)
+
     rules.write(b["effect"], f"The {label.lower()}: a press station. See build/systems/press.py.")
     return b["effect"]
+
+
+def _auto_variants(model, station_id, table, rules, debug):
+    """AN AUTO UPGRADE (the dishwasher): a variant of this station (`upgrade_of`, with
+    `auto_seconds`) that does the pressing itself.
+
+        hold the kit, press a FREE station  ->  it becomes the upgrade
+        press it holding an input           ->  it goes in; after auto_seconds it is done
+                                                 by itself (GROWTH, like a stove or a crate)
+        press it (or what's on it) once done ->  you take the output; it's free again
+
+    Same steps as the station it upgrades (the sink's wash steps), same ladder-free blocks:
+    free, busy, and on top a picture that grows from the input into the output."""
+    items = model["items"]
+    prefix = model["theme"]["prefix"]
+    gid = lambda local: settings.game_id(prefix, local)
+    base_free = ids(model, station_id)["free"]
+    for vid, vs in model["stations"].items():
+        if vs.get("upgrade_of") != station_id or "auto_seconds" not in vs:
+            continue
+        label, words, look = vs["label"], vs["words"], vs["look"]
+        note = f"{label}. See build/systems/press.py (_auto_variants)."
+        free, busy = gid(vid), gid(f"{vid}_busy")
+        blocks.station_block(free, label, look, words["free"], note, movable=True)
+        blocks.station_block(busy, f"{label} (in use)", look, words["busy"], note)
+        rep = lambda key, text: v.report(f"kk.{vid}.{key}", f"[{vid}] {text}", debug)
+        working, ready = [], []
+        for s in table:
+            w, r = gid(f"{vid}_on_{s['input']}"), gid(f"{vid}_ready_{s['output']}")
+            grow = clock.growth([w, r], [vs["auto_seconds"], None])
+            blocks.display_block(w, f"{items[s['input']]['label']} (in the {label.lower()})",
+                                 items[s["input"]]["look"], words["busy"], note, extra=grow)
+            blocks.display_block(r, f"{items[s['output']]['label']} (in the {label.lower()})",
+                                 items[s["output"]]["look"], words["done"], note, extra=grow)
+            working.append(w)
+            ready.append(r)
+            # IN: the input goes on top and starts working by itself.
+            rules.add(3000 + len(rules.conditions), [v.at([free]), v.holding(items[s["input"]]["game_id"])],
+                      [v.cell([free], busy), v.place(w), v.sound(0.8)]
+                      + rep(f"in.{s['input']}", f"{items[s['input']]['label']} in"))
+            # OUT, once done: press the station or what's on it.
+            for dy, where in ((0.0, [v.at([busy]), v.at([r], dy=1)]),
+                              (-1.0, [v.at([r]), v.at([busy], dy=-1)])):
+                rules.add(3000 + len(rules.conditions), where,
+                          [v.give(items[s["output"]]["game_id"]), v.cell([r], "Empty", dy=dy + 1),
+                           v.cell([busy], free, dy=dy), v.sound(1.2)]
+                          + rep(f"out.{s['output']}", f"{items[s['output']]['label']} taken"))
+        # THE UPGRADE: hold the kit and press a free station of the kind it upgrades.
+        kit = items[vs["kit_item"]]["game_id"]
+        rules.add(3900, [v.at([base_free]), v.holding(kit)],
+                  [v.cell([base_free], free), v.sound(1.5)]
+                  + rep("upgraded", f"upgraded to a {label.lower()}"))
+        # BREAKING: what's on top goes with it; a broken top frees it.
+        rules.add(3950, [v.at(working + ready, event="BLOCK_BROKEN")],
+                  [v.cell([busy], free, dy=-1, event="BLOCK_BROKEN")])
+        rules.add(3951, [v.at([free, busy], event="BLOCK_BROKEN")],
+                  [v.cell(working + ready, "Empty", dy=1, event="BLOCK_BROKEN")])

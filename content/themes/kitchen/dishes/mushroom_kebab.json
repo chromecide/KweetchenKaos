@@ -1,0 +1,52 @@
+{
+  "id": "mushroom_kebab",
+  "label": "Mushroom kebab",
+  "steps": [
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "mushroom_chopped",
+        "stick"
+      ],
+      "output": {
+        "id": "mushroom_kebab_raw",
+        "label": "Raw mushroom kebab",
+        "look": {
+          "model": "Items/Consumables/Food/Mushroom_Skewer.blockymodel",
+          "texture": "Items/Consumables/Food/Mushroom_Skewer_Texture.png",
+          "icon": "Icons/ItemsGenerated/Food_Skewer_Mushroom.png",
+          "tint": "#e8dcc8"
+        }
+      }
+    },
+    {
+      "type": "heat",
+      "station": "stove",
+      "ladder": "bake",
+      "input": "mushroom_kebab_raw",
+      "look": {
+        "model": "Items/Consumables/Food/Mushroom_Skewer.blockymodel",
+        "texture": "Items/Consumables/Food/Mushroom_Skewer_Texture.png",
+        "icon": "Icons/ItemsGenerated/Food_Skewer_Mushroom.png"
+      },
+      "stage_looks": {
+        "raw": {
+          "tint": "#e8dcc8"
+        }
+      },
+      "stage_seconds": {
+        "raw": 5,
+        "cooked": 6,
+        "well": 5
+      }
+    }
+  ],
+  "serve": [
+    {
+      "item": "mushroom_kebab_cooked",
+      "price": 6
+    }
+  ],
+  "unlock": "card"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "fruit_kebab",
+  "label": "Fruit kebab",
+  "steps": [
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "apple_chopped",
+        "stick"
+      ],
+      "output": {
+        "id": "fruit_kebab",
+        "label": "Fruit kebab",
+        "look": {
+          "model": "Items/Consumables/Food/Fruit_Skewer.blockymodel",
+          "texture": "Items/Consumables/Food/Fruit_Skewer_Texture.png",
+          "icon": "Icons/ItemsGenerated/Food_Skewer_Fruit.png"
+        }
+      }
+    }
+  ],
+  "serve": [
+    {
+      "item": "fruit_kebab"
+    }
+  ],
+  "unlock": "card"
+}

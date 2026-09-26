@@ -87,6 +87,15 @@
         "mid": 4,
         "late": 6
       }
+    },
+    {
+      "kit": "dishwasher",
+      "price": 10,
+      "weights": {
+        "early": 2,
+        "mid": 5,
+        "late": 5
+      }
     }
   ]
 }

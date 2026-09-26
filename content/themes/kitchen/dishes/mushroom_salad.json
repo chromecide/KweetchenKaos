@@ -1,0 +1,29 @@
+{
+  "id": "mushroom_salad",
+  "label": "Mushroom salad",
+  "steps": [
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "lettuce_chopped",
+        "mushroom_chopped"
+      ],
+      "output": {
+        "id": "mushroom_salad",
+        "label": "Mushroom salad",
+        "look": {
+          "model": "Items/Consumables/Food/Salad_Mushroom.blockymodel",
+          "texture": "Items/Consumables/Food/Salad_Mushroom_Texture.png",
+          "icon": "Icons/ItemsGenerated/Food_Salad_Mushroom.png"
+        }
+      }
+    }
+  ],
+  "serve": [
+    {
+      "item": "mushroom_salad"
+    }
+  ],
+  "unlock": "card"
+}

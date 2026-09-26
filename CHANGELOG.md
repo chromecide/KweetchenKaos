@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- **The Kweebec menu:** ten dishes instead of four pies. New: berry salad, roasted
+  corn (both starters), mushroom salad, fruit kebab, mushroom kebab, bread. Three
+  need no cooking. New ingredients: lettuce, berries, corn, skewer sticks.
+- **Dishwasher:** a sink upgrade (a kit from the pads): a dirty plate goes in and
+  comes out clean by itself.
+- Hints show the interact key, the way the game's doors do.
+
 ## 0.1.0 (2026-09-26)
 
 The first release: a full run, from HQ to out of business.

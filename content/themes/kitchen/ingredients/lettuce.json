@@ -1,0 +1,30 @@
+{
+  "item": {
+    "id": "lettuce",
+    "label": "Lettuce",
+    "look": {
+      "model": "Resources/Ingredients/Cabbage.blockymodel",
+      "texture": "Resources/Ingredients/Cabbage_Lettuce.png",
+      "scale": 0.5,
+      "icon": "Icons/ItemsGenerated/Plant_Crop_Lettuce.png"
+    }
+  },
+  "source": "crate",
+  "steps": [
+    {
+      "type": "press",
+      "station": "board",
+      "input": "lettuce",
+      "presses": 4,
+      "output": {
+        "id": "lettuce_chopped",
+        "label": "Chopped lettuce",
+        "look": {
+          "base": "petal",
+          "texture": "Resources/Plants/Petal_Textures/Green.png",
+          "icon": "Icons/ItemsGenerated/Plant_Petals_Green.png"
+        }
+      }
+    }
+  ]
+}

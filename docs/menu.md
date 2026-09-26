@@ -1,5 +1,29 @@
 # Menu: ingredients, processes, dishes
 
+## The Kweebec menu (built 2026-09-26)
+
+Ten dishes, leaning into forest food, made with the stations that exist (no code):
+
+| Dish | Chain | Unlock | Price |
+|---|---|---|---|
+| Berry salad | lettuce → chop; + berries → combine (no cooking) | starter | 4 |
+| Roasted corn | corn → stove | starter | 4 |
+| Pumpkin pie | pumpkin → chop; + dough → combine → stove | starter | 5 (well done 6) |
+| Mushroom salad | lettuce → chop; mushroom → chop; combine (no cooking) | card | 5 |
+| Fruit kebab | apple → chop; + stick → combine (no cooking) | card | 5 |
+| Mushroom kebab | mushroom → chop; + stick → combine → stove | card | 6 |
+| Bread | flour → knead (dough) → stove | card | 5 |
+| Apple pie | as pumpkin | card | 5 (well done 6) |
+| Meat pie | as pumpkin | card | 5 (well done 6) |
+| Mushroom pie | as pumpkin | card | 5 (well done 6) |
+
+Ingredients from crates: flour, pumpkin, apple, raw meat, mushroom, lettuce, berries,
+corn, skewer sticks. Only the pies have a well-done order. Chopped lettuce is the green
+petal; the raw mushroom kebab is the cooked model tinted pale (`#e8dcc8`); corn's and
+bread's raw stages on the stove are the corn and the dough.
+
+The research below is how the list was chosen.
+
 Working table, started 2026-09-24. Every dish is a shipped food item with its own
 model; every step is one of the processes already built. Nothing here is built yet.
 

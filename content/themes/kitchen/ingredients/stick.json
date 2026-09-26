@@ -1,0 +1,14 @@
+{
+  "item": {
+    "id": "stick",
+    "label": "Skewer stick",
+    "look": {
+      "model": "Items/Ingredients/Stick.blockymodel",
+      "texture": "Items/Ingredients/Stick_Texture.png",
+      "scale": 0.5,
+      "icon": "Icons/ItemsGenerated/Ingredient_Stick.png"
+    }
+  },
+  "source": "crate",
+  "steps": []
+}

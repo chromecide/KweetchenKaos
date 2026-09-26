@@ -1,0 +1,14 @@
+{
+  "item": {
+    "id": "corn",
+    "label": "Corn",
+    "look": {
+      "model": "Resources/Ingredients/Corn.blockymodel",
+      "texture": "Resources/Ingredients/Corn_Texture.png",
+      "scale": 0.75,
+      "icon": "Icons/ItemsGenerated/Plant_Crop_Corn.png"
+    }
+  },
+  "source": "crate",
+  "steps": []
+}

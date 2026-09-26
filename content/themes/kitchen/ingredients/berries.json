@@ -1,0 +1,14 @@
+{
+  "item": {
+    "id": "berries",
+    "label": "Berries",
+    "look": {
+      "model": "Resources/Plants/Wild_Berry.blockymodel",
+      "texture": "Resources/Plants/Wild_Berry_Texture.png",
+      "scale": 0.5,
+      "icon": "Icons/ItemsGenerated/Plant_Fruit_Berries_Red.png"
+    }
+  },
+  "source": "crate",
+  "steps": []
+}

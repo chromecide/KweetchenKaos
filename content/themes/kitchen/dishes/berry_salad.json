@@ -1,0 +1,30 @@
+{
+  "id": "berry_salad",
+  "label": "Berry salad",
+  "steps": [
+    {
+      "type": "combine",
+      "station": "counter",
+      "inputs": [
+        "lettuce_chopped",
+        "berries"
+      ],
+      "output": {
+        "id": "berry_salad",
+        "label": "Berry salad",
+        "look": {
+          "model": "Items/Consumables/Food/Salad_Berries.blockymodel",
+          "texture": "Items/Consumables/Food/Salad_Berries_Texture.png",
+          "icon": "Icons/ItemsGenerated/Food_Salad_Berry.png"
+        }
+      }
+    }
+  ],
+  "serve": [
+    {
+      "item": "berry_salad",
+      "price": 4
+    }
+  ],
+  "unlock": "start"
+}

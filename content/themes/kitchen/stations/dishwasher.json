@@ -1,0 +1,22 @@
+{
+  "$comment": "An upgrade of the sink: apply the kit to a free sink and it becomes this. A dirty plate goes in and comes out clean by itself after auto_seconds -- no scrubbing.",
+  "id": "dishwasher",
+  "role": "wash",
+  "upgrade_of": "sink",
+  "label": "Dishwasher",
+  "auto_seconds": 4,
+  "look": {
+    "sides": "BlockTextures/Metal_Iron.png",
+    "top": "BlockTextures/Metal_Iron_Ornate.png",
+    "sound": "Stone",
+    "trim": "#40c0d0"
+  },
+  "words": {
+    "free": "Dishwasher - put a dirty plate in",
+    "busy": "Dishwasher - washing",
+    "done": "Clean plate - press to take it"
+  },
+  "kit": {
+    "label": "Dishwasher kit"
+  }
+}

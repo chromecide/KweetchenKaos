@@ -1,0 +1,36 @@
+{
+  "id": "bread",
+  "label": "Bread",
+  "steps": [
+    {
+      "type": "heat",
+      "station": "stove",
+      "ladder": "bake",
+      "input": "dough",
+      "look": {
+        "model": "Items/Consumables/Food/Bread.blockymodel",
+        "texture": "Items/Consumables/Food/Bread_Texture.png",
+        "icon": "Icons/ItemsGenerated/Food_Bread.png"
+      },
+      "stage_looks": {
+        "raw": {
+          "model": "Items/Ingredients/Dough.blockymodel",
+          "texture": "Items/Ingredients/Dough_Texture.png",
+          "scale": 0.25,
+          "icon": "Icons/ItemsGenerated/Food_Dough.png"
+        }
+      },
+      "stage_seconds": {
+        "raw": 6,
+        "cooked": 8,
+        "well": 6
+      }
+    }
+  ],
+  "serve": [
+    {
+      "item": "bread_cooked"
+    }
+  ],
+  "unlock": "card"
+}
