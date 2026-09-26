@@ -95,3 +95,8 @@ together.
 This started as the second version of the Kitchen POC (`../tools`, `../pack`),
 which is untouched and still loads beside it: every game id here starts with
 `K2_`, so nothing collides.
+
+## Licence
+
+MIT: see [LICENSE](LICENSE). Hytale's own models, textures and prefabs are
+referenced by path, never copied into this project.
