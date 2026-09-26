@@ -114,8 +114,10 @@ says so.
 8. **End of day.** At closing time no more guests come, and the day ends when
    the last one leaves. A title shows how many you served and your purse.
    Blueprints appear on the pads: press one to buy that station (plain, or already
-   upgraded, like a dishwasher or a fast stove) and put it down. Every few days,
-   **recipe cards** come instead: a new dish, which brings more guests.
+   upgraded, like a dishwasher or a fast stove) and put it down. At the start of
+   day 4, and every third day after, it's a **card day**: two recipe cards come
+   first, and you must choose one (a new dish, which brings more guests) before
+   you can open. The blueprints come once you have.
 9. **Upgraded stations.** The fast stove glows blue and cooks faster, the safety
    stove glows green and never burns food, and the dishwashers wash by themselves.
 10. **Losing.** If a guest leaves angry, because its order or its food took too

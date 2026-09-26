@@ -48,6 +48,8 @@ import volumes as v
 
 FIXTURE = "shift"
 AFTER_CLEAR = 0.5     # PlaceBlock only fills an empty cell, and a clear lands at tick end
+TIPS = range(-3, 6)   # the tip levels there are rules for: coins added to (or taken off) each
+                      # guest served
 
 
 def ids(model):
@@ -159,8 +161,11 @@ def build(model, roles, debug=True, exit_on_lose=False):
                                        "the kitchen, then open the sign."))
 
     # 10: open the day. 11: already open. 12: nothing delivered yet.
+    # 9: a card is waiting to be chosen -- no opening until it is.
+    rules.add(9, [v.at([s["sign"]]), _t("BLOCK_USED", "cardwait", 1)],
+              say("BLOCK_USED", "cardwait", "[shift] Choose a card on the pads first."))
     rules.add(10, [v.at([s["sign"]]), _t("BLOCK_USED", "open", 0),
-                   _t("BLOCK_USED", "onmenu", 1, "AtLeast")],
+                   _t("BLOCK_USED", "onmenu", 1, "AtLeast"), _t("BLOCK_USED", "cardwait", 0)],
               [v.cell([s["sign"]], s["sign_open"]),
                _set("BLOCK_USED", "open", 1), _set("BLOCK_USED", "closing", 0),
                _set("BLOCK_USED", "lost", 0),
@@ -285,12 +290,17 @@ def build(model, roles, debug=True, exit_on_lose=False):
                          "{served} of {expected} served - {money} coins")
               + logged("TICK", "dayover", "[shift] The last guest has gone - {served} of "
                                           "{expected} served. Purse: {money} coins."))
-    # 51: a card day (and something left to learn) -- cards INSTEAD of offers.
+    # 51: a CARD DAY (PlateUp's rhythm: the start of day 4, then every third day), if there's
+    # something left to learn. The cards FIRST, and one MUST be chosen (`cardwait` holds the
+    # sign); choosing one puts the day's blueprints out (700+). Later a customer card will
+    # take pad 2 -- until there are any, both cards are recipes, as PlateUp does when one
+    # kind runs out.
     rules.add(51, [_t("TICK", "dayover", 1), _t("TICK", "cards_in", 0, "AtMost"),
                    _t("TICK", "locked", 1, "AtLeast")],
               [_set("TICK", "cardpick", 1), _set("TICK", "cards_in", every),
-               _set("TICK", "dayover", 0), EVERY_TICK]
-              + say("TICK", "cards", "[shift] Recipe cards are on the pads - choose one."))
+               _set("TICK", "cardwait", 1), _set("TICK", "dayover", 0), EVERY_TICK]
+              + say("TICK", "cards", "[shift] Card day - choose a card on the pads. The "
+                                     "blueprints come once you have."))
     rules.add(52, [_t("TICK", "dayover", 1)],
               [signals.to_pads("TICK", signals.PLACE, delay=AFTER_CLEAR),
                _set("TICK", "dayover", 0), EVERY_TICK]
@@ -335,6 +345,12 @@ def build(model, roles, debug=True, exit_on_lose=False):
                                       _t("SIGNAL_RECEIVED", "onmenu", gate,
                                          "Exactly" if gate == 0 else "AtLeast")],
                           [_set("SIGNAL_RECEIVED", "extra", add, op="Increment")])
+        # On a card day, choosing lets the day go on: the blueprints, once the pads are clear
+        # and any crates delivered (they skip a pad holding one). Not for the starter.
+        rules.add(next(num), [signals.heard(signals.CHOSE, d), _t("SIGNAL_RECEIVED", "cardwait", 1)],
+                  [_set("SIGNAL_RECEIVED", "cardwait", 0),
+                   signals.to_pads("SIGNAL_RECEIVED", signals.PLACE, delay=3 * AFTER_CLEAR)]
+                  + say("SIGNAL_RECEIVED", "offers.after", "[shift] Today's offers are on the pads."))
         rules.add(next(num), [signals.heard(signals.CHOSE, d)],
                   [_set("SIGNAL_RECEIVED", f"has_{d}", 1),
                    _set("SIGNAL_RECEIVED", "locked", -1, op="Increment"),
@@ -385,6 +401,25 @@ def build(model, roles, debug=True, exit_on_lose=False):
                                f"[shift] a guest called in (+{call_pays(day)} coins)"))
     rules.add(next(num), [signals.heard(signals.GUEST, signals.SERVED)],
               [_set("SIGNAL_RECEIVED", "served", 1, op="Increment")])
+    # TIPS: every guest served pays the tip level on top of its dish (negative: less). The
+    # level is the shift's `tip`; a customer card moves it (later), the tips spike's dial now.
+    for k in TIPS:
+        if k:
+            rules.add(next(num), [signals.heard(signals.GUEST, signals.SERVED),
+                                  _t("SIGNAL_RECEIVED", "tip", k)],
+                      [_set("SIGNAL_RECEIVED", signals.MONEY, k, op="Increment")]
+                      + logged("SIGNAL_RECEIVED", f"tip.{k}",
+                               f"[shift] tip {k:+d} - purse: {{money}}"))
+    for direction, step, edge in ((signals.UP, 1, TIPS[-1]), (signals.DOWN, -1, TIPS[0])):
+        rules.add(next(num), [signals.heard(signals.TIP, direction),
+                              _t("SIGNAL_RECEIVED", "tip", edge, "Exactly")],
+                  say("SIGNAL_RECEIVED", f"tip.edge.{direction}",
+                      "[shift] Tips can't go any " + ("higher." if step > 0 else "lower.")))
+        rules.add(next(num), [signals.heard(signals.TIP, direction),
+                              _t("SIGNAL_RECEIVED", "tip", edge, "NotEquals")],
+                  [_set("SIGNAL_RECEIVED", "tip", step, op="Increment")]
+                  + say("SIGNAL_RECEIVED", f"tip.{direction}",
+                        "[shift] Every guest served now tips {tip} coins."))
     rules.add(next(num), [signals.heard(signals.GUEST, signals.TURNED_AWAY)],
               say("SIGNAL_RECEIVED", "turnedaway",
                   "[shift] A guest got the wrong dish and left without paying."))
@@ -409,9 +444,10 @@ def build(model, roles, debug=True, exit_on_lose=False):
                {"Type": "RemoveEntities", "Event": "SIGNAL_RECEIVED", "IncludeNpcs": True,
                 "IncludePlayers": False, "IgnoreInvulnerability": True, "Roles": guests,
                 "Delay": 0.5},
-               _set("SIGNAL_RECEIVED", "cards_in", every)]
+               _set("SIGNAL_RECEIVED", "cards_in", every), _set("SIGNAL_RECEIVED", "cardwait", 0)]
             + ([] if exit_on_lose else [_set("SIGNAL_RECEIVED", signals.DAY, 1),
-                                        _set("SIGNAL_RECEIVED", signals.MONEY, 0)]))
+                                        _set("SIGNAL_RECEIVED", signals.MONEY, 0),
+                                        _set("SIGNAL_RECEIVED", "tip", 0)]))
     rules.add(900, [signals.heard(signals.GUEST, signals.ANGRY),
                     _t("SIGNAL_RECEIVED", "lost", 0)], lose)
     rules.add(901, [signals.heard(signals.QUEUE, signals.IMPATIENT),
@@ -458,7 +494,8 @@ def build(model, roles, debug=True, exit_on_lose=False):
     locked = len(dishes)          # nothing is on the menu until a starter is chosen
     tags = {**signals.LISTENER_TAGS, signals.MONEY: "0", signals.DAY: "1", "open": "0",
             "closing": "0", "time_left": "0", "beat": "0", "picked": "0", "choice": "0",
-            "lost": "0", "started": "0", "dayover": "0", "cardpick": "0",
+            "lost": "0", "started": "0", "dayover": "0", "cardpick": "0", "cardwait": "0",
+            "tip": "0",
             "cards_in": str(every), "locked": str(locked), "onmenu": "0",
             "to_arrive": "0", "expected": "0", "served": "0", "extra": "0",
             **{f"t_{k}": "0" for k in announcements}}

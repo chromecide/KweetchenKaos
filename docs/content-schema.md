@@ -481,7 +481,7 @@ All three arrive on the **offer pads** (a layout slot) between days:
 | Day | The pads show |
 |---|---|
 | Day 0 | a starter card for each starter dish. Choose one: it's on the menu, its crates delivered |
-| Card days (every 3rd, `rules/cards.json`) | a pair of recipe cards, **instead of** the random offer roll. Choosing one puts the dish on the menu from the next day; any crates it needs that the restaurant doesn't own arrive on the pads the next morning, free |
+| Card days (the start of day 4, then every 3rd: `rules/cards.json`, PlateUp's rhythm) | a pair of recipe cards FIRST, and one **must** be chosen before the day opens. Choosing one puts the dish on the menu from the next day; any crates it needs that the restaurant doesn't own arrive on the pads, free; then the day's blueprints go out as on other days. (With customer cards, one card of each kind.) |
 | Other days | the random offers (`rules/offers.json`): station blueprints |
 
 - A dish says `"unlock": "start"` (a STARTER: offered as a starter card when the

@@ -276,7 +276,13 @@ day, purse, what's on the menu, guests expected, still to come, served.
   arrive evenly spread over it. Each wants a fair random pick from the dishes on
   the menu.
 - **Closing time:** no more guests. The day ends when the last one has left.
-  Every few days recipe cards come instead of offers.
+  **Card days** follow PlateUp's rhythm: the start of day 4, then every third day.
+  Two cards go on the pads and **one must be chosen** before the day can open;
+  choosing one puts the day's blueprints out. Today both are recipe cards; with
+  customer cards, it will be one of each.
+- **Tips:** every guest served pays the shift's **tip level** on top of its dish
+  (negative: less). It starts at 0; customer cards will move it (the `tips` spike
+  has a dial).
 - **Payments:** it hears *served*, *paid*, *turned away*, *angry* and *queue
   gave up*, and adds to the purse or ends the run.
 - **Losing:** out of business. In a run from HQ, everyone is sent back to HQ.
@@ -390,6 +396,7 @@ Pasted anywhere, the room works. Two things make that possible:
   | `rack` | the plate rack | two racks, a sink; a dirty plate |
   | `dish:<dish>` | one recipe, start to paid | its chain's stations and crates, a bin if it cooks; plates; callers for its orders |
   | `impatient` | random impatient guests | the front of house only |
+  | `tips` | the tip level paid on every guest served, and card days | a small kitchen (board, 2 counters, stove, bin, rack), the shift, a tip dial |
   | `mats` | mats soaking up, overflowing, and rubber mats | a sink, the mop stand, a mess dispenser; 6 mats, 3 rubber mats, dirty plates |
   | `hazards` | every hazard and the mop | sink, board, stove, mop stand, the front (every guest messy), a mess dispenser; a dirty plate, a pumpkin, corn |
   | `service` | the game, served by hand | the whole kitchen and front of house |

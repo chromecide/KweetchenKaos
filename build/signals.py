@@ -48,6 +48,9 @@ DELIVER, CARD = "deliver", "card"
 SHORT, BOUGHT, CHOSE = "short", "bought", "chose"
 # A booking desk asks the shift for the next guest now (booking.py).
 CALL = "call"
+# TIPS: the shift's tip level (extra coins per guest served) goes UP or DOWN -- a customer
+# card, later; the tips spike's dial today.
+TIP, UP, DOWN = "tip", "up", "down"
 # HAZARDS (hazards.py): every guest says it GOT UP (a small chance of a mess round its
 # chair); a messy guest asks for a MESS (always).
 HAZARD_KEY, MESS, GOT_UP = "hazard", "mess", "gotup"

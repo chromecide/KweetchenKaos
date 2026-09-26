@@ -9,14 +9,17 @@ the guests for the rest of the run. Every card carries a downside and an upside.
 
 ## When they appear
 
-- Every **5 days**: before day 5, 10, 15 and so on.
-- The day ends as usual. Then two customer cards are on pads 1 and 2, and nothing
-  else. **One must be chosen**: until then the open sign refuses, and says why.
-- Once one is chosen, both vanish and the day goes on as it does today: recipe cards
-  on a recipe-card day (day 15 is both), offers otherwise.
+**PlateUp's rhythm (decided 2026-09-26):** a customer card isn't a step of its own. On
+every **card day** -- the start of day 4, then every third day -- the pads show **one
+recipe card and one customer card**, and **one of the two must be chosen**: a new dish
+or a change to the guests, never both. Until then the open sign refuses, and says why.
+Choosing one puts the day's blueprints out, as on any other day. When one kind runs out
+(every dish learned, or every customer card taken), both cards are the other kind.
+
+This is built for recipe cards already (both cards are recipes until customer cards
+exist); customer cards take pad 2.
+
 - **No repeats:** a card that has been chosen is not offered again in the same run.
-- It's a **separate step** on the same day as the others: the customer card first, then
-  the day's recipe cards or station blueprints, as usual.
 
 ## How a card changes guests: per-guest rolls
 
@@ -80,9 +83,9 @@ Word card text as **"X% chance a guest is Y"**, not "X% of guests".
 
 ## How it will be built
 
-- **The shift** counts down to customer-card days, as it does for recipe cards. On one,
-  it holds the normal end of day (recipe cards or offers) until a customer card is
-  chosen, then lets it run.
+- **The shift** already runs card days (the countdown, `cardwait` holding the sign, the
+  blueprints once a card is chosen). A customer card is the second card on those days,
+  and choosing it applies its effects instead of adding a dish.
 - **The pads** show a customer card as a blueprint in its own colour (the offers are
   blue), with the card's text on hover. Pressing it sends "chose" to the shift.
 - **The queue spots** keep a count per card and roll each chosen card's mood when a
@@ -100,5 +103,6 @@ Word card text as **"X% chance a guest is Y"**, not "X% of guests".
 | Separate tracks | to build: a mark per track, read once each |
 | Relaxed mood | to build: a mark, and longer clocks |
 | `guests` effect | the shift's extra-guests count, already there |
-| `tip` effect | to build |
-| The card step (every 5 days, must pick, the sign held, then the day's usual step) | to build |
+| `tip` effect | built: the shift's tip level (`tips` spike) |
+| Card days (every 3rd from day 4, must pick, the sign held, then the blueprints) | built, for recipe cards |
+| The customer card on pad 2 | to build |

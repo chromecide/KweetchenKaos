@@ -50,6 +50,7 @@ import clock
 import pack
 import restaurant
 import settings
+import signals
 import spike_front
 import systems
 import volumes as v
@@ -95,6 +96,12 @@ SPIKES = {
     # among the mats), the sink spills round itself (put mats by it); the mop is on its stand.
     "mats": {"stations": {"sink": 1, "mop_stand": 1}, "hazards": True, "dispenser": True,
              "give": ["plate_dirty", "plate_dirty"], "mats": {"mat": 6, "mat_rubber": 3}},
+    # TIPS: the shift pays the tip level on top of every dish served. A small run (the
+    # shift, the pads, the guests), a stove and a bin as well as a board and counters so
+    # any starter -- and any dish a card day offers -- can be made, and a TIP DIAL (two
+    # blocks: up, down) standing in for the customer cards that will move the level.
+    "tips": {"stations": {"crates": 0, "board": 1, "counter": 2, "stove": 1, "bin": 1,
+                          "rack": 1}, "front": True, "run": True, "tip_dial": True},
     # THE GAME, service only: the kitchen, the queue, chairs and guests, called by hand.
     "service": {"stations": KITCHEN, "front": True, "hazards": True},
     # THE GAME, a full RUN: the shift runs the days. Crates at 0: mounted (so delivered ones
@@ -102,6 +109,7 @@ SPIKES = {
     "run": {"stations": dict(KITCHEN, crates=0), "front": True, "run": True, "hazards": True},
 }
 HAZARD_DISPENSER = (8, 4)     # x, z: between the queue and the chairs
+TIP_DIAL = (6, 4)             # x, z: the tip dial's UP block; DOWN beside it (x - 2)
 SETUP = f"{settings.NAMESPACE}_Spike_Setup"
 SETUP_EFFECT = f"{SETUP}_System"
 GROUND = 1              # the flat spike world's surface: blocks stand at y 1
@@ -113,6 +121,30 @@ ROW_Z, ROW_X, GAP = 12, 12, 2
 # cooks (for what burns). Plates come in the kit: no rack, no sink.
 DISH_COUNTS = {"stove": 2, "counter": 2}
 DISH_PLATES = 4
+
+
+TIP_DIAL_EFFECT = f"{settings.NAMESPACE}_Spike_Tip_Dial"
+
+
+def _tip_dial(model, debug):
+    """Spike only: two blocks that move the shift's tip level up or down, as a customer card
+    will. Returns their layout blocks."""
+    look = {"sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+            "top": "BlockTextures/Wood_Softwood_Planks_Side.png", "sound": "Wood"}
+    rules = v.Entries()
+    out = []
+    for n, (direction, label, tint, dx) in enumerate(
+            ((signals.UP, "up", "#3c8a5c", 0), (signals.DOWN, "down", "#a04030", -2))):
+        gid = f"{settings.NAMESPACE}_Spike_Tip_{label.capitalize()}"
+        blocks.station_block(gid, f"Tip dial - {label}",
+                             look, f"Press to move every guest's tip {label} a coin",
+                             "Spike only: moves the shift's tip level. See build/spike.py.",
+                             tint=tint)
+        rules.add(10 + n, [v.at([gid])],
+                  [signals.from_volume("BLOCK_USED", signals.TIP, direction), v.sound(1.2)])
+        out.append({"x": TIP_DIAL[0] + dx, "y": GROUND, "z": TIP_DIAL[1], "name": gid})
+    rules.write(TIP_DIAL_EFFECT, "Spike only: the tip dial. See build/spike.py.")
+    return out
 
 
 def dish_stations(model, dish_id):
@@ -332,6 +364,9 @@ def build(model, name, debug=True):
         hazards.build(model, debug, dispenser=spike.get("dispenser", False))
         mounted += hazards.volumes(model)
     extra = []
+    if spike.get("tip_dial"):
+        extra += _tip_dial(model, debug)
+        mounted.append(v.volume("spike_tip_dial", TIP_DIAL_EFFECT, {"spike": "tipdial"}))
     if spike.get("dispenser"):
         extra.append({"x": HAZARD_DISPENSER[0], "y": GROUND, "z": HAZARD_DISPENSER[1],
                       "name": hazards.ids(model)["dispenser"]})
