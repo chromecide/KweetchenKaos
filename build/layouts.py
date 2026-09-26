@@ -216,7 +216,7 @@ def write_slots(model=None):
                      "DrawType": "Model", "Material": "Solid", "Opacity": "Transparent",
                      "HitboxType": "Chair_Small", "Tint": [tint], "VariantRotation": "NESW",
                      "BlockSoundSetId": "Wood", "PhysicalMaterialId": "Wood",
-                     "InteractionHint": blocks.hint(slot_id(name), label),
+                     "InteractionHint": blocks.hint(slot_id(name), label, keyed=False),
                      "Interactions": {"Use": blocks.NOOP}}
             blocks.item(slot_id(name), label, CHAIR_LOOK["icon"], block,
                         "A layout slot. See build/layouts.py.")
@@ -225,10 +225,11 @@ def write_slots(model=None):
             # Its free look: no turn (you place it the way you like) and no in-use states.
             look = {k: v for k, v in st["look"].items() if k in ("sides", "top", "trim", "sound")}
             blocks.station_block(slot_id(name), label, look, label,
-                                 "A layout slot. See build/layouts.py.", tint=st["look"].get("tint"))
+                                 "A layout slot. See build/layouts.py.", tint=st["look"].get("tint"),
+                                 keyed=False)
         else:
             blocks.station_block(slot_id(name), label, SLOT_LOOK, label,
-                                 "A layout slot. See build/layouts.py.", tint=tint)
+                                 "A layout slot. See build/layouts.py.", tint=tint, keyed=False)
 
 
 def slot_kit(name):

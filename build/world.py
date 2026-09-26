@@ -155,7 +155,8 @@ def _placeholder_portal():
     """A portal that looks the part and goes nowhere: for the hq spike, to see every portal
     slot filled while lining them up."""
     block = dict(blocks.block_for(PORTAL_LOOK), Material="Solid", HitboxType="Pad_Portal",
-                 InteractionHint=blocks.hint(PLACEHOLDER, "Portal slot - no restaurant yet"),
+                 InteractionHint=blocks.hint(PLACEHOLDER, "Portal slot - no restaurant yet",
+                                             keyed=False),
                  Interactions={"Use": blocks.NOOP})
     blocks.item(PLACEHOLDER, "Portal (placeholder)", PORTAL_LOOK["icon"], block,
                 "A stand-in portal for the hq spike. See build/world.py.")
@@ -272,7 +273,7 @@ def build(debug=True, fill_portals=False):
         back = {"X": float(arrival[0] - px), "Y": 0.1, "Z": float(arrival[2] - pz)}
         block = dict(blocks.block_for(PORTAL_LOOK), Material="Solid", HitboxType="Pad_Portal",
                      AmbientSoundEventId="SFX_Portal_Neutral",
-                     InteractionHint=blocks.hint(key, f"{r['name']} - step on to play"),
+                     InteractionHint=blocks.hint(key, f"{r['name']} - step on to play", keyed=False),
                      Interactions={"CollisionEnter": {"Interactions": [{
                          "Type": "TeleportInstance", "InstanceName": inst,
                          "OriginSource": "Block", "PositionOffset": back,

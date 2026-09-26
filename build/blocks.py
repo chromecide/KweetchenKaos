@@ -51,10 +51,20 @@ def item(game_id, label, icon, block, comment, movable=False):
     pack.write_item(game_id, carry.carryable(data) if movable else data)
 
 
-def hint(game_id, text):
-    """A block's hint line; returns the key the block refers to."""
+def with_key(text):
+    """The player's interact key in a hint, the way the game's own doors say "Press [F] to
+    open": the client fills {key} with whatever the player has it bound to. After the first
+    standalone "press", or in front when the hint doesn't say press."""
+    import re
+    keyed, n = re.subn(r"\b([Pp]ress)\b(?![A-Za-z{])", r"\1 [{key}]", text, count=1)
+    return keyed if n else f"[{{key}}] {text}"
+
+
+def hint(game_id, text, keyed=True):
+    """A block's hint line; returns the key the block refers to. `keyed`: show the interact
+    key (not for things you don't press: a portal you step on, an authoring slot)."""
     key = f"kk.hint.{game_id}"
-    pack.say(key, text)
+    pack.say(key, with_key(text) if keyed else text)
     return f"server.{key}"
 
 
@@ -111,7 +121,7 @@ def turn_fields(look):
 
 
 def station_block(game_id, label, look, hint_text, comment, sides=None, tint=None, use=True,
-                  light=None, movable=False, top=None):
+                  light=None, movable=False, top=None, keyed=None):
     """`use=False`: a block nothing presses (a queue spot works off ENTER and EXIT only).
     `light`: a glow (glow.light) -- an upgraded station. `sides`/`top`: instead of the
     look's (a busy state's own, e.g. a stove's copper top while cooking)."""
@@ -120,7 +130,7 @@ def station_block(game_id, label, look, hint_text, comment, sides=None, tint=Non
              "Textures": [turned_faces(look, sides, top or look["top"])],
              "BlockSoundSetId": look.get("sound", "Stone"),
              "PhysicalMaterialId": look.get("sound", "Stone"),
-             "InteractionHint": hint(game_id, hint_text),
+             "InteractionHint": hint(game_id, hint_text, use if keyed is None else keyed),
              "Supporting": {"Up": [{"FaceType": "Full"}]}}
     if use:
         block["Interactions"] = {"Use": NOOP}

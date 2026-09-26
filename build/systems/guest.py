@@ -26,6 +26,7 @@ interaction branches, and names nothing of seating's -- getting up is whatever `
   * EVERY CLOCK IS ITS OWN: a timer keeps the durations it was first started with, so each
     phase has its own patience and warning clocks, and each pulse colour its own beat.
 """
+import blocks
 import npc
 import pack
 import serving
@@ -126,7 +127,7 @@ def fragment(model, entry, on_fed=(), on_unfed=()):
     others = [serving.context(items[e["serves"]]) for e in model["menu"]
               if e["serves"] != menu_id]
     order_hint = "kk.guest.order"
-    pack.say(order_hint, model["fixtures"]["words"]["order"])
+    pack.say(order_hint, blocks.with_key(model["fixtures"]["words"]["order"]))
     interactions = [
         npc.branch("Not seated yet, or already gone: not interactable.",
                    npc.any_of(npc.no(npc.flag(F("active"))), npc.flag(F("gone"))), None,
