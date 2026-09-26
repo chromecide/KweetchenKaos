@@ -39,10 +39,10 @@ THE RULES that keep systems maintainable:
   6. A station's FREE block is movable (blocks.station_block movable=True, carry.py):
      picked up and put down between days. Anything holding food or a plate is not.
 """
-from systems import bin, counter, crate, heat, press, rack
+from systems import bin, booking, counter, crate, heat, press, rack
 
 _BY_ROLE = {}
-for _module in (press, counter, heat, crate, bin, rack):
+for _module in (press, counter, heat, crate, bin, rack, booking):
     for _role in _module.ROLES:
         _BY_ROLE[_role] = _module
 

@@ -356,6 +356,15 @@ def build(model, roles, debug=True, exit_on_lose=False):
                   [_set("SIGNAL_RECEIVED", signals.MONEY, e["price"], op="Increment")]
                   + logged("SIGNAL_RECEIVED", f"paid.{e['serves']}",
                            f"[shift] +{e['price']} coins ({e['label']}) - purse: {{money}}"))
+    # A BOOKING DESK CALLED (booking.py): the next guest comes now -- the day's beat fires,
+    # so it counts against the day's expected guests like any other arrival.
+    rules.add(next(num), [signals.heard(signals.CALL, "next"), _t("SIGNAL_RECEIVED", "open", 1),
+                          _t("SIGNAL_RECEIVED", "closing", 0),
+                          _t("SIGNAL_RECEIVED", "to_arrive", 1, "AtLeast")],
+              [_set("SIGNAL_RECEIVED", "beat", 1)])
+    rules.add(next(num), [signals.heard(signals.CALL, "next"),
+                          _t("SIGNAL_RECEIVED", "to_arrive", 0, "AtMost")],
+              say("SIGNAL_RECEIVED", "call_none", "[shift] Nobody else is booked in today."))
     rules.add(next(num), [signals.heard(signals.GUEST, signals.SERVED)],
               [_set("SIGNAL_RECEIVED", "served", 1, op="Increment")])
     rules.add(next(num), [signals.heard(signals.GUEST, signals.TURNED_AWAY)],

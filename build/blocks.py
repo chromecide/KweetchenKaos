@@ -121,7 +121,7 @@ def turn_fields(look):
 
 
 def station_block(game_id, label, look, hint_text, comment, sides=None, tint=None, use=True,
-                  light=None, movable=False, top=None, keyed=None):
+                  light=None, movable=False, top=None, keyed=None, extra=None):
     """`use=False`: a block nothing presses (a queue spot works off ENTER and EXIT only).
     `light`: a glow (glow.light) -- an upgraded station. `sides`/`top`: instead of the
     look's (a busy state's own, e.g. a stove's copper top while cooking)."""
@@ -149,6 +149,8 @@ def station_block(game_id, label, look, hint_text, comment, sides=None, tint=Non
         write_trim_mask()
         block["TextureSideMask"] = TRIM_MASK
         block["TintUp"] = [look["trim"]]
+    if extra:
+        block.update(extra)
     item(game_id, label, look.get("icon", STATION_ICON), block, comment, movable)
 
 

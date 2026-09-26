@@ -1,0 +1,26 @@
+{
+  "$comment": "A booking desk: press it during service to call the next guest in now. Busy for cooldown_seconds after. Bought on the pads, or placed by a layout's booking desk slot.",
+  "id": "booking_desk",
+  "role": "call",
+  "label": "Booking desk",
+  "cooldown_seconds": 10,
+  "look": {
+    "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+    "top": "BlockTextures/Soil_Snow.png",
+    "sound": "Wood",
+    "trim": "#aaaaaa",
+    "icon": "Icons/ItemsGenerated/Bench_Cooking.png"
+  },
+  "on_top": {
+    "label": "Booking book",
+    "model": "Blocks/Dungeons/Book.blockymodel",
+    "texture": "Blocks/Dungeons/Book_Brown.png",
+    "scale": 0.75,
+    "icon": "Icons/ItemsGenerated/Recipe_Book_Magic_Air.png"
+  },
+  "words": {
+    "free": "Booking desk - press to call the next guest in now",
+    "busy": "Booking desk - calling...",
+    "closed": "The booking desk only takes calls while the restaurant is open."
+  }
+}

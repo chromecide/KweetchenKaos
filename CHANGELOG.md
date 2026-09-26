@@ -14,6 +14,8 @@
   kits 30-45, ready-made upgrades 60, chairs 10 (practice rules: half).
 - **Dishes set how many guests they bring** (`guests`): quick dishes more, slow ones
   fewer -- and a starter shifts day 1 the same way.
+- **Booking desk:** press it during service to call the next guest in now (busy for 10s
+  after). Bought on the pads (40), or placed by a layout's optional slot.
 - Fixed: buying a plate rack gave an item that doesn't exist.
 - Hints show the interact key, the way the game's doors do.
 

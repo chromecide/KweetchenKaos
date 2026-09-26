@@ -139,6 +139,16 @@ it. A plate on top shows it has any. The same block both gives and takes, and
 one press was doing both. So the first rule that fires claims a `busy` tag and
 the others require it clear: it's the only lock in the kitchen.
 
+### Booking desk (`booking.py`)
+
+A desk with a book on it. Pressing it during service calls the next guest in now
+instead of at the day's pace (it doesn't add guests: the day's expected ones come
+sooner). It asks the shift on the `call` channel, since the shift holds the day's
+count, and the shift says so if nobody is left to come. The desk is then busy for
+a few seconds: a stage that grows back into the free desk, like a crate
+restocking. A desk can be bought on the pads anywhere, so every room carries this
+system whether or not its layout has a desk slot.
+
 ## Front of house
 
 ### Queue (`queue.py`)

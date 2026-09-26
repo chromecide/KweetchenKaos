@@ -46,6 +46,8 @@ PADS_KEY, PADS_VALUE, PAD_KEY = "offerpad", "1", "pad"
 OFFERS, PLACE, CLEAR = "offers", "place", "clear"
 DELIVER, CARD = "deliver", "card"
 SHORT, BOUGHT, CHOSE = "short", "bought", "chose"
+# A booking desk asks the shift for the next guest now (booking.py).
+CALL = "call"
 
 
 def shift_reads(event, key, comparison, value):
