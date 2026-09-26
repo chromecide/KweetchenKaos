@@ -182,7 +182,7 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
 
     # THE ROOM'S OWN VOLUMES: every system over the room (its plot and a little round it).
     box = ((-ROOM_MARGIN, -8, -ROOM_MARGIN),
-           (ROOM_SIZE + ROOM_MARGIN, 40, ROOM_SIZE + ROOM_MARGIN))
+           (ROOM_SIZE + ROOM_MARGIN, layouts.AUTHOR_HEIGHT + 8, ROOM_SIZE + ROOM_MARGIN))
     crates = [sid for sid, st in model["stations"].items()
               if st["role"] == "crate" and not st.get("upgrade_of")]
     for sid in sorted(used) + crates:

@@ -59,7 +59,7 @@ usual 10.
 
 Each plot's floor is at **y 32**, the top of the grass. What gets saved:
 
-- **A room plot:** from 3 blocks below the floor to 16 above it. The ground
+- **A room plot:** from 3 blocks below the floor to 48 above it (room for a room up a tree). The ground
   under the floor comes with the room. That's what gravel rests on, and it is
   the room's underside in the floating worlds.
 - **The border plot:** from 16 below to 48 above, but nothing in the hole. The

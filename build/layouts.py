@@ -74,7 +74,7 @@ import settings
 CHUNK = 16
 LAYOUT = 2 * CHUNK            # a plot is 32 x 32 blocks
 PITCH = 6 * CHUNK             # plots are 96 blocks apart on x
-AUTHOR_HEIGHT = 16
+AUTHOR_HEIGHT = 48             # saved above a room's floor: tall enough for a room up a tree
 PLOTS = 10                    # plot 0 the border, 1 HQ, 2-9 layouts; more can be added
 MAX_PLOTS = 32
 # THE GROUND: stone, then dirt, then the grass the plots stand on at FLOOR -- deep enough to
