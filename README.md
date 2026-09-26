@@ -68,6 +68,7 @@ pack/               build output (not committed)
 | `/kk plot <n>` | go to authoring plot *n* (0 the border, 1 HQ, 2+ layouts) |
 | `/kk grid [n]` | mark the authoring plots' edges |
 | `/kk slots [hq\|plot]` | take the slot blocks |
+| `/kk barriers` | turn Barrier blocks in the plots into visible barrier slots |
 | `/kk save [n]` | save the authoring plots |
 | `/kk restore [n]` | put plot *n* back as last saved; with no number, restore the kept layouts to a new authoring world |
 | `/kk spike`, `/kk kit` | (in a test build) open the test world, take its setup kit |

@@ -106,6 +106,8 @@ STATION_TINT, SEAT_TINT, QUEUE_TINT, PAD_TINT, SIGN_TINT = \
     "#e08a30", "#3c7ad0", "#40a060", "#8a6ad0", "#d04040"
 PORTAL_TINT, ARRIVAL_TINT = "#30c8d8", "#f0f0f0"
 PORTALS = 8                     # HQ portal slots: a restaurant for each, eventually
+BARRIER_TINT = "#ff40ff"
+BARRIER = "Barrier"             # what a barrier slot becomes: the game's invisible wall
 SLOTS = (
     [(f"station_{role}", f"Slot: {what}", STATION_TINT)
      for role, what in (("press", "board (press)"), ("combine", "counter (combine)"),
@@ -119,6 +121,9 @@ SLOTS = (
     + [("sign", "Slot: open sign", SIGN_TINT)]
     # Any layout: where players appear (HQ or a restaurant; it becomes the floor round it).
     + [("arrival", "Slot: arrival (players appear here)", ARRIVAL_TINT)]
+    # Any layout: an invisible wall in game. The game's own Barrier can hardly be seen while
+    # building, so it's built as this and becomes a Barrier (barrier()).
+    + [("barrier", "Slot: barrier (an invisible wall in game)", BARRIER_TINT)]
     # HQ only: a walk-in portal per restaurant (world.json says which).
     + [(f"portal_{n}", f"Slot: HQ portal {n} (restaurant {n} in world.json)", PORTAL_TINT)
        for n in range(1, PORTALS + 1)])
@@ -136,6 +141,11 @@ def floor_at(blocks_, x, y, z, default="Wood_Softwood_Planks"):
     names = [b["name"] for b in blocks_ if (b["x"], b["y"], b["z"]) in near
              and not b["name"].startswith(f"{settings.NAMESPACE}_Slot_")]
     return max(set(names), key=names.count) if names else default
+
+
+def barrier(b):
+    """A barrier slot is a Barrier in the built game; any other block is itself."""
+    return dict(b, name=BARRIER) if b["name"] == slot_id("barrier") else b
 
 
 def slot_id(name):
@@ -207,7 +217,7 @@ def write_slots():
 def slot_kit(name):
     """Which kits a slot is in: "hq" (the arrival, portals) and "plot" (everything a
     restaurant layout uses -- the arrival too)."""
-    if name == "arrival":
+    if name in ("arrival", "barrier"):
         return {"hq", "plot"}
     return {"hq"} if name.startswith("portal_") else {"plot"}
 
@@ -264,6 +274,16 @@ def write_authoring():
                _give(SLOTS, "hq")),
               ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant plot's slot blocks",
                _give(SLOTS, "plot"))]
+    # "/kk barriers": every real Barrier in the plots becomes a barrier SLOT (which you can
+    # see) -- for barriers placed before the slot existed. Once; the build turns them back.
+    barriers = list(enter)
+    for n in range(PLOTS):
+        x1, z1, x2, z2, y1, y2 = plot_box(n)
+        barriers += [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 3",
+                     f"pos1 --x={x1} --y={y1} --z={z1}", f"pos2 --x={x2} --y={y2} --z={z2}",
+                     f"replace {BARRIER} {slot_id('barrier')}", "wait 1"]
+    macros.append(("KKBarriers", "kk barriers",
+                   "Turn the plots' Barrier blocks into visible barrier slots", barriers))
     # "/kk plot 3": go and stand just in front of plot 3's edge, looking in (+z).
     for n in range(MAX_PLOTS):
         x1, z1, x2, _, _, _ = plot_box(n)

@@ -81,7 +81,11 @@ Build the floor as part of the room: a new plot is just grass.
 | **offer pad 1–4** | the pads (offers, deliveries, recipe cards) | all four |
 | **open sign** | the sign that starts each day | one |
 | **arrival** | where players appear | set it in the floor; it becomes the floor around it. Optional: without it, players arrive in front of the room |
+| **barrier** | an invisible wall (the game's `Barrier`) | anywhere, in any layout, HQ and the border: a clearly visible block while you build |
 | **HQ portal 1–8** | (HQ only) the portal to restaurant 1–8 in `world.json` | set in the floor |
+
+Barriers placed as the game's own `Barrier` block (hard to see) can be turned
+into barrier slots with **`/kk barriers`**, once.
 
 Every station slot can appear more than once; the build warns if a kind is missing.
 Crates are not slots. They are delivered on the pads when a dish goes on the

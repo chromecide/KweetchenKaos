@@ -97,6 +97,7 @@ def _border(world, r=None):
         raise SystemExit(f"world.json: border '{bid}' is not a border plot's layout")
     name = f"{NS}_Border_" + "_".join(p.capitalize() for p in bid.split("_"))
     room = json.load(open(os.path.join(folder, "room.prefab.json")))
+    room["blocks"] = [layouts.barrier(b) for b in room["blocks"]]
     pack.write(pack.out("Prefabs", f"{name}.prefab.json"),
                dict(room, entities=[], **{"$Comment": f"Border: {meta['name']}. "
                                                       f"See build/world.py."}))
@@ -209,7 +210,7 @@ def build(debug=True, fill_portals=False):
             else:
                 notes.append(f"HQ: portal slot {n} has no restaurant in world.json")
         else:
-            out.append(b)
+            out.append(layouts.barrier(b))
     for n in portal_of:
         if not any(b["name"] == f"{NS}_Portal_{n}" for b in out):
             notes.append(f"HQ: no portal slot {n} for '{portal_of[n][0]['name']}'")

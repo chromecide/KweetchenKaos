@@ -142,6 +142,8 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
             entities.append(pads.pad_entity(n, b["x"], b["y"], b["z"]))
         elif name == "sign":
             out_blocks.append(at(shift.ids(model)["sign"]))
+        elif name == "barrier":
+            out_blocks.append(at(layouts.BARRIER))
         elif name == "arrival":
             arrival = (b["x"], b["y"], b["z"])
             out_blocks.append(at(layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
