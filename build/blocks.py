@@ -51,6 +51,12 @@ def item(game_id, label, icon, block, comment, movable=False):
     pack.write_item(game_id, carry.carryable(data) if movable else data)
 
 
+def hazard_id(model, kind):
+    """A hazard's block ("mess", "spill"): made by the hazard system, dropped by whichever
+    system causes it (a guest's mess, a sink's spill)."""
+    return settings.game_id(model["theme"]["prefix"], kind)
+
+
 def with_key(text):
     """The player's interact key in a hint, the way the game's own doors say "Press [F] to
     open": the client fills {key} with whatever the player has it bound to. After the first

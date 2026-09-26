@@ -12,5 +12,6 @@
     "free": "Sink - put a dirty plate in",
     "busy": "Washing - {n} scrub{s} to go",
     "on_top": "Press to scrub"
-  }
+  },
+  "spills": 0.25
 }

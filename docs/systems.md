@@ -329,7 +329,9 @@ Pasted anywhere, the room works. Two things make that possible:
   `stove`, `rack`, `counter`, `kitchen` (every station), `service` (front of
   house), `run` (the whole run), `dish:<dish>` (one recipe: only the stations its
   chain needs, crates included, plus sink, rack and bin, and guest callers for that
-  dish's orders only, e.g. `dish:roasted_corn`), `room:<layout>` (one restaurant), `hq` (the game, with every
+  dish's orders only, e.g. `dish:roasted_corn`), `impatient` (a probe: a 50% chance a guest
+  is impatient), `hazards` (a probe: every guest messy, sink spills, a mess dispenser and a
+  mop), `room:<layout>` (one restaurant), `hq` (the game, with every
   HQ portal slot filled, placeholders where no restaurant is hung, for lining them up). Add a
   rules name, e.g. `python3 deploy.py run practice`, for short days.
 - **The deploy's rejection check** lists any asset the game refused, any rule it

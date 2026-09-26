@@ -48,6 +48,8 @@ DELIVER, CARD = "deliver", "card"
 SHORT, BOUGHT, CHOSE = "short", "bought", "chose"
 # A booking desk asks the shift for the next guest now (booking.py).
 CALL = "call"
+# HAZARDS (hazards.py): a messy guest asks for a MESS where it stands.
+HAZARD_KEY, MESS = "hazard", "mess"
 
 
 def shift_reads(event, key, comparison, value):

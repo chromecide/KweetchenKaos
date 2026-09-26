@@ -24,6 +24,7 @@ closed door blocks NPC pathfinding). A different exit replaces _leaving() and no
 """
 import npc
 import settings
+import signals
 from systems import guest, queue, seating
 
 WALK_OFF = 4.0
@@ -45,6 +46,13 @@ def roles(model):
 def _leaving(model):
     going = npc.flag("guests_going")
     return [
+        npc.branch("Messy, and just got up (still on its chair): ask for a mess round the "
+                   "chair, once (hazards.py puts it down).",
+                   npc.all_of(npc.flag(guest.mood_flag("messy")),
+                              npc.no(npc.flag("guests_messed"))),
+                   None, [signals.from_npc(signals.HAZARD_KEY, signals.MESS,
+                                           tag=signals.HAZARD_KEY),
+                          npc.set_flag("guests_messed")], cont=True),
         npc.branch("Walked off long enough, and not on a queue spot: go (stands in for "
                    "leaving by the door). Never ON a spot -- see queue.off_the_line.",
                    npc.all_of(going, npc.stopped("guests_walk"), queue.off_the_line(model)),

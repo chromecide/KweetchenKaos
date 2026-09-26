@@ -155,6 +155,18 @@ def build(model, station_id, debug=True):
     rules.add(901, [v.at([b["free"]] + ladder, event="BLOCK_BROKEN")],
               [v.cell(shown_in + shown_out, "Empty", dy=1, event="BLOCK_BROKEN")])
 
+    # SPILLS (the station's "spills": a chance per scrub): water in an empty cell round the
+    # station -- the hazard system's block, which it mops up. Pressing the picture on top
+    # is the station one below. Only where hazards are mounted (model["hazards"]): the
+    # spill block is theirs.
+    if st.get("spills") and model.get("hazards"):
+        spill = blocks.hazard_id(model, "spill")
+        chance = {"Type": "RandomChanceCondition", "Event": "BLOCK_USED",
+                  "Chance": float(st["spills"])}
+        v.drop_around(rules, 8000, "spill", spill, [v.at(ladder), chance], "BLOCK_USED")
+        v.drop_around(rules, 8100, "spilltop", spill, [v.at(shown_in), chance], "BLOCK_USED",
+                      dy=-1.0)
+
     _auto_variants(model, station_id, table, rules, debug)
 
     rules.write(b["effect"], f"The {label.lower()}: a press station. See build/systems/press.py.")

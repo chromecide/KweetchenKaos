@@ -42,18 +42,22 @@ def pulse_id(model, colour):
     return settings.game_id(model["theme"]["prefix"], f"guest_pulse_{colour}")
 
 
-# MOODS: a guest can arrive with a mood (the queue's spots mark it at random; it reads the
-# mark once, into a flag, the first time it stands in line). IMPATIENT: every patience clock runs at this fraction.
+# MOODS: a guest can arrive with a mood (a queue spot marks it at random; it reads the mark
+# once, into a flag, the first time it stands in line). At most one: the spot's LAST roll
+# wins (queue.py). IMPATIENT: every patience clock runs at this fraction. MESSY: it leaves a
+# mess on the floor as it walks off (what the composer does with the flag: build/guests.py).
 IMPATIENT = 0.5
-MOOD_FLAG = F("impatient")
+MOODS = ("impatient", "messy")
+mood_flag = lambda mood: F(mood)
+MOOD_FLAG = mood_flag("impatient")
 
 
-def mood_effect(model):
-    """The mark a queue spot puts on an arriving guest that is to be impatient. Invisible (a
-    tint would wash the model out); it only has to last until the guest reads it."""
-    gid = settings.game_id(model["theme"]["prefix"], "guest_mood_impatient")
+def mood_effect(model, mood="impatient"):
+    """The mark a queue spot puts on an arriving guest with this mood. Invisible (a tint
+    would wash the model out); it only has to last until the guest reads it."""
+    gid = settings.game_id(model["theme"]["prefix"], f"guest_mood_{mood}")
     pack.write(pack.out("Entity", "Effects", settings.NAMESPACE, f"{gid}.json"), {
-        "$Comment": "An arriving guest marked impatient. See build/systems/guest.py.",
+        "$Comment": f"An arriving guest marked {mood}. See build/systems/guest.py.",
         "Duration": 600.0, "OverlapBehavior": "Overwrite"})
     return gid
 
@@ -61,13 +65,15 @@ def mood_effect(model):
 def read_mood(model):
     """Branches (each Continue) for the moment a guest first stands in line: read the mark
     once, into a flag, and never again."""
-    decided, mark = F("mood_read"), mood_effect(model)
-    return [npc.branch("First time in line, and marked impatient: remember it.",
-                       npc.all_of(npc.no(npc.flag(decided)), npc.has_effect(mark)), None,
-                       [npc.set_flag(decided), npc.set_flag(MOOD_FLAG),
-                        npc.name_tag("Waiting (impatient)")], cont=True),
-            npc.branch("First time in line, not marked: calm, for good.",
-                       npc.no(npc.flag(decided)), None, [npc.set_flag(decided)], cont=True)]
+    decided = F("mood_read")
+    out = [npc.branch(f"First time in line, and marked {mood}: remember it.",
+                      npc.all_of(npc.no(npc.flag(decided)), npc.has_effect(mood_effect(model, mood))),
+                      None, [npc.set_flag(mood_flag(mood)), npc.name_tag(f"Waiting ({mood})")],
+                      cont=True)
+           for mood in MOODS]
+    return out + [npc.branch("First time in line: the mood (or none) is read, for good.",
+                             npc.no(npc.flag(decided)), None, [npc.set_flag(decided)],
+                             cont=True)]
 
 
 def build(model, debug=True):

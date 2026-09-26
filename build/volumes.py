@@ -56,6 +56,43 @@ def at(blocks, dy=0.0, event="BLOCK_USED"):
     return c
 
 
+# THE EIGHT CELLS ROUND A POINT, at its own height: where a mess or a spill can land.
+AROUND = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
+
+
+def drop_around(rules, first, key, block, gate, event, origin="Event", dy=0.0):
+    """Rules first..first+17: `block` goes into a RANDOM EMPTY cell of the eight round the
+    origin ("Event": the block the event was at; "Entity": whoever caused it), dy up; into
+    none if all eight are taken. `gate`: the conditions that start it. `key` names its tags
+    (unique per volume).
+
+    Why it's built this way: a condition can't ask "is this cell empty?" (BlockTypeCondition
+    fails on an empty cell), but PlaceBlock OnlyAir only fills an empty one, and a placed
+    block is there AT ONCE. So each cell in turn is tried at a chance of 1/(cells left) --
+    the fair pick -- and the next rule asks whether the block landed there; the first that
+    lands stops it. A taken cell is simply skipped."""
+    going, tried = f"{key}_drop", f"{key}_tried"
+    tag = lambda k, val: {"Type": "TagCondition", "Event": event, "Source": "Self",
+                          "TagKey": k, "Comparison": "Exactly", "TagValue": str(val)}
+    put = lambda k, val: {"Type": "ModifyTags", "Event": event, "Operation": "Set",
+                          "TagKey": k, "TagValue": str(val)}
+    rules.add(first, list(gate), [put(going, 1), put(tried, 0)])
+    for k, (dx, dz) in enumerate(AROUND):
+        at_cell = {"X": float(dx), "Y": float(dy), "Z": float(dz)}
+        rules.add(first + 1 + 2 * k,
+                  [tag(going, 1), {"Type": "RandomChanceCondition", "Event": event,
+                                   "Chance": 1.0 / (len(AROUND) - k)}],
+                  [{"Type": "PlaceBlock", "Event": event, "BlockType": block,
+                    "Position": at_cell, "Origin": origin, "ReplaceMode": "OnlyAir"},
+                   put(tried, k + 1)])
+        rules.add(first + 2 + 2 * k,
+                  [tag(going, 1), tag(tried, k + 1),
+                   {"Type": "BlockTypeCondition", "Event": event, "BlockType": [block],
+                    "PositionSource": origin, "PositionOffset": at_cell}],
+                  [put(going, 0)])
+    rules.add(first + 17, [tag(going, 1)], [put(going, 0)])
+
+
 def holding(item, event="BLOCK_USED"):
     """The presser holds one of these; it is taken once the whole rule passes."""
     return {"Type": "ItemCondition", "Event": event, "Item": item, "Quantity": 1,

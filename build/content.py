@@ -161,6 +161,10 @@ def load_theme(theme_id):
             items[kid]["description"] = st["kit"].get(
                 "description", f"An upgrade: hold it and press a free {what} (F).")
             st["kit_item"] = kid
+    # THE MOP: what cleans up a mess (systems/hazards.py). Never binned.
+    define({"id": "mop", "label": "Mop", "look": fixtures["looks"]["mop"], "bin": "refuse"},
+           f"themes/{theme_id}/fixtures.json")
+    items["mop"]["description"] = "Hold it and press a mess (F) to clean it up."
     for f, d in many("ingredients"):
         iid = define(d["item"], f)
         source = d.get("source")

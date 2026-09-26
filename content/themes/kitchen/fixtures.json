@@ -53,6 +53,23 @@
       "model": "Items/Tools/Repair_Kit/Repair_Kit_Iron.blockymodel",
       "texture": "Items/Tools/Repair_Kit/Repair_Kit_Iron_Texture.png",
       "icon": "Icons/ItemsGenerated/Tool_Repair_Kit_Iron.png"
+    },
+    "mop": {
+      "model": "Items/Halloween_Props/Broomstick.blockymodel",
+      "texture": "Items/Halloween_Props/Broomstick_Texture.png",
+      "icon": "Icons/ItemsGenerated/Halloween_Broomstick.png"
+    },
+    "mess": {
+      "model": "Resources/Plants/Petal.blockymodel",
+      "texture": "Resources/Plants/Petal_Textures/White.png",
+      "icon": "Icons/ItemsGenerated/Plant_Petals_White.png",
+      "tint": "#6b4a2a"
+    },
+    "spill": {
+      "model": "Resources/Plants/Petal.blockymodel",
+      "texture": "Resources/Plants/Petal_Textures/White.png",
+      "icon": "Icons/ItemsGenerated/Plant_Petals_White.png",
+      "tint": "#3a78b8"
     }
   },
   "words": {
@@ -65,7 +82,10 @@
     "pad": "Offer pad {n}",
     "offer": "{label} - {price} coins. Press to buy",
     "delivery": "{label} - free. Press to take it",
-    "card": "Recipe: {label} - press to put it on the menu"
+    "card": "Recipe: {label} - press to put it on the menu",
+    "mess": "A mess - press with a mop to clean it up",
+    "mop_needed": "That needs a mop.",
+    "spill": "Spilt water - press with a mop to clean it up"
   },
   "slots": {}
 }

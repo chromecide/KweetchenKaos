@@ -65,12 +65,16 @@ SPIKES = {
     "service": {"stations": KITCHEN, "front": True},
     # PROBE: the service spike, with half of all guests arriving impatient (the queue's
     # spots mark them at random; half patience, "(impatient)" on the name tag).
-    "impatient": {"stations": KITCHEN, "front": True, "impatient": 0.5},
+    "impatient": {"stations": KITCHEN, "front": True, "moods": {"impatient": 0.5}},
+    # PROBE: messes. Every guest is messy (leaves a mess as it walks off); a dispenser drops
+    # one where you stand; a mop in the kit. See build/systems/hazards.py.
+    "hazards": {"stations": KITCHEN, "front": True, "moods": {"messy": 1.0}, "hazards": True},
     # A full RUN: the shift runs the days. The crates aren't laid out -- the run delivers
     # them on day 1, and more with recipe cards.
     # Crates at 0: mounted (so delivered ones work) but not laid out.
     "run": {"stations": dict(KITCHEN, crates=0), "front": True, "run": True},
 }
+HAZARD_DISPENSER = (8, 4)     # x, z: between the queue and the chairs
 SETUP = f"{settings.NAMESPACE}_Spike_Setup"
 SETUP_EFFECT = f"{SETUP}_System"
 GROUND = 1              # the flat spike world's surface: blocks stand at y 1
@@ -279,18 +283,28 @@ def build(model, name, debug=True):
     else:
         spike = SPIKES[name]
         stations = stations_of(model, name)
+    # Before the stations: a station that causes a hazard (a sink's spill) needs to know.
+    model["hazards"] = spike.get("hazards", False)
     mounted = [v.volume(f"spike_{st}", systems.for_station(model, st).build(model, st, debug),
                         systems.tags_for(model, st, {"spike": st})) for st in stations]
     front = None
     model["in_run"] = spike.get("run", False)
-    if spike.get("impatient"):
+    if spike.get("moods"):
         from systems import guest as guest_system
-        model["arrival_moods"] = [(guest_system.mood_effect(model), spike["impatient"])]
+        model["arrival_moods"] = [(guest_system.mood_effect(model, mood), chance)
+                                  for mood, chance in spike["moods"].items()]
     if spike.get("front"):
         front_volumes, front_layout = spike_front.build(model, GROUND, debug,
                                                         run=spike.get("run", False))
         mounted += front_volumes
         front = front_layout
+    if spike.get("hazards"):
+        from systems import hazards
+        hazards.build(model, debug, dispenser=True)
+        mounted += hazards.volumes(model)
+        more, ents = front
+        more.append({"x": HAZARD_DISPENSER[0], "y": GROUND, "z": HAZARD_DISPENSER[1],
+                     "name": hazards.ids(model)["dispenser"]})
     mounted.append(setup(model, stations, front, debug))
     # A run needs only plates: the run delivers the crates, which make everything else.
     # ...plus one of every upgrade kit, so upgrades can be tried without earning them.
@@ -303,6 +317,8 @@ def build(model, name, debug=True):
         given = plates + [(model["items"][model["vessel"]["dirty"]["id"]]["game_id"], 1)]
     else:
         given = kit(model, stations)
+    if spike.get("hazards"):
+        given = given + [(model["items"]["mop"]["game_id"], 1)]
     note = " + ".join(model["stations"][st]["label"].lower() for st in stations)
     if front:
         note += " + the front of house"

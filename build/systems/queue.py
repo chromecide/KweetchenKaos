@@ -241,11 +241,14 @@ def _spot_rules(q, boost_by, debug, moods=()):
     # first time it stands in line, and never again. (Rolled in the pool at first, a guest
     # wandering in and out of it while the line was full rolled again each time.) The queue
     # only marks; what a mood means is the guest's business (systems/guest.py).
+    # LAST ROLL WINS: a roll that lands takes off every other mood, so a guest has one.
     for k, (effect, chance) in enumerate(moods):
         rules.add(40 + k, [{"Type": "RandomChanceCondition", "Event": "ENTER",
                             "Chance": float(chance)}],
-                  [{"Type": "EntityEffect", "Event": "ENTER", "Effect": effect,
-                    "Mode": "Apply"}]
+                  [{"Type": "EntityEffect", "Event": "ENTER", "Effect": other,
+                    "Mode": "Remove"} for other, _ in moods if other != effect]
+                  + [{"Type": "EntityEffect", "Event": "ENTER", "Effect": effect,
+                      "Mode": "Apply"}]
                   + rep(f"mood.{k}", f"a guest stepped on, marked {effect}", "ENTER"))
     # RESET: guests were removed wholesale; free every spot and its claim.
     rules.add(65, [signals.heard(signals.RESET, signals.RESET)],
