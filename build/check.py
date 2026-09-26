@@ -61,13 +61,17 @@ def check(model):
     if rules:
         kits = {i[:-len("_kit")] for i in items if i.endswith("_kit")}
         for o in rules["offers"]["catalogue"]:
-            if "station" in o and o["station"] not in base:
+            # Any station can be offered, an upgraded one (a dishwasher) ready-made too.
+            if "station" in o and o["station"] not in stations:
                 problems.append(f"rules offers.json: unknown station '{o['station']}'")
             if "kit" in o and o["kit"] not in kits:
                 problems.append(f"rules offers.json: unknown kit '{o['kit']}'")
+            if "fixture" in o and o["fixture"] != "chair":
+                problems.append(f"rules offers.json: '{o['fixture']}' can't be offered "
+                                f"(the only fixture is chair)")
             for st in rules["stages"]:
                 if st["id"] not in o["weights"]:
-                    problems.append(f"rules offers.json: '{o.get('station') or o.get('kit')}' "
+                    problems.append(f"rules offers.json: '{o.get('station') or o.get('kit') or o.get('fixture')}' "
                                     f"has no weight for stage '{st['id']}'")
     dishes = model.get("dishes", {})
     if dishes and not any(d["unlock"] == "start" for d in dishes.values()):

@@ -404,6 +404,9 @@ rules/
 - Rules name **stations and kits by id**, never blocks, so the same rules
   work for any theme. `offers.json` says "stove, price 14, weights 1/5/10";
   the theme says what a stove is.
+- An offer is a **station** (`{"station": "dishwasher", ...}` -- plain, or one already
+  upgraded, ready-made), an **upgrade kit**, or a **fixture** (`{"fixture": "chair", ...}`:
+  a chair brings its own table when it's put down).
 - **Upgrade kits** are offered as `{"kit": "stove_fast", ...}`. The kit is made
   from the theme's variant station file, which has `upgrade_of`, `glow` and
   `kit`.

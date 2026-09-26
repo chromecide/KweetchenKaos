@@ -14,18 +14,31 @@ import settings
 
 
 def catalogue(model):
+    """Every offer: a STATION (a plain one, or one already upgraded -- a dishwasher, a fast
+    stove), an upgrade KIT, or a FIXTURE (a chair). The item given is the block the station's
+    own system says you place (a rack's is its count, Rack_6, not "Rack")."""
+    import systems
     prefix, items, st = model["theme"]["prefix"], model["items"], model["stations"]
+    fixtures = model["fixtures"]["looks"]
     out = []
     for o in model["rules"]["offers"]["catalogue"]:
         if "station" in o:
             key = o["station"]
             out.append(dict(o, key=key, label=st[key]["label"],
-                            item=settings.game_id(prefix, key), look=st[key]["look"], cube=True))
-        else:
-            key = o["kit"]
-            kit = items[f"{key}_kit"]
-            out.append(dict(o, key=key, label=kit["label"], item=kit["game_id"],
+                            item=systems.for_station(model, key).free_block(model, key),
+                            look=st[key]["look"], cube=True))
+        elif "kit" in o:
+            kit = items[f"{o['kit']}_kit"]
+            # Its own key: an upgraded station can be on offer ready-made as well as by kit.
+            out.append(dict(o, key=f"{o['kit']}_kit", label=kit["label"], item=kit["game_id"],
                             look=kit["look"], cube=False))
+        else:
+            key = o["fixture"]
+            if key != "chair":
+                raise ValueError(f"offers.json: no fixture '{key}' can be offered (only chair)")
+            # A chair places its own table when it's put down (seating.py), as when moved.
+            out.append(dict(o, key=key, label="Chair", item=settings.game_id(prefix, "chair"),
+                            look=fixtures["chair"], cube=False))
     return out
 
 

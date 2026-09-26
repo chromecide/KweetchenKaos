@@ -1,5 +1,5 @@
 {
-  "$comment": "What the pads offer between days (not on day 1, and not on card days). Stations and upgrade kits by id, never by block. pads: pad N offers from day pads[N].",
+  "$comment": "What the pads offer between days (not on day 1, and not on card days). Stations and upgrade kits by id, never by block. pads: pad N offers from day pads[N]. An offer is a station (plain or already upgraded), an upgrade kit, or a fixture (chair).",
   "pads": {
     "1": 1,
     "2": 1,
@@ -95,6 +95,42 @@
         "early": 2,
         "mid": 5,
         "late": 5
+      }
+    },
+    {
+      "fixture": "chair",
+      "price": 3,
+      "weights": {
+        "early": 8,
+        "mid": 6,
+        "late": 4
+      }
+    },
+    {
+      "station": "dishwasher",
+      "price": 16,
+      "weights": {
+        "early": 1,
+        "mid": 3,
+        "late": 4
+      }
+    },
+    {
+      "station": "stove_fast",
+      "price": 20,
+      "weights": {
+        "early": 0,
+        "mid": 2,
+        "late": 4
+      }
+    },
+    {
+      "station": "stove_safe",
+      "price": 20,
+      "weights": {
+        "early": 0,
+        "mid": 2,
+        "late": 4
       }
     }
   ]

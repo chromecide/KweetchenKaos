@@ -7,6 +7,10 @@
   need no cooking. New ingredients: lettuce, berries, corn, skewer sticks.
 - **Dishwasher:** a sink upgrade (a kit from the pads): a dirty plate goes in and
   comes out clean by itself.
+- **More between-day offers:** chairs (each brings its own table), and stations
+  already upgraded (a dishwasher, a fast stove, a safety stove) as well as the kits --
+  so a kitchen can have a sink AND a dishwasher.
+- Fixed: buying a plate rack gave an item that doesn't exist.
 - Hints show the interact key, the way the game's doors do.
 
 ## 0.1.0 (2026-09-26)
