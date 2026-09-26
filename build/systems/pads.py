@@ -1,9 +1,11 @@
 """
 THE PAD SYSTEM: numbered pads out front where, between days, things arrive for the kitchen.
 
-    the shift says PLACE     ->  each pad live today picks an OFFER (a station or an upgrade
-                                 kit), weighted for the stage of the run, and shows it
-    press an offer           ->  enough in the purse: you get it, the price comes off;
+    the shift says PLACE     ->  each pad live today picks an OFFER (a station, plain or
+                                 already upgraded, or a chair), weighted for the stage of the
+                                 run, and shows its BLUEPRINT
+    press a blueprint        ->  enough in the purse: you get the station to put down, the
+                                 price comes off;
                                  not enough: the shift says so, nothing changes
     the shift DELIVERS       ->  a crate appears on one pad, free: press to take it
     the shift shows a CARD   ->  a recipe card on one pad: press to choose it -- the dish
@@ -175,14 +177,13 @@ def build(model, debug=True):
         blocks.station_block(p["pad"](n), f"Offer pad {n}", pad,
                              words["pad"].format(n=n) + f" - offers from day {first}", note,
                              tint=pad.get("tint"), use=False)
+    # EVERY OFFER IS A BLUEPRINT (PlateUp's), told apart by its hint; the recipe cards'
+    # model in blue. What you get for it is the real station.
     for c in catalogue(model):
         text = words["offer"].format(label=c["label"], price=c["price"])
-        if c["cube"]:
-            blocks.station_block(p["offer"](c["key"]), f"{c['label']} (on offer)", c["look"],
-                                 text, note, tint=c["look"].get("tint"))
-        else:
-            blocks.display_block(p["offer"](c["key"]), f"{c['label']} (on offer)", c["look"],
-                                 text, note)
+        blocks.display_block(p["offer"](c["key"]), f"{c['label']} blueprint",
+                             dict(looks["blueprint"], icon=c["look"].get("icon", looks["blueprint"]["icon"])),
+                             text, note)
     for c in crates(model):
         s = model["stations"][c]
         icon = model["items"][s["ingredient"]]["look"]["icon"]

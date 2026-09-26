@@ -141,26 +141,13 @@ def load_theme(theme_id):
 
     # CRATES: a station file marked per_ingredient is a template, expanded into one station
     # per ingredient that comes from it -- the pumpkin crate, the apple crate... Each gets a
-    # "source" step (nothing in, the ingredient out) so everything that reads steps (the
-    # kit, the report, checks) sees where raw ingredients come from.
+    # "source" step (nothing in, the ingredient out) so everything that reads steps (a
+    # spike's kit, the report, checks) sees where raw ingredients come from. An UPGRADED
+    # station (upgrade_of) is its own station, offered ready-made on the pads.
     fixtures = one("fixtures.json")
     templates = {sid: st for sid, st in stations.items() if st.get("per_ingredient")}
     for sid in templates:
         del stations[sid]
-    # UPGRADE KITS: any station (or template) with a "kit" is an upgraded variant of the
-    # station it names in upgrade_of. The kit is an item -- apply it to a free station of
-    # that kind and the station becomes the variant. One kit per variant file, so one
-    # "fast crate kit" upgrades any crate.
-    for sid, st in list(stations.items()) + list(templates.items()):
-        if "kit" in st:
-            base = stations.get(st["upgrade_of"]) or templates.get(st["upgrade_of"])
-            what = (base["label"].replace("{ingredient} ", "") if base else "station").lower()
-            kid = define({"id": f"{sid}_kit", "label": st["kit"]["label"],
-                          "look": fixtures["looks"]["kit"], "quality": "Rare",
-                          "bin": "refuse"}, st["file"])
-            items[kid]["description"] = st["kit"].get(
-                "description", f"An upgrade: hold it and press a free {what} (F).")
-            st["kit_item"] = kid
     # THE MOP: what cleans up a mess (systems/hazards.py). Never binned.
     define({"id": "mop", "label": "Mop", "look": fixtures["looks"]["mop"], "bin": "refuse"},
            f"themes/{theme_id}/fixtures.json")

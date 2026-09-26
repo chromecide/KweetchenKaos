@@ -13,5 +13,9 @@
     "free": "Stove - put something on to cook",
     "busy": "Stove - in use",
     "on_top": "{label} - {stage}. Press to take it off"
+  },
+  "hazard": {
+    "kind": "scorch",
+    "chance": 1.0
   }
 }

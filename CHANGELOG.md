@@ -7,6 +7,14 @@
   down, grow from small to large, and spilt water spreads if it's left. Clean them
   with the mop: hold F for a second, once per size.
 - **Mop stand:** every room needs one (a new "mop stand" slot) -- it keeps the mop.
+- **Messier stations:** the chopping board drops food scraps now and then, and burnt
+  food leaves a scorch mark by the stove.
+- **Offers are blueprints** (PlateUp's): everything on the pads shows as a blueprint;
+  press it to pay and you get the station to put down.
+- **No more upgrade kits.** Upgraded stations (dishwashers, fast and safety stoves)
+  are bought ready-made. The fast crate is gone with the kits, for now.
+- **Cheap dishwasher** (35): washes by itself, but slower than the dishwasher (60),
+  and it drips.
 - Recipe spikes: `python3 deploy.py dish:<dish>` lays out one dish's kitchen.
 
 ## 0.2.0 (2026-09-26)

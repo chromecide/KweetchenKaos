@@ -1,5 +1,5 @@
 {
-  "$comment": "What the pads offer between days (not on day 1, and not on card days). Stations and upgrade kits by id, never by block. pads: pad N offers from day pads[N]. An offer is a station (plain or already upgraded), an upgrade kit, or a fixture (chair).",
+  "$comment": "What the pads offer between days (not on day 1, and not on card days), each as a BLUEPRINT: press it to pay, and you get the station to put down. Stations by id (plain or already upgraded), never by block, and the chair. pads: pad N offers from day pads[N].",
   "pads": {
     "1": 1,
     "2": 1,
@@ -62,48 +62,21 @@
       }
     },
     {
-      "kit": "crate_fast",
-      "price": 30,
-      "weights": {
-        "early": 2,
-        "mid": 5,
-        "late": 5
-      }
-    },
-    {
-      "kit": "stove_fast",
-      "price": 45,
-      "weights": {
-        "early": 1,
-        "mid": 4,
-        "late": 6
-      }
-    },
-    {
-      "kit": "stove_safe",
-      "price": 45,
-      "weights": {
-        "early": 1,
-        "mid": 4,
-        "late": 6
-      }
-    },
-    {
-      "kit": "dishwasher",
-      "price": 45,
-      "weights": {
-        "early": 2,
-        "mid": 5,
-        "late": 5
-      }
-    },
-    {
       "fixture": "chair",
       "price": 10,
       "weights": {
         "early": 8,
         "mid": 6,
         "late": 4
+      }
+    },
+    {
+      "station": "dishwasher_cheap",
+      "price": 35,
+      "weights": {
+        "early": 2,
+        "mid": 3,
+        "late": 2
       }
     },
     {

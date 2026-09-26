@@ -114,8 +114,7 @@ content time of 8 seconds means 8 seconds. Nothing ticks and nothing drifts.
 (`glow.py`): blue for the fast stove, green for the safety stove. Stage blocks
 carry growth modifiers that read the light on them. Blue makes every stage grow
 twice as fast. Green all but stops the well-done stage, so food on a safety stove
-never burns. Holding a kit and pressing a free, plain stove swaps it for the
-upgrade.
+never burns. An upgraded stove is bought ready-made, as a blueprint on the pads.
 
 ### Crate: raw ingredients (`crate.py`)
 
@@ -161,11 +160,19 @@ it shows on top (`on_top`).
 Things that go wrong on the floor, PlateUp's messes. On in every restaurant and
 spike.
 
-- **Where they come from:** any guest, as it gets up, has a small chance of
-  leaving a **mess** (the rules' `hazards.guest_mess_chance`, 5%); a messy guest
-  always does. A station with `"spills"` (the sink: 25% a scrub) spills **water**.
-  Each lands in a random empty cell of the eight round its source (the guest's
-  chair, the station) -- never on a table, chair or station.
+- **Where they come from:**
+
+  | Source | Hazard | When |
+  |---|---|---|
+  | any guest | mess (brown) | 5% as it gets up (the rules' `hazards.guest_mess_chance`); a messy guest always |
+  | sink | spill (water, blue) | 25% each scrub |
+  | cheap dishwasher | spill | 30% each time a clean plate comes out |
+  | chopping board | scraps (green; slows less: 90/80/70%) | 8% each chop |
+  | stove | scorch (black) | every time burnt food comes off |
+
+  A station's hazard is its `"hazard": {"kind": ..., "chance": ...}`. Each lands in
+  a random empty cell of the eight round its source (the guest's chair, the
+  station) -- never on a table, chair or station.
 - **Sizes:** small, medium, large. A new one landing where one of its kind already
   is makes it a size bigger. The bigger, the slower you walk through it (80%,
   65%, 50%) and the weaker your jump.
@@ -179,6 +186,14 @@ spike.
   block is there at once -- so each cell is tried at a fair chance, and checked.
   A spill spreads because placing a block is a "block placed" event at that
   cell, which the hazard system answers with a drop round it.
+
+**Ideas, not built:**
+
+- **An overflowing bin:** after so many things go in, it drops rubbish round
+  itself until it's emptied. Needs the bin to count what goes in, which it
+  doesn't yet.
+- **Fire:** a stove left with burnt food catches fire, the fire spreads to the
+  stations beside it, and an extinguisher puts it out.
 
 ## Front of house
 
@@ -269,8 +284,9 @@ expected guests and their pacing are a rule for each day and number of cards.
 
 ### Pads (`pads.py`) and offers (`offers.py`)
 
-Four pads out front. Between days they show **offers** (stations and upgrade
-kits, weighted by the stage of the run, paid from the purse), **deliveries**
+Four pads out front. Between days they show **offers** as blueprints (stations,
+plain or upgraded, and chairs, weighted by the stage of the run; pressing one pays
+from the purse and hands over the station), **deliveries**
 (crates, free) and **recipe cards** (choose one, and its dish goes on the menu).
 The pads know no shift: they read the purse through `signals.shift_reads` and
 hear place / clear / deliver / card on their own channel. `offers.py` holds the
@@ -356,15 +372,25 @@ Pasted anywhere, the room works. Two things make that possible:
 ## Testing and debugging
 
 - **`python3 deploy.py <spike>`** builds a test world instead of the game, then
-  `/kk spike` and `/kk kit` in game. Spikes (`build/spike.py`): `board`,
-  `stove`, `rack`, `counter`, `kitchen` (every station), `service` (front of
-  house), `run` (the whole run), `dish:<dish>` (one recipe: only the stations its
-  chain needs, crates included, plus sink, rack and bin, and guest callers for that
-  dish's orders only, e.g. `dish:roasted_corn`), `impatient` (a probe: a 50% chance a guest
-  is impatient), `hazards` (a probe: every guest messy, sink spills, a mess dispenser and a
-  mop), `room:<layout>` (one restaurant), `hq` (the game, with every
-  HQ portal slot filled, placeholders where no restaurant is hung, for lining them up). Add a
-  rules name, e.g. `python3 deploy.py run practice`, for short days.
+  `/kk spike` and `/kk kit` in game. **A spike isolates one thing**: it carries only
+  the stations and items that thing needs, so what it proves isn't muddied by
+  anything else. Spikes (`build/spike.py`):
+
+  | Spike | Tests | Carries |
+  |---|---|---|
+  | `board` | chopping and kneading | a board; a pumpkin, flour |
+  | `stove` | cooking through to burnt | two stoves; an unbaked pie, corn |
+  | `counter` | combining and plating | two counters; dough, chopped pumpkin, a plate, cooked corn |
+  | `rack` | the plate rack | two racks, a sink; a dirty plate |
+  | `dish:<dish>` | one recipe, start to paid | its chain's stations and crates, a bin if it cooks; plates; callers for its orders |
+  | `impatient` | random impatient guests | the front of house only |
+  | `hazards` | every hazard and the mop | sink, board, stove, mop stand, the front (every guest messy), a mess dispenser; a dirty plate, a pumpkin, corn |
+  | `service` | the game, served by hand | the whole kitchen and front of house |
+  | `run` | the game, a whole run | the whole kitchen, the shift; plates |
+  | `room:<layout>` | one restaurant | that room |
+  | `hq` | the game, every HQ portal slot filled | for lining portals up |
+
+  Add a rules name, e.g. `python3 deploy.py run practice`, for short days.
 - **The deploy's rejection check** lists any asset the game refused, any rule it
   dropped, and any block a room names that doesn't exist.
 - **The server log** has a line for every milestone: each station's presses,

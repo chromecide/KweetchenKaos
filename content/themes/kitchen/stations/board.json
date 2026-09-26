@@ -14,5 +14,9 @@
     "busy": "Chopping - {n} press{es} to go",
     "on_top": "Press to chop",
     "done": "Done - press to pick it up"
+  },
+  "hazard": {
+    "kind": "scraps",
+    "chance": 0.08
   }
 }

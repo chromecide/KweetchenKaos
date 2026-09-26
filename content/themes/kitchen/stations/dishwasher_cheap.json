@@ -1,0 +1,23 @@
+{
+  "$comment": "A cheaper upgrade of the sink: washes by itself like the dishwasher, but slower, and it drips -- a chance of a spill round it each time a clean plate comes out.",
+  "id": "dishwasher_cheap",
+  "role": "wash",
+  "upgrade_of": "sink",
+  "label": "Cheap dishwasher",
+  "auto_seconds": 6,
+  "hazard": {
+    "kind": "spill",
+    "chance": 0.3
+  },
+  "look": {
+    "sides": "BlockTextures/Metal_Iron.png",
+    "top": "BlockTextures/Metal_Iron_Ornate.png",
+    "sound": "Stone",
+    "trim": "#c08a3a"
+  },
+  "words": {
+    "free": "Cheap dishwasher - put a dirty plate in",
+    "busy": "Cheap dishwasher - washing",
+    "done": "Clean plate - press to take it"
+  }
+}

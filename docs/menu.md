@@ -21,7 +21,7 @@ Ten dishes, leaning into forest food, made with the stations that exist (no code
 8+, and a slow dish brings fewer guests (PlateUp's pies -15%, salads +15%). *Guests*
 is how many extra a dish brings when added as a card; as the starter it shifts day 1
 by its difference from the usual +2. Stations cost about four dishes (20) and
-upgrades about ten (45 as a kit, 60 ready-made), as PlateUp's appliances do (20 / 60);
+upgrades about ten (60, ready-made), as PlateUp's appliances do (20 / 60);
 see `content/rules/standard/offers.json`.
 
 Ingredients from crates: flour, pumpkin, apple, raw meat, mushroom, lettuce, berries,

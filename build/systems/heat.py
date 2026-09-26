@@ -19,7 +19,7 @@ cooking whether anyone is near or not. A world with a stove must run its clock.
 
 UPGRADES (fast stove, safety stove) are the theme's variants of this station: the same
 dishes on the same stage blocks, only the stove block differs -- it GLOWS (glow.py), and
-the stage blocks listen. Hold the kit and press a FREE stove: it becomes the upgrade.
+the stage blocks listen. An upgraded stove is bought ready-made (a blueprint on the pads).
 """
 import blocks
 import clock
@@ -126,21 +126,12 @@ def build(model, station_id, debug=True):
                                 f"{h['owner_label']} taken off {st_['word']} -> "
                                 f"{name(st_['gives'])}"))
 
-    # UPGRADE: hold a kit and press a free stove (the plain one) -- it becomes the upgrade.
-    for sid, vs in kinds[1:]:
-        kit = items[vs["kit_item"]]
-        rules.add(next(n), [v.at([b["free"]]), v.holding(kit["game_id"])],
-                  [v.cell([b["free"]], b["free_of"](sid)), v.sound(1.5)]
-                  + rep(f"upgraded.{sid}", f"upgraded to a {vs['label'].lower()}"))
-
-    # A kit pressed on the wrong stove (busy, or already upgraded): say why, not nothing.
-    for sid, vs in kinds[1:]:
-        kit = items[vs["kit_item"]]
-        rules.add(next(n), [v.at([x for x in frees + busies if x != b["free"]]),
-                            v.has(kit["game_id"])],
-                  [v.say(f"kk.{station_id}.kit_wrong",
-                         f"A kit upgrades a FREE, plain {label.lower()} "
-                         f"- nothing on it, not already upgraded.")])
+    # ITS HAZARD (a scorch mark) when BURNT food comes off -- the last stage of every
+    # ladder -- round the stove. Pressing the burnt food is the stove one below.
+    burnt = [b["on"](h, h["stages"][-1]["id"]) for h in heats]
+    v.station_hazard(rules, 50000, "hazard", model, st, [v.at(burnt), v.at(busies, dy=-1)],
+                     dy=-1.0)
+    v.station_hazard(rules, 50100, "hazardtop", model, st, [v.at(busies), v.at(burnt, dy=1)])
 
     # BREAKING: a dish broken frees its stove; a stove broken takes its dish.
     rules.add(90, [v.at(on_top, event="BLOCK_BROKEN")],

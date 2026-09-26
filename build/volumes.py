@@ -114,6 +114,22 @@ def drop_around(rules, first, key, sizes, gate, event, origin="Event", dy=0.0, l
     rules.add(first + 1 + 6 * len(AROUND), [tag(going, 1)], [put(going, 0)])
 
 
+def station_hazard(rules, first, key, model, station, gate, dy=0.0, event="BLOCK_USED"):
+    """A station's HAZARD ({"kind": "spill", "chance": 0.25}): rules first..first+49 drop
+    one round the station (dy up from the pressed block) when `gate` passes, at the chance.
+    Nothing where hazards aren't mounted (model["hazards"]): the blocks are the hazard
+    system's."""
+    import blocks
+    hz = station.get("hazard")
+    if not hz or not model.get("hazards"):
+        return
+    drop = blocks.hazard_drop(model, hz["kind"])
+    chance = ([{"Type": "RandomChanceCondition", "Event": event, "Chance": float(hz["chance"])}]
+              if hz["chance"] < 1 else [])
+    drop_around(rules, first, key, drop["sizes"], list(gate) + chance, event, dy=dy,
+                large=drop["large"], on_large=drop["on_large"])
+
+
 def holding(item, event="BLOCK_USED"):
     """The presser holds one of these; it is taken once the whole rule passes."""
     return {"Type": "ItemCondition", "Event": event, "Item": item, "Quantity": 1,

@@ -49,11 +49,6 @@
       "texture": "Items/Consumables/Recipes/Recipe_Texture.png",
       "icon": "Icons/ItemsGenerated/Recipe_Page.png"
     },
-    "kit": {
-      "model": "Items/Tools/Repair_Kit/Repair_Kit_Iron.blockymodel",
-      "texture": "Items/Tools/Repair_Kit/Repair_Kit_Iron_Texture.png",
-      "icon": "Icons/ItemsGenerated/Tool_Repair_Kit_Iron.png"
-    },
     "mop": {
       "model": "Items/Halloween_Props/Broomstick.blockymodel",
       "texture": "Items/Halloween_Props/Broomstick_Texture.png",
@@ -64,14 +59,41 @@
       "model": "Resources/Plants/Petal.blockymodel",
       "texture": "Resources/Plants/Petal_Textures/White.png",
       "icon": "Icons/ItemsGenerated/Plant_Petals_White.png",
-      "tint": "#6b4a2a"
+      "tint": "#6b4a2a",
+      "hazard": true
     },
     "spill": {
       "model": "Resources/Plants/Petal.blockymodel",
       "texture": "Resources/Plants/Petal_Textures/White.png",
       "icon": "Icons/ItemsGenerated/Plant_Petals_White.png",
       "tint": "#3a78b8",
-      "spreads": 3
+      "spreads": 3,
+      "hazard": true
+    },
+    "scraps": {
+      "model": "Resources/Plants/Petal.blockymodel",
+      "texture": "Resources/Plants/Petal_Textures/White.png",
+      "icon": "Icons/ItemsGenerated/Plant_Petals_White.png",
+      "tint": "#7a9a3a",
+      "hazard": true,
+      "speeds": [
+        0.9,
+        0.8,
+        0.7
+      ]
+    },
+    "scorch": {
+      "model": "Resources/Plants/Petal.blockymodel",
+      "texture": "Resources/Plants/Petal_Textures/White.png",
+      "icon": "Icons/ItemsGenerated/Plant_Petals_White.png",
+      "tint": "#2a2420",
+      "hazard": true
+    },
+    "blueprint": {
+      "model": "Items/Consumables/Recipes/Recipe.blockymodel",
+      "texture": "Items/Consumables/Recipes/Recipe_Texture.png",
+      "icon": "Icons/ItemsGenerated/Recipe_Page.png",
+      "tint": "#4a78c8"
     }
   },
   "words": {
@@ -82,12 +104,14 @@
     "sign_closed": "CLOSED - press to open for the day",
     "sign_open": "OPEN - the day ends at closing time",
     "pad": "Offer pad {n}",
-    "offer": "{label} - {price} coins. Press to buy",
+    "offer": "{label} blueprint - {price} coins. Press to buy it",
     "delivery": "{label} - free. Press to take it",
     "card": "Recipe: {label} - press to put it on the menu",
     "mess": "A mess - hold [{key}] with a mop to clean it up",
     "mop_needed": "That needs a mop.",
-    "spill": "Spilt water - hold [{key}] with a mop to clean it up"
+    "spill": "Spilt water - hold [{key}] with a mop to clean it up",
+    "scraps": "Food scraps - hold [{key}] with a mop to clean them up",
+    "scorch": "A scorch mark - hold [{key}] with a mop to clean it up"
   },
   "slots": {}
 }

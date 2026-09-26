@@ -56,23 +56,31 @@ def check(model):
             problems.append(f"{s['file']}: '{s['id']}' upgrades '{up}', which isn't a "
                             f"{s['role']} station")
 
-    # Rules: offers name real stations and kits; at least one dish starts on the menu.
+    # Rules: offers name real stations; at least one dish starts on the menu.
     rules = model.get("rules")
     if rules:
-        kits = {i[:-len("_kit")] for i in items if i.endswith("_kit")}
         for o in rules["offers"]["catalogue"]:
             # Any station can be offered, an upgraded one (a dishwasher) ready-made too.
             if "station" in o and o["station"] not in stations:
                 problems.append(f"rules offers.json: unknown station '{o['station']}'")
-            if "kit" in o and o["kit"] not in kits:
-                problems.append(f"rules offers.json: unknown kit '{o['kit']}'")
+            if "kit" in o:
+                problems.append(f"rules offers.json: '{o['kit']}' is a kit - there are no "
+                                f"upgrade kits; offer the upgraded station itself")
             if "fixture" in o and o["fixture"] != "chair":
                 problems.append(f"rules offers.json: '{o['fixture']}' can't be offered "
                                 f"(the only fixture is chair)")
             for st in rules["stages"]:
                 if st["id"] not in o["weights"]:
-                    problems.append(f"rules offers.json: '{o.get('station') or o.get('kit') or o.get('fixture')}' "
+                    problems.append(f"rules offers.json: '{o.get('station') or o.get('fixture')}' "
                                     f"has no weight for stage '{st['id']}'")
+    # A station's hazard names a kind the theme has (a fixtures look marked "hazard").
+    kinds = [k for k, look in model["fixtures"]["looks"].items() if look.get("hazard")]
+    for s in stations.values():
+        hz = s.get("hazard")
+        if hz and (hz.get("kind") not in kinds or not 0 < hz.get("chance", 0) <= 1):
+            problems.append(f"{s['file']}: hazard needs a kind ({', '.join(kinds)}) and a "
+                            f"chance above 0, up to 1")
+
     dishes = model.get("dishes", {})
     if dishes and not any(d["unlock"] == "start" for d in dishes.values()):
         problems.append("dishes/: no dish is on the menu from the start")

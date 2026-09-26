@@ -50,7 +50,7 @@ def slow(speed, jump):
 def ids(model):
     prefix = model["theme"]["prefix"]
     gid = lambda local: settings.game_id(prefix, local)
-    return {"mess": blocks.hazard_ids(model, "mess"), "spill": blocks.hazard_ids(model, "spill"),
+    return {**{k: blocks.hazard_ids(model, k) for k in blocks.hazard_kinds(model)},
             "mop": model["items"]["mop"]["game_id"],
             "dispenser": gid("spike_mess_dispenser"), "effect": gid("hazards_system")}
 
@@ -63,16 +63,20 @@ def build(model, debug=True, dispenser=False):
     look, words = fx["looks"]["mess"], fx["words"]
     note = "A mess. See build/systems/hazards.py."
     hazards, shrink = [], {}             # every hazard block; what one mop hold makes it
-    for kind, name in (("mess", "Mess"), ("spill", "Spill")):
+    for kind in blocks.hazard_kinds(model):
         look = fx["looks"][kind]
+        name = kind.capitalize()
+        # A kind may slow less (or more) than the default, size by size: its look's "speeds".
+        speeds = look.get("speeds") or [sz[2] for sz in SIZES]
         spreading = blocks.hazard_spreading(model, kind)
         for j, gid in enumerate(h[kind]):
             shrink[gid] = h[kind][j - 1] if j else "Empty"
         for gid in spreading:
             shrink[gid] = h[kind][-2]
         # The spreading large ones look and act exactly like the large one.
-        for gid, (size, scale, speed, jump) in list(zip(h[kind], SIZES)) + [
-                (g, SIZES[-1]) for g in spreading]:
+        for gid, (size, scale, _, jump), speed in [
+                (g, sz, sp) for g, sz, sp in zip(h[kind], SIZES, speeds)] + [
+                (g, SIZES[-1], speeds[-1]) for g in spreading]:
             blocks.item(gid, f"{name} ({size})", look["icon"],
                         dict(blocks.block_for(dict(look, scale=scale)), HitboxType="Plant_Seed",
                              RandomRotation="YawStep1", BlockSoundSetId="Seeds",
@@ -110,7 +114,7 @@ def build(model, debug=True, dispenser=False):
     # can land on another large one and put the next hop over that. The last hop's drop
     # finds large ones full, so a spread goes at most `spreads` hops from where it began.
     first = 300
-    for kind in ("mess", "spill"):
+    for kind in blocks.hazard_kinds(model):
         spreading = blocks.hazard_spreading(model, kind)
         for hop, block in enumerate(spreading):
             nxt = spreading[hop + 1] if hop + 1 < len(spreading) else None

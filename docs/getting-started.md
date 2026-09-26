@@ -113,11 +113,11 @@ says so.
    nobody wants goes in the bin.
 8. **End of day.** At closing time no more guests come, and the day ends when
    the last one leaves. A title shows how many you served and your purse.
-   Offers appear on the pads: buy new stations or upgrade kits. Every few days,
+   Blueprints appear on the pads: press one to buy that station (plain, or already
+   upgraded, like a dishwasher or a fast stove) and put it down. Every few days,
    **recipe cards** come instead: a new dish, which brings more guests.
-9. **Upgrade kits.** Hold a kit and press a free station of the kind it fits:
-   the fast stove and fast crate glow blue and work faster, and the safety
-   stove glows green and never burns food.
+9. **Upgraded stations.** The fast stove glows blue and cooks faster, the safety
+   stove glows green and never burns food, and the dishwashers wash by themselves.
 10. **Losing.** If a guest leaves angry, because its order or its food took too
     long, or the whole queue gives up, you are **out of business**. Everyone
     goes back to HQ, and the next person through the portal starts a new run.

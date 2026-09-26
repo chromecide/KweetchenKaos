@@ -199,8 +199,16 @@ Roles today: `press` (board), `heat` (stove), `combine` (counter), `wash`
 (sink), `bin` (bin), `rack` (plate rack), `call` (booking desk), `tool` (mop
 stand: `holds` the item it keeps, `on_top` how it shows). Each has one station.
 
-A station may cause a hazard: `"spills": 0.25` is the chance each press spills
-water round it (the sink). See `docs/systems.md`, Hazards.
+An **upgraded station** (a dishwasher, a fast stove) is its own station file with
+`"upgrade_of"` naming the station it improves. It's bought ready-made from the pads;
+there are no upgrade kits.
+
+A station may cause a hazard: `"hazard": {"kind": "spill", "chance": 0.25}` is
+the chance each press (the sink: each scrub; the board: each chop; the stove: burnt
+food taken off; a dishwasher: a clean plate taken out) drops one round it. The
+kinds are the fixtures looks marked `"hazard": true` (mess, spill, scraps, scorch);
+a look may set `"speeds"` (how much each size slows you) and `"spreads"` (how many
+hops a large one spreads). See `docs/systems.md`, Hazards.
 
 A `look` may also say how the station looks while in use: `busy_sides` and
 `busy_top` (the stove's top turns copper while something cooks), and `tint` /
@@ -387,7 +395,8 @@ How a run plays, independent of what it looks like. Built 2026-09-25.
 rules/
   standard/
     rules.json       day length, stages of a run, expected guests, queue patience
-    offers.json      what the pads can offer (stations and upgrade kits), prices, weights,
+    offers.json      what the pads can offer (stations, plain or upgraded, and chairs) as
+                     blueprints, prices, weights,
                      and from which day each pad offers
     cards.json       recipe cards: every N days, how many to choose from
 ```
@@ -415,15 +424,14 @@ rules/
   still to come and how many were served when the sign is pressed, and the
   served count at the end of the day. Counts are worked out for days 1-30;
   from day 30 on they stop growing.
-- Rules name **stations and kits by id**, never blocks, so the same rules
+- Rules name **stations by id**, never blocks, so the same rules
   work for any theme. `offers.json` says "stove, price 14, weights 1/5/10";
   the theme says what a stove is.
 - An offer is a **station** (`{"station": "dishwasher", ...}` -- plain, or one already
-  upgraded, ready-made), an **upgrade kit**, or a **fixture** (`{"fixture": "chair", ...}`:
-  a chair brings its own table when it's put down).
-- **Upgrade kits** are offered as `{"kit": "stove_fast", ...}`. The kit is made
-  from the theme's variant station file, which has `upgrade_of`, `glow` and
-  `kit`.
+  upgraded, ready-made) or a **fixture** (`{"fixture": "chair", ...}`: a chair brings
+  its own table when it's put down). Every offer shows on its pad as a **blueprint**
+  (the recipe card's model, in blue); pressing it pays, and hands over the real
+  station to put down. There are no upgrade kits (removed 2026-09-26).
 - The theme's `defaults` (times, patience, prices) stay in the theme, because
   they belong to the dishes. The rules can scale them: `guest_patience_scale`
   multiplies every guest's patience (practice: 2.5).
@@ -466,7 +474,7 @@ restaurant is:
 - server-log instrumentation
 - the test worlds (`spike.py`) and the authoring world (`layouts.py`)
 
-## Deliveries, recipe cards and upgrade kits (decided 2026-09-24)
+## Deliveries, recipe cards and blueprints (decided 2026-09-24, kits dropped 2026-09-26)
 
 All three arrive on the **offer pads** (a layout slot) between days:
 
@@ -474,7 +482,7 @@ All three arrive on the **offer pads** (a layout slot) between days:
 |---|---|
 | Day 0 | a starter card for each starter dish. Choose one: it's on the menu, its crates delivered |
 | Card days (every 3rd, `rules/cards.json`) | a pair of recipe cards, **instead of** the random offer roll. Choosing one puts the dish on the menu from the next day; any crates it needs that the restaurant doesn't own arrive on the pads the next morning, free |
-| Other days | the random offers (`rules/offers.json`): stations and upgrade kits |
+| Other days | the random offers (`rules/offers.json`): station blueprints |
 
 - A dish says `"unlock": "start"` (a STARTER: offered as a starter card when the
   run begins, and later as a recipe card if not chosen) or `"unlock": "card"` (only
@@ -484,12 +492,14 @@ All three arrive on the **offer pads** (a layout slot) between days:
   crates).
 - The run remembers which crates it owns (tags on the run's volume), so a crate
   is never delivered twice. Crates, like plates, can't be binned.
-- **Upgrade kits:** bought on a pad, then F on a matching station while holding
-  the kit swaps the station for its upgraded variant. The variant is a theme
-  station file with `upgrade_of` (a fast crate or a fast stove glows, and a
-  light growth modifier speeds its growth, as `probe_heat` proved; a safety
-  stove stops the well-done stage burning). The rules decide when kits are
-  offered and their price.
+- **Upgrades** come ready-made: a blueprint for a dishwasher, a fast stove, a safety
+  stove. The variant is a theme station file with `upgrade_of` (a fast stove glows,
+  and a light growth modifier speeds its growth, as `probe_heat` proved; a safety
+  stove stops the well-done stage burning). Upgrading a station you already own
+  was done with **upgrade kits** until 2026-09-26; they were dropped for PlateUp's
+  way, and a **research desk** (a blueprint left on it overnight comes back
+  upgraded) is the idea for bringing it back. The fast crate went with the kits:
+  crates come one per ingredient, so it can't be offered ready-made.
 
 ## Room to grow
 

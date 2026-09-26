@@ -69,6 +69,11 @@ def hazard_spreading(model, kind):
             for h in range(1, hops + 1)]
 
 
+def hazard_kinds(model):
+    """Every hazard the theme has: the fixtures looks marked "hazard"."""
+    return [k for k, look in model["fixtures"]["looks"].items() if look.get("hazard")]
+
+
 def hazard_drop(model, kind):
     """What a FRESH drop of this hazard passes to volumes.drop_around: its sizes, and (if it
     spreads) which blocks count as large and what goes over one it lands on."""

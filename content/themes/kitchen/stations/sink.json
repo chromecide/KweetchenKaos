@@ -13,5 +13,8 @@
     "busy": "Washing - {n} scrub{s} to go",
     "on_top": "Press to scrub"
   },
-  "spills": 0.25
+  "hazard": {
+    "kind": "spill",
+    "chance": 0.25
+  }
 }

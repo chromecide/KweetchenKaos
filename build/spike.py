@@ -7,13 +7,17 @@ empty world, to test on their own.
     SETUP block  place it anywhere and press it once: everything is laid out at fixed
                  places (see the map below), so nobody sets a spike up by hand
 
+A SPIKE ISOLATES ONE THING, carrying only the stations and items that thing needs (SPIKES
+below says what each proves). Only `service` and `run` carry the whole kitchen: they are the
+game. Anything extra in a spike is noise in what it proves.
+
 A RECIPE SPIKE, `dish:<id>` (e.g. python3 deploy.py dish:roasted_corn), is a service spike
 for one dish: the stations that dish's chain needs and no others (worked out from its
-steps, crates included), the sink, rack and bin, and guest callers for that dish's orders
-only (cooked and well done, say). One recipe, start to plate to paid.
+steps, crates included), a bin if it cooks, plates in the kit, and guest callers for that
+dish's orders only (cooked and well done, say). One recipe, start to plate to paid.
 
 A SPIKE IS A LIST OF STATIONS AND HOW MANY OF EACH, plus "front": True for the queue,
-chairs and guests (SPIKES below). Each station is mounted by whichever system runs its role
+chairs and guests, and what /kk kit hands over (SPIKES below). Each station is mounted by whichever system runs its role
 (systems/__init__.py) -- the way a layout will mount it later, so a spike tests exactly what
 ships. Chosen at build time: `build.py --spike NAME`, or `python3 deploy.py NAME`.
 
@@ -51,28 +55,46 @@ import systems
 import volumes as v
 
 INSTANCE = f"{settings.NAMESPACE}_Spike"
+# THE WHOLE KITCHEN, for the two spikes that ARE the game (service, run).
 KITCHEN = {"crates": 1, "board": 2, "counter": 3, "stove": 2, "bin": 1, "sink": 1,
            "rack": 1, "mop_stand": 1}
+# A SPIKE ISOLATES ONE THING: it carries the stations and items that thing needs, and
+# nothing else -- so what it proves is that thing, built the way the game will build it.
+# Only `service` and `run` carry the whole kitchen, because the whole game is what they test.
+#   stations  {station id: how many}; "crates" is one of every crate
+#   give      items handed over by /kk kit (item ids); without it, what the stations take
+#             that none of them make (spike.kit)
+#   front     the queue, chairs and guests (guest callers, or the shift in a run)
+#   moods     {mood: chance} a guest arrives with (systems/guest.py)
+#   hazards   the hazard system mounted (systems/hazards.py); a station's hazard only
+#             drops where it is
 SPIKES = {
-    "board": {"stations": {"board": 2}},
-    # Per-dish cook times: four stoves, one unbaked pie of each kind, side by side.
-    "stove": {"stations": {"stove": 4}},
+    # Chopping (pumpkin) and kneading (flour into dough): the board's two kinds of press.
+    "board": {"stations": {"board": 1}, "give": ["pumpkin", "flour"]},
+    # Cooking through every stage to burnt, on two ladders side by side: a pie (put together
+    # first) and corn (straight on). Each dish's own times belong to its dish:<id> spike.
+    "stove": {"stations": {"stove": 2}, "give": ["pumpkin_pie_unbaked", "corn"]},
     # The plate rack on its own, with a sink to wash a dirty plate to put back.
     "rack": {"stations": {"rack": 2, "sink": 1}},
-    "counter": {"stations": {"counter": 3, "board": 2}},
-    "kitchen": {"stations": KITCHEN},
-    # A full service: the kitchen, the queue, chairs and guests, called by hand.
-    "service": {"stations": KITCHEN, "front": True},
-    # PROBE: the service spike, with half of all guests arriving impatient (the queue's
-    # spots mark them at random; half patience, "(impatient)" on the name tag).
-    "impatient": {"stations": KITCHEN, "front": True, "moods": {"impatient": 0.5}},
-    # PROBE: messes. Every guest is messy (leaves a mess round its chair as it gets up); a
-    # dispenser drops one round you. The mop is on the mop stand. See build/systems/hazards.py.
-    "hazards": {"stations": KITCHEN, "front": True, "moods": {"messy": 1.0}, "hazards": True},
-    # A full RUN: the shift runs the days. The crates aren't laid out -- the run delivers
-    # them on day 1, and more with recipe cards.
-    # Crates at 0: mounted (so delivered ones work) but not laid out.
-    "run": {"stations": dict(KITCHEN, crates=0), "front": True, "run": True},
+    # Combining (dough + chopped pumpkin into an unbaked pie) and plating (a plate + a
+    # cooked dish): the counter's two jobs.
+    "counter": {"stations": {"counter": 2},
+                "give": ["dough", "pumpkin_chopped", "plate", "roasted_corn_cooked"]},
+    # PROBE: guests who arrive impatient, at random. Only the front of house: an impatient
+    # guest shows it on its name tag and walks out angry in half the time -- no kitchen needed.
+    "impatient": {"stations": {}, "front": True, "moods": {"impatient": 0.5}},
+    # PROBE: every hazard and its source. A messy guest (every one here) leaves a mess round
+    # its chair; the sink spills, the board drops scraps, burnt food off the stove scorches;
+    # a dispenser drops a mess round you; the mop is on its stand. One raw thing to chop,
+    # one thing to burn, a dirty plate to scrub.
+    "hazards": {"stations": {"sink": 1, "board": 1, "stove": 1, "mop_stand": 1},
+                "front": True, "moods": {"messy": 1.0}, "hazards": True,
+                "give": ["plate_dirty", "pumpkin", "corn"]},
+    # THE GAME, service only: the kitchen, the queue, chairs and guests, called by hand.
+    "service": {"stations": KITCHEN, "front": True, "hazards": True},
+    # THE GAME, a full RUN: the shift runs the days. Crates at 0: mounted (so delivered ones
+    # work) but not laid out -- the run delivers them on day 1, and more with recipe cards.
+    "run": {"stations": dict(KITCHEN, crates=0), "front": True, "run": True, "hazards": True},
 }
 HAZARD_DISPENSER = (8, 4)     # x, z: between the queue and the chairs
 SETUP = f"{settings.NAMESPACE}_Spike_Setup"
@@ -81,17 +103,17 @@ GROUND = 1              # the flat spike world's surface: blocks stand at y 1
 ROW_Z, ROW_X, GAP = 12, 12, 2
 
 
-# A recipe spike's stations beyond its chain, and how many of each: two stoves (one to
-# watch through well done while the other cooks), two counters (assemble on one, plate on
-# the other), one of the rest -- the mop stand among them, for the sink's spills.
-DISH_EXTRAS = ("sink", "rack", "bin", "mop_stand")
+# A recipe spike's stations beyond its chain: two stoves (one to watch through well done
+# while the other cooks), two counters (assemble on one, plate on the other); a bin if it
+# cooks (for what burns). Plates come in the kit: no rack, no sink.
 DISH_COUNTS = {"stove": 2, "counter": 2}
+DISH_PLATES = 4
 
 
 def dish_stations(model, dish_id):
     """Every station a dish's chain passes through, found by walking back from what its
-    guests order (the plated items) to the crates; then the sink, rack and bin. In the
-    kitchen's order: crates, then the rest."""
+    guests order (the plated items) to the crates; and a bin if it cooks. In the kitchen's
+    order: crates, then the rest."""
     wanted = {e["serves"] for e in model["menu"] if e["dish"] == dish_id}
     plate = model["vessel"]["clean"]["id"]
     used, grew = set(), True
@@ -107,7 +129,9 @@ def dish_stations(model, dish_id):
             grew = True
     chain = {s["station"] for s in model["steps"] if id(s) in used}
     crates = sorted(st for st in chain if model["stations"][st]["role"] == "crate")
-    rest = [st for st in KITCHEN if st in chain or st in DISH_EXTRAS]
+    if any(model["stations"][st]["role"] == "heat" for st in chain):
+        chain.add("bin")
+    rest = [st for st in KITCHEN if st in chain]
     return {**{st: 1 for st in crates}, **{st: DISH_COUNTS.get(st, 1) for st in rest}}
 
 
@@ -259,8 +283,7 @@ def build_room(model, layout_id, debug=True):
                 "TagKey": "done", "TagValue": "1"}]
               + v.report("kk.setup.room", f"[setup] built the room: {info['name']}", debug))
     rules.write(SETUP_EFFECT, "Spike only: the setup block. See build/spike.py.")
-    kits = [(it["game_id"], 1) for i, it in model["items"].items() if i.endswith("_kit")]
-    given = [(SETUP, 1), (model["items"][model["vessel"]["clean"]["id"]]["game_id"], 2)] + kits
+    given = [(SETUP, 1), (model["items"][model["vessel"]["clean"]["id"]]["game_id"], 2)]
     note = f"the room {info['name']}"
     _world(note, True, [v.volume("spike_setup", SETUP_EFFECT, {"done": "0"})], given)
     return note, given
@@ -283,9 +306,9 @@ def build(model, name, debug=True):
     else:
         spike = SPIKES[name]
         stations = stations_of(model, name)
-    # HAZARDS ARE ON in every spike, as in the game. Before the stations: a station that
-    # causes one (a sink's spill) needs to know.
-    model["hazards"] = True
+    # HAZARDS where the spike says (the game's spikes, and the hazards probe). Before the
+    # stations: a station that causes one (a sink's spill) needs to know.
+    model["hazards"] = spike.get("hazards", False)
     mounted = [v.volume(f"spike_{st}", systems.for_station(model, st).build(model, st, debug),
                         systems.tags_for(model, st, {"spike": st})) for st in stations]
     front = None
@@ -299,23 +322,25 @@ def build(model, name, debug=True):
                                                         run=spike.get("run", False))
         mounted += front_volumes
         front = front_layout
-    from systems import hazards
-    hazards.build(model, debug, dispenser=spike.get("hazards", False))
-    mounted += hazards.volumes(model)
     if spike.get("hazards"):
+        from systems import hazards
+        hazards.build(model, debug, dispenser=name == "hazards")
+        mounted += hazards.volumes(model)
+    if name == "hazards":
         more, ents = front
         more.append({"x": HAZARD_DISPENSER[0], "y": GROUND, "z": HAZARD_DISPENSER[1],
                      "name": hazards.ids(model)["dispenser"]})
     mounted.append(setup(model, stations, front, debug))
-    # A run needs only plates: the run delivers the crates, which make everything else.
-    # ...plus one of every upgrade kit, so upgrades can be tried without earning them.
-    kits = [(it["game_id"], 1) for i, it in model["items"].items() if i.endswith("_kit")]
-    plates = [(SETUP, 1), (model["items"][model["vessel"]["clean"]["id"]]["game_id"], 2)]
+    items = model["items"]
+    plate = items[model["vessel"]["clean"]["id"]]["game_id"]
     if spike.get("run"):
-        given = plates + kits
+        # A run needs only plates: it delivers the crates, which make everything else.
+        given = [(SETUP, 1), (plate, 2)]
     elif name.startswith("dish:"):
-        # Its crates make everything else; a dirty plate to try the sink with.
-        given = plates + [(model["items"][model["vessel"]["dirty"]["id"]]["game_id"], 1)]
+        # Its crates make everything else.
+        given = [(SETUP, 1), (plate, DISH_PLATES)]
+    elif "give" in spike:
+        given = [(SETUP, 1)] + [(items[i]["game_id"], 1) for i in spike["give"]]
     else:
         given = kit(model, stations)
     note = " + ".join(model["stations"][st]["label"].lower() for st in stations)

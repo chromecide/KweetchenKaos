@@ -155,18 +155,11 @@ def build(model, station_id, debug=True):
     rules.add(901, [v.at([b["free"]] + ladder, event="BLOCK_BROKEN")],
               [v.cell(shown_in + shown_out, "Empty", dy=1, event="BLOCK_BROKEN")])
 
-    # SPILLS (the station's "spills": a chance per scrub): water in an empty cell round the
-    # station -- the hazard system's block, which it mops up. Pressing the picture on top
-    # is the station one below. Only where hazards are mounted (model["hazards"]): the
-    # spill block is theirs.
-    if st.get("spills") and model.get("hazards"):
-        spill = blocks.hazard_drop(model, "spill")
-        chance = {"Type": "RandomChanceCondition", "Event": "BLOCK_USED",
-                  "Chance": float(st["spills"])}
-        v.drop_around(rules, 8000, "spill", spill["sizes"], [v.at(ladder), chance],
-                      "BLOCK_USED", large=spill["large"], on_large=spill["on_large"])
-        v.drop_around(rules, 8100, "spilltop", spill["sizes"], [v.at(shown_in), chance],
-                      "BLOCK_USED", dy=-1.0, large=spill["large"], on_large=spill["on_large"])
+    # ITS HAZARD (the station's "hazard": a spill for the sink, scraps for the board): a
+    # chance each press, dropped round the station. Pressing what's on top is the station
+    # one below.
+    v.station_hazard(rules, 8000, "hazard", model, st, [v.at(ladder)])
+    v.station_hazard(rules, 8100, "hazardtop", model, st, [v.at(shown_in)], dy=-1.0)
 
     _auto_variants(model, station_id, table, rules, debug)
 
@@ -178,7 +171,7 @@ def _auto_variants(model, station_id, table, rules, debug):
     """AN AUTO UPGRADE (the dishwasher): a variant of this station (`upgrade_of`, with
     `auto_seconds`) that does the pressing itself.
 
-        hold the kit, press a FREE station  ->  it becomes the upgrade
+        (bought ready-made: a blueprint on the pads)
         press it holding an input           ->  it goes in; after auto_seconds it is done
                                                  by itself (GROWTH, like a stove or a crate)
         press it (or what's on it) once done ->  you take the output; it's free again
@@ -188,10 +181,9 @@ def _auto_variants(model, station_id, table, rules, debug):
     items = model["items"]
     prefix = model["theme"]["prefix"]
     gid = lambda local: settings.game_id(prefix, local)
-    base_free = ids(model, station_id)["free"]
-    for vid, vs in model["stations"].items():
-        if vs.get("upgrade_of") != station_id or "auto_seconds" not in vs:
-            continue
+    autos = [(vid, vs) for vid, vs in model["stations"].items()
+             if vs.get("upgrade_of") == station_id and "auto_seconds" in vs]
+    for k, (vid, vs) in enumerate(autos):
         label, words, look = vs["label"], vs["words"], vs["look"]
         note = f"{label}. See build/systems/press.py (_auto_variants)."
         free, busy = gid(vid), gid(f"{vid}_busy")
@@ -219,13 +211,14 @@ def _auto_variants(model, station_id, table, rules, debug):
                           [v.give(items[s["output"]]["game_id"]), v.cell([r], "Empty", dy=dy + 1),
                            v.cell([busy], free, dy=dy), v.sound(1.2)]
                           + rep(f"out.{s['output']}", f"{items[s['output']]['label']} taken"))
-        # THE UPGRADE: hold the kit and press a free station of the kind it upgrades.
-        kit = items[vs["kit_item"]]["game_id"]
-        rules.add(3900, [v.at([base_free]), v.holding(kit)],
-                  [v.cell([base_free], free), v.sound(1.5)]
-                  + rep("upgraded", f"upgraded to a {label.lower()}"))
-        # BREAKING: what's on top goes with it; a broken top frees it.
-        rules.add(3950, [v.at(working + ready, event="BLOCK_BROKEN")],
+        # BREAKING: what's on top goes with it; a broken top frees it. Numbered per variant:
+        # two rules sharing a number are ONE rule to the engine.
+        rules.add(3950 + 2 * k, [v.at(working + ready, event="BLOCK_BROKEN")],
                   [v.cell([busy], free, dy=-1, event="BLOCK_BROKEN")])
-        rules.add(3951, [v.at([free, busy], event="BLOCK_BROKEN")],
+        rules.add(3951 + 2 * k, [v.at([free, busy], event="BLOCK_BROKEN")],
                   [v.cell(working + ready, "Empty", dy=1, event="BLOCK_BROKEN")])
+        # ITS HAZARD (a cheap dishwasher drips): a chance each time a clean plate comes out.
+        v.station_hazard(rules, 8200 + 200 * k, f"hazard{k}", model, vs,
+                         [v.at([busy]), v.at(ready, dy=1)])
+        v.station_hazard(rules, 8300 + 200 * k, f"hazardtop{k}", model, vs,
+                         [v.at(ready), v.at([busy], dy=-1)], dy=-1.0)

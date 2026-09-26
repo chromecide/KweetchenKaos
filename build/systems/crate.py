@@ -11,9 +11,9 @@ template, so a new ingredient brings its own crate with no work here.
 RESTOCKING IS GROWTH, like the stove (clock.py): the top is a block that grows from
 "restocking" (the ingredient, tiny) to "ready" (full size) in restock_seconds. A volume
 can't see an empty cell, so "restocking" has to be a real block -- and a tiny ingredient
-reads as the crate filling back up. An UPGRADED crate (hold the fast crate kit and press
-a crate) glows, and the restocking top listens for the glow and grows twice as fast
-(glow.py) -- the same top blocks on either crate.
+reads as the crate filling back up. An UPGRADED crate (a variant with upgrade_of; none is
+offered today -- a research desk would bring one) glows, and the restocking top listens
+for the glow and grows faster (glow.py) -- the same top blocks on either crate.
 
 A crate a player puts down gets its top by itself (BLOCK_PLACED); a crate picked up takes
 its top with it. The spike setup and layouts place the top with the crate.
@@ -97,18 +97,6 @@ def build(model, station_id, debug=True):
                   [v.give(item["game_id"]), v.place(b["restocking"], dy=dy), v.sound(1.1)]
                   + rep("take", f"{item['label']} taken - restocking"))
 
-    # UPGRADE: hold the kit and press a plain crate -- it becomes the fast one; its top
-    # carries on as it was.
-    for k, (sid, vs) in enumerate(kinds[1:]):
-        kit = items[vs["kit_item"]]
-        rules.add(150 + k, [v.at([b["free"]]), v.holding(kit["game_id"])],
-                  [v.cell([b["free"]], b["of"](sid)), v.sound(1.5)]
-                  + rep(f"upgraded.{sid}", f"upgraded to a {vs['label'].lower()}"))
-    # The kit pressed on an already-fast crate: say so.
-    for k, (sid, vs) in enumerate(kinds[1:]):
-        kit = items[vs["kit_item"]]
-        rules.add(170 + k, [v.at(crates[1:]), v.has(kit["game_id"])],
-                  [v.say("kk.crate.kit_wrong", "That crate is already upgraded.")])
     # A crate put down grows its own top; a crate picked up (broken) takes its top.
     rules.add(200, [v.at(crates, event="BLOCK_PLACED")],
               [v.place(b["restocking"], event="BLOCK_PLACED")]
