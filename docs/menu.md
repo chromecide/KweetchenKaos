@@ -4,18 +4,25 @@
 
 Ten dishes, leaning into forest food, made with the stations that exist (no code):
 
-| Dish | Chain | Unlock | Price |
-|---|---|---|---|
-| Berry salad | lettuce → chop; + berries → combine (no cooking) | starter | 4 |
-| Roasted corn | corn → stove | starter | 4 |
-| Pumpkin pie | pumpkin → chop; + dough → combine → stove | starter | 5 (well done 6) |
-| Mushroom salad | lettuce → chop; mushroom → chop; combine (no cooking) | card | 5 |
-| Fruit kebab | apple → chop; + stick → combine (no cooking) | card | 5 |
-| Mushroom kebab | mushroom → chop; + stick → combine → stove | card | 6 |
-| Bread | flour → knead (dough) → stove | card | 5 |
-| Apple pie | as pumpkin | card | 5 (well done 6) |
-| Meat pie | as pumpkin | card | 5 (well done 6) |
-| Mushroom pie | as pumpkin | card | 5 (well done 6) |
+| Dish | Chain | Unlock | Price | Guests |
+|---|---|---|---|---|
+| Berry salad | lettuce → chop; + berries → combine (no cooking) | starter | 4 | +3 |
+| Roasted corn | corn → stove | starter | 4 | +2 |
+| Pumpkin pie | pumpkin → chop; + dough → combine → stove | starter | 8 (well done 9) | +1 |
+| Mushroom salad | lettuce → chop; mushroom → chop; combine (no cooking) | card | 6 | +3 |
+| Fruit kebab | apple → chop; + stick → combine (no cooking) | card | 5 | +3 |
+| Mushroom kebab | mushroom → chop; + stick → combine → stove | card | 7 | +2 |
+| Bread | flour → knead (dough) → stove | card | 5 | +2 |
+| Apple pie | as pumpkin | card | 8 (well done 9) | +1 |
+| Meat pie | as pumpkin | card | 8 (well done 9) | +1 |
+| Mushroom pie | as pumpkin | card | 8 (well done 9) | +1 |
+
+**Prices follow PlateUp** (wiki.plateupgame.com): most dishes pay about 5, slow ones
+8+, and a slow dish brings fewer guests (PlateUp's pies -15%, salads +15%). *Guests*
+is how many extra a dish brings when added as a card; as the starter it shifts day 1
+by its difference from the usual +2. Stations cost about four dishes (20) and
+upgrades about ten (45 as a kit, 60 ready-made), as PlateUp's appliances do (20 / 60);
+see `content/rules/standard/offers.json`.
 
 Ingredients from crates: flour, pumpkin, apple, raw meat, mushroom, lettuce, berries,
 corn, skewer sticks. Only the pies have a well-done order. Chopped lettuce is the green

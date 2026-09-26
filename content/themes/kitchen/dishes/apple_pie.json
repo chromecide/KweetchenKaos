@@ -44,12 +44,14 @@
   ],
   "serve": [
     {
-      "item": "apple_pie_cooked"
+      "item": "apple_pie_cooked",
+      "price": 8
     },
     {
       "item": "apple_pie_well",
-      "price": 6
+      "price": 9
     }
   ],
-  "unlock": "card"
+  "unlock": "card",
+  "guests": 1
 }

@@ -22,8 +22,10 @@
   ],
   "serve": [
     {
-      "item": "mushroom_salad"
+      "item": "mushroom_salad",
+      "price": 6
     }
   ],
-  "unlock": "card"
+  "unlock": "card",
+  "guests": 3
 }

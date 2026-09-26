@@ -33,5 +33,6 @@
       "price": 4
     }
   ],
-  "unlock": "start"
+  "unlock": "start",
+  "guests": 2
 }

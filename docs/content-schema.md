@@ -395,8 +395,11 @@ rules/
 ```
 
 - **Expected guests** each day are `day_1`, plus `per_day` for every day
-  after the first, plus `per_card` for every recipe card chosen (the starter
-  recipe doesn't count). They arrive evenly spread over the day, the first as
+  after the first, plus what each dish on the menu brings. A dish's `guests`
+  (in its dish file) is how many it brings when it's added as a card; without
+  one it's `per_card`. The run's first dish shifts day 1 by its difference from
+  `per_card`, so a quick salad start brings a guest more and a slow pie start
+  one fewer (PlateUp's +15% / -15%). They arrive evenly spread over the day, the first as
   it opens. The shift says how many to expect when it opens, how many are
   still to come and how many were served when the sign is pressed, and the
   served count at the end of the day. Counts are worked out for days 1-30;

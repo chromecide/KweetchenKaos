@@ -29,8 +29,10 @@
   ],
   "serve": [
     {
-      "item": "bread_cooked"
+      "item": "bread_cooked",
+      "price": 5
     }
   ],
-  "unlock": "card"
+  "unlock": "card",
+  "guests": 2
 }

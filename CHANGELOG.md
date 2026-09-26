@@ -10,6 +10,10 @@
 - **More between-day offers:** chairs (each brings its own table), and stations
   already upgraded (a dishwasher, a fast stove, a safety stove) as well as the kits --
   so a kitchen can have a sink AND a dishwasher.
+- **PlateUp prices:** dishes pay 4-9 (pies 8, well done 9); stations cost 20, upgrade
+  kits 30-45, ready-made upgrades 60, chairs 10 (practice rules: half).
+- **Dishes set how many guests they bring** (`guests`): quick dishes more, slow ones
+  fewer -- and a starter shifts day 1 the same way.
 - Fixed: buying a plate rack gave an item that doesn't exist.
 - Hints show the interact key, the way the game's doors do.
 

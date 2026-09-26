@@ -44,12 +44,14 @@
   ],
   "serve": [
     {
-      "item": "pumpkin_pie_cooked"
+      "item": "pumpkin_pie_cooked",
+      "price": 8
     },
     {
       "item": "pumpkin_pie_well",
-      "price": 6
+      "price": 9
     }
   ],
-  "unlock": "start"
+  "unlock": "start",
+  "guests": 1
 }

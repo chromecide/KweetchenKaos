@@ -45,8 +45,9 @@
   "serve": [
     {
       "item": "mushroom_kebab_cooked",
-      "price": 6
+      "price": 7
     }
   ],
-  "unlock": "card"
+  "unlock": "card",
+  "guests": 2
 }

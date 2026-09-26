@@ -198,6 +198,9 @@ def load_theme(theme_id):
             continue
         dishes[d["id"]] = {"id": d["id"], "label": d["label"], "file": f,
                            "unlock": d.get("unlock", "start"),
+                           # Guests it brings when it goes on the menu (None: the rules'
+                           # per_card, or nothing for the run's first dish).
+                           "guests": d.get("guests"),
                            "serves": [e["item"] for e in d.get("serve", [])]}
         read_steps(d["id"], d["label"], d.get("steps", []), f)
         for e in d.get("serve", []):

@@ -9,7 +9,7 @@
   "catalogue": [
     {
       "station": "counter",
-      "price": 5,
+      "price": 10,
       "weights": {
         "early": 10,
         "mid": 6,
@@ -18,7 +18,7 @@
     },
     {
       "station": "board",
-      "price": 6,
+      "price": 10,
       "weights": {
         "early": 10,
         "mid": 6,
@@ -27,7 +27,7 @@
     },
     {
       "station": "bin",
-      "price": 4,
+      "price": 10,
       "weights": {
         "early": 6,
         "mid": 4,
@@ -36,7 +36,7 @@
     },
     {
       "station": "rack",
-      "price": 6,
+      "price": 10,
       "weights": {
         "early": 4,
         "mid": 4,
@@ -54,7 +54,7 @@
     },
     {
       "station": "stove",
-      "price": 14,
+      "price": 10,
       "weights": {
         "early": 1,
         "mid": 5,
@@ -63,7 +63,7 @@
     },
     {
       "kit": "crate_fast",
-      "price": 8,
+      "price": 15,
       "weights": {
         "early": 2,
         "mid": 5,
@@ -72,7 +72,7 @@
     },
     {
       "kit": "stove_fast",
-      "price": 12,
+      "price": 22,
       "weights": {
         "early": 1,
         "mid": 4,
@@ -81,7 +81,7 @@
     },
     {
       "kit": "stove_safe",
-      "price": 12,
+      "price": 22,
       "weights": {
         "early": 1,
         "mid": 4,
@@ -90,7 +90,7 @@
     },
     {
       "kit": "dishwasher",
-      "price": 10,
+      "price": 22,
       "weights": {
         "early": 2,
         "mid": 5,
@@ -99,7 +99,7 @@
     },
     {
       "fixture": "chair",
-      "price": 3,
+      "price": 5,
       "weights": {
         "early": 8,
         "mid": 6,
@@ -108,7 +108,7 @@
     },
     {
       "station": "dishwasher",
-      "price": 16,
+      "price": 30,
       "weights": {
         "early": 1,
         "mid": 3,
@@ -117,7 +117,7 @@
     },
     {
       "station": "stove_fast",
-      "price": 20,
+      "price": 30,
       "weights": {
         "early": 0,
         "mid": 2,
@@ -126,7 +126,7 @@
     },
     {
       "station": "stove_safe",
-      "price": 20,
+      "price": 30,
       "weights": {
         "early": 0,
         "mid": 2,
