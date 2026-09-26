@@ -46,6 +46,7 @@ FRONT = (16.0, 2.0, -4.0)    # a restaurant's arrival, relative to its room: in 
 # Feet on top of the arrival block. The room is pasted only once a player is in the world, so
 # over a void there is nothing under them for a moment: arrive standing, not dropping in.
 STAND = 1.0
+ARRIVAL_CATCH = (1.0, 3.0)   # seconds after arriving that a player is put back on the arrival
 PORTAL_LOOK = {"model": "Blocks/Miscellaneous/Platform_Magic_Exit.blockymodel",
                "texture": "Blocks/Miscellaneous/Platform_Magic_Blue2.png",
                "icon": "Icons/ItemsGenerated/Portal_Return.png"}
@@ -105,31 +106,40 @@ def _border(world, r=None):
     return name, meta["ring"]
 
 
-def _paste_on_arrival(name, prefab, text, border=(None, 0), welcome=None):
+def _paste_on_arrival(name, prefab, text, border=(None, 0), welcome=None, spawn=None):
     """A volume that pastes `prefab` at AT the first time a player is in the world -- and
-    its BORDER first, round it (the border's hole is the room's plot). `text`: a chat line
+    its BORDER round it, after (the border's hole is the room's plot). `spawn`: where every
+    arriving player is put back, a moment after arriving. `text`: a chat line
     then (None: none). `welcome` (title, subtitle): shown to EVERY player as they arrive --
     ENTER is the arriving player's own event, so the title reaches them."""
     effect = f"{name}_Arrival"
     rules = v.Entries()
+    if spawn:
+        # BACK ON THE ARRIVAL SPOT, a moment after arriving: the first player lands before
+        # the room is pasted, and an arrival up a tree left them falling to the ground. Every
+        # arriving player is put back on it (harmless when the room was already there).
+        rules.add(3, [], [{"Type": "Teleport", "Event": "ENTER", "Delay": d, "ResetVelocity": True,
+                           "Position": {"X": float(spawn[0]), "Y": float(spawn[1]),
+                                        "Z": float(spawn[2])}} for d in ARRIVAL_CATCH])
     if welcome:
         rules.add(2, [], [v.title(f"kk.world.{name.lower()}.title", welcome[0],
                                   f"kk.world.{name.lower()}.title.sub", welcome[1],
                                   event="ENTER", seconds=5.0)])
     rules.add(1, [{"Type": "TagCondition", "Event": "ENTER", "Source": "Self", "TagKey": "built",
                    "Comparison": "Exactly", "TagValue": "0"}],
-              ([{"Type": "PastePrefab", "Event": "ENTER", "Prefab": border[0],
-                 "Origin": "WorldAbsolute",
-                 "Position": {"X": float(AT[0] - border[1]), "Y": float(AT[1]),
-                              "Z": float(AT[2] - border[1])},
-                 "ShowParticles": False}] if border[0] else [])
-              + [{"Type": "PastePrefab", "Event": "ENTER", "Prefab": prefab,
+              # The ROOM first -- it holds the arrival spot -- then the border (scenery).
+              [{"Type": "PastePrefab", "Event": "ENTER", "Prefab": prefab,
                 "Origin": "WorldAbsolute",
                 "Position": {"X": float(AT[0]), "Y": float(AT[1]), "Z": float(AT[2])},
                 "ShowParticles": False},
                {"Type": "ModifyTags", "Event": "ENTER", "Operation": "Set", "TagKey": "built",
                 "TagValue": "1"},
-              ] + ([v.say(f"kk.world.{name.lower()}", text, event="ENTER")] if text else []))
+              ] + ([{"Type": "PastePrefab", "Event": "ENTER", "Prefab": border[0],
+                     "Origin": "WorldAbsolute",
+                     "Position": {"X": float(AT[0] - border[1]), "Y": float(AT[1]),
+                                  "Z": float(AT[2] - border[1])},
+                     "ShowParticles": False}] if border[0] else [])
+              + ([v.say(f"kk.world.{name.lower()}", text, event="ENTER")] if text else []))
     rules.write(effect, "Pastes the room when the first player arrives. See build/world.py.")
     return v.volume(f"{name}_arrival", effect, {"built": "0"})
 
@@ -210,7 +220,8 @@ def build(debug=True, fill_portals=False):
         rules_name = model["rules"].get("name", r["rules"])
         _instance(inst, spawn, [_paste_on_arrival(inst, prefab, None, _border(world, r),
                                                   welcome=(f"Welcome to {r['name']}",
-                                                           f"{rules_name} rules"))],
+                                                           f"{rules_name} rules"),
+                                                  spawn=spawn)],
                   f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True,
                   ground=r.get("ground", world.get("ground", "flat")),
                   weather=r.get("weather", world.get("weather")))
@@ -277,7 +288,8 @@ def build(debug=True, fill_portals=False):
     spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + STAND, AT[2] + arrival[2] + 0.5)
     _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", None, _border(world),
                                             welcome=("Welcome to Kweetchen Kaos",
-                                                     "Step on a portal to play"))],
+                                                     "Step on a portal to play"),
+                                            spawn=spawn)],
               "HQ: where runs start. One shared world. See build/world.py.", clock_on=False,
               ground=world.get("ground", "flat"), weather=world.get("weather"),
               # NEVER REMOVED: a run's players come back to it. With an "empty" timeout it was
