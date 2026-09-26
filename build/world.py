@@ -136,7 +136,24 @@ def _instance_name(r):
     return f"{NS}_R_" + "_".join(p.capitalize() for p in r["id"].split("_"))
 
 
-def build(debug=True):
+PLACEHOLDER = f"{NS}_Portal_Placeholder"
+
+
+def _placeholder_portal():
+    """A portal that looks the part and goes nowhere: for the hq spike, to see every portal
+    slot filled while lining them up."""
+    block = dict(blocks.block_for(PORTAL_LOOK), Material="Solid", HitboxType="Pad_Portal",
+                 InteractionHint=blocks.hint(PLACEHOLDER, "Portal slot - no restaurant yet"),
+                 Interactions={"Use": blocks.NOOP})
+    blocks.item(PLACEHOLDER, "Portal (placeholder)", PORTAL_LOOK["icon"], block,
+                "A stand-in portal for the hq spike. See build/world.py.")
+
+
+def build(debug=True, fill_portals=False):
+    """`fill_portals`: every portal slot gets a portal -- a placeholder where no restaurant
+    is hung (the hq spike: `python3 deploy.py hq`)."""
+    if fill_portals:
+        _placeholder_portal()
     """Write HQ, its portals, and every restaurant's world. Returns a summary."""
     world = load()
     notes = []
@@ -180,6 +197,8 @@ def build(debug=True):
             if n in portal_of:
                 out.append({"x": b["x"], "y": b["y"] + 1, "z": b["z"], "name": f"{NS}_Portal_{n}"})
                 portal_at[n] = (b["x"], b["y"] + 1, b["z"])
+            elif fill_portals:
+                out.append({"x": b["x"], "y": b["y"] + 1, "z": b["z"], "name": PLACEHOLDER})
             else:
                 notes.append(f"HQ: portal slot {n} has no restaurant in world.json")
         else:

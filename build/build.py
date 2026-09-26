@@ -128,9 +128,10 @@ def main(argv):
     # The layout workshop is always there, whatever the spike.
     layouts.write_slots()
     layouts.write_authoring()
-    if name == "world":
-        # HQ and the restaurants in content/world/world.json -- /kk hq to go.
-        summary, notes = world.build()
+    if name in ("world", "hq"):
+        # HQ and the restaurants in content/world/world.json -- /kk hq to go. The "hq" spike
+        # is the same with every portal slot filled (placeholders where nothing is hung).
+        summary, notes = world.build(fill_portals=name == "hq")
         pack.finish()
         print(f"\nwrote pack: {n} items; the WORLD: /kk hq")
         for line in summary:
