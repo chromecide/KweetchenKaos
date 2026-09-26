@@ -754,7 +754,7 @@
       "x": -15,
       "y": 3,
       "z": 10,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -15,
@@ -778,7 +778,7 @@
       "x": -15,
       "y": 3,
       "z": 11,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -15,
@@ -802,7 +802,7 @@
       "x": -15,
       "y": 3,
       "z": 12,
-      "name": "Soil_Grass"
+      "name": "Soil_Dirt"
     },
     {
       "x": -15,
@@ -850,7 +850,7 @@
       "x": -15,
       "y": 3,
       "z": 13,
-      "name": "Soil_Grass"
+      "name": "Soil_Dirt"
     },
     {
       "x": -15,
@@ -886,7 +886,7 @@
       "x": -15,
       "y": 3,
       "z": 14,
-      "name": "Soil_Grass"
+      "name": "Soil_Dirt"
     },
     {
       "x": -15,
@@ -928,7 +928,7 @@
       "x": -15,
       "y": 3,
       "z": 15,
-      "name": "Soil_Grass"
+      "name": "Soil_Dirt"
     },
     {
       "x": -15,
@@ -952,19 +952,19 @@
       "x": -15,
       "y": 1,
       "z": 16,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -15,
       "y": 2,
       "z": 16,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -15,
       "y": 3,
       "z": 16,
-      "name": "Soil_Grass"
+      "name": "Soil_Pathway"
     },
     {
       "x": -15,
@@ -1926,7 +1926,7 @@
       "x": -14,
       "y": 3,
       "z": 10,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -14,
@@ -1950,7 +1950,7 @@
       "x": -14,
       "y": 3,
       "z": 11,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -14,
@@ -1974,7 +1974,7 @@
       "x": -14,
       "y": 3,
       "z": 12,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -14,
@@ -2004,7 +2004,7 @@
       "x": -14,
       "y": 3,
       "z": 13,
-      "name": "Soil_Grass"
+      "name": "Soil_Dirt"
     },
     {
       "x": -14,
@@ -2040,7 +2040,7 @@
       "x": -14,
       "y": 3,
       "z": 14,
-      "name": "Soil_Grass"
+      "name": "Soil_Dirt"
     },
     {
       "x": -14,
@@ -2070,19 +2070,19 @@
       "x": -14,
       "y": 1,
       "z": 15,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -14,
       "y": 2,
       "z": 15,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -14,
       "y": 3,
       "z": 15,
-      "name": "Soil_Grass"
+      "name": "Soil_Pathway"
     },
     {
       "x": -14,
@@ -2118,25 +2118,25 @@
       "x": -14,
       "y": 0,
       "z": 16,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -14,
       "y": 1,
       "z": 16,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -14,
       "y": 2,
       "z": 16,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -14,
       "y": 3,
       "z": 16,
-      "name": "Soil_Grass"
+      "name": "Soil_Pathway"
     },
     {
       "x": -14,
@@ -3270,7 +3270,7 @@
       "x": -13,
       "y": 3,
       "z": 10,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -13,
@@ -3294,13 +3294,13 @@
       "x": -13,
       "y": 3,
       "z": 11,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -13,
       "y": 0,
       "z": 12,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
@@ -3312,37 +3312,37 @@
       "x": -13,
       "y": 2,
       "z": 12,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
       "y": 3,
       "z": 12,
-      "name": "Soil_Grass"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
       "y": 0,
       "z": 13,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
       "y": 1,
       "z": 13,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
       "y": 2,
       "z": 13,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
       "y": 3,
       "z": 13,
-      "name": "Soil_Grass"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
@@ -3354,19 +3354,19 @@
       "x": -13,
       "y": 1,
       "z": 14,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
       "y": 2,
       "z": 14,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
       "y": 3,
       "z": 14,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -13,
@@ -3396,19 +3396,19 @@
       "x": -13,
       "y": 1,
       "z": 15,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
       "y": 2,
       "z": 15,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
       "y": 3,
       "z": 15,
-      "name": "Soil_Grass"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
@@ -3444,13 +3444,13 @@
       "x": -13,
       "y": 0,
       "z": 16,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
       "y": 1,
       "z": 16,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -13,
@@ -3462,7 +3462,7 @@
       "x": -13,
       "y": 3,
       "z": 16,
-      "name": "Soil_Grass"
+      "name": "Soil_Dirt"
     },
     {
       "x": -13,
@@ -4645,7 +4645,7 @@
       "x": -12,
       "y": 3,
       "z": 8,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -12,
@@ -4717,7 +4717,7 @@
       "x": -12,
       "y": 3,
       "z": 11,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -12,
@@ -4741,19 +4741,19 @@
       "x": -12,
       "y": 3,
       "z": 12,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -12,
       "y": 0,
       "z": 13,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -12,
       "y": 1,
       "z": 13,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -12,
@@ -4765,7 +4765,7 @@
       "x": -12,
       "y": 3,
       "z": 13,
-      "name": "Soil_Grass"
+      "name": "Soil_Pathway"
     },
     {
       "x": -12,
@@ -4783,13 +4783,13 @@
       "x": -12,
       "y": 2,
       "z": 14,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -12,
       "y": 3,
       "z": 14,
-      "name": "Soil_Grass"
+      "name": "Soil_Pathway"
     },
     {
       "x": -12,
@@ -4813,13 +4813,13 @@
       "x": -12,
       "y": 0,
       "z": 15,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -12,
       "y": 1,
       "z": 15,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -12,
@@ -4831,7 +4831,7 @@
       "x": -12,
       "y": 3,
       "z": 15,
-      "name": "Soil_Grass"
+      "name": "Soil_Dirt"
     },
     {
       "x": -12,
@@ -4873,7 +4873,7 @@
       "x": -12,
       "y": 0,
       "z": 16,
-      "name": "Soil_Dirt"
+      "name": "Soil_Pathway"
     },
     {
       "x": -12,
@@ -4891,7 +4891,7 @@
       "x": -12,
       "y": 3,
       "z": 16,
-      "name": "Soil_Grass"
+      "name": "Soil_Dirt"
     },
     {
       "x": -12,
@@ -6172,7 +6172,7 @@
       "x": -11,
       "y": 3,
       "z": 10,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -11,
@@ -6196,7 +6196,7 @@
       "x": -11,
       "y": 3,
       "z": 11,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -11,
@@ -6220,7 +6220,7 @@
       "x": -11,
       "y": 3,
       "z": 12,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -11,
@@ -6256,7 +6256,7 @@
       "x": -11,
       "y": 3,
       "z": 13,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -11,
@@ -6298,7 +6298,7 @@
       "x": -11,
       "y": 3,
       "z": 14,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -11,
@@ -6352,7 +6352,7 @@
       "x": -11,
       "y": 3,
       "z": 15,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -11,
@@ -6407,7 +6407,7 @@
       "x": -11,
       "y": 3,
       "z": 16,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -11,
@@ -7662,7 +7662,7 @@
       "x": -10,
       "y": 3,
       "z": 10,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -10,
@@ -7716,7 +7716,7 @@
       "x": -10,
       "y": 3,
       "z": 12,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -10,
@@ -7758,7 +7758,7 @@
       "x": -10,
       "y": 3,
       "z": 13,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -10,
@@ -7800,7 +7800,7 @@
       "x": -10,
       "y": 3,
       "z": 14,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -10,
@@ -7848,7 +7848,7 @@
       "x": -10,
       "y": 3,
       "z": 15,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -10,
@@ -7915,7 +7915,7 @@
       "x": -10,
       "y": 3,
       "z": 16,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -10,
@@ -9295,7 +9295,7 @@
       "x": -9,
       "y": 3,
       "z": 14,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -9,
@@ -9350,7 +9350,7 @@
       "x": -9,
       "y": 3,
       "z": 15,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -9,
@@ -9436,7 +9436,7 @@
       "x": -9,
       "y": 3,
       "z": 16,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -9,
@@ -11052,7 +11052,7 @@
       "x": -8,
       "y": 3,
       "z": 16,
-      "name": "Soil_Grass"
+      "name": "Soil_Mud_Dry"
     },
     {
       "x": -7,
@@ -100923,6 +100923,72 @@
     {
       "Components": {
         "Nameplate": {
+          "Text": "0.Z3Kweebec_P2~5 #0 [Wait 10.0s] <Rotate 90.00deg>"
+        },
+        "PatrolPathMarker": {
+          "Version": 5,
+          "DisplayName": "0.Z3Kweebec_P2~5 #0 [Wait 10.0s] <Rotate 90.00deg>",
+          "UUID": {
+            "$binary": "MdnBJ9PzON2++vGvxqDgzA==",
+            "$type": "04"
+          },
+          "PathName": "Z3Kweebec_P2",
+          "PathLength": 0,
+          "Order": 0,
+          "PauseTime": 10.0,
+          "ObsvAngle": 1.5707963705062866
+        },
+        "HiddenFromAdventurePlayer": {},
+        "Transform": {
+          "Position": {
+            "X": -3.710052490234375,
+            "Y": 18.057907104492188,
+            "Z": -9.15478515625
+          },
+          "Rotation": {
+            "Pitch": 0.0,
+            "Yaw": -0.2592894732952118,
+            "Roll": 0.0
+          }
+        },
+        "Velocity": {
+          "Velocity": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        },
+        "PrefabCopyable": {},
+        "Model": {
+          "Model": {
+            "Id": "NPC_Path_Marker",
+            "Scale": 1.0,
+            "Static": false
+          }
+        },
+        "UUID": {
+          "UUID": {
+            "$binary": "MdnBJ9PzON2++vGvxqDgzA==",
+            "$type": "04"
+          }
+        },
+        "PersistentDisplayName": {
+          "DisplayName": {
+            "RawText": "0.Z3Kweebec_P2~5 #0 [Wait 10.0s] <Rotate 90.00deg>"
+          }
+        },
+        "HeadRotation": {
+          "Rotation": {
+            "Pitch": 0.0,
+            "Yaw": -0.2592894732952118,
+            "Roll": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Components": {
+        "Nameplate": {
           "Text": "0.Z3Kweebec_P2~5 #1 [Wait 10.0s] <Rotate 90.00deg>"
         },
         "PatrolPathMarker": {
@@ -100985,76 +101051,6 @@
           "Rotation": {
             "Pitch": 0.0,
             "Yaw": -2.0689587593078613,
-            "Roll": 0.0
-          }
-        }
-      }
-    },
-    {
-      "Components": {
-        "Nameplate": {
-          "Text": "0.Z3Kweebec_P2~5 #0 [Wait 10.0s] <Rotate 90.00deg>"
-        },
-        "PatrolPathMarker": {
-          "Version": 5,
-          "DisplayName": "0.Z3Kweebec_P2~5 #0 [Wait 10.0s] <Rotate 90.00deg>",
-          "UUID": {
-            "$binary": "MdnBJ9PzON2++vGvxqDgzA==",
-            "$type": "04"
-          },
-          "PathId": {
-            "$binary": "akEz4lChNvaDuJ47g06JZw==",
-            "$type": "04"
-          },
-          "PathName": "Z3Kweebec_P2",
-          "PathLength": 0,
-          "Order": 0,
-          "PauseTime": 10.0,
-          "ObsvAngle": 1.5707963705062866
-        },
-        "HiddenFromAdventurePlayer": {},
-        "Transform": {
-          "Position": {
-            "X": -3.710052490234375,
-            "Y": 18.057907104492188,
-            "Z": -9.15478515625
-          },
-          "Rotation": {
-            "Pitch": 0.0,
-            "Yaw": -0.2592894732952118,
-            "Roll": 0.0
-          }
-        },
-        "Velocity": {
-          "Velocity": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          }
-        },
-        "PrefabCopyable": {},
-        "Model": {
-          "Model": {
-            "Id": "NPC_Path_Marker",
-            "Scale": 1.0,
-            "Static": false
-          }
-        },
-        "UUID": {
-          "UUID": {
-            "$binary": "MdnBJ9PzON2++vGvxqDgzA==",
-            "$type": "04"
-          }
-        },
-        "PersistentDisplayName": {
-          "DisplayName": {
-            "RawText": "0.Z3Kweebec_P2~5 #0 [Wait 10.0s] <Rotate 90.00deg>"
-          }
-        },
-        "HeadRotation": {
-          "Rotation": {
-            "Pitch": 0.0,
-            "Yaw": -0.2592894732952118,
             "Roll": 0.0
           }
         }
