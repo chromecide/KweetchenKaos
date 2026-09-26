@@ -13,7 +13,7 @@ it (docs/content-schema.md, Layouts).
     /kk grid [n]   mark the plots' edges (the first n; PLOTS without) -- OUTSIDE what is
                    saved, so it never touches a build: safe to run again, and to add plots
     /kk slots      hand over the slot blocks -- all of them; "/kk slots hq" just HQ's
-                   (the arrival, portals 1-4), "/kk slots plot" just a restaurant plot's
+                   (the arrival, portals 1-8), "/kk slots plot" just a restaurant plot's
     /kk save [n]   save the plots as prefabs (K2_Save_00, _01, ...; the first n)
     /kk restore    paste the kept layouts back into their plots (RESTORE below) -- for a
                    new authoring world
@@ -104,6 +104,7 @@ DEPLOYED_PREFABS = (os.path.join(settings.SERVER, "mods",
 STATION_TINT, SEAT_TINT, QUEUE_TINT, PAD_TINT, SIGN_TINT = \
     "#e08a30", "#3c7ad0", "#40a060", "#8a6ad0", "#d04040"
 PORTAL_TINT, ARRIVAL_TINT = "#30c8d8", "#f0f0f0"
+PORTALS = 8                     # HQ portal slots: a restaurant for each, eventually
 SLOTS = (
     [(f"station_{role}", f"Slot: {what}", STATION_TINT)
      for role, what in (("press", "board (press)"), ("combine", "counter (combine)"),
@@ -119,7 +120,7 @@ SLOTS = (
     + [("arrival", "Slot: arrival (players appear here)", ARRIVAL_TINT)]
     # HQ only: a walk-in portal per restaurant (world.json says which).
     + [(f"portal_{n}", f"Slot: HQ portal {n} (restaurant {n} in world.json)", PORTAL_TINT)
-       for n in range(1, 5)])
+       for n in range(1, PORTALS + 1)])
 CHAIR_LOOK = {"model": "Blocks/Decorative_Sets/Tavern/Chair.blockymodel",
               "texture": "Blocks/Decorative_Sets/Tavern/Chair_Texture.png",
               "icon": "Icons/ItemsGenerated/Furniture_Tavern_Chair.png"}

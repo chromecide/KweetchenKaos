@@ -8,7 +8,7 @@ THE WORLD: HQ, and the restaurants its portals lead to (content/world/world.json
                             arrival spot; the empty restaurant is torn down
 
 HQ IS A LAYOUT, built by hand in the authoring world with two HQ slots: an ARRIVAL slot
-(where players appear) and PORTAL slots 1-4. world.json hangs a restaurant (theme + layout +
+(where players appear) and PORTAL slots 1-8 (layouts.PORTALS). world.json hangs a restaurant (theme + layout +
 rules) on a portal number.
 
 HOW THE GAME DOES IT (the Instances plugin; the shipped Forgotten Temple portal works the

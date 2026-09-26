@@ -61,7 +61,7 @@ Build the floor as part of the room: a new plot is just grass.
 | Command | Gives you |
 |---|---|
 | `/kk slots plot` | everything a restaurant room uses |
-| `/kk slots hq` | the arrival slot and portals 1–4 |
+| `/kk slots hq` | the arrival slot and portals 1–8 |
 | `/kk slots` | all of them |
 
 | Slot | Becomes | Rules |
@@ -78,7 +78,7 @@ Build the floor as part of the room: a new plot is just grass.
 | **offer pad 1–4** | the pads (offers, deliveries, recipe cards) | all four |
 | **open sign** | the sign that starts each day | one |
 | **arrival** | where players appear | set it in the floor; it becomes the floor around it. Optional: without it, players arrive in front of the room |
-| **HQ portal 1–4** | (HQ only) the portal to restaurant 1–4 in `world.json` | set in the floor |
+| **HQ portal 1–8** | (HQ only) the portal to restaurant 1–8 in `world.json` | set in the floor |
 
 Every station slot can appear more than once; the build warns if a kind is missing.
 Crates are not slots. They are delivered on the pads when a dish goes on the
@@ -178,7 +178,7 @@ plot in `layout.json`).
 | `ground` | `"void"` (floating in the sky) or `"flat"` (grass to the horizon), for HQ and every restaurant |
 | `weather` | a shipped weather held for good, e.g. `Zone1_Sunny`; leave it out for the world's own |
 | `border` | the layout pasted around every room; `"none"` for none |
-| `restaurants` | one per portal: `id` (any unique name), `name` (shown in game), `theme`, `layout`, `rules` (`standard`, or `practice` for short, easy days) and `portal` (1–4) |
+| `restaurants` | one per portal: `id` (any unique name), `name` (shown in game), `theme`, `layout`, `rules` (`standard`, or `practice` for short, easy days) and `portal` (1–8) |
 
 A restaurant can override `ground`, `weather` and `border` for itself.
 
