@@ -141,13 +141,13 @@ the others require it clear: it's the only lock in the kitchen.
 
 ### Booking desk (`booking.py`)
 
-A desk with a book on it. Pressing it during service calls the next guest in now
-instead of at the day's pace (it doesn't add guests: the day's expected ones come
-sooner). It asks the shift on the `call` channel, since the shift holds the day's
-count, and the shift says so if nobody is left to come. The desk is then busy for
-a few seconds: a stage that grows back into the free desk, like a crate
-restocking. A desk can be bought on the pads anywhere, so every room carries this
-system whether or not its layout has a desk slot.
+The desk every room has, with a book on it (PlateUp's). Pressing it during service
+calls the next guest in now instead of at the day's pace. It doesn't add guests:
+the day's expected ones come sooner, and each call **pays** a few coins (3 on day
+1, 4 on day 2, then one more every two days: the station's `pay`). With nobody
+left to come, it calls closing time. It asks the shift on the `call` channel,
+since the shift holds the day's count and the purse. No cooldown: the day's
+expected guests are the limit.
 
 ## Front of house
 

@@ -132,15 +132,6 @@
         "mid": 2,
         "late": 4
       }
-    },
-    {
-      "station": "booking_desk",
-      "price": 20,
-      "weights": {
-        "early": 1,
-        "mid": 3,
-        "late": 4
-      }
     }
   ]
 }

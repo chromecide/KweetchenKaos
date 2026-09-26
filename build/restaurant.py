@@ -43,8 +43,6 @@ import settings
 import systems
 from systems import pads, queue, seating, shift
 
-# Roles whose system every room carries, slot or not: a booking desk can be bought anywhere.
-ALWAYS_MOUNTED = ("call",)
 ZONE_MARGIN = 1          # a worked-out queue zone reaches this far round the spots and pool
 ROOM_SIZE, ROOM_MARGIN = 32, 4
 
@@ -151,7 +149,7 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
             out_blocks.append(at(layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
 
     for role, sid in by_role.items():
-        if sid not in used and role not in ALWAYS_MOUNTED:
+        if sid not in used:
             problems.append(f"no {role} slot: the room has no "
                             f"{model['stations'][sid]['label'].lower()}")
     missing = set(pads.numbers(model)) - pad_numbers
@@ -186,8 +184,7 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     box = ((-ROOM_MARGIN, -8, -ROOM_MARGIN),
            (ROOM_SIZE + ROOM_MARGIN, layouts.AUTHOR_HEIGHT + 8, ROOM_SIZE + ROOM_MARGIN))
     crates = [sid for sid, st in model["stations"].items()
-              if (st["role"] == "crate" or st["role"] in ALWAYS_MOUNTED)
-              and not st.get("upgrade_of") and sid not in used]
+              if st["role"] == "crate" and not st.get("upgrade_of")]
     for sid in sorted(used) + crates:
         effect = systems.for_station(model, sid).build(model, sid, debug)
         entities.append(_carried(f"station_{sid}", effect,

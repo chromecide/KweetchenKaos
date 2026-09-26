@@ -113,7 +113,7 @@ SLOTS = (
      for role, what in (("press", "board (press)"), ("combine", "counter (combine)"),
                         ("heat", "stove (heat)"), ("wash", "sink (wash)"), ("bin", "bin"),
                         ("rack", "plate rack (starts with plates)"),
-                        ("call", "booking desk (optional)"))]
+                        ("call", "booking desk"))]
     + [("chair", "Slot: chair (its table goes in front)", SEAT_TINT)]
     + [(f"queue_{i}", f"Slot: queue spot {i}" + (" (the front)" if i == 1 else ""), QUEUE_TINT)
        for i in range(1, 5)]
@@ -375,7 +375,7 @@ def latest_save(plot, quiet=False):
 # without. A saved plot with all of them is picked up by itself (reimport); one with some is
 # said to be unfinished.
 NEEDED = (["station_press", "station_combine", "station_heat", "station_wash", "station_bin",
-           "station_rack", "chair", "pool", "sign"] + [f"queue_{i}" for i in range(1, 5)])
+           "station_rack", "station_call", "chair", "pool", "sign"] + [f"queue_{i}" for i in range(1, 5)])
 RESTAURANT_PLOTS_FROM = 2       # 0 is the border, 1 HQ
 
 

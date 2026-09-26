@@ -356,15 +356,33 @@ def build(model, roles, debug=True, exit_on_lose=False):
                   [_set("SIGNAL_RECEIVED", signals.MONEY, e["price"], op="Increment")]
                   + logged("SIGNAL_RECEIVED", f"paid.{e['serves']}",
                            f"[shift] +{e['price']} coins ({e['label']}) - purse: {{money}}"))
-    # A BOOKING DESK CALLED (booking.py): the next guest comes now -- the day's beat fires,
-    # so it counts against the day's expected guests like any other arrival.
-    rules.add(next(num), [signals.heard(signals.CALL, "next"), _t("SIGNAL_RECEIVED", "open", 1),
-                          _t("SIGNAL_RECEIVED", "closing", 0),
-                          _t("SIGNAL_RECEIVED", "to_arrive", 1, "AtLeast")],
-              [_set("SIGNAL_RECEIVED", "beat", 1)])
-    rules.add(next(num), [signals.heard(signals.CALL, "next"),
-                          _t("SIGNAL_RECEIVED", "to_arrive", 0, "AtMost")],
-              say("SIGNAL_RECEIVED", "call_none", "[shift] Nobody else is booked in today."))
+    # A BOOKING DESK CALLED (booking.py). Guests still to come: the next one comes now (the
+    # day's beat fires, so it counts against the day's expected guests) and the call PAYS, by
+    # the day (the desk's "pay"). Nobody left: closing time now. CLOSING FIRST, while
+    # to_arrive still says nobody's left -- the call's beat only lands on the next tick.
+    desk = next((st for st in model["stations"].values() if st["role"] == "call"), None)
+    if desk:
+        rules.add(next(num), [signals.heard(signals.CALL, "next"), _t("SIGNAL_RECEIVED", "open", 1),
+                              _t("SIGNAL_RECEIVED", "closing", 0),
+                              _t("SIGNAL_RECEIVED", "to_arrive", 0, "AtMost")],
+                  [_set("SIGNAL_RECEIVED", "time_left", 0)]
+                  + say("SIGNAL_RECEIVED", "call_close", "[shift] Nobody else is booked in - "
+                                                         "closing early."))
+        pay = desk.get("pay", {"day_1": 3, "day_2": 4, "then_every_days": 2})
+
+        def call_pays(day):
+            return pay["day_1"] if day == 1 else pay["day_2"] + (day - 2) // pay["then_every_days"]
+
+        for day in range(1, last_day + 1):
+            rules.add(next(num), [signals.heard(signals.CALL, "next"),
+                                  _t("SIGNAL_RECEIVED", "open", 1), _t("SIGNAL_RECEIVED", "closing", 0),
+                                  _t("SIGNAL_RECEIVED", "to_arrive", 1, "AtLeast"),
+                                  _t("SIGNAL_RECEIVED", signals.DAY, day,
+                                     "AtLeast" if day == last_day else "Exactly")],
+                      [_set("SIGNAL_RECEIVED", "beat", 1),
+                       _set("SIGNAL_RECEIVED", signals.MONEY, call_pays(day), op="Increment")]
+                      + logged("SIGNAL_RECEIVED", f"call.{day}",
+                               f"[shift] a guest called in (+{call_pays(day)} coins)"))
     rules.add(next(num), [signals.heard(signals.GUEST, signals.SERVED)],
               [_set("SIGNAL_RECEIVED", "served", 1, op="Increment")])
     rules.add(next(num), [signals.heard(signals.GUEST, signals.TURNED_AWAY)],

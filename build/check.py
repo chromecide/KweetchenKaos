@@ -10,9 +10,8 @@ import zipfile
 
 import settings
 
-ROLES = ("press", "heat", "combine", "wash", "bin", "rack")  # exactly one station each
+ROLES = ("press", "heat", "combine", "wash", "bin", "rack", "call")  # exactly one station each
 MANY_ROLES = ("crate",)                                       # one per ingredient
-OPTIONAL_ROLES = ("call",)                                    # none or one (a booking desk)
 STEP_ROLES = {"press": ("press", "wash"), "combine": ("combine",), "heat": ("heat",),
               "source": ("crate",)}
 _shipped = None
@@ -47,7 +46,7 @@ def check(model):
             problems.append(f"stations/: exactly one '{role}' station is needed, found "
                             f"{have or 'none'}")
     for s in stations.values():
-        if s["role"] not in ROLES + MANY_ROLES + OPTIONAL_ROLES:
+        if s["role"] not in ROLES + MANY_ROLES:
             problems.append(f"{s['file']}: unknown role '{s['role']}'")
 
     # Upgrades: each names a station of its own role.

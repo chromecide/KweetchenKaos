@@ -1,9 +1,8 @@
 {
-  "$comment": "A booking desk: press it during service to call the next guest in now. Busy for cooldown_seconds after. Bought on the pads, or placed by a layout's booking desk slot.",
+  "$comment": "The booking desk every room has (PlateUp's): press it during service to call the next guest in now, for a few coins; with nobody left to come, it calls closing time.",
   "id": "booking_desk",
   "role": "call",
   "label": "Booking desk",
-  "cooldown_seconds": 10,
   "look": {
     "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
     "top": "BlockTextures/Soil_Snow.png",
@@ -20,7 +19,11 @@
   },
   "words": {
     "free": "Booking desk - press to call the next guest in now",
-    "busy": "Booking desk - calling...",
     "closed": "The booking desk only takes calls while the restaurant is open."
+  },
+  "pay": {
+    "day_1": 3,
+    "day_2": 4,
+    "then_every_days": 2
   }
 }
