@@ -31,6 +31,10 @@
     {
       "item": "bread_cooked",
       "price": 5
+    },
+    {
+      "item": "bread_well",
+      "price": 6
     }
   ],
   "unlock": "card",

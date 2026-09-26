@@ -69,6 +69,7 @@ def ids(model):
             "set_taken": lambda i: gid(f"queue_taken_{i}"),
             "set_taken_any": gid("queue_taken_any"),
             "set_held": gid("queue_held"),
+            "set_spot_any": gid("queue_spot_any"),
             "set_pool": gid("queue_pool_marker"),
             "bumped": gid("queue_bumped"),
             "pulse": lambda colour: gid(f"queue_pulse_{colour}"),
@@ -81,6 +82,14 @@ def ids(model):
 def release():
     """The ACTION a guest runs once it has arrived where the front sent it (sat down)."""
     return signals.from_npc(SIGNAL_KEY, RELEASE, tag=SPOT_TAG)
+
+
+def off_the_line(model):
+    """A sensor: I'm not standing on any queue spot -- where a guest may despawn. A guest that
+    vanishes ON a spot leaves it taken for ever: the engine fires the spot's EXIT while the
+    vanishing guest still counts as inside, so "nobody left" never holds, and the whole line
+    stalls behind it (seen: a guest walking out despawned on spot 1)."""
+    return npc.no(npc.on_block(ids(model)["set_spot_any"]))
 
 
 def _drop_claims():
@@ -307,6 +316,9 @@ def build(model, guests, debug=True, patience=None):
                   "Any occupied spot: negated, it means 'not in the queue yet'.")
     blocks.station_block(q["pool"], "Queue pool", pool, words["pool"], note,
                          tint=pool.get("tint"), use=False)
+    npc.block_set(q["set_spot_any"], [q["free"](i) for i in range(1, LENGTH + 1)]
+                  + [q["taken"](i) for i in range(1, LENGTH + 1)] + [q["held"]],
+                  "Any queue spot, whatever its state: where a guest must never vanish.")
     npc.block_set(q["set_pool"], [q["pool"]], "Where guests arrive and wait.")
     npc.entity_effect(q["bumped"], BUMP_SECONDS, "#d03020", "#f07050",
                       "Put on a guest by a spot that already had someone: back to the pool.")

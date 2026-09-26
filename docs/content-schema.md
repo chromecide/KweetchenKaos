@@ -310,6 +310,9 @@ own crate with no extra work.
   and output can sit on a counter.
 - Every `serve` entry names an item that exists (plating itself is built in,
   so guests are only ever handed something on a plate).
+- A dish that serves one stage of its cooking serves every stage the stove makes
+  for it: cooked AND well done (burnt is never served). Leave one out and the
+  build stops, naming the missing item.
 - Every look path exists in the shipped assets.
 
 Every check names the file, the field and the id it failed on.

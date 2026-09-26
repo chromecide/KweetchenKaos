@@ -18,6 +18,12 @@
   guest in now, for coins (3 on day 1, 4 on day 2, +1 every two days); with nobody left
   to come, it calls closing time. Every layout needs a booking desk slot.
 - Fixed: buying a plate rack gave an item that doesn't exist.
+- Fixed: guests could stop coming in. A guest walking out could vanish while standing on
+  a queue spot, and that spot then stayed "occupied" for good, so the line never moved
+  up. Guests now only vanish once they're off the line.
+- Fixed: well-done roasted corn, bread and mushroom kebab couldn't be plated. Every
+  cooked dish now serves its well-done version too (one coin more), and the build
+  refuses a dish that leaves one out.
 - Hints show the interact key, the way the game's doors do.
 
 ## 0.1.0 (2026-09-26)

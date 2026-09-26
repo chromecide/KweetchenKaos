@@ -45,8 +45,15 @@ def roles(model):
 def _leaving(model):
     going = npc.flag("guests_going")
     return [
-        npc.branch("Walked off long enough: go (stands in for leaving by the door).",
-                   npc.all_of(going, npc.stopped("guests_walk")), None, [{"Type": "Despawn"}]),
+        npc.branch("Walked off long enough, and not on a queue spot: go (stands in for "
+                   "leaving by the door). Never ON a spot -- see queue.off_the_line.",
+                   npc.all_of(going, npc.stopped("guests_walk"), queue.off_the_line(model)),
+                   None, [{"Type": "Despawn"}]),
+        npc.branch("Walked off long enough, but standing on a queue spot: keep going, right "
+                   "to the pool, to get off the line.",
+                   npc.all_of(npc.near(queue.ids(model)["set_pool"]), going,
+                              npc.stopped("guests_walk")),
+                   {"Type": "Seek", "StopDistance": 0.5, "SlowDownDistance": 1.5}),
         npc.branch("Walking off towards the pool: away from the tables.",
                    npc.all_of(npc.near(queue.ids(model)["set_pool"]), going),
                    {"Type": "Seek", "StopDistance": 3.0, "SlowDownDistance": 4.0}),

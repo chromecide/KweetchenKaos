@@ -31,6 +31,10 @@
     {
       "item": "roasted_corn_cooked",
       "price": 4
+    },
+    {
+      "item": "roasted_corn_well",
+      "price": 5
     }
   ],
   "unlock": "start",

@@ -46,6 +46,10 @@
     {
       "item": "mushroom_kebab_cooked",
       "price": 7
+    },
+    {
+      "item": "mushroom_kebab_well",
+      "price": 8
     }
   ],
   "unlock": "card",

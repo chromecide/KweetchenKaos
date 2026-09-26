@@ -7,12 +7,12 @@ Ten dishes, leaning into forest food, made with the stations that exist (no code
 | Dish | Chain | Unlock | Price | Guests |
 |---|---|---|---|---|
 | Berry salad | lettuce → chop; + berries → combine (no cooking) | starter | 4 | +3 |
-| Roasted corn | corn → stove | starter | 4 | +2 |
+| Roasted corn | corn → stove | starter | 4 (well done 5) | +2 |
 | Pumpkin pie | pumpkin → chop; + dough → combine → stove | starter | 8 (well done 9) | +1 |
 | Mushroom salad | lettuce → chop; mushroom → chop; combine (no cooking) | card | 6 | +3 |
 | Fruit kebab | apple → chop; + stick → combine (no cooking) | card | 5 | +3 |
-| Mushroom kebab | mushroom → chop; + stick → combine → stove | card | 7 | +2 |
-| Bread | flour → knead (dough) → stove | card | 5 | +2 |
+| Mushroom kebab | mushroom → chop; + stick → combine → stove | card | 7 (well done 8) | +2 |
+| Bread | flour → knead (dough) → stove | card | 5 (well done 6) | +2 |
 | Apple pie | as pumpkin | card | 8 (well done 9) | +1 |
 | Meat pie | as pumpkin | card | 8 (well done 9) | +1 |
 | Mushroom pie | as pumpkin | card | 8 (well done 9) | +1 |
@@ -25,7 +25,7 @@ upgrades about ten (45 as a kit, 60 ready-made), as PlateUp's appliances do (20 
 see `content/rules/standard/offers.json`.
 
 Ingredients from crates: flour, pumpkin, apple, raw meat, mushroom, lettuce, berries,
-corn, skewer sticks. Only the pies have a well-done order. Chopped lettuce is the green
+corn, skewer sticks. Every cooked dish also has a well-done order (one coin more). Chopped lettuce is the green
 petal; the raw mushroom kebab is the cooked model tinted pale (`#e8dcc8`); corn's and
 bread's raw stages on the stove are the corn and the dough.
 

@@ -115,6 +115,7 @@ def load_theme(theme_id):
                 look["tint"] = st["tint"]
             look.update(s.get("stage_looks", {}).get(st["id"], {}))
             gives = st["gives"]
+            made = gives == "new"
             if gives == "input":
                 gives = s["input"]
             elif gives == "new":
@@ -130,7 +131,10 @@ def load_theme(theme_id):
             stages.append({"id": st["id"], "word": st["word"], "look_spec": look,
                            "seconds": None if last else seconds, "gives": gives,
                            # The stage a safety stove holds (it all but stops growing).
-                           "safety": st.get("safety", False)})
+                           "safety": st.get("safety", False),
+                           # A food of its own (cooked, well done): servable. Not the raw
+                           # input or the shared burnt.
+                           "made": made})
         return {"type": "heat", "station": s["station"], "ladder": ladder["id"],
                 "input": s["input"], "owner": owner, "owner_label": owner_label,
                 "stages": stages, "file": at}
@@ -205,6 +209,21 @@ def load_theme(theme_id):
         read_steps(d["id"], d["label"], d.get("steps", []), f)
         for e in d.get("serve", []):
             serving.append((f, d, e))
+    # EVERY WAY A DISH CAN COME OFF THE STOVE IS SERVABLE: a dish that serves one stage of
+    # its heat step (cooked) serves them all (well done too) -- a well done corn that
+    # couldn't be plated was the bug this catches.
+    for f, d in many("dishes"):
+        served = {e["item"] for e in d.get("serve", [])}
+        for s in steps:
+            if s["type"] != "heat" or s.get("owner") != d.get("id"):
+                continue
+            made = [st["gives"] for st in s["stages"] if st.get("made")]
+            if served & set(made):
+                for food in made:
+                    if food not in served:
+                        problems.append(f"{f}: serves {' and '.join(sorted(served & set(made)))} "
+                                        f"but not '{food}' - add it to serve (a stage that "
+                                        f"comes off the stove must be plateable)")
     for f, d, e in serving:
         food = e["item"]
         if food not in items:
