@@ -86,9 +86,9 @@ pack/               build output (not committed)
 
 ## Status
 
-Playable end to end: HQ, a test kitchen, the full run (days, guests, offers,
-recipe cards, upgrades, losing). One theme (kitchen, with four pies), one
-restaurant room, two rules sets. Every item and system loads with nothing
+Playable end to end: HQ, three restaurants, the full run (days, guests, offers,
+recipe cards, upgrades, the booking desk, messes and the mop, losing). One theme
+(kitchen, ten dishes), two rules sets. Every item and system loads with nothing
 rejected, and each system was tested in game on its own before being put
 together.
 
@@ -96,7 +96,45 @@ This started as the second version of the Kitchen POC (`../tools`, `../pack`),
 which is untouched and still loads beside it: every game id here starts with
 `K2_`, so nothing collides.
 
+## Contributing
+
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md). Every contributor
+accepts the short [Contributor License Agreement](CLA.md) once, in their first pull
+request.
+
 ## Licence
 
 MIT: see [LICENSE](LICENSE). Hytale's own models, textures and prefabs are
 referenced by path, never copied into this project.
+
+## AI Use Disclosure
+
+Kweetchen Kaos was made by one person, Chromecide, working with an AI coding agent,
+Claude Code. It is worth being plain about what that means.
+
+- The idea, the design decisions, what to build next and what to leave out came from
+  a person. So did every test in the game: each system was played on its own in a
+  test world before it went into the game, then played again as part of a full run,
+  and the ones that did not hold up were reworked. Most of what is in the game is
+  there because playing it showed it was needed.
+- Nothing is called working because it was written carefully. What counts is seeing
+  it work in game; the build also checks the content and reads the server log for
+  anything the game refused, and every release is booted from the zip that ships.
+- Most of the Python build, the content files and these documents were written by
+  the agent under that direction, in a terminal, with the person reading the results
+  in the game rather than the code. The restaurant rooms, HQ and the backdrop were
+  built by hand, in the game. Hytale's server source and shipped files were read to
+  learn how the game works, never copied; the rule is in
+  [CONTRIBUTING.md](CONTRIBUTING.md).
+- There is no AI in the mod. It is plain game data: no plugin code, and it makes no
+  network calls and sends nothing anywhere.
+- No generative AI imagery, ever. Everything players see is the game's own art,
+  referenced by path, except one image: a thin white band that trims the stations,
+  drawn by a script pixel by pixel from numbers. Any art the mod adds will be made by
+  people, and contributions containing AI-generated images are rejected; see
+  [CONTRIBUTING.md](CONTRIBUTING.md).
+
+If that is not something you want to run on your server, that is a fair choice, and
+the whole repository is here to read. Bugs are ours whichever of us typed them;
+please report them. Contributions are welcome from people working with or without
+such tools, on the same terms.
