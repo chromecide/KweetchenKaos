@@ -98,10 +98,7 @@ Word card text as **"X% chance a guest is Y"**, not "X% of guests".
 
 | Piece | State |
 |---|---|
-| Impatient mood | built (the probe runs clocks at ½; the cards use ⅔) |
-| Messy mood | built |
-| Separate tracks | to build: a mark per track, read once each |
-| Relaxed mood | to build: a mark, and longer clocks |
+| Moods on separate tracks | built: `systems/moods.py` (the `moods` spike) -- impatient ⅔, relaxed 1.5x, messy |
 | `guests` effect | the shift's extra-guests count, already there |
 | `tip` effect | built: the shift's tip level (`tips` spike) |
 | Card days (every 3rd from day 4, must pick, the sign held, then the blueprints) | built, for recipe cards |

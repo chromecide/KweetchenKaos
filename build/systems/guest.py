@@ -42,40 +42,6 @@ def pulse_id(model, colour):
     return settings.game_id(model["theme"]["prefix"], f"guest_pulse_{colour}")
 
 
-# MOODS: a guest can arrive with a mood (a queue spot marks it at random; it reads the mark
-# once, into a flag, the first time it stands in line). At most one: the spot's LAST roll
-# wins (queue.py). IMPATIENT: every patience clock runs at this fraction. MESSY: it leaves a
-# mess on the floor as it walks off (what the composer does with the flag: build/guests.py).
-IMPATIENT = 0.5
-MOODS = ("impatient", "messy")
-mood_flag = lambda mood: F(mood)
-MOOD_FLAG = mood_flag("impatient")
-
-
-def mood_effect(model, mood="impatient"):
-    """The mark a queue spot puts on an arriving guest with this mood. Invisible (a tint
-    would wash the model out); it only has to last until the guest reads it."""
-    gid = settings.game_id(model["theme"]["prefix"], f"guest_mood_{mood}")
-    pack.write(pack.out("Entity", "Effects", settings.NAMESPACE, f"{gid}.json"), {
-        "$Comment": f"An arriving guest marked {mood}. See build/systems/guest.py.",
-        "Duration": 600.0, "OverlapBehavior": "Overwrite"})
-    return gid
-
-
-def read_mood(model):
-    """Branches (each Continue) for the moment a guest first stands in line: read the mark
-    once, into a flag, and never again."""
-    decided = F("mood_read")
-    out = [npc.branch(f"First time in line, and marked {mood}: remember it.",
-                      npc.all_of(npc.no(npc.flag(decided)), npc.has_effect(mood_effect(model, mood))),
-                      None, [npc.set_flag(mood_flag(mood)), npc.name_tag(f"Waiting ({mood})")],
-                      cont=True)
-           for mood in MOODS]
-    return out + [npc.branch("First time in line: the mood (or none) is read, for good.",
-                             npc.no(npc.flag(decided)), None, [npc.set_flag(decided)],
-                             cont=True)]
-
-
 def build(model, debug=True):
     """What every guest shares: the pulse effects."""
     for colour, (bottom, top, on, _) in PULSES.items():
@@ -105,14 +71,16 @@ def _phase(model, tag, patience, on_out, name_text):
                                 npc.once(F(f"{tag}_warn1"), round(secs * WARN_FIRST, 2)),
                                 npc.once(F(f"{tag}_warn2"), round(secs * WARN_LAST, 2)),
                                 npc.name_tag(text)]
-    out += [
-        npc.branch(f"Phase {tag}: waiting.", started, npc.STILL),
-        npc.branch(f"Phase {tag}: start its clocks, SHORTER - an impatient guest.",
-                   npc.flag(MOOD_FLAG), npc.STILL,
-                   start(round(patience * IMPATIENT, 2), f"{name_text} (impatient)")),
-        npc.branch(f"Phase {tag}: start its clocks (the flag proves they were started).",
-                   {"Type": "Any"}, npc.STILL, start(patience, name_text)),
-    ]
+    # ITS MOODS (systems/moods.py: model["moods"]["combos"], most specific first): the clocks
+    # scaled by their patience factor, and the moods on its name tag.
+    out.append(npc.branch(f"Phase {tag}: waiting.", started, npc.STILL))
+    for combo in model["moods"]["combos"]:
+        out.append(npc.branch(
+            f"Phase {tag}: start its clocks - {combo['words']} (x{combo['patience']:.2f}).",
+            npc.all_of(*[npc.flag(f) for f in combo["flags"]]), npc.STILL,
+            start(round(patience * combo["patience"], 2), f"{name_text} ({combo['words']})")))
+    out.append(npc.branch(f"Phase {tag}: start its clocks (the flag proves they were started).",
+                          {"Type": "Any"}, npc.STILL, start(patience, name_text)))
     return out
 
 

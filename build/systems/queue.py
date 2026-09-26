@@ -236,17 +236,16 @@ def _spot_rules(q, boost_by, debug, moods=()):
     rules.add(61, [signals.heard(SIGNAL_KEY, RELEASE), here("SIGNAL_RECEIVED", [q["held"]])],
               [swap("SIGNAL_RECEIVED", [q["held"]], q["free"](1))]
               + rep("released", "front released - next in line moves up", "SIGNAL_RECEIVED"))
-    # MOODS: [(entity effect, chance)] -- a guest stepping onto a spot is marked with the
-    # effect at that chance. Only its FIRST spot counts: the guest reads the mark once, the
-    # first time it stands in line, and never again. (Rolled in the pool at first, a guest
-    # wandering in and out of it while the line was full rolled again each time.) The queue
-    # only marks; what a mood means is the guest's business (systems/guest.py).
-    # LAST ROLL WINS: a roll that lands takes off every other mood, so a guest has one.
-    for k, (effect, chance) in enumerate(moods):
+    # MOODS (model["moods"]["arrival"], from systems/moods.py): [(mark, chance, [marks it
+    # takes off])] -- a guest stepping onto a spot is marked at that chance. Only its FIRST
+    # spot counts: the guest reads its marks once, the first time it stands in line. The
+    # queue only marks; what a mood is, and means, is the mood system's business. A roll
+    # that lands takes off the other moods on its track: last roll wins, within a track.
+    for k, (effect, chance, others) in enumerate(moods):
         rules.add(40 + k, [{"Type": "RandomChanceCondition", "Event": "ENTER",
                             "Chance": float(chance)}],
                   [{"Type": "EntityEffect", "Event": "ENTER", "Effect": other,
-                    "Mode": "Remove"} for other, _ in moods if other != effect]
+                    "Mode": "Remove"} for other in others]
                   + [{"Type": "EntityEffect", "Event": "ENTER", "Effect": effect,
                       "Mode": "Apply"}]
                   + rep(f"mood.{k}", f"a guest stepped on, marked {effect}", "ENTER"))
@@ -340,7 +339,7 @@ def build(model, guests, debug=True, patience=None):
         npc.entity_effect(q["pulse"](colour), on, bottom, top,
                           "The queue's impatience, on every queued guest. See build/systems/queue.py.")
 
-    moods = model.get("arrival_moods", ())
+    moods = model["moods"]["arrival"]
     spot_rules = _spot_rules(q, boost_by, debug, moods)
     pool_rules = _pool_rules(q, guests, debug)
     _built["spot"] = _entity("queue_spot", spot_rules, 3.0,

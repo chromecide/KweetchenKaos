@@ -42,7 +42,7 @@ import pack
 import settings
 import signals
 import systems
-from systems import hazards, pads, queue, seating, shift
+from systems import hazards, moods, pads, queue, seating, shift
 
 ZONE_MARGIN = 1          # a worked-out queue zone reaches this far round the spots and pool
 ROOM_SIZE, ROOM_MARGIN = 32, 4
@@ -94,6 +94,9 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
 
     roles = guests.roles(model)
     q = queue.ids(model)
+    # The moods first: the queue rolls them and the guests read them (systems/moods.py).
+    # None in play yet in a restaurant -- customer cards will bring them.
+    moods.build(model)
     built_q = queue.build(model, roles, debug, patience=patience)
     seating_effect = seating.build(model, debug)
     guests.build(model, debug)

@@ -25,7 +25,7 @@ closed door blocks NPC pathfinding). A different exit replaces _leaving() and no
 import npc
 import settings
 import signals
-from systems import guest, queue, seating
+from systems import guest, moods, queue, seating
 
 WALK_OFF = 4.0
 
@@ -48,7 +48,7 @@ def _leaving(model):
     return [
         npc.branch("Messy, and just got up (still on its chair): ask for a mess round the "
                    "chair, once (hazards.py puts it down).",
-                   npc.all_of(npc.flag(guest.mood_flag("messy")),
+                   npc.all_of(npc.flag(model["moods"]["flags"]["messy"]),
                               npc.no(npc.flag("guests_messed"))),
                    None, [signals.from_npc(signals.HAZARD_KEY, signals.MESS,
                                            tag=signals.HAZARD_KEY),
@@ -83,9 +83,9 @@ def build(model, debug=True):
     for entry in model["menu"]:
         seated, interactions = guest.fragment(model, entry, on_fed=seating.left_fed(),
                                               on_unfed=seating.left_unfed())
-        # Read a mood the pool marked it with, once: the first time it stands in line.
+        # Read the moods a queue spot marked it with, once: the first time it stands in line.
         mood = [dict(b, Sensor=npc.all_of(npc.on_block(queue.ids(model)["set_taken_any"]),
-                                          b["Sensor"])) for b in guest.read_mood(model)]
+                                          b["Sensor"])) for b in moods.read_branches(model)]
         queue_state = mood + queue.guest_fragment(model, ready=seating.chair_free(model),
                                                   next_state="Seat", debug=debug)
         seat_state = seating.guest_fragment(

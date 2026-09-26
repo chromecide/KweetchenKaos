@@ -203,6 +203,19 @@ spike.
 
 ## Front of house
 
+### Moods (`moods.py`)
+
+What kind of guest this is. As a guest first steps into the line, each mood in
+play is rolled at its chance, and the guest reads the result once, for good.
+Moods sit on **tracks**, rolled independently: **patience** (impatient: every
+patience clock ⅔ as long; relaxed: 1.5 times) and **tidiness** (messy: always a
+mess round its chair as it gets up). A guest has at most one mood per track, and
+can have one from each; last roll wins within a track. They show on its name tag,
+e.g. "Ready to order (impatient, messy)". Which moods are in play comes from a
+spike's `moods`, and from customer cards (to come). The mood system hands the
+others plain data in the model -- what a queue spot rolls, and each mix of moods'
+patience factor and words -- so no system imports it.
+
 ### Queue (`queue.py`)
 
 Guests appear at the **pool**, then move up the **spots** one at a time
@@ -395,7 +408,7 @@ Pasted anywhere, the room works. Two things make that possible:
   | `counter` | combining and plating | two counters; dough, chopped pumpkin, a plate, cooked corn |
   | `rack` | the plate rack | two racks, a sink; a dirty plate |
   | `dish:<dish>` | one recipe, start to paid | its chain's stations and crates, a bin if it cooks; plates; callers for its orders |
-  | `impatient` | random impatient guests | the front of house only |
+  | `moods` | guests' moods on their two tracks | the front of house, hazards (for messy guests' messes) |
   | `tips` | the tip level paid on every guest served, and card days | a small kitchen (board, 2 counters, stove, bin, rack), the shift, a tip dial |
   | `mats` | mats soaking up, overflowing, and rubber mats | a sink, the mop stand, a mess dispenser; 6 mats, 3 rubber mats, dirty plates |
   | `hazards` | every hazard and the mop | sink, board, stove, mop stand, the front (every guest messy), a mess dispenser; a dirty plate, a pumpkin, corn |

@@ -66,7 +66,7 @@ KITCHEN = {"crates": 1, "board": 2, "counter": 3, "stove": 2, "bin": 1, "sink": 
 #   give      items handed over by /kk kit (item ids); without it, what the stations take
 #             that none of them make (spike.kit)
 #   front     the queue, chairs and guests (guest callers, or the shift in a run)
-#   moods     {mood: chance} a guest arrives with (systems/guest.py)
+#   moods     {mood: chance} a guest arrives with (systems/moods.py)
 #   hazards   the hazard system mounted (systems/hazards.py); a station's hazard only
 #             drops where it is
 SPIKES = {
@@ -81,9 +81,12 @@ SPIKES = {
     # cooked dish): the counter's two jobs.
     "counter": {"stations": {"counter": 2},
                 "give": ["dough", "pumpkin_chopped", "plate", "roasted_corn_cooked"]},
-    # PROBE: guests who arrive impatient, at random. Only the front of house: an impatient
-    # guest shows it on its name tag and walks out angry in half the time -- no kitchen needed.
-    "impatient": {"stations": {}, "front": True, "moods": {"impatient": 0.5}},
+    # MOODS on their two tracks (systems/moods.py). Only the front of house, and hazards so a
+    # messy guest's mess shows: impatient 40% then relaxed 40% on the patience track (last
+    # roll wins: ~40% relaxed, ~24% impatient), messy 50% on its own track. Moods show on
+    # the name tag; an impatient guest walks out angry in ⅔ the time, a relaxed one 1.5x.
+    "moods": {"stations": {}, "front": True, "hazards": True,
+              "moods": {"impatient": 0.4, "relaxed": 0.4, "messy": 0.5}},
     # PROBE: every hazard and its source. A messy guest (every one here) leaves a mess round
     # its chair; the sink spills, the board drops scraps, burnt food off the stove scorches;
     # a dispenser drops a mess round you; the mop is on its stand. One raw thing to chop,
@@ -350,10 +353,8 @@ def build(model, name, debug=True):
                         systems.tags_for(model, st, {"spike": st})) for st in stations]
     front = None
     model["in_run"] = spike.get("run", False)
-    if spike.get("moods"):
-        from systems import guest as guest_system
-        model["arrival_moods"] = [(guest_system.mood_effect(model, mood), chance)
-                                  for mood, chance in spike["moods"].items()]
+    # The moods in play (systems/moods.py, built with the front of house).
+    model["mood_chances"] = spike.get("moods", {})
     if spike.get("front"):
         front_volumes, front_layout = spike_front.build(model, GROUND, debug,
                                                         run=spike.get("run", False))

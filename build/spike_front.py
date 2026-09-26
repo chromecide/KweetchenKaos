@@ -21,7 +21,7 @@ import guests
 import settings
 import signals
 import volumes as v
-from systems import pads, queue, seating, shift
+from systems import moods, pads, queue, seating, shift
 
 QUEUE_X, SPOT_Z, POOL_Z = 2, (8, 10, 12, 14), 18   # spot 1 (the front) first
 CHAIRS_X, CHAIRS_Z = (12, 14, 16), 4
@@ -38,6 +38,8 @@ def caller_id(model, entry):
 def build(model, ground, debug=True, run=False):
     """Write the front of house; return (volumes, (layout blocks, layout entities))."""
     roles = guests.roles(model)
+    # The moods first: the queue rolls them and the guests read them (systems/moods.py).
+    moods.build(model)
     built = queue.build(model, roles, debug, patience=SPIKE_PATIENCE)
     seating.build(model, debug)
     guests.build(model, debug)
