@@ -27837,6 +27837,12 @@
     },
     {
       "x": -3,
+      "y": 4,
+      "z": 1,
+      "name": "K2_Slot_Station_Call"
+    },
+    {
+      "x": -3,
       "y": 7,
       "z": 1,
       "name": "Rock_Basalt"
@@ -91986,6 +91992,13 @@
     },
     {
       "x": -3,
+      "y": 4,
+      "z": 1,
+      "name": "Empty",
+      "level": 0
+    },
+    {
+      "x": -3,
       "y": 7,
       "z": 1,
       "name": "Empty",
@@ -129614,6 +129627,114 @@
     {
       "Components": {
         "Nameplate": {
+          "Text": "Kweebec_Razorleaf_Patrol"
+        },
+        "HiddenFromAdventurePlayer": {},
+        "SpawnMarkerComponent": {
+          "SpawnMarker": "Kweebec_Razorleaf_Patrol",
+          "RespawnTime": 0.0,
+          "SpawnCount": 0,
+          "NPCReferences": [],
+          "PersistedFlock": {},
+          "SpawnPosition": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        },
+        "Transform": {
+          "Position": {
+            "X": -1.5925264282226408,
+            "Y": 32.0,
+            "Z": -2.186547265624995
+          },
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 0.542616069316864,
+            "Roll": 0.0
+          }
+        },
+        "Intangible": {},
+        "PrefabCopyable": {},
+        "Model": {
+          "Model": {
+            "Id": "NPC_Spawn_Marker",
+            "Scale": 1.0,
+            "Static": false
+          }
+        },
+        "UUID": {
+          "UUID": {
+            "$binary": "DSfUukoPM/CdSjvQGWUoNQ==",
+            "$type": "04"
+          }
+        },
+        "HeadRotation": {
+          "Rotation": {
+            "Pitch": 0.0,
+            "Yaw": -2.59897780418396,
+            "Roll": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Components": {
+        "Nameplate": {
+          "Text": "Kweebec_Razorleaf_Patrol"
+        },
+        "HiddenFromAdventurePlayer": {},
+        "SpawnMarkerComponent": {
+          "SpawnMarker": "Kweebec_Razorleaf_Patrol",
+          "RespawnTime": 0.0,
+          "SpawnCount": 0,
+          "NPCReferences": [],
+          "PersistedFlock": {},
+          "SpawnPosition": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        },
+        "Transform": {
+          "Position": {
+            "X": -3.7734451293945312,
+            "Y": 18.066993713378906,
+            "Z": -8.4345703125
+          },
+          "Rotation": {
+            "Pitch": 0.0,
+            "Yaw": -3.0270557403564453,
+            "Roll": 0.0
+          }
+        },
+        "Intangible": {},
+        "PrefabCopyable": {},
+        "Model": {
+          "Model": {
+            "Id": "NPC_Spawn_Marker",
+            "Scale": 1.0,
+            "Static": false
+          }
+        },
+        "UUID": {
+          "UUID": {
+            "$binary": "IIH5DMlQN8mbAU6Ep5xp1w==",
+            "$type": "04"
+          }
+        },
+        "HeadRotation": {
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 0.11453573405742645,
+            "Roll": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Components": {
+        "Nameplate": {
           "Text": "0.Z3Kweebec_P2~6 #4 [Wait 10.0s] <Rotate 180.00deg>"
         },
         "PatrolPathMarker": {
@@ -129691,10 +129812,6 @@
           "DisplayName": "0.Z3Kweebec_P2~6 #0 [Wait 10.0s] <Rotate 90.00deg>",
           "UUID": {
             "$binary": "gHUc7pOONAa08YseFykYqA==",
-            "$type": "04"
-          },
-          "PathId": {
-            "$binary": "akEz4lChNvaDuJ47g06JZw==",
             "$type": "04"
           },
           "PathName": "Z3Kweebec_P2",
@@ -130113,6 +130230,10 @@
             "$binary": "MdnBJ9PzON2++vGvxqDgzA==",
             "$type": "04"
           },
+          "PathId": {
+            "$binary": "akEz4lChNvaDuJ47g06JZw==",
+            "$type": "04"
+          },
           "PathName": "Z3Kweebec_P2",
           "PathLength": 0,
           "Order": 0,
@@ -130162,114 +130283,6 @@
           "Rotation": {
             "Pitch": 0.0,
             "Yaw": -0.2592894732952118,
-            "Roll": 0.0
-          }
-        }
-      }
-    },
-    {
-      "Components": {
-        "Nameplate": {
-          "Text": "Kweebec_Razorleaf_Patrol"
-        },
-        "HiddenFromAdventurePlayer": {},
-        "SpawnMarkerComponent": {
-          "SpawnMarker": "Kweebec_Razorleaf_Patrol",
-          "RespawnTime": 0.0,
-          "SpawnCount": 0,
-          "NPCReferences": [],
-          "PersistedFlock": {},
-          "SpawnPosition": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          }
-        },
-        "Transform": {
-          "Position": {
-            "X": -1.5925264282226408,
-            "Y": 32.0,
-            "Z": -2.186547265624995
-          },
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 0.542616069316864,
-            "Roll": 0.0
-          }
-        },
-        "Intangible": {},
-        "PrefabCopyable": {},
-        "Model": {
-          "Model": {
-            "Id": "NPC_Spawn_Marker",
-            "Scale": 1.0,
-            "Static": false
-          }
-        },
-        "UUID": {
-          "UUID": {
-            "$binary": "DSfUukoPM/CdSjvQGWUoNQ==",
-            "$type": "04"
-          }
-        },
-        "HeadRotation": {
-          "Rotation": {
-            "Pitch": 0.0,
-            "Yaw": -2.59897780418396,
-            "Roll": 0.0
-          }
-        }
-      }
-    },
-    {
-      "Components": {
-        "Nameplate": {
-          "Text": "Kweebec_Razorleaf_Patrol"
-        },
-        "HiddenFromAdventurePlayer": {},
-        "SpawnMarkerComponent": {
-          "SpawnMarker": "Kweebec_Razorleaf_Patrol",
-          "RespawnTime": 0.0,
-          "SpawnCount": 0,
-          "NPCReferences": [],
-          "PersistedFlock": {},
-          "SpawnPosition": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          }
-        },
-        "Transform": {
-          "Position": {
-            "X": -3.7734451293945312,
-            "Y": 18.066993713378906,
-            "Z": -8.4345703125
-          },
-          "Rotation": {
-            "Pitch": 0.0,
-            "Yaw": -3.0270557403564453,
-            "Roll": 0.0
-          }
-        },
-        "Intangible": {},
-        "PrefabCopyable": {},
-        "Model": {
-          "Model": {
-            "Id": "NPC_Spawn_Marker",
-            "Scale": 1.0,
-            "Static": false
-          }
-        },
-        "UUID": {
-          "UUID": {
-            "$binary": "IIH5DMlQN8mbAU6Ep5xp1w==",
-            "$type": "04"
-          }
-        },
-        "HeadRotation": {
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 0.11453573405742645,
             "Roll": 0.0
           }
         }

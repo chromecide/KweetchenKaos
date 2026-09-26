@@ -25067,6 +25067,12 @@
     },
     {
       "x": 1,
+      "y": 18,
+      "z": 2,
+      "name": "K2_Slot_Station_Call"
+    },
+    {
+      "x": 1,
       "y": 22,
       "z": 2,
       "name": "K2_Slot_Barrier"
@@ -98688,6 +98694,13 @@
     {
       "x": 1,
       "y": 17,
+      "z": 2,
+      "name": "Empty",
+      "level": 0
+    },
+    {
+      "x": 1,
+      "y": 18,
       "z": 2,
       "name": "Empty",
       "level": 0
