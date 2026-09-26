@@ -194,7 +194,16 @@ def _lay_edges(i):
     return out
 
 
-def write_slots():
+def write_slots(model=None):
+    """The slot blocks. Each shows its name when you look at it (a hint needs an F action,
+    so they all have one that does nothing). With a `model`, a STATION slot looks like that
+    theme's station -- a stove slot is an iron stove with its trim -- so a room reads as it
+    will play; the fixtures keep their tinted markers."""
+    blocks.write_noop()
+    stations = {}
+    for st in (model or {}).get("stations", {}).values():
+        if not st.get("upgrade_of"):
+            stations.setdefault(st["role"], st)
     blocks.station_block(BORDER_EDGE, "Plot edge", SLOT_LOOK,
                          "Plot edge (outside what is saved)",
                          "Marks a plot's edge. See build/layouts.py.", tint=EDGE_TINT,
@@ -206,12 +215,20 @@ def write_slots():
                      "CustomModelTexture": [{"Texture": CHAIR_LOOK["texture"], "Weight": 1}],
                      "DrawType": "Model", "Material": "Solid", "Opacity": "Transparent",
                      "HitboxType": "Chair_Small", "Tint": [tint], "VariantRotation": "NESW",
-                     "BlockSoundSetId": "Wood", "PhysicalMaterialId": "Wood"}
+                     "BlockSoundSetId": "Wood", "PhysicalMaterialId": "Wood",
+                     "InteractionHint": blocks.hint(slot_id(name), label),
+                     "Interactions": {"Use": blocks.NOOP}}
             blocks.item(slot_id(name), label, CHAIR_LOOK["icon"], block,
                         "A layout slot. See build/layouts.py.")
+        elif name.startswith("station_") and name[len("station_"):] in stations:
+            st = stations[name[len("station_"):]]
+            # Its free look: no turn (you place it the way you like) and no in-use states.
+            look = {k: v for k, v in st["look"].items() if k in ("sides", "top", "trim", "sound")}
+            blocks.station_block(slot_id(name), label, look, label,
+                                 "A layout slot. See build/layouts.py.", tint=st["look"].get("tint"))
         else:
             blocks.station_block(slot_id(name), label, SLOT_LOOK, label,
-                                 "A layout slot. See build/layouts.py.", tint=tint, use=False)
+                                 "A layout slot. See build/layouts.py.", tint=tint)
 
 
 def slot_kit(name):

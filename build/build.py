@@ -126,7 +126,7 @@ def main(argv):
     pack.begin()
     n = items.write_all(model)
     # The layout workshop is always there, whatever the spike.
-    layouts.write_slots()
+    layouts.write_slots(model)
     layouts.write_authoring()
     if name in ("world", "hq"):
         # HQ and the restaurants in content/world/world.json -- /kk hq to go. The "hq" spike

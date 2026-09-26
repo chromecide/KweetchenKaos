@@ -90,6 +90,10 @@ Build the floor as part of the room: a new plot is just grass.
 Barriers placed as the game's own `Barrier` block (hard to see) can be turned
 into barrier slots with **`/kk barriers`**, once.
 
+Look at any slot to see which it is. Station slots look like the kitchen theme's
+stations (a stove slot is an iron stove with its trim); the other slots are tinted
+marker blocks.
+
 Every station slot can appear more than once; the build warns if a kind is missing.
 Crates are not slots. They are delivered on the pads when a dish goes on the
 menu, and players place them.
