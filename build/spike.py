@@ -7,6 +7,11 @@ empty world, to test on their own.
     SETUP block  place it anywhere and press it once: everything is laid out at fixed
                  places (see the map below), so nobody sets a spike up by hand
 
+A RECIPE SPIKE, `dish:<id>` (e.g. python3 deploy.py dish:roasted_corn), is a service spike
+for one dish: the stations that dish's chain needs and no others (worked out from its
+steps, crates included), the sink, rack and bin, and guest callers for that dish's orders
+only (cooked and well done, say). One recipe, start to plate to paid.
+
 A SPIKE IS A LIST OF STATIONS AND HOW MANY OF EACH, plus "front": True for the queue,
 chairs and guests (SPIKES below). Each station is mounted by whichever system runs its role
 (systems/__init__.py) -- the way a layout will mount it later, so a spike tests exactly what
@@ -67,6 +72,36 @@ SETUP = f"{settings.NAMESPACE}_Spike_Setup"
 SETUP_EFFECT = f"{SETUP}_System"
 GROUND = 1              # the flat spike world's surface: blocks stand at y 1
 ROW_Z, ROW_X, GAP = 12, 12, 2
+
+
+# A recipe spike's stations beyond its chain, and how many of each: two stoves (one to
+# watch through well done while the other cooks), two counters (assemble on one, plate on
+# the other), one of the rest.
+DISH_EXTRAS = ("sink", "rack", "bin")
+DISH_COUNTS = {"stove": 2, "counter": 2}
+
+
+def dish_stations(model, dish_id):
+    """Every station a dish's chain passes through, found by walking back from what its
+    guests order (the plated items) to the crates; then the sink, rack and bin. In the
+    kitchen's order: crates, then the rest."""
+    wanted = {e["serves"] for e in model["menu"] if e["dish"] == dish_id}
+    plate = model["vessel"]["clean"]["id"]
+    used, grew = set(), True
+    while grew:
+        grew = False
+        for s in model["steps"]:
+            made = ([s["output"]] if "output" in s
+                    else [x["gives"] for x in s.get("stages", []) if x["gives"] != s["input"]])
+            if plate in made or not wanted & set(made) or id(s) in used:
+                continue
+            used.add(id(s))
+            wanted.update(s.get("inputs", []) + ([s["input"]] if "input" in s else []))
+            grew = True
+    chain = {s["station"] for s in model["steps"] if id(s) in used}
+    crates = sorted(st for st in chain if model["stations"][st]["role"] == "crate")
+    rest = [st for st in KITCHEN if st in chain or st in DISH_EXTRAS]
+    return {**{st: 1 for st in crates}, **{st: DISH_COUNTS.get(st, 1) for st in rest}}
 
 
 def stations_of(model, name):
@@ -228,8 +263,19 @@ def build_room(model, layout_id, debug=True):
 def build(model, name, debug=True):
     if name.startswith("room:"):
         return build_room(model, name[len("room:"):], debug)
-    spike = SPIKES[name]
-    stations = stations_of(model, name)
+    if name.startswith("dish:"):
+        dish = name[len("dish:"):]
+        if dish not in model["dishes"]:
+            raise SystemExit(f"no dish '{dish}'; the dishes are: "
+                             + ", ".join(sorted(model["dishes"])))
+        spike = {"front": True}
+        stations = dish_stations(model, dish)
+        # Guests (and their callers) for this dish's orders only. Items are already
+        # written, so narrowing the menu here touches the front of house alone.
+        model["menu"] = [e for e in model["menu"] if e["dish"] == dish]
+    else:
+        spike = SPIKES[name]
+        stations = stations_of(model, name)
     mounted = [v.volume(f"spike_{st}", systems.for_station(model, st).build(model, st, debug),
                         systems.tags_for(model, st, {"spike": st})) for st in stations]
     front = None
@@ -243,8 +289,14 @@ def build(model, name, debug=True):
     # A run needs only plates: the run delivers the crates, which make everything else.
     # ...plus one of every upgrade kit, so upgrades can be tried without earning them.
     kits = [(it["game_id"], 1) for i, it in model["items"].items() if i.endswith("_kit")]
-    given = ([(SETUP, 1), (model["items"][model["vessel"]["clean"]["id"]]["game_id"], 2)]
-             + kits if spike.get("run") else kit(model, stations))
+    plates = [(SETUP, 1), (model["items"][model["vessel"]["clean"]["id"]]["game_id"], 2)]
+    if spike.get("run"):
+        given = plates + kits
+    elif name.startswith("dish:"):
+        # Its crates make everything else; a dirty plate to try the sink with.
+        given = plates + [(model["items"][model["vessel"]["dirty"]["id"]]["game_id"], 1)]
+    else:
+        given = kit(model, stations)
     note = " + ".join(model["stations"][st]["label"].lower() for st in stations)
     if front:
         note += " + the front of house"
