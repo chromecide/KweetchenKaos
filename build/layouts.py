@@ -60,7 +60,9 @@ which re-anchors it (a save comes back CENTRE-anchored; everything else is corne
 content/layouts/corner_pass/.
 """
 import json
+import glob
 import os
+import re
 import shutil
 import sys
 
@@ -321,8 +323,29 @@ def latest_save(plot, quiet=False):
     return src if os.path.exists(src) else None
 
 
+def reimport():
+    """Import again every layout whose plot has a save newer than the layout: each layout
+    knows its plot (layout.json from_plot). What to run after /kk save."""
+    done = 0
+    for meta_path in sorted(glob.glob(os.path.join(settings.CONTENT, "layouts", "*", "layout.json"))):
+        meta = json.load(open(meta_path))
+        plot = meta.get("from_plot")
+        if plot is None:
+            continue
+        src = latest_save(plot, quiet=True)
+        room = os.path.join(os.path.dirname(meta_path), "room.prefab.json")
+        if src and (not os.path.exists(room) or os.path.getmtime(src) > os.path.getmtime(room)):
+            print(f"plot {plot} -> {meta['id']}")
+            import_save(plot, meta["id"], meta["name"])
+            done += 1
+    print(f"{done} layout(s) re-imported" if done else "every layout is up to date with its plot")
+
+
 def import_save(plot, layout_id, name):
     """A rescued save -> content/layouts/<layout_id>/ (corner-anchored, slots listed)."""
+    if not re.fullmatch(r"[a-z][a-z0-9_]*", layout_id or ""):
+        raise SystemExit(f"a layout id is lower case letters, digits and _, starting with a "
+                         f"letter: '{layout_id}'")
     src = latest_save(plot)
     if src is None:
         raise SystemExit(f"plot {plot}: never saved")
@@ -391,12 +414,14 @@ def import_save(plot, layout_id, name):
     print(f"layout {layout_id}: {len(placed)} blocks, zones {sorted(zones) or 'none'}")
     for s, n in sorted(slots.items()):
         print(f"  {n}x {s}")
-    if "queue" not in zones and not border:
+    if "queue" not in zones and not border and any("Queue" in k for k in slots):
         print("  (no 'queue' zone drawn: the queue's area is worked out round its spots and pool)")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) >= 4 and sys.argv[1] == "import":
+    if len(sys.argv) == 2 and sys.argv[1] == "reimport":
+        reimport()
+    elif len(sys.argv) >= 4 and sys.argv[1] == "import":
         import_save(int(sys.argv[2]), sys.argv[3], " ".join(sys.argv[4:]) or sys.argv[3])
     else:
         print(__doc__)

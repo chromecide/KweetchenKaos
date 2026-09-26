@@ -144,6 +144,15 @@ python3 build/layouts.py import 2 corner_pass "Corner pass"
 - Importing again replaces the layout. Import the border (plot 0) and HQ
   (plot 1) the same way; the border is recognised by its plot number.
 
+**After any later `/kk save`,** there's no need to name plots again:
+
+```
+python3 build/layouts.py reimport
+```
+
+imports again every layout whose plot has a newer save (each layout remembers its
+plot in `layout.json`).
+
 ## Putting a room in the game
 
 `content/world/world.json` says what HQ offers:

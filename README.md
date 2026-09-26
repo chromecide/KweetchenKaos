@@ -56,7 +56,8 @@ pack/               build output (not committed)
 | `python3 deploy.py` | build the game and install it |
 | `python3 deploy.py <spike> [rules]` | build a test world instead (see [systems.md](docs/systems.md#testing-and-debugging)) |
 | `python3 build/build.py --check` | check the content and print every dish's chain, crate to plate |
-| `python3 build/layouts.py import <plot> <id> "<Name>"` | turn a saved plot into a layout |
+| `python3 build/layouts.py import <plot> <id> "<Name>"` | turn a saved plot into a new layout |
+| `python3 build/layouts.py reimport` | import again every layout whose plot has been saved since |
 
 **In game:**
 
