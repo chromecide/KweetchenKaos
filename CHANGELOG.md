@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (2026-09-26)
 
 - **The Kweebec menu:** ten dishes instead of four pies. New: berry salad, roasted
   corn (both starters), mushroom salad, fruit kebab, mushroom kebab, bread. Three
