@@ -22,10 +22,10 @@
       "portal": 2
     },
     {
-      "id": "plot_4",
-      "name": "Plot 4",
+      "id": "alfresco_dining",
+      "name": "Alfresco Dining",
       "theme": "kitchen",
-      "layout": "plot_4",
+      "layout": "alfresco_dining",
       "rules": "standard",
       "portal": 3
     }
