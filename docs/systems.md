@@ -317,7 +317,8 @@ Pasted anywhere, the room works. Two things make that possible:
 - **`python3 deploy.py <spike>`** builds a test world instead of the game, then
   `/kk spike` and `/kk kit` in game. Spikes (`build/spike.py`): `board`,
   `stove`, `rack`, `counter`, `kitchen` (every station), `service` (front of
-  house), `run` (the whole run), `room:<layout>` (one restaurant). Add a
+  house), `run` (the whole run), `room:<layout>` (one restaurant), `hq` (the game, with every
+  HQ portal slot filled, placeholders where no restaurant is hung, for lining them up). Add a
   rules name, e.g. `python3 deploy.py run practice`, for short days.
 - **The deploy's rejection check** lists any asset the game refused, any rule it
   dropped, and any block a room names that doesn't exist.

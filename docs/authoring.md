@@ -107,7 +107,8 @@ menu, and players place them.
 HQ is plot 1, built the same way with the HQ slots: one **arrival** slot and a
 **portal** slot for each restaurant. Portal *n* leads to the restaurant that
 `world.json` hangs on portal *n*. Players arrive on the arrival spot, both when
-they join and when they come back from a run.
+they join and when they come back from a run. To see every portal slot filled while you
+line them up, `python3 deploy.py hq` puts a placeholder portal on each empty one.
 
 ## The border
 
