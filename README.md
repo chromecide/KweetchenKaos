@@ -53,7 +53,7 @@ pack/               build output (not committed)
 
 | Command | Does |
 |---|---|
-| `python3 deploy.py` | build the game and install it |
+| `python3 deploy.py` | pick up new layout saves, build the game and install it (all you need after `/kk save`) |
 | `python3 deploy.py <spike> [rules]` | build a test world instead (see [systems.md](docs/systems.md#testing-and-debugging)) |
 | `python3 build/build.py --check` | check the content and print every dish's chain, crate to plate |
 | `python3 build/layouts.py import <plot> <id> "<Name>"` | turn a saved plot into a new layout |

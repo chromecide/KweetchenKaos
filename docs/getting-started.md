@@ -37,8 +37,9 @@ on to [authoring.md](authoring.md) afterwards.
 python3 deploy.py
 ```
 
-This builds the whole game from `content/` into `pack/`, then installs it as
-`mods/Chromecide_KweetchenKaos` in your server folder.
+This picks up any layout saves made since the last run (see
+[authoring.md](authoring.md)), builds the whole game from `content/` into
+`pack/`, then installs it as `mods/Chromecide_KweetchenKaos` in your server folder.
 
 - **If your server folder has a `run.sh`** (a script that starts the server;
   macOS and Linux), `deploy.py` stops the server, installs, starts it again, and

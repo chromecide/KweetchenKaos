@@ -24,6 +24,9 @@ Set up and deploy once first ([getting-started.md](getting-started.md)).
 7. Add a restaurant to `content/world/world.json`.
 8. `python3 deploy.py`, then `/kk hq` and step on its portal.
 
+**After that, a tweak is just:** `/kk save` in game, then `python3 deploy.py`.
+It picks up every plot saved since, builds and installs.
+
 Each step is explained below.
 
 ## The authoring world
@@ -152,14 +155,10 @@ python3 build/layouts.py import 2 corner_pass "Corner pass"
 - Importing again replaces the layout. Import the border (plot 0) and HQ
   (plot 1) the same way; the border is recognised by its plot number.
 
-**After any later `/kk save`,** there's no need to name plots again:
-
-```
-python3 build/layouts.py reimport
-```
-
-imports again every layout whose plot has a newer save (each layout remembers its
-plot in `layout.json`).
+**After any later `/kk save`, just deploy.** `python3 deploy.py` first imports
+again every layout whose plot has a newer save (each layout remembers its plot in
+`layout.json`), then builds and installs. `python3 build/layouts.py reimport` does
+only the import step, if you want it on its own.
 
 ## Putting a room in the game
 

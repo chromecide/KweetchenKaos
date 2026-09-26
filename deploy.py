@@ -2,7 +2,8 @@
 """
 Build Kweetchen Kaos and install it on your Hytale server. See docs/getting-started.md.
 
-    python3 deploy.py                  build the game (HQ and its restaurants), install it
+    python3 deploy.py                  pick up new layout saves, build the game (HQ and its
+                                       restaurants), install it
     python3 deploy.py SPIKE [RULES]    build a test world instead (see build/spike.py), e.g.
                                        python3 deploy.py kitchen, python3 deploy.py run practice
 
@@ -77,6 +78,21 @@ def stop_server():
     subprocess.run(["pkill", "-f", "tail -f console.in"], capture_output=True)
 
 
+def reimport():
+    """Every layout whose plot has been saved (/kk save) since it was imported is imported
+    again first -- so after building in the authoring world, this script is all there is to
+    run. Only which layouts, and anything the import warns about, is shown."""
+    import contextlib
+    import io
+    import layouts
+    said = io.StringIO()
+    with contextlib.redirect_stdout(said):
+        layouts.reimport()
+    for line in said.getvalue().splitlines():
+        if " -> " in line or "NOTE" in line or "layout(s)" in line or "up to date" in line:
+            print(line.strip())
+
+
 def build(spike, rules):
     with open(BUILD_LOG, "w") as out:
         code = subprocess.run([sys.executable, os.path.join(HERE, "build", "build.py"),
@@ -144,6 +160,7 @@ def main(argv):
                  f"  now: '{server or 'not set'}'")
     spike = argv[0] if argv else "world"
     rules = argv[1] if len(argv) > 1 else "standard"
+    reimport()
     build(spike, rules)
 
     run = os.path.join(server, "run.sh")
