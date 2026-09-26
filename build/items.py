@@ -25,6 +25,20 @@ import pack
 import serving
 
 
+def _hold_to_use(item):
+    """An item whose F must be HELD (`hold_seconds`: the mop): a charge in front of the
+    block's use. The use -- and so the BLOCK_USED a volume hears -- only happens once the hold
+    is complete (UseBlock fires the event as it uses the block), with the progress shown;
+    let go early and nothing happens. The shipped watering can's pattern."""
+    secs = item.get("hold_seconds")
+    if not secs:
+        return {}
+    return {"Use": {"Interactions": [{
+        "Type": "Charging", "AllowIndefiniteHold": False, "DisplayProgress": True,
+        "OnItemChangeBehavior": "Cancel",
+        "Next": {"0": {"Type": "Simple"}, str(float(secs)): {"Type": "UseBlock"}}}]}}
+
+
 def write_all(model):
     blocks.write_noop()
     stack = model["theme"]["defaults"].get("max_stack", 1)
@@ -49,7 +63,8 @@ def write_all(model):
             # through, and a station's left-click is PICK UP (carry.py) -- holding a kit, a
             # left-click on the stove carried it off and the kit was gone.
             "Interactions": (serving.interactions(item) if iid in served
-                             else {"Primary": blocks.NOOP, "Secondary": blocks.NOOP}),
+                             else dict({"Primary": blocks.NOOP, "Secondary": blocks.NOOP},
+                                       **_hold_to_use(item))),
             "BlockType": blocks.block_for(item["look"]),
         })
     return len(model["items"])

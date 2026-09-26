@@ -164,7 +164,8 @@ def load_theme(theme_id):
     # THE MOP: what cleans up a mess (systems/hazards.py). Never binned.
     define({"id": "mop", "label": "Mop", "look": fixtures["looks"]["mop"], "bin": "refuse"},
            f"themes/{theme_id}/fixtures.json")
-    items["mop"]["description"] = "Hold it and press a mess (F) to clean it up."
+    items["mop"]["description"] = "Hold it, look at a mess, and hold F to clean it up."
+    items["mop"]["hold_seconds"] = fixtures["looks"]["mop"].get("hold_seconds", 1.0)
     for f, d in many("ingredients"):
         iid = define(d["item"], f)
         source = d.get("source")

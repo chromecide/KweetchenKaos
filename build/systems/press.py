@@ -160,12 +160,13 @@ def build(model, station_id, debug=True):
     # is the station one below. Only where hazards are mounted (model["hazards"]): the
     # spill block is theirs.
     if st.get("spills") and model.get("hazards"):
-        spill = blocks.hazard_id(model, "spill")
+        spill = blocks.hazard_drop(model, "spill")
         chance = {"Type": "RandomChanceCondition", "Event": "BLOCK_USED",
                   "Chance": float(st["spills"])}
-        v.drop_around(rules, 8000, "spill", spill, [v.at(ladder), chance], "BLOCK_USED")
-        v.drop_around(rules, 8100, "spilltop", spill, [v.at(shown_in), chance], "BLOCK_USED",
-                      dy=-1.0)
+        v.drop_around(rules, 8000, "spill", spill["sizes"], [v.at(ladder), chance],
+                      "BLOCK_USED", large=spill["large"], on_large=spill["on_large"])
+        v.drop_around(rules, 8100, "spilltop", spill["sizes"], [v.at(shown_in), chance],
+                      "BLOCK_USED", dy=-1.0, large=spill["large"], on_large=spill["on_large"])
 
     _auto_variants(model, station_id, table, rules, debug)
 

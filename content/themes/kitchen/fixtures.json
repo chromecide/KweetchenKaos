@@ -57,7 +57,8 @@
     "mop": {
       "model": "Items/Halloween_Props/Broomstick.blockymodel",
       "texture": "Items/Halloween_Props/Broomstick_Texture.png",
-      "icon": "Icons/ItemsGenerated/Halloween_Broomstick.png"
+      "icon": "Icons/ItemsGenerated/Halloween_Broomstick.png",
+      "hold_seconds": 1.0
     },
     "mess": {
       "model": "Resources/Plants/Petal.blockymodel",
@@ -69,7 +70,8 @@
       "model": "Resources/Plants/Petal.blockymodel",
       "texture": "Resources/Plants/Petal_Textures/White.png",
       "icon": "Icons/ItemsGenerated/Plant_Petals_White.png",
-      "tint": "#3a78b8"
+      "tint": "#3a78b8",
+      "spreads": 3
     }
   },
   "words": {
@@ -83,9 +85,9 @@
     "offer": "{label} - {price} coins. Press to buy",
     "delivery": "{label} - free. Press to take it",
     "card": "Recipe: {label} - press to put it on the menu",
-    "mess": "A mess - press with a mop to clean it up",
+    "mess": "A mess - hold [{key}] with a mop to clean it up",
     "mop_needed": "That needs a mop.",
-    "spill": "Spilt water - press with a mop to clean it up"
+    "spill": "Spilt water - hold [{key}] with a mop to clean it up"
   },
   "slots": {}
 }

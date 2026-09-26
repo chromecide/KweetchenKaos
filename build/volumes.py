@@ -60,17 +60,26 @@ def at(blocks, dy=0.0, event="BLOCK_USED"):
 AROUND = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
 
 
-def drop_around(rules, first, key, block, gate, event, origin="Event", dy=0.0):
-    """Rules first..first+17: `block` goes into a RANDOM EMPTY cell of the eight round the
-    origin ("Event": the block the event was at; "Entity": whoever caused it), dy up; into
-    none if all eight are taken. `gate`: the conditions that start it. `key` names its tags
-    (unique per volume).
+def drop_around(rules, first, key, sizes, gate, event, origin="Event", dy=0.0, large=(),
+                on_large=None):
+    """Rules first..first+49: one of the eight cells round the origin ("Event": the block
+    the event was at; "Entity": whoever caused it), dy up, picked AT RANDOM, gets a hazard:
+
+        empty            ->  a new one, the smallest (sizes[0])
+        one of `sizes`   ->  it GROWS a size
+        one of `large`   ->  with `on_large`: that is placed over it -- a SPREADING large one,
+                             whose placing sets off a drop round IT (hazards.py); without,
+                             it's full, like:
+        anything else    ->  (a table, a chair, another kind) full: the pick goes on to
+                             another cell; if every cell is full, nothing
+    `gate`: the conditions that start it. `key` names its tags (unique per volume).
 
     Why it's built this way: a condition can't ask "is this cell empty?" (BlockTypeCondition
-    fails on an empty cell), but PlaceBlock OnlyAir only fills an empty one, and a placed
-    block is there AT ONCE. So each cell in turn is tried at a chance of 1/(cells left) --
-    the fair pick -- and the next rule asks whether the block landed there; the first that
-    lands stops it. A taken cell is simply skipped."""
+    fails on an empty cell), but it CAN ask "is it a small mess?", and PlaceBlock OnlyAir only
+    fills an empty cell, whose block is there AT ONCE. So each cell in turn is picked at a
+    chance of 1/(cells left) -- the fair pick -- and then: grow it if it's a hazard that can
+    grow; else try to place; and if the smallest is now there, it landed. Growing is
+    checked BEFORE placing, so a small one already there grows rather than counts as placed."""
     going, tried = f"{key}_drop", f"{key}_tried"
     tag = lambda k, val: {"Type": "TagCondition", "Event": event, "Source": "Self",
                           "TagKey": k, "Comparison": "Exactly", "TagValue": str(val)}
@@ -79,18 +88,30 @@ def drop_around(rules, first, key, block, gate, event, origin="Event", dy=0.0):
     rules.add(first, list(gate), [put(going, 1), put(tried, 0)])
     for k, (dx, dz) in enumerate(AROUND):
         at_cell = {"X": float(dx), "Y": float(dy), "Z": float(dz)}
-        rules.add(first + 1 + 2 * k,
-                  [tag(going, 1), {"Type": "RandomChanceCondition", "Event": event,
-                                   "Chance": 1.0 / (len(AROUND) - k)}],
-                  [{"Type": "PlaceBlock", "Event": event, "BlockType": block,
-                    "Position": at_cell, "Origin": origin, "ReplaceMode": "OnlyAir"},
-                   put(tried, k + 1)])
-        rules.add(first + 2 + 2 * k,
-                  [tag(going, 1), tag(tried, k + 1),
-                   {"Type": "BlockTypeCondition", "Event": event, "BlockType": [block],
-                    "PositionSource": origin, "PositionOffset": at_cell}],
+        is_ = lambda *blocks_: {"Type": "BlockTypeCondition", "Event": event,
+                                "BlockType": list(blocks_), "PositionSource": origin,
+                                "PositionOffset": at_cell}
+        # GROW BY PLACING the next size over it: PlaceBlock rounds the point to a cell exactly
+        # as the condition that found it does. (ReplaceBlockType only takes blocks whose
+        # CENTRE is in its box: a tenth-of-a-block box offset from the point held none -- above
+        # a block's centre for a press, anywhere for an entity's feet -- and nothing grew.)
+        grow = lambda frm, to: {"Type": "PlaceBlock", "Event": event, "BlockType": to,
+                                "Position": at_cell, "Origin": origin, "ReplaceMode": "Always"}
+        n = first + 1 + 6 * k
+        rules.add(n, [tag(going, 1), {"Type": "RandomChanceCondition", "Event": event,
+                                      "Chance": 1.0 / (len(AROUND) - k)}], [put(tried, k + 1)])
+        if on_large:
+            rules.add(n + len(sizes) + 2, [tag(going, 1), tag(tried, k + 1), is_(*large)],
+                      [grow(None, on_large), put(going, 0)])
+        for j in range(len(sizes) - 1, 0, -1):          # the larger first: one grows once
+            rules.add(n + len(sizes) - j, [tag(going, 1), tag(tried, k + 1), is_(sizes[j - 1])],
+                      [grow(sizes[j - 1], sizes[j]), put(going, 0)])
+        rules.add(n + len(sizes), [tag(going, 1), tag(tried, k + 1)],
+                  [{"Type": "PlaceBlock", "Event": event, "BlockType": sizes[0],
+                    "Position": at_cell, "Origin": origin, "ReplaceMode": "OnlyAir"}])
+        rules.add(n + len(sizes) + 1, [tag(going, 1), tag(tried, k + 1), is_(sizes[0])],
                   [put(going, 0)])
-    rules.add(first + 17, [tag(going, 1)], [put(going, 0)])
+    rules.add(first + 1 + 6 * len(AROUND), [tag(going, 1)], [put(going, 0)])
 
 
 def holding(item, event="BLOCK_USED"):

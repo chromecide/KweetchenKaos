@@ -51,10 +51,30 @@ def item(game_id, label, icon, block, comment, movable=False):
     pack.write_item(game_id, carry.carryable(data) if movable else data)
 
 
-def hazard_id(model, kind):
-    """A hazard's block ("mess", "spill"): made by the hazard system, dropped by whichever
-    system causes it (a guest's mess, a sink's spill)."""
-    return settings.game_id(model["theme"]["prefix"], kind)
+HAZARD_SIZES = 3
+
+
+def hazard_ids(model, kind):
+    """A hazard's blocks ("mess", "spill"), smallest first: made by the hazard system,
+    dropped (or grown) by whichever system causes it (a guest's mess, a sink's spill)."""
+    return [settings.game_id(model["theme"]["prefix"], f"{kind}_{n}")
+            for n in range(1, HAZARD_SIZES + 1)]
+
+
+def hazard_spreading(model, kind):
+    """A hazard's SPREADING large blocks, one per hop (its look's "spreads": how many hops a
+    spread may travel; none, it doesn't spread). Each looks like the large one."""
+    hops = model["fixtures"]["looks"][kind].get("spreads", 0)
+    return [settings.game_id(model["theme"]["prefix"], f"{kind}_{HAZARD_SIZES}_spreading_{h}")
+            for h in range(1, hops + 1)]
+
+
+def hazard_drop(model, kind):
+    """What a FRESH drop of this hazard passes to volumes.drop_around: its sizes, and (if it
+    spreads) which blocks count as large and what goes over one it lands on."""
+    sizes, spreading = hazard_ids(model, kind), hazard_spreading(model, kind)
+    return {"sizes": sizes, "large": [sizes[-1]] + spreading,
+            "on_large": spreading[0] if spreading else None}
 
 
 def with_key(text):
