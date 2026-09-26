@@ -82,9 +82,9 @@ was agreed is written down beside the art.
 
 ## Reporting bugs
 
-Include what you did and what you expected, the restaurant and day, the server log lines tagged `[`
-with the system's name (`[shift]`, `[hazards]`, `[sink]`...), and the Hytale version. A screenshot
-helps with anything you can see.
+Include what you did and what you expected, the restaurant and day, the server log lines tagged with
+the system's name (`[shift]`, `[hazards]`, `[sink]`...), and the Hytale version. A screenshot helps
+with anything you can see.
 
 ## Before a release
 
