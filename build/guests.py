@@ -73,7 +73,7 @@ def build(model, debug=True):
             debug=debug)
         npc.role(role_id(model, entry), f"Guest - wants {entry['label']}", "Queue",
                  {"Queue": queue_state, "Seat": seat_state}, interactions,
-                 appearance=model["theme"]["guest"]["appearance"], display="Arriving",
+                 appearance=model["theme"]["guest"]["appearance"], display="Waiting",
                  comment=f"A guest who wants {entry['label']}, composed from the queue's, "
                          f"seating's and the guest system's fragments. See build/guests.py.",
                  trace=TRACE)

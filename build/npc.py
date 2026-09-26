@@ -83,9 +83,15 @@ WALK = {"Type": "Seek", "StopDistance": 0.4, "SlowDownDistance": 2}
 STILL = {"Type": "Nothing"}
 
 
+# STEP TAGS: a branch's `tag` shown as the NPC's name while it runs -- "Heading to a chair",
+# "Spot 3" -- for chasing a behaviour bug. Off: players see only what a guest says on
+# purpose (Waiting, Ready to order, the dish, Eating, Leaving).
+SHOW_STEPS = False
+
+
 def branch(note, sensor, motion=None, actions=(), tag=None, debug=False, instructions=None,
            cont=False):
-    """One rule. `tag` is a name-tag line shown while it runs (debug only)."""
+    """One rule. `tag` is a name-tag line shown while it runs (with debug and SHOW_STEPS)."""
     b = {"$Comment": note, "Sensor": sensor}
     if cont:
         b["Continue"] = True
@@ -93,7 +99,7 @@ def branch(note, sensor, motion=None, actions=(), tag=None, debug=False, instruc
         b["Instructions"] = list(instructions)
     elif motion:
         b["BodyMotion"] = motion
-    acts = list(actions) + ([name_tag(tag)] if tag and debug else [])
+    acts = list(actions) + ([name_tag(tag)] if tag and debug and SHOW_STEPS else [])
     if acts:
         b["Actions"] = acts
     return b

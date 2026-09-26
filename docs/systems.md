@@ -329,6 +329,9 @@ Pasted anywhere, the room works. Two things make that possible:
   play, then search the server log. Every instruction every guest tries is
   logged, as matched or failed, with the rule's tag. It's very noisy: switch it
   off afterwards.
+- **Guest step tags:** set `SHOW_STEPS = True` in `build/npc.py` and each guest's
+  name shows the step it's on ("Heading to a chair", "Spot 3"...). Off, a guest
+  shows only Waiting, Ready to order, its dish, Eating and Leaving.
 - **Play in adventure mode.** Guests ignore creative players.
 
 ## Adding things
