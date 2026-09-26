@@ -194,7 +194,7 @@ def return_fragment(model, queue_state, debug=False):
 
 # ---------------------------------------------------------------- the volumes a spot carries
 
-def _spot_rules(q, boost_by, debug):
+def _spot_rules(q, boost_by, debug, moods=()):
     """The one-cell volume on every spot, INLINE: a pasted volume keeps an EMPTY effect
     list if it names an effect asset (resolved once, at world start, over volumes that
     already exist), so its rules have to travel with it."""
@@ -236,6 +236,17 @@ def _spot_rules(q, boost_by, debug):
     rules.add(61, [signals.heard(SIGNAL_KEY, RELEASE), here("SIGNAL_RECEIVED", [q["held"]])],
               [swap("SIGNAL_RECEIVED", [q["held"]], q["free"](1))]
               + rep("released", "front released - next in line moves up", "SIGNAL_RECEIVED"))
+    # MOODS: [(entity effect, chance)] -- a guest stepping onto a spot is marked with the
+    # effect at that chance. Only its FIRST spot counts: the guest reads the mark once, the
+    # first time it stands in line, and never again. (Rolled in the pool at first, a guest
+    # wandering in and out of it while the line was full rolled again each time.) The queue
+    # only marks; what a mood means is the guest's business (systems/guest.py).
+    for k, (effect, chance) in enumerate(moods):
+        rules.add(40 + k, [{"Type": "RandomChanceCondition", "Event": "ENTER",
+                            "Chance": float(chance)}],
+                  [{"Type": "EntityEffect", "Event": "ENTER", "Effect": effect,
+                    "Mode": "Apply"}]
+                  + rep(f"mood.{k}", f"a guest stepped on, marked {effect}", "ENTER"))
     # RESET: guests were removed wholesale; free every spot and its claim.
     rules.add(65, [signals.heard(signals.RESET, signals.RESET)],
               [swap("SIGNAL_RECEIVED", [q["taken"](i)], q["free"](i)) for i in range(1, LENGTH + 1)]
@@ -326,7 +337,8 @@ def build(model, guests, debug=True, patience=None):
         npc.entity_effect(q["pulse"](colour), on, bottom, top,
                           "The queue's impatience, on every queued guest. See build/systems/queue.py.")
 
-    spot_rules = _spot_rules(q, boost_by, debug)
+    moods = model.get("arrival_moods", ())
+    spot_rules = _spot_rules(q, boost_by, debug, moods)
     pool_rules = _pool_rules(q, guests, debug)
     _built["spot"] = _entity("queue_spot", spot_rules, 3.0,
                              {SPOT_TAG: "1", "occ": "0", **signals.RESET_TAGS}, ["Player", "Npc"])

@@ -63,6 +63,9 @@ SPIKES = {
     "kitchen": {"stations": KITCHEN},
     # A full service: the kitchen, the queue, chairs and guests, called by hand.
     "service": {"stations": KITCHEN, "front": True},
+    # PROBE: the service spike, with half of all guests arriving impatient (the queue's
+    # spots mark them at random; half patience, "(impatient)" on the name tag).
+    "impatient": {"stations": KITCHEN, "front": True, "impatient": 0.5},
     # A full RUN: the shift runs the days. The crates aren't laid out -- the run delivers
     # them on day 1, and more with recipe cards.
     # Crates at 0: mounted (so delivered ones work) but not laid out.
@@ -280,6 +283,9 @@ def build(model, name, debug=True):
                         systems.tags_for(model, st, {"spike": st})) for st in stations]
     front = None
     model["in_run"] = spike.get("run", False)
+    if spike.get("impatient"):
+        from systems import guest as guest_system
+        model["arrival_moods"] = [(guest_system.mood_effect(model), spike["impatient"])]
     if spike.get("front"):
         front_volumes, front_layout = spike_front.build(model, GROUND, debug,
                                                         run=spike.get("run", False))

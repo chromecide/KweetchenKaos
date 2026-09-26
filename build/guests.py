@@ -69,8 +69,11 @@ def build(model, debug=True):
     for entry in model["menu"]:
         seated, interactions = guest.fragment(model, entry, on_fed=seating.left_fed(),
                                               on_unfed=seating.left_unfed())
-        queue_state = queue.guest_fragment(model, ready=seating.chair_free(model),
-                                           next_state="Seat", debug=debug)
+        # Read a mood the pool marked it with, once: the first time it stands in line.
+        mood = [dict(b, Sensor=npc.all_of(npc.on_block(queue.ids(model)["set_taken_any"]),
+                                          b["Sensor"])) for b in guest.read_mood(model)]
+        queue_state = mood + queue.guest_fragment(model, ready=seating.chair_free(model),
+                                                  next_state="Seat", debug=debug)
         seat_state = seating.guest_fragment(
             model, on_sat=[queue.release()], while_seated=seated,
             on_unseated=_leaving(model),
