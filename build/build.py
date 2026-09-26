@@ -127,7 +127,7 @@ def main(argv):
     n = items.write_all(model)
     # The layout workshop is always there, whatever the spike.
     layouts.write_slots(model)
-    layouts.write_authoring()
+    layouts.write_authoring(release="--release" in argv)
     if name in ("world", "hq"):
         # HQ and the restaurants in content/world/world.json -- /kk hq to go. The "hq" spike
         # is the same with every portal slot filled (placeholders where nothing is hung).

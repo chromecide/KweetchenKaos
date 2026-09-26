@@ -8,7 +8,16 @@ It is built entirely from game data: no plugin code. Restaurants come from
 **content** (JSON in `content/`), which the build in `build/` turns into a
 Hytale asset pack. You build new restaurant rooms by hand, in the game.
 
-## Quick start
+## Install a release (just to play)
+
+1. Download `KweetchenKaos-<version>.zip` from the repo's **Releases**.
+2. Unzip it into your Hytale server's `mods/` folder: you get
+   `mods/Chromecide_KweetchenKaos/`.
+3. Restart the server, join in **adventure mode**, and type `/kk hq`.
+
+What's in each release is in [CHANGELOG.md](CHANGELOG.md).
+
+## Quick start (from the source)
 
 1. Install **Python 3.9+** and have a **Hytale server** you can add mods to.
 2. Copy `local.cfg.example` to `local.cfg` and set `SERVER` to your server's
@@ -43,6 +52,7 @@ build/              the build: reads content, checks it, writes the pack
   systems/          one system per job (stove, counter, queue, shift...)
 docs/               the docs above
 deploy.py           build and install
+release.py          package a release (dist/, not committed)
 local.cfg.example   where your server is (copy to local.cfg)
 pack/               build output (not committed)
 ```
@@ -58,6 +68,7 @@ pack/               build output (not committed)
 | `python3 build/build.py --check` | check the content and print every dish's chain, crate to plate |
 | `python3 build/layouts.py import <plot> <id> "<Name>"` | turn a saved plot into a new layout |
 | `python3 build/layouts.py reimport` | import again every layout whose plot has been saved since |
+| `python3 release.py` | package a release zip in `dist/` and boot-test it (version in `build/settings.py`) |
 
 **In game:**
 

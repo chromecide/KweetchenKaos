@@ -244,8 +244,9 @@ def _give(slots, kit=None):
             for _ in range(4 if n == "chair" else 1)]
 
 
-def write_authoring():
-    """The authoring world and its commands."""
+def write_authoring(release=False):
+    """The authoring world and its commands. `release`: without this project's own plots --
+    no saves and no /kk restore (they're the author's working copies, not the game)."""
     manifest = json.load(open(os.path.join(settings.PACK, "manifest.json")))
     pack_id = f"{manifest['Group']}:{manifest['Name']}"
     pack.write(pack.out("Instances", AUTHOR, "instance.bson"), {
@@ -314,7 +315,7 @@ def write_authoring():
     # RESTORE: the kept layouts pasted back at their plots' corners (they are corner-
     # anchored). paste writes only into LOADED chunks, so stand in each plot first.
     restore = list(enter)
-    for plot, lid in sorted(RESTORE.items()):
+    for plot, lid in ([] if release else sorted(RESTORE.items())):
         src = os.path.join(settings.CONTENT, "layouts", lid, "room.prefab.json")
         name = f"{settings.NAMESPACE}_Restore_Plot_{plot}"
         pack.write(pack.out("Prefabs", f"{name}.prefab.json"),
@@ -324,15 +325,16 @@ def write_authoring():
         # An imported layout has its floor at y 0 (the ground under it below).
         restore += [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 5",
                     f"prefab load {name}", "wait 1", f"paste {x1} {FLOOR} {z1}", "wait 3"]
-    macros.append(("KKRestore", "kk restore",
-                   "Paste the kept layouts back into their plots", restore))
+    if not release:
+        macros.append(("KKRestore", "kk restore",
+                       "Paste the kept layouts back into their plots", restore))
     # "/kk restore 3": plot 3 back to its LAST SAVE, throwing away what was built since. The
     # saves go into the pack (a deploy wipes the server's copy). Only for plots that HAVE a
     # save: a macro carries on past a failed step, so with no save to paste it would clear
     # the plot and leave it empty. Load first, then clear the whole box, ground and all (the
     # save holds every block of it), then paste -- a save is anchored at the centre on x and z
     # and at the BOTTOM on y, so at the box's centre cell on its lowest layer.
-    for n in range(MAX_PLOTS):
+    for n in ([] if release else range(MAX_PLOTS)):
         src = latest_save(n, quiet=True)
         if src is None:
             continue
