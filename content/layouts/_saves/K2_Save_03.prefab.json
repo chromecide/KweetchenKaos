@@ -12177,8 +12177,8 @@
       "x": -7,
       "y": 3,
       "z": -8,
-      "name": "Wood_Redwood_Trunk_Full",
-      "rotation": 5
+      "name": "Plant_Moss_Block_Green",
+      "support": 15
     },
     {
       "x": -7,
@@ -12236,8 +12236,8 @@
       "x": -7,
       "y": 3,
       "z": -7,
-      "name": "Wood_Redwood_Trunk_Full",
-      "rotation": 5
+      "name": "Plant_Moss_Block_Green",
+      "support": 15
     },
     {
       "x": -7,
@@ -14200,7 +14200,8 @@
       "x": -6,
       "y": 3,
       "z": -8,
-      "name": "Rock_Basalt"
+      "name": "Plant_Moss_Block_Green",
+      "support": 15
     },
     {
       "x": -6,
@@ -14293,8 +14294,8 @@
       "x": -6,
       "y": 3,
       "z": -7,
-      "name": "Wood_Redwood_Trunk_Full",
-      "rotation": 5
+      "name": "Plant_Moss_Block_Green",
+      "support": 15
     },
     {
       "x": -6,
@@ -18171,7 +18172,8 @@
       "x": -4,
       "y": 3,
       "z": -9,
-      "name": "Rock_Basalt"
+      "name": "Plant_Moss_Block_Green",
+      "support": 15
     },
     {
       "x": -4,
@@ -18242,15 +18244,8 @@
       "x": -4,
       "y": 3,
       "z": -8,
-      "name": "Wood_Redwood_Trunk_Full",
-      "rotation": 5
-    },
-    {
-      "x": -4,
-      "y": 4,
-      "z": -8,
-      "name": "Plant_Moss_Rug_Green",
-      "rotation": 1
+      "name": "Plant_Moss_Block_Green",
+      "support": 15
     },
     {
       "x": -4,
@@ -18310,13 +18305,6 @@
       "y": 3,
       "z": -7,
       "name": "Rock_Basalt"
-    },
-    {
-      "x": -4,
-      "y": 4,
-      "z": -7,
-      "name": "Plant_Moss_Rug_Green",
-      "rotation": 1
     },
     {
       "x": -4,
@@ -20139,7 +20127,8 @@
       "x": -3,
       "y": 3,
       "z": -9,
-      "name": "Rock_Basalt"
+      "name": "Plant_Moss_Block_Green",
+      "support": 15
     },
     {
       "x": -3,
@@ -20203,8 +20192,8 @@
       "x": -3,
       "y": 3,
       "z": -8,
-      "name": "Wood_Redwood_Trunk_Full",
-      "rotation": 5
+      "name": "Plant_Moss_Block_Green",
+      "support": 15
     },
     {
       "x": -3,
@@ -20354,13 +20343,6 @@
       "y": 3,
       "z": -6,
       "name": "Rock_Basalt"
-    },
-    {
-      "x": -3,
-      "y": 4,
-      "z": -6,
-      "name": "Plant_Moss_Rug_Green",
-      "rotation": 1
     },
     {
       "x": -3,
@@ -22085,13 +22067,6 @@
     },
     {
       "x": -2,
-      "y": 4,
-      "z": -9,
-      "name": "Plant_Moss_Rug_Green",
-      "rotation": 1
-    },
-    {
-      "x": -2,
       "y": 7,
       "z": -9,
       "name": "Rock_Basalt"
@@ -22145,13 +22120,6 @@
       "z": -8,
       "name": "Wood_Redwood_Trunk_Full",
       "rotation": 5
-    },
-    {
-      "x": -2,
-      "y": 4,
-      "z": -8,
-      "name": "Plant_Moss_Rug_Green",
-      "rotation": 1
     },
     {
       "x": -2,
@@ -70168,13 +70136,6 @@
     },
     {
       "x": -4,
-      "y": 4,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -4,
       "y": 9,
       "z": -8,
       "name": "Empty",
@@ -70232,13 +70193,6 @@
     {
       "x": -4,
       "y": 3,
-      "z": -7,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -4,
-      "y": 4,
       "z": -7,
       "name": "Empty",
       "level": 0
@@ -72450,13 +72404,6 @@
     },
     {
       "x": -3,
-      "y": 4,
-      "z": -6,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -3,
       "y": 8,
       "z": -6,
       "name": "Empty",
@@ -74347,13 +74294,6 @@
     },
     {
       "x": -2,
-      "y": 4,
-      "z": -9,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -2,
       "y": 7,
       "z": -9,
       "name": "Empty",
@@ -74411,13 +74351,6 @@
     {
       "x": -2,
       "y": 3,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -2,
-      "y": 4,
       "z": -8,
       "name": "Empty",
       "level": 0
@@ -105535,6 +105468,76 @@
     {
       "Components": {
         "Nameplate": {
+          "Text": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>"
+        },
+        "PatrolPathMarker": {
+          "Version": 5,
+          "DisplayName": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>",
+          "UUID": {
+            "$binary": "cot/5edbOt2IVdwocxzFbA==",
+            "$type": "04"
+          },
+          "PathId": {
+            "$binary": "rU+ou++wS7Wko8V+cU8UUg==",
+            "$type": "04"
+          },
+          "PathName": "Z3Kweebec_P2",
+          "PathLength": 0,
+          "Order": 1,
+          "PauseTime": 10.0,
+          "ObsvAngle": 1.919862151145935
+        },
+        "HiddenFromAdventurePlayer": {},
+        "Transform": {
+          "Position": {
+            "X": -1.659393310546875,
+            "Y": 18.136817932128906,
+            "Z": -4.4326171875
+          },
+          "Rotation": {
+            "Pitch": 0.0,
+            "Yaw": -2.0561389923095703,
+            "Roll": 0.0
+          }
+        },
+        "Velocity": {
+          "Velocity": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          }
+        },
+        "PrefabCopyable": {},
+        "Model": {
+          "Model": {
+            "Id": "NPC_Path_Marker",
+            "Scale": 1.0,
+            "Static": false
+          }
+        },
+        "UUID": {
+          "UUID": {
+            "$binary": "cot/5edbOt2IVdwocxzFbA==",
+            "$type": "04"
+          }
+        },
+        "PersistentDisplayName": {
+          "DisplayName": {
+            "RawText": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>"
+          }
+        },
+        "HeadRotation": {
+          "Rotation": {
+            "Pitch": -0.0,
+            "Yaw": 2.03071665763855,
+            "Roll": -0.0
+          }
+        }
+      }
+    },
+    {
+      "Components": {
+        "Nameplate": {
           "Text": "0.Z3Kweebec_P2~5 #0 [Wait 10.0s] <Rotate 90.00deg>"
         },
         "PatrolPathMarker": {
@@ -105542,10 +105545,6 @@
           "DisplayName": "0.Z3Kweebec_P2~5 #0 [Wait 10.0s] <Rotate 90.00deg>",
           "UUID": {
             "$binary": "MdnBJ9PzON2++vGvxqDgzA==",
-            "$type": "04"
-          },
-          "PathId": {
-            "$binary": "akEz4lChNvaDuJ47g06JZw==",
             "$type": "04"
           },
           "PathName": "Z3Kweebec_P2",
@@ -105668,76 +105667,6 @@
             "Pitch": 0.0,
             "Yaw": -2.0689587593078613,
             "Roll": 0.0
-          }
-        }
-      }
-    },
-    {
-      "Components": {
-        "Nameplate": {
-          "Text": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>"
-        },
-        "PatrolPathMarker": {
-          "Version": 5,
-          "DisplayName": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>",
-          "UUID": {
-            "$binary": "cot/5edbOt2IVdwocxzFbA==",
-            "$type": "04"
-          },
-          "PathId": {
-            "$binary": "rU+ou++wS7Wko8V+cU8UUg==",
-            "$type": "04"
-          },
-          "PathName": "Z3Kweebec_P2",
-          "PathLength": 0,
-          "Order": 1,
-          "PauseTime": 10.0,
-          "ObsvAngle": 1.919862151145935
-        },
-        "HiddenFromAdventurePlayer": {},
-        "Transform": {
-          "Position": {
-            "X": -1.659393310546875,
-            "Y": 18.136817932128906,
-            "Z": -4.4326171875
-          },
-          "Rotation": {
-            "Pitch": 0.0,
-            "Yaw": -2.0561389923095703,
-            "Roll": 0.0
-          }
-        },
-        "Velocity": {
-          "Velocity": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          }
-        },
-        "PrefabCopyable": {},
-        "Model": {
-          "Model": {
-            "Id": "NPC_Path_Marker",
-            "Scale": 1.0,
-            "Static": false
-          }
-        },
-        "UUID": {
-          "UUID": {
-            "$binary": "cot/5edbOt2IVdwocxzFbA==",
-            "$type": "04"
-          }
-        },
-        "PersistentDisplayName": {
-          "DisplayName": {
-            "RawText": "0.Z3Kweebec_P2~5 #2 [Wait 10.0s] <Rotate 110.00deg>"
-          }
-        },
-        "HeadRotation": {
-          "Rotation": {
-            "Pitch": -0.0,
-            "Yaw": 2.03071665763855,
-            "Roll": -0.0
           }
         }
       }

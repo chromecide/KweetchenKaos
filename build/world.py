@@ -175,8 +175,12 @@ def build(debug=True, fill_portals=False):
         else:
             notes.append(f"{r['name']}: no arrival slot -- players arrive in front of the room")
             spawn = (AT[0] + FRONT[0], AT[1] + FRONT[1], AT[2] + FRONT[2])
-        _instance(inst, spawn, [_paste_on_arrival(inst, prefab, f"Welcome to the {r['name'].lower()}!",
-                                                  _border(world, r))],
+        # A title for each player as they arrive (their own event, so it reaches them), not
+        # a chat line: the restaurant's name, and the rules it plays under.
+        rules_name = model["rules"].get("name", r["rules"])
+        _instance(inst, spawn, [_paste_on_arrival(inst, prefab, None, _border(world, r),
+                                                  welcome=(f"Welcome to {r['name']}",
+                                                           f"{rules_name} rules"))],
                   f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True,
                   ground=r.get("ground", world.get("ground", "flat")),
                   weather=r.get("weather", world.get("weather")))
