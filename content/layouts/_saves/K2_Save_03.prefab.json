@@ -8357,7 +8357,7 @@
       "x": -9,
       "y": 3,
       "z": -15,
-      "name": "Soil_Grass"
+      "name": "Soil_Dirt"
     },
     {
       "x": -9,
@@ -105545,6 +105545,10 @@
           "DisplayName": "0.Z3Kweebec_P2~5 #0 [Wait 10.0s] <Rotate 90.00deg>",
           "UUID": {
             "$binary": "MdnBJ9PzON2++vGvxqDgzA==",
+            "$type": "04"
+          },
+          "PathId": {
+            "$binary": "akEz4lChNvaDuJ47g06JZw==",
             "$type": "04"
           },
           "PathName": "Z3Kweebec_P2",

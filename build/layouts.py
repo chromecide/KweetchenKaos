@@ -367,10 +367,47 @@ def latest_save(plot, quiet=False):
     return src if os.path.exists(src) else None
 
 
+# What a room needs to be PLAYABLE: every kind of station, and the fixtures a run can't do
+# without. A saved plot with all of them is picked up by itself (reimport); one with some is
+# said to be unfinished.
+NEEDED = (["station_press", "station_combine", "station_heat", "station_wash", "station_bin",
+           "station_rack", "chair", "pool", "sign"] + [f"queue_{i}" for i in range(1, 5)])
+RESTAURANT_PLOTS_FROM = 2       # 0 is the border, 1 HQ
+
+
+def room_slots(save_path):
+    """The slot names a save holds ("chair", "station_heat"...)."""
+    pre = f"{settings.NAMESPACE}_Slot_"
+    return {b["name"][len(pre):].lower() for b in json.load(open(save_path)).get("blocks") or []
+            if b["name"].startswith(pre)}
+
+
 def reimport():
     """Import again every layout whose plot has a save newer than the layout: each layout
-    knows its plot (layout.json from_plot). What to run after /kk save."""
+    knows its plot (layout.json from_plot). What to run after /kk save.
+
+    A plot saved but never imported is picked up too, when it is a playable room (NEEDED),
+    as plot_<n> / "Plot <n>" -- rename it with `import` (a new id) or in layout.json's name."""
     done = 0
+    known = set()
+    for meta_path in glob.glob(os.path.join(settings.CONTENT, "layouts", "*", "layout.json")):
+        known.add(json.load(open(meta_path)).get("from_plot"))
+    for plot in range(RESTAURANT_PLOTS_FROM, MAX_PLOTS):
+        if plot in known:
+            continue
+        src = latest_save(plot, quiet=True)
+        if not src:
+            continue
+        have = room_slots(src)
+        if not have:
+            continue            # an empty plot
+        missing = [n for n in NEEDED if n not in have]
+        if missing:
+            print(f"  NOTE: plot {plot} isn't a playable room yet -- missing: {', '.join(missing)}")
+            continue
+        print(f"plot {plot} -> plot_{plot} (new)")
+        import_save(plot, f"plot_{plot}", f"Plot {plot}")
+        done += 1
     for meta_path in sorted(glob.glob(os.path.join(settings.CONTENT, "layouts", "*", "layout.json"))):
         meta = json.load(open(meta_path))
         plot = meta.get("from_plot")

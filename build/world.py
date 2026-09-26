@@ -24,6 +24,7 @@ same way):
     nothing else to set up. The world is removed once it has been empty a little while.
   * HQ is built the same way: pasted when the first player arrives.
 """
+import glob
 import json
 import os
 
@@ -150,14 +151,43 @@ def _placeholder_portal():
                 "A stand-in portal for the hq spike. See build/world.py.")
 
 
+def register_layouts(world):
+    """Every restaurant LAYOUT not yet in world.json is added to it, on the next free portal,
+    with the first theme and the standard rules -- and world.json is written back, so it can
+    be renamed, re-themed or moved to another portal there. Border and HQ layouts are not
+    restaurants. Returns notes for the build report."""
+    notes = []
+    listed = {r["layout"] for r in world["restaurants"]}
+    taken = {r["portal"] for r in world["restaurants"]}
+    theme = sorted(os.listdir(os.path.join(settings.CONTENT, "themes")))[0]
+    for meta_path in sorted(glob.glob(os.path.join(settings.CONTENT, "layouts", "*", "layout.json"))):
+        meta = json.load(open(meta_path))
+        lid = meta["id"]
+        if lid in listed or lid == world["hq"] or meta.get("kind") == "border" or lid.startswith("_"):
+            continue
+        free = next((n for n in range(1, layouts.PORTALS + 1) if n not in taken), None)
+        if free is None:
+            notes.append(f"layout {lid} isn't in world.json: every HQ portal is taken")
+            continue
+        world["restaurants"].append({"id": lid, "name": meta["name"], "theme": theme,
+                                     "layout": lid, "rules": "standard", "portal": free})
+        taken.add(free)
+        notes.append(f"added '{meta['name']}' ({lid}) to world.json on portal {free}")
+    if any(n.startswith("added") for n in notes):
+        path = os.path.join(settings.CONTENT, "world", "world.json")
+        with open(path, "w") as fh:
+            json.dump(world, fh, indent=2)
+            fh.write("\n")
+    return notes
+
+
 def build(debug=True, fill_portals=False):
     """`fill_portals`: every portal slot gets a portal -- a placeholder where no restaurant
     is hung (the hq spike: `python3 deploy.py hq`)."""
     if fill_portals:
         _placeholder_portal()
-    """Write HQ, its portals, and every restaurant's world. Returns a summary."""
     world = load()
-    notes = []
+    notes = register_layouts(world)
     portal_of = {}
     for r in world["restaurants"]:
         model = content.load(r["theme"], r["rules"])

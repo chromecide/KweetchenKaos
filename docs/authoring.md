@@ -20,12 +20,17 @@ Set up and deploy once first ([getting-started.md](getting-started.md)).
 3. `/kk slots plot`: take the slot blocks.
 4. Build the room in a plot.
 5. `/kk save`: save the plots.
-6. `python3 build/layouts.py import <plot> <id> "<Name>"`: turn the save into a layout.
-7. Add a restaurant to `content/world/world.json`.
-8. `python3 deploy.py`, then `/kk hq` and step on its portal.
+6. `python3 deploy.py`: a new playable room is imported as a layout by itself,
+   added to `content/world/world.json` on the next free HQ portal, built and
+   installed.
+7. `/kk hq`, and step on its portal.
 
 **After that, a tweak is just:** `/kk save` in game, then `python3 deploy.py`.
 It picks up every plot saved since, builds and installs.
+
+**Naming it:** a room picked up by itself is `plot_4` / "Plot 4". Change its
+`name` in `world.json` for what players see, or import it under an id of your own
+(below) and remove the `plot_4` entry.
 
 Each step is explained below.
 
@@ -143,7 +148,12 @@ away what you've built since. It exists for every plot that has been saved.
 
 ## Importing
 
-A save is raw. Importing turns it into a layout the build can use:
+`python3 deploy.py` does this for you: a saved plot that is a **playable room**
+(every kind of station, chairs, all four queue spots, the pool and the sign) and
+not yet a layout is imported as `plot_<n>`. A plot with some slots but not all is
+reported as unfinished, with what's missing. To choose the id and name yourself,
+import it by hand. A save is raw; importing turns it into a layout the build can
+use:
 
 ```
 python3 build/layouts.py import 2 corner_pass "Corner pass"
@@ -166,7 +176,10 @@ only the import step, if you want it on its own.
 
 ## Putting a room in the game
 
-`content/world/world.json` says what HQ offers:
+Every restaurant layout not yet in `content/world/world.json` is **added by
+itself** when you deploy: on the next free portal, with the kitchen theme and the
+standard rules. After that it's yours to edit: rename it, change its theme,
+rules or portal. `world.json` says what HQ offers:
 
 ```json
 {
