@@ -88,8 +88,13 @@ SPIKES = {
     # a dispenser drops a mess round you; the mop is on its stand. One raw thing to chop,
     # one thing to burn, a dirty plate to scrub.
     "hazards": {"stations": {"sink": 1, "board": 1, "stove": 1, "mop_stand": 1},
-                "front": True, "moods": {"messy": 1.0}, "hazards": True,
+                "front": True, "moods": {"messy": 1.0}, "hazards": True, "dispenser": True,
                 "give": ["plate_dirty", "pumpkin", "corn"]},
+    # MATS: a mat soaks up what lands on it (clean, dirty, filthy -- then full) and the mop
+    # cleans it; a rubber mat is always full. The dispenser drops messes round you (stand
+    # among the mats), the sink spills round itself (put mats by it); the mop is on its stand.
+    "mats": {"stations": {"sink": 1, "mop_stand": 1}, "hazards": True, "dispenser": True,
+             "give": ["plate_dirty", "plate_dirty"], "mats": {"mat": 6, "mat_rubber": 3}},
     # THE GAME, service only: the kitchen, the queue, chairs and guests, called by hand.
     "service": {"stations": KITCHEN, "front": True, "hazards": True},
     # THE GAME, a full RUN: the shift runs the days. Crates at 0: mounted (so delivered ones
@@ -324,12 +329,14 @@ def build(model, name, debug=True):
         front = front_layout
     if spike.get("hazards"):
         from systems import hazards
-        hazards.build(model, debug, dispenser=name == "hazards")
+        hazards.build(model, debug, dispenser=spike.get("dispenser", False))
         mounted += hazards.volumes(model)
-    if name == "hazards":
-        more, ents = front
-        more.append({"x": HAZARD_DISPENSER[0], "y": GROUND, "z": HAZARD_DISPENSER[1],
-                     "name": hazards.ids(model)["dispenser"]})
+    extra = []
+    if spike.get("dispenser"):
+        extra.append({"x": HAZARD_DISPENSER[0], "y": GROUND, "z": HAZARD_DISPENSER[1],
+                      "name": hazards.ids(model)["dispenser"]})
+    if extra:
+        front = (front[0] + extra, front[1]) if front else (extra, [])
     mounted.append(setup(model, stations, front, debug))
     items = model["items"]
     plate = items[model["vessel"]["clean"]["id"]]["game_id"]
@@ -343,8 +350,12 @@ def build(model, name, debug=True):
         given = [(SETUP, 1)] + [(items[i]["game_id"], 1) for i in spike["give"]]
     else:
         given = kit(model, stations)
+    if spike.get("mats"):
+        mats = blocks.mat_ids(model)
+        ids_ = {"mat": mats["levels"][0], "mat_rubber": mats["rubber"]}
+        given += [(ids_[k], n) for k, n in spike["mats"].items()]
     note = " + ".join(model["stations"][st]["label"].lower() for st in stations)
-    if front:
+    if spike.get("front"):
         note += " + the front of house"
     needs_clock = any(getattr(systems.for_station(model, st), "NEEDS_CLOCK", False)
                       for st in stations) or spike.get("run", False)

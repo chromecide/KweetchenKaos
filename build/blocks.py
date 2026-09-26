@@ -74,12 +74,39 @@ def hazard_kinds(model):
     return [k for k, look in model["fixtures"]["looks"].items() if look.get("hazard")]
 
 
-def hazard_drop(model, kind):
-    """What a FRESH drop of this hazard passes to volumes.drop_around: its sizes, and (if it
-    spreads) which blocks count as large and what goes over one it lands on."""
+MAT_LEVELS = 3        # a mat: clean, dirty, filthy (full)
+
+
+def mat_ids(model):
+    """The mat's blocks, clean first, and the rubber mat: a hazard lands on neither -- a mat
+    soaks it up (a level dirtier), a filthy or rubber one is simply full."""
+    gid = lambda local: settings.game_id(model["theme"]["prefix"], local)
+    return {"levels": [gid(f"mat_{n}") for n in range(1, MAT_LEVELS + 1)],
+            "rubber": gid("mat_rubber"),
+            # A filthy mat something lands on OVERFLOWS, exactly as a large hazard spreads:
+            # it's put down again as one of these (looks and acts filthy) -- one per hazard
+            # kind per hop, whose placing is answered with that hop's drop round it.
+            "overflow": {k: [gid(f"mat_{MAT_LEVELS}_overflow_{k}_{h}")
+                             for h in range(1, len(hazard_spreading(model, k)) + 1)]
+                         for k in hazard_kinds(model)}}
+
+
+def hazard_drop(model, kind, hop=0):
+    """What a drop of this hazard passes to volumes.drop_around: its sizes; which blocks
+    count as large and what goes over one it lands on; the mats that soak it up; and which
+    mats are full and what goes over one of those. `hop`: a FRESH drop is 0; the drop a
+    spread (or an overflow) at hop h sets off is h. What goes over a large hazard or a full
+    mat is the next hop's -- the same for both, so hazards and mats spread as one -- and
+    past the last hop there's none: a large one, or a full mat, is simply full."""
     sizes, spreading = hazard_ids(model, kind), hazard_spreading(model, kind)
+    m = mat_ids(model)
+    mats, over = m["levels"], m["overflow"]
+    full = [mats[-1]] + [b for blocks_ in over.values() for b in blocks_]
+    nxt = hop < len(spreading)
     return {"sizes": sizes, "large": [sizes[-1]] + spreading,
-            "on_large": spreading[0] if spreading else None}
+            "on_large": spreading[hop] if nxt else None,
+            "absorb": list(zip(mats, mats[1:])),
+            "overflow": (full, over[kind][hop]) if nxt else None}
 
 
 def with_key(text):

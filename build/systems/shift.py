@@ -433,9 +433,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
         rules.add(next(num), [signals.heard(signals.BOUGHT, c["key"])],
                   say("SIGNAL_RECEIVED", f"bought.{c['key']}",
                       f"[shift] Bought the {c['label'].lower()} for {c['price']} - "
-                      f"{{money}} left."
-                      + ("" if c["cube"] else " Hold it and press a free station it fits "
-                                              "to upgrade it.")))
+                      f"{{money}} left. Put it down where you want it."))
 
     # 9000+: THE ANNOUNCEMENTS (see announce): every player's tick shows a running one to
     # them once; a whole-volume beat counts it down.

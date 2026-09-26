@@ -13,6 +13,9 @@ A station's placeable block is its own id -- the rule every station system keeps
 import settings
 
 
+FIXTURES = {"chair": "Chair", "mat": "Mat", "mat_rubber": "Rubber mat"}
+
+
 def catalogue(model):
     """Every offer: a STATION (a plain one, or one already upgraded -- a dishwasher, a fast
     stove) or a FIXTURE (a chair). Each shows on its pad as a blueprint; buying it gives the
@@ -27,14 +30,17 @@ def catalogue(model):
             key = o["station"]
             out.append(dict(o, key=key, label=st[key]["label"],
                             item=systems.for_station(model, key).free_block(model, key),
-                            look=st[key]["look"], cube=True))
+                            look=st[key]["look"]))
         else:
             key = o["fixture"]
-            if key != "chair":
-                raise ValueError(f"offers.json: no fixture '{key}' can be offered (only chair)")
-            # A chair places its own table when it's put down (seating.py), as when moved.
-            out.append(dict(o, key=key, label="Chair", item=settings.game_id(prefix, "chair"),
-                            look=fixtures["chair"], cube=False))
+            if key not in FIXTURES:
+                raise ValueError(f"offers.json: no fixture '{key}' can be offered "
+                                 f"({', '.join(FIXTURES)})")
+            # A chair places its own table when it's put down (seating.py), as when moved;
+            # a mat goes down clean (hazards.py).
+            out.append(dict(o, key=key, label=FIXTURES[key],
+                            item=settings.game_id(prefix, "mat_1" if key == "mat" else key),
+                            look=fixtures[key]))
     return out
 
 

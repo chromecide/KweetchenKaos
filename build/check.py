@@ -8,6 +8,7 @@ reported together. A theme that fails here builds nothing.
 import os
 import zipfile
 
+import offers
 import settings
 
 ROLES = ("press", "heat", "combine", "wash", "bin", "rack", "call", "tool")  # exactly one station each
@@ -66,9 +67,9 @@ def check(model):
             if "kit" in o:
                 problems.append(f"rules offers.json: '{o['kit']}' is a kit - there are no "
                                 f"upgrade kits; offer the upgraded station itself")
-            if "fixture" in o and o["fixture"] != "chair":
+            if "fixture" in o and o["fixture"] not in offers.FIXTURES:
                 problems.append(f"rules offers.json: '{o['fixture']}' can't be offered "
-                                f"(the only fixture is chair)")
+                                f"(fixtures: {', '.join(offers.FIXTURES)})")
             for st in rules["stages"]:
                 if st["id"] not in o["weights"]:
                     problems.append(f"rules offers.json: '{o.get('station') or o.get('fixture')}' "

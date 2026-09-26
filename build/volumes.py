@@ -60,9 +60,12 @@ def at(blocks, dy=0.0, event="BLOCK_USED"):
 AROUND = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
 
 
+DROP_RULES = 99    # how many rule numbers a drop_around may use: start them 100 apart
+
+
 def drop_around(rules, first, key, sizes, gate, event, origin="Event", dy=0.0, large=(),
-                on_large=None):
-    """Rules first..first+49: one of the eight cells round the origin ("Event": the block
+                on_large=None, absorb=(), overflow=None):
+    """Rules first..first+DROP_RULES: one of the eight cells round the origin ("Event": the block
     the event was at; "Entity": whoever caused it), dy up, picked AT RANDOM, gets a hazard:
 
         empty            ->  a new one, the smallest (sizes[0])
@@ -70,6 +73,10 @@ def drop_around(rules, first, key, sizes, gate, event, origin="Event", dy=0.0, l
         one of `large`   ->  with `on_large`: that is placed over it -- a SPREADING large one,
                              whose placing sets off a drop round IT (hazards.py); without,
                              it's full, like:
+        a mat (`absorb`: [(from, to)])  ->  it soaks it up: the mat goes a level dirtier
+        a full mat (`overflow`: (full mats, what goes over one))  ->  it OVERFLOWS: put
+                             down again as that, whose placing sets off a drop round it
+                             (hazards.py); without, and a rubber mat, it's full, like:
         anything else    ->  (a table, a chair, another kind) full: the pick goes on to
                              another cell; if every cell is full, nothing
     `gate`: the conditions that start it. `key` names its tags (unique per volume).
@@ -85,6 +92,8 @@ def drop_around(rules, first, key, sizes, gate, event, origin="Event", dy=0.0, l
                           "TagKey": k, "Comparison": "Exactly", "TagValue": str(val)}
     put = lambda k, val: {"Type": "ModifyTags", "Event": event, "Operation": "Set",
                           "TagKey": k, "TagValue": str(val)}
+    stride = len(sizes) + 3 + len(absorb) + (1 if overflow else 0)
+    assert 1 + stride * len(AROUND) <= DROP_RULES, "drop_around: too many rules for its range"
     rules.add(first, list(gate), [put(going, 1), put(tried, 0)])
     for k, (dx, dz) in enumerate(AROUND):
         at_cell = {"X": float(dx), "Y": float(dy), "Z": float(dz)}
@@ -97,12 +106,20 @@ def drop_around(rules, first, key, sizes, gate, event, origin="Event", dy=0.0, l
         # a block's centre for a press, anywhere for an entity's feet -- and nothing grew.)
         grow = lambda frm, to: {"Type": "PlaceBlock", "Event": event, "BlockType": to,
                                 "Position": at_cell, "Origin": origin, "ReplaceMode": "Always"}
-        n = first + 1 + 6 * k
+        n = first + 1 + stride * k
         rules.add(n, [tag(going, 1), {"Type": "RandomChanceCondition", "Event": event,
                                       "Chance": 1.0 / (len(AROUND) - k)}], [put(tried, k + 1)])
         if on_large:
             rules.add(n + len(sizes) + 2, [tag(going, 1), tag(tried, k + 1), is_(*large)],
                       [grow(None, on_large), put(going, 0)])
+        for j, (frm, to) in enumerate(absorb):
+            rules.add(n + len(sizes) + 3 + j, [tag(going, 1), tag(tried, k + 1), is_(frm)],
+                      [grow(frm, to), put(going, 0)])
+        if overflow:
+            full, marker = overflow
+            rules.add(n + len(sizes) + 3 + len(absorb), [tag(going, 1), tag(tried, k + 1),
+                                                         is_(*full)],
+                      [grow(None, marker), put(going, 0)])
         for j in range(len(sizes) - 1, 0, -1):          # the larger first: one grows once
             rules.add(n + len(sizes) - j, [tag(going, 1), tag(tried, k + 1), is_(sizes[j - 1])],
                       [grow(sizes[j - 1], sizes[j]), put(going, 0)])
@@ -111,11 +128,11 @@ def drop_around(rules, first, key, sizes, gate, event, origin="Event", dy=0.0, l
                     "Position": at_cell, "Origin": origin, "ReplaceMode": "OnlyAir"}])
         rules.add(n + len(sizes) + 1, [tag(going, 1), tag(tried, k + 1), is_(sizes[0])],
                   [put(going, 0)])
-    rules.add(first + 1 + 6 * len(AROUND), [tag(going, 1)], [put(going, 0)])
+    rules.add(first + 1 + stride * len(AROUND), [tag(going, 1)], [put(going, 0)])
 
 
 def station_hazard(rules, first, key, model, station, gate, dy=0.0, event="BLOCK_USED"):
-    """A station's HAZARD ({"kind": "spill", "chance": 0.25}): rules first..first+49 drop
+    """A station's HAZARD ({"kind": "spill", "chance": 0.25}): rules first..first+99 drop
     one round the station (dy up from the pressed block) when `gate` passes, at the chance.
     Nothing where hazards aren't mounted (model["hazards"]): the blocks are the hazard
     system's."""
@@ -127,7 +144,8 @@ def station_hazard(rules, first, key, model, station, gate, dy=0.0, event="BLOCK
     chance = ([{"Type": "RandomChanceCondition", "Event": event, "Chance": float(hz["chance"])}]
               if hz["chance"] < 1 else [])
     drop_around(rules, first, key, drop["sizes"], list(gate) + chance, event, dy=dy,
-                large=drop["large"], on_large=drop["on_large"])
+                large=drop["large"], on_large=drop["on_large"], absorb=drop["absorb"],
+                overflow=drop["overflow"])
 
 
 def holding(item, event="BLOCK_USED"):

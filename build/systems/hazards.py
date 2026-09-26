@@ -7,10 +7,13 @@ THE HAZARD SYSTEM: things that go wrong on the floor, and what clears them (Plat
     station's "spills"
     chance, each scrub)      ->  a SPILL (water) in an empty cell round the sink -- dropped
                                  by the press system, which runs the sink
-    a drop picks a cell      ->  small grows to medium, medium to large; a LARGE one (of a
-    that already has one         kind that spreads: the spill) spreads -- a drop round IT,
-                                 and on, up to its look's "spreads" hops away
+    a drop picks a cell      ->  small grows to medium, medium to large; a LARGE one spreads
+    that already has one         -- a drop round IT, and on, up to its look's "spreads" hops
+                                 away (every kind: food mess, water, scraps, scorch)
     walk through either      ->  you're slowed (the spider web's numbers: 65% speed, weak jumps)
+    one lands on a MAT       ->  the mat soaks it up and gets dirtier (clean, dirty, filthy);
+                                 on a FILTHY one, the mat overflows -- spreads, as a large
+                                 hazard does; a RUBBER mat is full: it lands elsewhere
     hold F with a mop (1s)   ->  it's cleaned up (the mop's own hold: items.py)
     press it without one     ->  it says so
 
@@ -86,6 +89,39 @@ def build(model, debug=True, dispenser=False):
                              Interactions={"Use": blocks.NOOP}), note)
         hazards += h[kind] + spreading
 
+    # MATS: a hazard lands on neither -- the mat soaks it up and goes a level dirtier (a
+    # tint), a filthy mat or a rubber one is just full. Only a clean mat (or a rubber one)
+    # can be picked up and moved. A mop hold cleans a mat a level.
+    mats = blocks.mat_ids(model)
+    mat_look, rubber_look = fx["looks"]["mat"], fx["looks"]["mat_rubber"]
+    tints = [None] + mat_look["dirt"]
+    for j, (gid, tint) in enumerate(zip(mats["levels"], tints)):
+        blocks.item(gid, mat_look["label"] if not j else f"{mat_look['label']} ({'dirty' if j == 1 else 'filthy'})",
+                    mat_look["icon"],
+                    dict(blocks.block_for(dict(mat_look, tint=tint)), HitboxType="Block_Flat",
+                         BlockSoundSetId="Cloth", PhysicalMaterialId="Cloth",
+                         InteractionHint=blocks.hint(gid, words["mat_dirty" if j else "mat"],
+                                                     keyed=False),
+                         Interactions={"Use": blocks.NOOP}), note, movable=not j)
+        if j:
+            shrink[gid] = mats["levels"][j - 1]
+    blocks.item(mats["rubber"], rubber_look["label"], rubber_look["icon"],
+                dict(blocks.block_for(rubber_look), HitboxType="Block_Flat",
+                     BlockSoundSetId="Cloth", PhysicalMaterialId="Cloth",
+                     InteractionHint=blocks.hint(mats["rubber"], words["mat_rubber"], keyed=False),
+                     Interactions={"Use": blocks.NOOP}), note, movable=True)
+    # OVERFLOWING: a filthy mat something landed on, put down again (one per kind per hop):
+    # looks, mops and stays put exactly like a filthy mat.
+    overflowing = [g for kind in mats["overflow"] for g in mats["overflow"][kind]]
+    for gid in overflowing:
+        blocks.item(gid, f"{mat_look['label']} (filthy)", mat_look["icon"],
+                    dict(blocks.block_for(dict(mat_look, tint=tints[-1])), HitboxType="Block_Flat",
+                         BlockSoundSetId="Cloth", PhysicalMaterialId="Cloth",
+                         InteractionHint=blocks.hint(gid, words["mat_dirty"], keyed=False),
+                         Interactions={"Use": blocks.NOOP}), note)
+        shrink[gid] = mats["levels"][-2]
+    dirty_mats = mats["levels"][1:] + overflowing
+
     rules = v.Entries()
     rep = lambda key, text, event="BLOCK_USED": v.report(f"kk.hazards.{key}",
                                                          f"[hazards] {text}", debug, event=event)
@@ -93,42 +129,51 @@ def build(model, debug=True, dispenser=False):
     for n, (block, to) in enumerate(shrink.items()):
         rules.add(1 + n, [v.at([block]), v.has(h["mop"])],
                   [v.cell([block], to), v.sound(1.2)] + rep(f"mopped.{n}", f"mopped a {block}"))
-    rules.add(90, [v.at(hazards), v.not_holding(h["mop"])],
+    rules.add(90, [v.at(hazards + dirty_mats), v.not_holding(h["mop"])],
               [v.say("kk.hazards.needmop", words["mop_needed"])])
     # 10+: a messy guest got up -- a mess round its chair (the guest is still on it).
     heard = [signals.heard(signals.HAZARD_KEY, signals.MESS)]
-    rules.add(99, heard, rep("mess", "a guest left a mess", "SIGNAL_RECEIVED"))
+    rules.add(999, heard, rep("mess", "a guest left a mess", "SIGNAL_RECEIVED"))
     mess = blocks.hazard_drop(model, "mess")
-    v.drop_around(rules, 100, "mess", mess["sizes"], heard, "SIGNAL_RECEIVED", origin="Entity",
-                  large=mess["large"], on_large=mess["on_large"])
+    # Each drop_around takes up to v.DROP_RULES numbers: they start 100 apart.
+    v.drop_around(rules, 1000, "mess", mess["sizes"], heard, "SIGNAL_RECEIVED", origin="Entity",
+                  large=mess["large"], on_large=mess["on_large"], absorb=mess["absorb"],
+                  overflow=mess["overflow"])
     # 150+: ANY guest got up -- a mess round its chair at the rules' chance.
     chance = model["rules"].get("hazards", {}).get("guest_mess_chance", 0)
     if chance:
         got_up = [signals.heard(signals.HAZARD_KEY, signals.GOT_UP),
                   {"Type": "RandomChanceCondition", "Event": "SIGNAL_RECEIVED",
                    "Chance": float(chance)}]
-        v.drop_around(rules, 150, "gotup", mess["sizes"], got_up, "SIGNAL_RECEIVED",
-                      origin="Entity", large=mess["large"], on_large=mess["on_large"])
-    # 300+: SPREADING. A drop that lands on a large one puts a spreading one over it (hop 1);
-    # placing it is a BLOCK_PLACED at ITS cell, answered here with a drop round it -- which
-    # can land on another large one and put the next hop over that. The last hop's drop
-    # finds large ones full, so a spread goes at most `spreads` hops from where it began.
-    first = 300
+        v.drop_around(rules, 1100, "gotup", mess["sizes"], got_up, "SIGNAL_RECEIVED",
+                      origin="Entity", large=mess["large"], on_large=mess["on_large"],
+                      absorb=mess["absorb"], overflow=mess["overflow"])
+    # 1300+: SPREADING -- a large hazard, or a full mat, that something lands on. It's put
+    # down again as that kind's hop-1 block (a spreading large one, or an overflowing mat);
+    # placing it is a BLOCK_PLACED at ITS cell, answered here with a drop round it, which
+    # can land on another large one or full mat and put the next hop over that. The last
+    # hop's drop finds them full, so a spread goes at most `spreads` hops from where it
+    # began. Hazards and mats spread as one: food mess and water alike.
+    first = 1300
     for kind in blocks.hazard_kinds(model):
         spreading = blocks.hazard_spreading(model, kind)
         for hop, block in enumerate(spreading):
-            nxt = spreading[hop + 1] if hop + 1 < len(spreading) else None
-            rules.add(first - 1, [v.at([block], event="BLOCK_PLACED")],
+            at_hop = [block, mats["overflow"][kind][hop]]
+            d = blocks.hazard_drop(model, kind, hop + 1)
+            rules.add(first - 1, [v.at(at_hop, event="BLOCK_PLACED")],
                       rep(f"spread.{kind}.{hop}", f"a {kind} spread (hop {hop + 1})",
                           "BLOCK_PLACED"))
-            v.drop_around(rules, first, f"{kind}spread{hop}", h[kind],
-                          [v.at([block], event="BLOCK_PLACED")], "BLOCK_PLACED",
-                          large=[h[kind][-1]] + spreading, on_large=nxt)
+            v.drop_around(rules, first, f"{kind}spread{hop}", d["sizes"],
+                          [v.at(at_hop, event="BLOCK_PLACED")], "BLOCK_PLACED",
+                          large=d["large"], on_large=d["on_large"], absorb=d["absorb"],
+                          overflow=d["overflow"])
             first += 100
     # RESET: a new run starts with a clean floor.
     rules.add(95, [signals.heard(signals.RESET, signals.RESET)],
               [{"Type": "ReplaceBlockType", "Event": "SIGNAL_RECEIVED",
-                "FromBlockTypes": hazards, "ToBlockType": "Empty"}])
+                "FromBlockTypes": hazards, "ToBlockType": "Empty"},
+               {"Type": "ReplaceBlockType", "Event": "SIGNAL_RECEIVED",
+                "FromBlockTypes": dirty_mats, "ToBlockType": mats["levels"][0]}])
     if dispenser:
         blocks.station_block(h["dispenser"], "Mess dispenser", {
             "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
@@ -136,9 +181,10 @@ def build(model, debug=True, dispenser=False):
             "Press to drop a mess where you stand", "Spike only. See build/systems/hazards.py.",
             tint="#6b4a2a")
         # Round the presser, the way a guest's mess lands round its chair.
-        rules.add(199, [v.at([h["dispenser"]])], rep("dropped", "a mess dropped by hand"))
-        v.drop_around(rules, 200, "hand", mess["sizes"], [v.at([h["dispenser"]])], "BLOCK_USED",
-                      origin="Entity", large=mess["large"], on_large=mess["on_large"])
+        rules.add(1199, [v.at([h["dispenser"]])], rep("dropped", "a mess dropped by hand"))
+        v.drop_around(rules, 1200, "hand", mess["sizes"], [v.at([h["dispenser"]])], "BLOCK_USED",
+                      origin="Entity", large=mess["large"], on_large=mess["on_large"],
+                      absorb=mess["absorb"], overflow=mess["overflow"])
     rules.write(h["effect"], "Hazards: messes and the mop. See build/systems/hazards.py.")
     return h["effect"]
 

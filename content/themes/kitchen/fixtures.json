@@ -60,7 +60,8 @@
       "texture": "Resources/Plants/Petal_Textures/White.png",
       "icon": "Icons/ItemsGenerated/Plant_Petals_White.png",
       "tint": "#6b4a2a",
-      "hazard": true
+      "hazard": true,
+      "spreads": 3
     },
     "spill": {
       "model": "Resources/Plants/Petal.blockymodel",
@@ -80,20 +81,38 @@
         0.9,
         0.8,
         0.7
-      ]
+      ],
+      "spreads": 3
     },
     "scorch": {
       "model": "Resources/Plants/Petal.blockymodel",
       "texture": "Resources/Plants/Petal_Textures/White.png",
       "icon": "Icons/ItemsGenerated/Plant_Petals_White.png",
       "tint": "#2a2420",
-      "hazard": true
+      "hazard": true,
+      "spreads": 3
     },
     "blueprint": {
       "model": "Items/Consumables/Recipes/Recipe.blockymodel",
       "texture": "Items/Consumables/Recipes/Recipe_Texture.png",
       "icon": "Icons/ItemsGenerated/Recipe_Page.png",
       "tint": "#4a78c8"
+    },
+    "mat": {
+      "label": "Mat",
+      "model": "Blocks/Structures/Roofs/Cloth_Roof_Horizontal.blockymodel",
+      "texture": "Blocks/Structures/Roofs/Cloth_Roof_Textures/Tent_White.png",
+      "icon": "Icons/ItemsGenerated/Cloth_Roof_White_Flat.png",
+      "dirt": [
+        "#c8b48c",
+        "#7a5e3c"
+      ]
+    },
+    "mat_rubber": {
+      "label": "Rubber mat",
+      "model": "Blocks/Structures/Roofs/Cloth_Roof_Horizontal.blockymodel",
+      "texture": "Blocks/Structures/Roofs/Cloth_Roof_Textures/Tent_Blue.png",
+      "icon": "Icons/ItemsGenerated/Cloth_Roof_Blue_Flat.png"
     }
   },
   "words": {
@@ -111,7 +130,10 @@
     "mop_needed": "That needs a mop.",
     "spill": "Spilt water - hold [{key}] with a mop to clean it up",
     "scraps": "Food scraps - hold [{key}] with a mop to clean them up",
-    "scorch": "A scorch mark - hold [{key}] with a mop to clean it up"
+    "scorch": "A scorch mark - hold [{key}] with a mop to clean it up",
+    "mat": "Mat - soaks up a mess that lands here",
+    "mat_dirty": "Dirty mat - hold [{key}] with a mop to clean it",
+    "mat_rubber": "Rubber mat - no mess lands here"
   },
   "slots": {}
 }

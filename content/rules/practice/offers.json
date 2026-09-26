@@ -1,5 +1,5 @@
 {
-  "$comment": "What the pads offer between days (not on day 1, and not on card days), each as a BLUEPRINT: press it to pay, and you get the station to put down. Stations by id (plain or already upgraded), never by block, and the chair. pads: pad N offers from day pads[N].",
+  "$comment": "What the pads offer between days (not on day 1, and not on card days), each as a BLUEPRINT: press it to pay, and you get the station to put down. Stations by id (plain or already upgraded), never by block, and the fixtures: chair, mat, rubber mat. pads: pad N offers from day pads[N].",
   "pads": {
     "1": 1,
     "2": 1,
@@ -104,6 +104,24 @@
         "early": 0,
         "mid": 2,
         "late": 4
+      }
+    },
+    {
+      "fixture": "mat",
+      "price": 5,
+      "weights": {
+        "early": 3,
+        "mid": 5,
+        "late": 5
+      }
+    },
+    {
+      "fixture": "mat_rubber",
+      "price": 15,
+      "weights": {
+        "early": 1,
+        "mid": 3,
+        "late": 5
       }
     }
   ]

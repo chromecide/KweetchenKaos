@@ -13,6 +13,9 @@
   press it to pay and you get the station to put down.
 - **No more upgrade kits.** Upgraded stations (dishwashers, fast and safety stoves)
   are bought ready-made. The fast crate is gone with the kits, for now.
+- **Mats** (PlateUp's): a mat (10) soaks up messes and gets dirty, then overflows
+  when it's filthy; a rubber mat (30) never lets a mess land on it. Every kind of
+  mess now spreads if it's left, food as well as water.
 - **Cheap dishwasher** (35): washes by itself, but slower than the dishwasher (60),
   and it drips.
 - Recipe spikes: `python3 deploy.py dish:<dish>` lays out one dish's kitchen.

@@ -176,9 +176,15 @@ spike.
 - **Sizes:** small, medium, large. A new one landing where one of its kind already
   is makes it a size bigger. The bigger, the slower you walk through it (80%,
   65%, 50%) and the weaker your jump.
-- **Spreading** (water only: its look's `"spreads": 3`): one landing on a large
-  spill makes that spill spread -- a drop round *it* -- which can land on another
-  large one and spread again, up to 3 hops from where it began.
+- **Spreading** (every kind: its look's `"spreads": 3`): one landing on a large
+  one makes it spread -- a drop round *it* -- which can land on another large one
+  and spread again, up to 3 hops from where it began. Food mess and water work the
+  same way; they're just different kinds.
+- **Mats** (blueprints on the pads): a **mat** soaks up whatever lands on it and
+  gets dirtier -- clean, dirty, filthy. A filthy mat that something lands on
+  **overflows**, exactly as a large hazard spreads, and counts toward the same 3
+  hops. A **rubber mat** never takes anything: a drop that picks it goes
+  elsewhere. A mop hold cleans a mat a level; only a clean mat can be moved.
 - **Cleaning:** hold F with the mop for a second; each hold makes it a size
   smaller, so a large one takes three.
 - How a random empty cell is found (`volumes.drop_around`): a rule can't ask "is
@@ -384,6 +390,7 @@ Pasted anywhere, the room works. Two things make that possible:
   | `rack` | the plate rack | two racks, a sink; a dirty plate |
   | `dish:<dish>` | one recipe, start to paid | its chain's stations and crates, a bin if it cooks; plates; callers for its orders |
   | `impatient` | random impatient guests | the front of house only |
+  | `mats` | mats soaking up, overflowing, and rubber mats | a sink, the mop stand, a mess dispenser; 6 mats, 3 rubber mats, dirty plates |
   | `hazards` | every hazard and the mop | sink, board, stove, mop stand, the front (every guest messy), a mess dispenser; a dirty plate, a pumpkin, corn |
   | `service` | the game, served by hand | the whole kitchen and front of house |
   | `run` | the game, a whole run | the whole kitchen, the shift; plates |
