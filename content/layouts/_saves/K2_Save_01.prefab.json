@@ -18955,7 +18955,7 @@
       "x": 7,
       "y": 3,
       "z": -1,
-      "name": "Soil_Clay"
+      "name": "Rock_Stone_Brick_Decorative"
     },
     {
       "x": 7,
@@ -18979,7 +18979,7 @@
       "x": 7,
       "y": 3,
       "z": 0,
-      "name": "Soil_Clay"
+      "name": "Rock_Stone_Brick_Decorative"
     },
     {
       "x": 7,
@@ -19075,7 +19075,8 @@
       "x": 7,
       "y": 3,
       "z": 4,
-      "name": "Soil_Clay"
+      "name": "Wood_Redwood_Trunk",
+      "support": 15
     },
     {
       "x": 7,
@@ -19099,7 +19100,8 @@
       "x": 7,
       "y": 3,
       "z": 5,
-      "name": "Soil_Clay"
+      "name": "Wood_Redwood_Trunk",
+      "support": 15
     },
     {
       "x": 7,

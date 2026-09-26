@@ -194,6 +194,13 @@ def build(debug=True, fill_portals=False):
         elif name.startswith(layouts.slot_id("portal_")[:-1]):
             n = int(name.rsplit("_", 1)[1])
             out.append(dict(b, name=layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
+            # A fence joining up to the pad beside it swallowed the pad (seen in game): say so.
+            if any(c["name"].startswith(("Wood_", "Metal_", "Rock_")) and "Fence" in c["name"]
+                   and (c["x"] - b["x"], c["y"] - b["y"] - 1, c["z"] - b["z"]) in
+                   ((1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1))
+                   for c in room["blocks"]):
+                notes.append(f"HQ: portal slot {n} has a fence right beside it -- the fence can "
+                             f"hide the portal; keep it a block clear")
             if n in portal_of:
                 out.append({"x": b["x"], "y": b["y"] + 1, "z": b["z"], "name": f"{NS}_Portal_{n}"})
                 portal_at[n] = (b["x"], b["y"] + 1, b["z"])
