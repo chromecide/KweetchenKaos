@@ -2,5 +2,5 @@
   "id": "test_room",
   "name": "Test room",
   "zones": {},
-  "size": "medium"
+  "enabled": false
 }

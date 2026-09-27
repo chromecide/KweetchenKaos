@@ -204,6 +204,8 @@ def pools(world):
         lid = meta["id"]
         if lid == world["hq"] or meta.get("kind") == "border" or lid.startswith("_"):
             continue
+        if meta.get("enabled", True) is False:
+            continue            # out of the rotation (layout.json), kept for later
         _, room = restaurant.load_layout(lid)
         have = {n for n in (restaurant._slot(b["name"]) for b in room["blocks"]) if n}
         # layout.json "size" stands in for the slot (a room built before size slots).

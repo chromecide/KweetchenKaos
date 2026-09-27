@@ -16,7 +16,8 @@ ONE AUTHORING WORLD PER LAYOUT, each with a single plot, so no world gets crowde
     /kk author practice        the practice room
     /kk author floorplan 7     a restaurant room: floorplans 1 to FLOORPLANS
     /kk slots      hand over the slot blocks -- all of them; "/kk slots hq" just HQ's
-                   (the arrival, portals 1-8), "/kk slots plot" just a room's
+                   (the arrival, portals, shelves), "/kk slots plot" just a
+                   restaurant room's (the practice room's only come with /kk slots)
     /kk save floorplan 7       save that world's plot (K2_Save_Floorplan_07). It goes into
                                that world first, so it can only save the world it names.
     /kk restore floorplan 7    put it back as it was LAST SAVED, throwing away changes since
@@ -316,6 +317,8 @@ def slot_kit(name):
     restaurant layout uses -- the arrival too)."""
     if name in ("arrival", "barrier"):
         return {"hq", "plot"}
+    if name == "practice_call" or name.startswith("crate_"):
+        return {"practice"}      # the practice room is switched off: only in /kk slots
     return {"hq"} if name.startswith(("portal_", "shelf_")) else {"plot"}
 
 
@@ -338,8 +341,7 @@ def write_authoring(release=False):
               ("KKSlotsHq", "kk slots hq", "Hand over HQ's slot blocks (arrival, portals, "
                                            "franchise shelves)",
                _give(SLOTS + SHELF_SLOTS, "hq")),
-              ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant room's slot blocks "
-                                               "(and a practice room's)",
+              ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant room's slot blocks",
                _give(SLOTS + CRATE_SLOTS, "plot"))]
     for src in sources():
         name, said = world_name(src), spoken(src)

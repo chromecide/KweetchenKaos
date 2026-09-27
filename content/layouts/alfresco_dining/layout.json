@@ -2,5 +2,5 @@
   "id": "alfresco_dining",
   "name": "Alfresco Dining",
   "zones": {},
-  "size": "medium"
+  "enabled": false
 }

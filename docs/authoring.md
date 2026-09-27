@@ -64,7 +64,7 @@ Build the floor as part of the room: a new plot is just grass.
 
 | Command | Gives you |
 |---|---|
-| `/kk slots plot` | everything a restaurant room uses |
+| `/kk slots plot` | everything a restaurant room uses (the practice room's slots, while it's switched off, only come with `/kk slots`) |
 | `/kk slots hq` | the arrival slot, the five portals and the franchise shelves |
 | `/kk slots` | all of them |
 
@@ -217,7 +217,8 @@ for now. Each player's
 best is kept per portal ("Your best at Medium: day 15+").
 
 A room built before size slots can be given one in its `layout.json` instead:
-`"size": "medium"`.
+`"size": "medium"`. `"enabled": false` in a room's `layout.json` takes it out of
+the rotation but keeps it (the three first rooms are out, for now).
 
 ## Testing a room on its own
 
