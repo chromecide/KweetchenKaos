@@ -119,6 +119,11 @@
       "texture": "Items/Consumables/Recipes/Recipe_Texture.png",
       "icon": "Icons/ItemsGenerated/Recipe_Page.png",
       "tint": "#d0a030"
+    },
+    "start_coins": {
+      "model": "Resources/Materials/Ingot.blockymodel",
+      "texture": "Resources/Materials/Ingot_Textures/Gold.png",
+      "icon": "Icons/ItemsGenerated/Ingredient_Bar_Gold.png"
     }
   },
   "words": {

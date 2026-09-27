@@ -57,5 +57,9 @@
     ],
     "big": 15,
     "best_from": 5
+  },
+  "franchise": {
+    "$comment": "Franchise rewards: start_coins is what a Start coins token adds to the purse, pressed on the open sign.",
+    "start_coins": 20
   }
 }

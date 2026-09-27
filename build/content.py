@@ -153,6 +153,11 @@ def load_theme(theme_id):
            f"themes/{theme_id}/fixtures.json")
     items["mop"]["description"] = "Hold it, look at a mess, and hold F to clean it up."
     items["mop"]["hold_seconds"] = fixtures["looks"]["mop"].get("hold_seconds", 1.0)
+    # START COINS: a franchise reward, carried in and pressed on the open sign for coins
+    # (systems/shift.py). Never binned.
+    define({"id": "start_coins", "label": "Start coins", "look": fixtures["looks"]["start_coins"],
+            "quality": "Rare", "bin": "refuse"}, f"themes/{theme_id}/fixtures.json")
+    items["start_coins"]["description"] = "A franchise reward: press the open sign with it."
     for f, d in many("ingredients"):
         iid = define(d["item"], f)
         source = d.get("source")

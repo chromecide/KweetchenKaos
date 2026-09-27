@@ -123,6 +123,11 @@ SPIKES = {
                 "endgame_blocks": True,
                 # A handful of guests a day, not day 9's crowd.
                 "guests": {"day_1": 2, "per_day": 0, "per_card": 1}},
+    # PROBE: the franchise STOREROOM (see _storeroom): banked counts per item, earned, taken
+    # from a shelf and put back; and the start coins token spent on the open sign. A run
+    # (the shift, the sign, the pads) and nothing else.
+    "storeroom": {"stations": {}, "front": True, "run": True, "storeroom_probe": True,
+                  "give": []},
     # PROBE: a FRANCHISE KIT carried into a restaurant as items (see _franchise): save a
     # reward, claim it at the desk, change worlds, put it down. A sink and a stove, so the
     # dishwasher and the safety stove (their rules are theirs) work once put down.
@@ -191,6 +196,120 @@ def _endgame_blocks(model):
         rules.add(10 + n, [v.at([gid])], effects + [v.sound(1.2)])
         out.append({"x": ENDGAME_ROW[0] + 2 * n, "y": GROUND, "z": ENDGAME_ROW[1], "name": gid})
     rules.write(ENDGAME_EFFECT, "Spike only: the endgame spike's blocks. See build/spike.py.")
+    return out
+
+
+STOREROOM_EFFECT = f"{settings.NAMESPACE}_Spike_Storeroom"
+STOREROOM_ROW = (4, 2)        # x, z of the first EARN block; shelves one row behind (z + 2)
+
+
+def _storeroom(model, debug):
+    """PROBE: the franchise STOREROOM. A player's franchise items are banked as a count per
+    item (a stat each, on the player). An EARN block adds one (what a day-15 pick will do).
+    A SHELF per item, with the item on top:
+        press it (not holding that item)  ->  one of it, and the count goes down one --
+                                              "none banked" at 0
+        press it holding that item        ->  it goes back, and the count goes up one
+    -- told apart by the shelf's volume, which checks what's in hand (TAKE is checked
+    first, so a return doesn't hand it straight back). Each says the count after ("2
+    left", up to "9+"). Start coins are a TOKEN: pressed on the open sign, +coins
+    (systems/shift.py). Returns layout blocks."""
+    items, prefix = model["items"], model["theme"]["prefix"]
+    gid = lambda local: settings.game_id(prefix, local)
+    title = lambda key: "_".join(p.capitalize() for p in key.split("_"))
+    say = lambda key, text: (pack.say(key, text), f"server.{key}")[1]
+    blueprint = model["fixtures"]["looks"]["blueprint"]   # a station on a shelf: its blueprint
+    goods = [("dishwasher", "Dishwasher", gid("dishwasher"), blueprint),
+             ("stove_safe", "Safety stove", gid("stove_safe"), blueprint),
+             ("start_coins", "Start coins", items["start_coins"]["game_id"],
+              items["start_coins"]["look"])]
+    look = {"sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+            "top": "BlockTextures/Wood_Softwood_Planks_Side.png", "sound": "Wood"}
+
+    def root(name, interaction):
+        rid = f"{settings.NAMESPACE}_Probe_Store_{name}"
+        pack.write(pack.out("Item", "RootInteractions", settings.NAMESPACE, f"{rid}.json"),
+                   {"$Comment": "Probe: see build/spike.py (_storeroom).",
+                    "Interactions": [interaction]})
+        return rid
+
+    def count(st, key, label, top=9):
+        """Say the count: exactly, 0 to `top`, then "top+" -- the highest threshold first."""
+        chain = {"Type": "SendMessage", "Key": say(f"kk.probe.store.{key}.0", f"{label}: none left")}
+        for k in range(1, top + 1):
+            text = f"{label}: {k}{'+' if k == top else ''} banked"
+            chain = {"Type": "StatsCondition", "Costs": {st: k}, "ValueType": "Absolute",
+                     "LessThan": False, "Next": {"Type": "SendMessage",
+                                                 "Key": say(f"kk.probe.store.{key}.{k}", text)},
+                     "Failed": chain}
+        return chain
+
+    rules = v.Entries()
+    out = []
+    for n, (key, label, item, item_look) in enumerate(goods):
+        st = f"{settings.NAMESPACE}_Franchise_{title(key)}"
+        pack.write(pack.out("Entity", "Stats", settings.NAMESPACE, f"{st}.json"), {
+            "$Comment": f"Probe: {label} banked in the franchise storeroom. See build/spike.py.",
+            "InitialValue": 0, "Min": 0, "Max": 99})
+        earn = root(f"Earn_{title(key)}", {"Type": "Serial", "Interactions": [
+            {"Type": "ChangeStat", "StatModifiers": {st: 1}, "ValueType": "Absolute",
+             "Behaviour": "Add"}, count(st, key, label)]})
+        take = root(f"Take_{title(key)}", {
+            "Type": "StatsCondition", "Costs": {st: 1}, "ValueType": "Absolute", "LessThan": False,
+            # The count, then the item -- and the message is a SEPARATE interaction (`tell`,
+            # run next by the shelf's rule): nothing after a ModifyInventory in a chain runs
+            # (seen: the item came, the count went down, its message never showed).
+            "Next": {"Type": "Serial", "Interactions": [
+                {"Type": "ChangeStat", "StatModifiers": {st: -1}, "ValueType": "Absolute",
+                 "Behaviour": "Add"},
+                {"Type": "ModifyInventory", "ItemToAdd": {"Id": item, "Quantity": 1}}]},
+            "Failed": {"Type": "SendMessage",
+                       "Key": say(f"kk.probe.store.{key}.none", f"No {label.lower()} banked")}})
+        give_back = root(f"Return_{title(key)}", {
+            "Type": "ChangeStat", "StatModifiers": {st: 1}, "ValueType": "Absolute",
+            "Behaviour": "Add"})
+        tell = root(f"Count_{title(key)}", count(st, key, label))
+        eb = f"{settings.NAMESPACE}_Spike_Store_Earn_{title(key)}"
+        blocks.station_block(eb, f"Earn: {label}", look, f"Press to bank a {label.lower()}",
+                             "Spike only: the storeroom probe. See build/spike.py.",
+                             tint="#3c8a5c", extra={"Interactions": {"Use": earn}})
+        shelf = f"{settings.NAMESPACE}_Spike_Store_Shelf_{title(key)}"
+        on_top = f"{shelf}_Top"
+        blocks.station_block(shelf, f"Shelf: {label}", dict(look, top="BlockTextures/Soil_Snow.png"),
+                             f"{label} - press to take one, or press holding one to put it back",
+                             "Spike only: the storeroom probe. See build/spike.py.", tint="#c08a3a")
+        blocks.display_block(on_top, f"{label} (on the shelf)", item_look,
+                             f"{label} - press to take one, or press holding one to put it back",
+                             "Spike only: the storeroom probe. See build/spike.py.")
+        x = STOREROOM_ROW[0] + 2 * n
+        out += [{"x": x, "y": GROUND, "z": STOREROOM_ROW[1], "name": eb},
+                {"x": x, "y": GROUND, "z": STOREROOM_ROW[1] + 2, "name": shelf},
+                {"x": x, "y": GROUND + 1, "z": STOREROOM_ROW[1] + 2, "name": on_top}]
+        # ONE PRESS IS A TAKE OR A RETURN, never both. A take can put the item straight
+        # into the empty hand, and RETURN, checked next, then took it back -- the count
+        # didn't move. So a take sets `took` for this press (tags are instant), RETURN
+        # needs it clear, and rule 99 clears it after every rule has run.
+        took = lambda value: {"Type": "TagCondition", "Event": "BLOCK_USED", "Source": "Self",
+                              "TagKey": "took", "Comparison": "Exactly", "TagValue": value}
+        for dy, where in ((0.0, [v.at([shelf])]), (-1.0, [v.at([on_top])])):
+            rules.add(10 + 4 * n + int(-dy), where + [v.not_holding(item)],
+                      [{"Type": "RunRootInteraction", "Event": "BLOCK_USED", "RootInteraction": take},
+                       {"Type": "RunRootInteraction", "Event": "BLOCK_USED", "RootInteraction": tell},
+                       {"Type": "ModifyTags", "Event": "BLOCK_USED", "Operation": "Set",
+                        "TagKey": "took", "TagValue": "1"}]
+                      + v.report(f"kk.store.take.{key}.{int(-dy)}", f"[storeroom] take: {label}", True))
+            rules.add(12 + 4 * n + int(-dy), where + [took("0"), v.holding(item)],
+                      [{"Type": "RunRootInteraction", "Event": "BLOCK_USED",
+                        "RootInteraction": give_back},
+                       {"Type": "RunRootInteraction", "Event": "BLOCK_USED", "RootInteraction": tell},
+                       v.sound(0.9)]
+                      + v.report(f"kk.store.return.{key}.{int(-dy)}", f"[storeroom] return: {label}",
+                                 True))
+    rules.add(99, [{"Type": "TagCondition", "Event": "BLOCK_USED", "Source": "Self",
+                    "TagKey": "took", "Comparison": "Exactly", "TagValue": "1"}],
+              [{"Type": "ModifyTags", "Event": "BLOCK_USED", "Operation": "Set",
+                "TagKey": "took", "TagValue": "0"}])
+    rules.write(STOREROOM_EFFECT, "Spike only: the storeroom probe's shelves. See build/spike.py.")
     return out
 
 
@@ -581,6 +700,10 @@ def build(model, name, debug=True):
     if spike.get("endgame_blocks"):
         extra += _endgame_blocks(model)
         mounted.append(v.volume("spike_endgame", ENDGAME_EFFECT, {"spike": "endgame"}))
+    if spike.get("storeroom_probe"):
+        extra += _storeroom(model, debug)
+        mounted.append(v.volume("spike_storeroom", STOREROOM_EFFECT,
+                                {"spike": "storeroom", "took": "0"}))
     if spike.get("franchise_probe"):
         extra += _franchise(model)
     if spike.get("best_probe"):

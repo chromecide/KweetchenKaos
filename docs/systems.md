@@ -228,6 +228,15 @@ player brings their own kit. The `franchise` spike proved it:
   have loaded, and is thrown out) and sets it back to 0: a one-time claim.
 - Items in the inventory survive a world change, so a kit goes through a portal.
 
+**The storeroom** (the `storeroom` spike, proved 2026-09-27): each franchise item is
+**banked as a count** on the player (a stat per item), earned one at a time. A **shelf**
+per item: press it to take one (the count goes down), or press it holding one to put it
+back (up); it says the count after each. Start coins are a **token**: pressed on the open
+sign, +20 coins (the rules' `franchise.start_coins`), without opening the day. What was
+learned: nothing after `ModifyInventory` in an interaction chain runs, so the item comes
+last and the message is its own interaction; and a take can land the item straight in an
+empty hand, so the shelf marks the press as a take and skips the return rule for it.
+
 ## Front of house
 
 ### Moods (`moods.py`)

@@ -174,11 +174,23 @@ def build(model, roles, debug=True, exit_on_lose=False):
                                        "the kitchen, then open the sign."))
 
     # 10: open the day. 11: already open. 12: nothing delivered yet.
+    # START COINS (a franchise reward): pressed on the closed sign, it's spent for coins --
+    # and the press doesn't open the day (or say what opening needs): those rules check
+    # the token isn't in hand. Rule 28 comes AFTER them, since spending it takes it away.
+    coins_token = model["items"].get("start_coins", {}).get("game_id")
+    no_token = [v.not_holding(coins_token)] if coins_token else []
+    if coins_token:
+        amount = rules_.get("franchise", {}).get("start_coins", 20)
+        rules.add(28, [v.at([s["sign"]]), v.holding(coins_token)],
+                  [_set("BLOCK_USED", signals.MONEY, amount, op="Increment"), v.sound(1.5)]
+                  + say("BLOCK_USED", "startcoins", f"[shift] +{amount} coins from your "
+                                                    f"franchise - purse: {{money}}"))
     # 9: a card is waiting to be chosen -- no opening until it is.
-    rules.add(9, [v.at([s["sign"]]), _t("BLOCK_USED", "cardwait", 1)],
+    rules.add(9, [v.at([s["sign"]]), _t("BLOCK_USED", "cardwait", 1)] + no_token,
               say("BLOCK_USED", "cardwait", "[shift] Choose a card on the pads first."))
     rules.add(10, [v.at([s["sign"]]), _t("BLOCK_USED", "open", 0),
-                   _t("BLOCK_USED", "onmenu", 1, "AtLeast"), _t("BLOCK_USED", "cardwait", 0)],
+                   _t("BLOCK_USED", "onmenu", 1, "AtLeast"), _t("BLOCK_USED", "cardwait", 0)]
+              + no_token,
               [v.cell([s["sign"]], s["sign_open"]),
                _set("BLOCK_USED", "open", 1), _set("BLOCK_USED", "closing", 0),
                _set("BLOCK_USED", "lost", 0),
@@ -211,7 +223,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
     rules.add(11, [v.at([s["sign_open"]])],
               say("BLOCK_USED", "stillopen", "[shift] Open - {time_left}s to closing time; "
                                              "{to_arrive} guests still to come, {served} served."))
-    rules.add(12, [v.at([s["sign"]]), _t("BLOCK_USED", "onmenu", 0)],
+    rules.add(12, [v.at([s["sign"]]), _t("BLOCK_USED", "onmenu", 0)] + no_token,
               say("BLOCK_USED", "nomenu", "[shift] Nothing on the menu yet - choose a "
                                           "starting recipe on the pads."))
 
