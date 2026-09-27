@@ -64,7 +64,8 @@ Build the floor as part of the room: a new plot is just grass.
 
 | Command | Gives you |
 |---|---|
-| `/kk slots plot` | everything a restaurant room uses (the practice room's slots, while it's switched off, only come with `/kk slots`) |
+| `/kk slots plot` | everything a restaurant room uses |
+| `/kk slots practice` | what the practice room adds: **call a guest**, a crate per ingredient, and the recipe picker (take `/kk slots plot` too) |
 | `/kk slots hq` | the arrival slot, the five portals and the franchise shelves |
 | `/kk slots` | all of them |
 
@@ -76,7 +77,8 @@ Build the floor as part of the room: a new plot is just grass.
 | **sink (wash)** | the sink | at least one |
 | **bin** | the bin | at least one |
 | **booking desk** | the booking desk (call the next guest in now, for coins) | one: every room has one |
-| **call a guest** | the practice room's Call a guest block -- and it makes the room a **practice room** (no shift, pads or sign: guests come by themselves, nothing counts) | one, in a practice room |
+| **call a guest** | the practice room's Call a guest block -- and it makes the room a **practice room** (no shift, pads or booking desk -- their slots are ignored there; the sign turns guests on and off, and nothing counts) | one, in a practice room |
+| **practice - any dish / practice - <dish> only** | the practice room's **recipe picker**: press a dish and every guest from then on wants that dish; *any dish* goes back to the whole menu. A dish's slot looks like the dish | as many as you like, in a practice room |
 | **crate - <ingredient>** (one per ingredient) | that ingredient's crate, in a practice room (a real run delivers its crates, so a normal room leaves these out) | one of each the menu needs |
 | **franchise shelf** (HQ, one per item) | a shelf in the franchise storeroom: players take their banked items here, and put them back | as many as you like; only the shelves you place appear |
 | **mop stand** | the mop stand, with the mop on it (to clean messes and spills) | one: every room has one; without it, messes can't be cleaned |
@@ -85,7 +87,7 @@ Build the floor as part of the room: a new plot is just grass.
 | **queue spot 1–4** | the queue | a line: 1 is the front, 4 the back; each needs a clear path to the next |
 | **queue pool** | where guests appear | behind spot 4 |
 | **offer pad 1–4** | the pads (offers, deliveries, recipe cards) | all four |
-| **open sign** | the sign that starts each day | one |
+| **open sign** | the sign that starts each day; in a practice room, the switch that turns guests on and off (off to start) | one |
 | **arrival** | where players appear | set it in the floor; it becomes the floor around it. Optional: without it, players arrive in front of the room |
 | **barrier** | an invisible wall (the game's `Barrier`) | anywhere, in any layout, HQ and the border: a clearly visible block while you build |
 | **room size - starter / small / medium / large** | which HQ portal picks this room; gone (air) in game | one in every restaurant room (not the practice room) |
@@ -212,8 +214,7 @@ picks it).
 | `portals` | the five portals: `name` (shown in game), `theme` and `rules` (`standard`, or `practice` for short, easy days) |
 
 A portal can override `ground`, `weather` and `border` for itself, and
-`"enabled": false` switches it off (no portal in HQ). The practice portal is off
-for now. Each player's
+`"enabled": false` switches it off (no portal in HQ). Each player's
 best is kept per portal ("Your best at Medium: day 15+").
 
 A room built before size slots can be given one in its `layout.json` instead:

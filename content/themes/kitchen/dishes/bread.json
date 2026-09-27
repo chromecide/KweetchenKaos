@@ -10,6 +10,7 @@
       "look": {
         "model": "Items/Consumables/Food/Bread.blockymodel",
         "texture": "Items/Consumables/Food/Bread_Texture.png",
+        "scale": 0.6,
         "icon": "Icons/ItemsGenerated/Food_Bread.png"
       },
       "stage_looks": {

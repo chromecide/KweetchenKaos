@@ -147,6 +147,8 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
             **({"rotation": rotation} if rotation is not None else {}))
         if name.startswith("station_"):
             role = name[len("station_"):]
+            if practice and role == "call":
+                continue        # a practice room has no booking desk (no days to call into)
             sid = by_role.get(role)
             if sid is None:
                 problems.append(f"a {role} slot at ({b['x']}, {b['y']}, {b['z']}), but the "
@@ -169,13 +171,15 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
             out_blocks.append(at(q["pool"]))
             entities.append(queue.pool_entity(b["x"], b["y"], b["z"]))
             queue_cells.append((b["x"], b["y"], b["z"]))
-        elif name.startswith("pad_"):
+        elif name.startswith("pad_") and not practice:        # no offers in practice
             n = int(name.split("_")[1])
             pad_numbers.add(n)
             out_blocks.append(at(pads.ids(model)["pad"](n)))
             entities.append(pads.pad_entity(n, b["x"], b["y"], b["z"]))
-        elif name == "sign" and not practice:
-            out_blocks.append(at(shift.ids(model)["sign"]))
+        elif name == "sign":
+            # A practice room's sign turns its guests on and off (systems/practice.py).
+            out_blocks.append(at(practice_system.ids(model)["sign"] if practice
+                                 else shift.ids(model)["sign"]))
         elif name.startswith("crate_"):
             # A CRATE SLOT (one per ingredient): the crate, in a practice room -- a run's
             # crates are delivered, so a normal room ignores them.
@@ -191,6 +195,16 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
                     out_blocks.append(at(block, dy=dy))
         elif name == "practice_call":
             out_blocks.append(at(practice_system.ids(model)["call"]))
+        elif name == "practice_any" or name.startswith("practice_dish_"):
+            # THE RECIPE PICKER (practice rooms only).
+            pi = practice_system.ids(model)
+            d = name[len("practice_dish_"):]
+            if not practice:
+                problems.append(f"a {name} slot: the recipe picker is for practice rooms -- left out")
+            elif name != "practice_any" and d not in model["dishes"]:
+                problems.append(f"a {name} slot, but the theme has no dish '{d}'")
+            else:
+                out_blocks.append(at(pi["any"] if name == "practice_any" else pi["dish"](d)))
         elif name == "barrier":
             out_blocks.append(at(layouts.BARRIER))
         elif name == "arrival":
@@ -222,8 +236,9 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
         problems.append(f"queue spots missing: {sorted({f'queue_{i}' for i in range(1, 5)} - spots)}")
     if "pool" not in names:
         problems.append("no queue pool slot: guests have nowhere to arrive")
-    if "sign" not in names and not practice:
-        problems.append("no open sign slot: the day can't be opened")
+    if "sign" not in names:
+        problems.append("no open sign slot: " + ("its guests can't be switched on" if practice
+                                                 else "the day can't be opened"))
 
     # THE QUEUE ZONE, in room coordinates: drawn, or worked out round the spots and pool.
     zone = meta.get("zones", {}).get("queue")
@@ -261,7 +276,8 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
                              {"seating": "system", "refused": "0", "guestreset": "1"}, box))
     if practice:
         pi = practice_system.ids(model)
-        entities.append(_carried("practice", pi["effect"], {"practice": "1"}, box))
+        entities.append(_carried("practice", pi["effect"], {"practice": "1", "focus": "0",
+                                                                   "open": "0"}, box))
         # The lock, on for good: nothing picked up, broken, or carried out of practice.
         entities.append(_carried("practice_lock", pi["lock"], {"servicelock": "1"}, box,
                                  extra={"Enabled": True, "RulesActive": True,

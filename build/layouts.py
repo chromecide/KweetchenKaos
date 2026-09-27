@@ -17,7 +17,7 @@ ONE AUTHORING WORLD PER LAYOUT, each with a single plot, so no world gets crowde
     /kk author floorplan 7     a restaurant room: floorplans 1 to FLOORPLANS
     /kk slots      hand over the slot blocks -- all of them; "/kk slots hq" just HQ's
                    (the arrival, portals, shelves), "/kk slots plot" just a
-                   restaurant room's (the practice room's only come with /kk slots)
+                   restaurant room's, "/kk slots practice" the practice room's own on top
     /kk save floorplan 7       save that world's plot (K2_Save_Floorplan_07). It goes into
                                that world first, so it can only save the world it names.
     /kk restore floorplan 7    put it back as it was LAST SAVED, throwing away changes since
@@ -134,6 +134,9 @@ SLOTS = (
 # PRACTICE rooms only: a CRATE per ingredient (a run's crates are delivered; a practice
 # room has nothing to deliver them) -- from the theme, like the shelves.
 CRATE_SLOTS = []
+# PRACTICE rooms only: THE RECIPE PICKER -- ANY DISH, and a block per dish (press one and
+# every guest wants that dish; systems/practice.py). From the theme, like the crates.
+PICKER_SLOTS = []
 # HQ only: a FRANCHISE SHELF per item a player can bank (systems/franchise.py) -- worked out
 # from the theme and rules when the slots are written (write_slots), so kept apart from SLOTS.
 SHELF_TINT = "#c08a3a"
@@ -272,7 +275,16 @@ def write_slots(model=None):
                                 f"(practice rooms)", STATION_TINT)
                           for sid, st in sorted(model["stations"].items())
                           if st["role"] == "crate" and not st.get("upgrade_of")]
-    for name, label, tint in SLOTS + SHELF_SLOTS + CRATE_SLOTS:
+    if model and model.get("menu"):
+        seen = []
+        for e in model["menu"]:
+            if e["dish"] not in seen:
+                seen.append(e["dish"])
+        PICKER_SLOTS[:] = ([("practice_any", "Slot: practice - any dish", QUEUE_TINT)]
+                           + [(f"practice_dish_{d}", f"Slot: practice - "
+                                                     f"{model['dishes'][d]['label']} only", QUEUE_TINT)
+                              for d in seen])
+    for name, label, tint in SLOTS + SHELF_SLOTS + CRATE_SLOTS + PICKER_SLOTS:
         if name.startswith("crate_") and name in (model or {}).get("stations", {}):
             # A crate slot looks like its crate.
             st = model["stations"][name]
@@ -280,6 +292,13 @@ def write_slots(model=None):
             blocks.station_block(slot_id(name), label, look, label,
                                  "A layout slot. See build/layouts.py.", tint=st["look"].get("tint"),
                                  keyed=False)
+            continue
+        if name.startswith("practice_dish_"):
+            # A dish's picker slot looks like the dish, plated.
+            d = name[len("practice_dish_"):]
+            entry = next(e for e in model["menu"] if e["dish"] == d)
+            blocks.display_block(slot_id(name), label, model["items"][entry["serves"]]["look"],
+                                 label, "A layout slot. See build/layouts.py.")
             continue
         if name == "chair":
             # A chair has a FACING (its table goes in front), so its slot is a chair.
@@ -317,8 +336,8 @@ def slot_kit(name):
     restaurant layout uses -- the arrival too)."""
     if name in ("arrival", "barrier"):
         return {"hq", "plot"}
-    if name == "practice_call" or name.startswith("crate_"):
-        return {"practice"}      # the practice room is switched off: only in /kk slots
+    if name.startswith(("practice_", "crate_")):
+        return {"practice"}      # /kk slots practice: on top of a room's own
     return {"hq"} if name.startswith(("portal_", "shelf_")) else {"plot"}
 
 
@@ -337,12 +356,16 @@ def write_authoring(release=False):
     manifest = json.load(open(os.path.join(settings.PACK, "manifest.json")))
     pack_id = f"{manifest['Group']}:{manifest['Name']}"
     macros = [("KKSlots", "kk slots", "Hand over every slot block",
-               _give(SLOTS + SHELF_SLOTS + CRATE_SLOTS)),
+               _give(SLOTS + SHELF_SLOTS + CRATE_SLOTS + PICKER_SLOTS)),
               ("KKSlotsHq", "kk slots hq", "Hand over HQ's slot blocks (arrival, portals, "
                                            "franchise shelves)",
                _give(SLOTS + SHELF_SLOTS, "hq")),
               ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant room's slot blocks",
-               _give(SLOTS + CRATE_SLOTS, "plot"))]
+               _give(SLOTS + CRATE_SLOTS, "plot")),
+              ("KKSlotsPractice", "kk slots practice", "Hand over the practice room's own slot "
+                                                       "blocks (call a guest, a crate each, "
+                                                       "the recipe picker)",
+               _give(SLOTS + CRATE_SLOTS + PICKER_SLOTS, "practice"))]
     for src in sources():
         name, said = world_name(src), spoken(src)
         pack.write(pack.out("Instances", name, "instance.bson"), {

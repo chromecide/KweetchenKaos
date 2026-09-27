@@ -1,5 +1,6 @@
 {
   "id": "pie",
   "model": "Items/Consumables/Food/Pie.blockymodel",
-  "icon": "Icons/ItemsGenerated/Food_Pie_Pumpkin.png"
+  "icon": "Icons/ItemsGenerated/Food_Pie_Pumpkin.png",
+  "scale": 0.75
 }

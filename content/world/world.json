@@ -8,8 +8,7 @@
     "practice": {
       "name": "Practice",
       "theme": "kitchen",
-      "rules": "standard",
-      "enabled": false
+      "rules": "standard"
     },
     "starter": {
       "name": "Starter",

@@ -83,6 +83,11 @@ def build(model, ground, debug=True, run=False, practice=False):
         roles_by = {e["serves"]: guests.role_id(model, e) for e in model["menu"]}
         p = practice_system.build(model, roles_by, debug)
         layout.append({"x": CALLERS_X, "y": ground, "z": CALLERS_Z, "name": p["call"]})
+        # The recipe picker beside it: any dish, then a block per dish.
+        picker = ([p["sign"], p["any"]]
+                  + [p["dish"](d) for d, _, _ in practice_system.dishes(model)])
+        for k, block in enumerate(picker, start=1):
+            layout.append({"x": CALLERS_X + 2 * k, "y": ground, "z": CALLERS_Z, "name": block})
         return base + practice_system.volumes(model), (layout, entities)
 
     # Callers and the listener.

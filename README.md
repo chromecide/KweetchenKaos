@@ -94,9 +94,8 @@ together.
 - **Enter with empty hands.** Nothing stops a player from carrying items into a
   restaurant or the practice room today. They could bring tools to break and rearrange a
   layout, bring food from one run into the next, or carry a practice station out
-  into a run. The practice room is switched off until this is solved (its portal has
-  `"enabled": false` in `world.json`); a recipe picker for it waits on the
-  `practice-picker` branch.
+  into a run. Until this is solved the practice room's stations stay locked in place;
+  a recipe picker for it waits on the `practice-picker` branch.
   The plan: HQ is the gate. Every portal out of HQ refuses a player who is carrying
   anything (the game's trigger volumes can check for an empty inventory), and HQ
   gets chests for dumping gear. Franchise items would be **packed** at the shelves
