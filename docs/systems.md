@@ -201,6 +201,19 @@ spike.
 - **Fire:** a stove left with burnt food catches fire, the fire spreads to the
   stations beside it, and an extinguisher puts it out.
 
+## Remembering the best run (probed, not built)
+
+A run's world is thrown away, and HQ is rebuilt on a restart, so a best day has to live
+on the **player**. The `bestrun` spike proved, in game (2026-09-27):
+
+- A custom player stat (`Server/Entity/Stats/`) survives a server restart.
+- A volume can write it: `RunRootInteraction` -> `ChangeStat` with `Behaviour: Max`,
+  so it keeps the higher of the best and today, in one step (recording 3 after 7 left 7).
+- It can be read back only by threshold (`StatsCondition`: "at least N?"), not printed:
+  HQ would show brackets, e.g. "Best here: day 15+".
+- **Death resets every stat** (`/kill` wiped it). Falling into the void is the only way
+  to die in Kweetchen Kaos.
+
 ## Front of house
 
 ### Moods (`moods.py`)

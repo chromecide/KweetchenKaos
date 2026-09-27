@@ -121,6 +121,9 @@ SPIKES = {
                 # A handful of guests a day, not day 14's crowd: it's the titles and the
                 # squeezes that are being watched, not surviving them.
                 "guests": {"day_1": 2, "per_day": 0, "per_card": 1}},
+    # PROBE: can a run remember the best day on the player, and can it be read back? Four
+    # blocks, nothing else (see _best_run).
+    "bestrun": {"stations": {}, "best_probe": True, "give": []},
     # THE GAME, service only: the kitchen, the queue, chairs and guests, called by hand.
     "service": {"stations": KITCHEN, "front": True, "hazards": True},
     # THE GAME, a full RUN: the shift runs the days. Crates at 0: mounted (so delivered ones
@@ -143,6 +146,57 @@ DISH_PLATES = 4
 
 
 TIP_DIAL_EFFECT = f"{settings.NAMESPACE}_Spike_Tip_Dial"
+BEST_EFFECT = f"{settings.NAMESPACE}_Spike_Best"
+BEST_STAT = f"{settings.NAMESPACE}_Best_Probe"
+BEST_ROW = (4, 4)             # x, z of the first of the probe's four blocks, 2 apart in x
+
+
+def _best_run(model, debug):
+    """PROBE: can a restaurant remember the best day on the PLAYER (a stat outlives the
+    run's world and a restart), and can HQ read it back? Four blocks: record day 7 and day
+    3 (ChangeStat with Behaviour Max: best = the higher of the two -- 3 must not lower 7),
+    show it (StatsCondition: at least 5? -- a threshold check, as HQ would use), and reset
+    it. `/entity stats get K2_Best_Probe` prints the number itself. Returns layout blocks."""
+    pack.write(pack.out("Entity", "Stats", settings.NAMESPACE, f"{BEST_STAT}.json"), {
+        "$Comment": "Probe: the best day reached, remembered on the player. See build/spike.py.",
+        "InitialValue": 0, "Min": 0, "Max": 1000})
+    say = lambda key, text: (pack.say(key, text), f"server.{key}")[1]
+    roots = {
+        "set7": {"Type": "ChangeStat", "StatModifiers": {BEST_STAT: 7}, "ValueType": "Absolute",
+                 "Behaviour": "Max"},
+        "set3": {"Type": "ChangeStat", "StatModifiers": {BEST_STAT: 3}, "ValueType": "Absolute",
+                 "Behaviour": "Max"},
+        "show": {"Type": "StatsCondition", "Costs": {BEST_STAT: 5}, "ValueType": "Absolute",
+                 "LessThan": False,
+                 "Next": {"Type": "Serial", "Interactions": [
+                     {"Type": "SendMessage", "Key": say("kk.probe.best.ge5", "Best day: at least 5")},
+                     {"Type": "ShowEventTitle", "PrimaryTitle": {"MessageId": say("kk.probe.best.t.ge5", "Best: day 5+")}, "IsMajor": True}]},
+                 "Failed": {"Type": "Serial", "Interactions": [
+                     {"Type": "SendMessage", "Key": say("kk.probe.best.lt5", "Best day: under 5")},
+                     {"Type": "ShowEventTitle", "PrimaryTitle": {"MessageId": say("kk.probe.best.t.lt5", "Best: under day 5")}, "IsMajor": True}]}},
+        "reset": {"Type": "ChangeStat", "StatModifiers": {BEST_STAT: 0}, "ValueType": "Absolute",
+                  "Behaviour": "Set"},
+    }
+    look = {"sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+            "top": "BlockTextures/Wood_Softwood_Planks_Side.png", "sound": "Wood"}
+    labels = {"set7": ("Record day 7", "#3c8a5c"), "set3": ("Record day 3", "#8a8a3c"),
+              "show": ("Show the best day", "#3c6a8a"), "reset": ("Forget the best day", "#a04030")}
+    rules = v.Entries()
+    out = []
+    for n, (key, root) in enumerate(roots.items()):
+        rid = f"{settings.NAMESPACE}_Probe_Best_{key.capitalize()}"
+        pack.write(pack.out("Item", "RootInteractions", settings.NAMESPACE, f"{rid}.json"),
+                   {"$Comment": "Probe: see build/spike.py (_best_run).", "Interactions": [root]})
+        gid = f"{settings.NAMESPACE}_Spike_Best_{key.capitalize()}"
+        text, tint = labels[key]
+        blocks.station_block(gid, text, look, f"Press to {text[0].lower() + text[1:]}",
+                             "Spike only: the best-run probe. See build/spike.py.", tint=tint)
+        rules.add(10 + n, [v.at([gid])],
+                  [{"Type": "RunRootInteraction", "Event": "BLOCK_USED", "RootInteraction": rid},
+                   v.sound(1.2)])
+        out.append({"x": BEST_ROW[0] + 2 * n, "y": GROUND, "z": BEST_ROW[1], "name": gid})
+    rules.write(BEST_EFFECT, "Spike only: the best-run probe. See build/spike.py.")
+    return out
 
 
 def _tip_dial(model, debug):
@@ -398,6 +452,9 @@ def build(model, name, debug=True):
     if spike.get("tip_dial"):
         extra += _tip_dial(model, debug)
         mounted.append(v.volume("spike_tip_dial", TIP_DIAL_EFFECT, {"spike": "tipdial"}))
+    if spike.get("best_probe"):
+        extra += _best_run(model, debug)
+        mounted.append(v.volume("spike_best", BEST_EFFECT, {"spike": "best"}))
     if spike.get("dispenser"):
         extra.append({"x": HAZARD_DISPENSER[0], "y": GROUND, "z": HAZARD_DISPENSER[1],
                       "name": hazards.ids(model)["dispenser"]})
