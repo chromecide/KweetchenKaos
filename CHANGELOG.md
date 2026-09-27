@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- **Much snappier:** the game's big rule sets are split into many small ones; pressing
+  and picking things up no longer lags.
+- The press count shows on what's on the board or in the sink too, not just the station.
+- Tap F with the mop to put it back on its stand (cleaning a mess still takes the hold).
+- Burnt food has its own icon (black petals).
+
 ## 0.3.0 (2026-09-27)
 
 - **Messes and spills** (PlateUp's): any guest may leave a mess by its chair as it

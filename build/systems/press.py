@@ -41,6 +41,9 @@ def ids(model, station_id):
             "left": lambda n: gid(f"{station_id}_left_{n}"),
             "done": gid(f"{station_id}_done"),
             "on": lambda item: gid(f"{station_id}_on_{item}"),
+            # An input being pressed, n presses to go: its own block per count, so the
+            # count shows whichever the crosshair lands on, the station or what's on it.
+            "on_n": lambda item, n: gid(f"{station_id}_on_{item}_{n}"),
             "effect": gid(f"{station_id}_system")}
 
 
@@ -78,19 +81,22 @@ def build(model, station_id, debug=True):
         blocks.station_block(b["done"], f"{label} (done)", look, words["done"], note,
                              sides=look.get("busy_sides"))
 
-    # What sits on top: each input while it is being pressed, and (leave_on) each output
-    # waiting to be picked up. Pressing the picture counts as pressing the station --
-    # small models are hard to aim at.
+    # What sits on top: each input while it is being pressed -- one block PER COUNT, which
+    # goes down a rung with the station, so its hint shows the count too (the crosshair
+    # often lands on a big model, not the station) -- and (leave_on) each output waiting to
+    # be picked up. Pressing the picture counts as pressing the station.
     inputs = list(dict.fromkeys(s["input"] for s in table))
     outputs = list(dict.fromkeys(s["output"] for s in table)) if leave_on else []
     assert not set(inputs) & set(outputs), f"{station_id}: an item is both input and output"
+    presses = {s["input"]: s["presses"] for s in table}
     for iid in inputs:
-        blocks.display_block(b["on"](iid), f"{name(iid)} (on the {label.lower()})",
-                             items[iid]["look"], words["on_top"], note)
+        for n in range(1, presses[iid] + 1):
+            blocks.display_block(b["on_n"](iid, n), f"{name(iid)} (on the {label.lower()})",
+                                 items[iid]["look"], f"{words['on_top']} - {n} to go", note)
     for iid in outputs:
         blocks.display_block(b["on"](iid), f"{name(iid)} (on the {label.lower()})",
                              items[iid]["look"], words["done"], note)
-    shown_in = [b["on"](i) for i in inputs]
+    shown_in = [b["on_n"](i, n) for i in inputs for n in range(1, presses[i] + 1)]
     shown_out = [b["on"](i) for i in outputs]
     ladder = [b["left"](n) for n in range(1, top + 1)] + ([b["done"]] if leave_on else [])
 
@@ -111,13 +117,17 @@ def build(model, station_id, debug=True):
         rules.add(100 + inputs.index(s["input"]),
                   [v.at([b["free"]]), v.holding(game(s["input"]))],
                   [v.cell([b["free"]], b["left"](s["presses"])),
-                   v.place(b["on"](s["input"])), v.sound(0.8)]
+                   v.place(b["on_n"](s["input"], s["presses"])), v.sound(0.8)]
                   + rep(f"on.{s['input']}", f"{name(s['input'])} on - start pressing"))
 
-    # PRESS: one rung down. What is on top isn't looked at.
+    # PRESS: one rung down -- the station, and what's on it (one swap per input; only the
+    # one that's there takes).
     for n in range(2, top + 1):
-        either(b["left"](n), shown_in, [
+        at_n = [i for i in inputs if presses[i] >= n]
+        either(b["left"](n), [b["on_n"](i, n) for i in at_n], [
             lambda dy, n=n: v.cell([b["left"](n)], b["left"](n - 1), dy=dy),
+            *[lambda dy, n=n, i=i: v.cell([b["on_n"](i, n)], b["on_n"](i, n - 1), dy=dy + 1)
+              for i in at_n],
             lambda dy, n=n: v.sound(1.4 + 0.1 * (top - n), volume=0.9)],
             # Chat only: the log takes a line a second, and presses would crowd out the
             # milestones (on, made, picked up).
@@ -125,7 +135,7 @@ def build(model, station_id, debug=True):
 
     # THE LAST PRESS: the only one that asks what is on top.
     for s in table:
-        shown = b["on"](s["input"])
+        shown = b["on_n"](s["input"], 1)
         if leave_on:
             effects = [lambda dy, s=s, shown=shown: v.cell([shown], b["on"](s["output"]), dy=dy + 1),
                        lambda dy: v.cell([b["left"](1)], b["done"], dy=dy),

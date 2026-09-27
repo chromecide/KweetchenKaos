@@ -8,7 +8,8 @@
       "look": {
         "base": "pie",
         "texture": "Items/Consumables/Food/Pie_Textures/Pumpkin.png",
-        "tint": "#2e2824"
+        "tint": "#2e2824",
+        "icon": "Icons/ItemsGenerated/Plant_Petals_Black.png"
       }
     }
   ]

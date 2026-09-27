@@ -91,6 +91,18 @@ def mat_ids(model):
                          for k in hazard_kinds(model)}}
 
 
+def mopped(model):
+    """Every block the mop cleans: each hazard at every size (spreading ones too), and the
+    dirty mats (overflowing ones too). What a mop TAP leaves alone (items.py): only a full
+    hold cleans."""
+    out = []
+    for kind in hazard_kinds(model):
+        out += hazard_ids(model, kind) + hazard_spreading(model, kind)
+    mats = mat_ids(model)
+    out += mats["levels"][1:] + [b for bs in mats["overflow"].values() for b in bs]
+    return out
+
+
 def hazard_drop(model, kind, hop=0):
     """What a drop of this hazard passes to volumes.drop_around: its sizes; which blocks
     count as large and what goes over one it lands on; the mats that soak it up; and which

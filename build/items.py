@@ -25,18 +25,23 @@ import pack
 import serving
 
 
-def _hold_to_use(item):
-    """An item whose F must be HELD (`hold_seconds`: the mop): a charge in front of the
-    block's use. The use -- and so the BLOCK_USED a volume hears -- only happens once the hold
-    is complete (UseBlock fires the event as it uses the block), with the progress shown;
-    let go early and nothing happens. The shipped watering can's pattern."""
+def _hold_to_use(item, model):
+    """An item whose F must be HELD on some blocks (`hold_seconds`: the mop, on a mess): a
+    charge in front of the block's use. The use -- and so the BLOCK_USED a volume hears --
+    only happens once it lets go: HELD the full time, it uses whatever it's aimed at, with the
+    progress shown (the shipped watering can's pattern); TAPPED, it uses the block too --
+    unless that's one the mop cleans (blocks.mopped), where a tap does nothing. So cleaning
+    takes the hold, and everything else -- putting the mop back on its stand -- a tap."""
     secs = item.get("hold_seconds")
     if not secs:
         return {}
+    tap = {"Type": "BlockCondition",
+           "Matchers": [{"Block": {"Id": b}} for b in blocks.mopped(model)],
+           "Next": {"Type": "Simple"}, "Failed": {"Type": "UseBlock"}}
     return {"Use": {"Interactions": [{
         "Type": "Charging", "AllowIndefiniteHold": False, "DisplayProgress": True,
         "OnItemChangeBehavior": "Cancel",
-        "Next": {"0": {"Type": "Simple"}, str(float(secs)): {"Type": "UseBlock"}}}]}}
+        "Next": {"0": tap, str(float(secs)): {"Type": "UseBlock"}}}]}}
 
 
 def write_all(model):
@@ -64,7 +69,7 @@ def write_all(model):
             # left-click on the stove carried it off and the kit was gone.
             "Interactions": (serving.interactions(item) if iid in served
                              else dict({"Primary": blocks.NOOP, "Secondary": blocks.NOOP},
-                                       **_hold_to_use(item))),
+                                       **_hold_to_use(item, model))),
             "BlockType": blocks.block_for(item["look"]),
         })
     return len(model["items"])
