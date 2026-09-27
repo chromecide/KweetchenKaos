@@ -59,15 +59,19 @@ def build(model, ground, debug=True, run=False):
 
     base = (queue.volumes(model, QUEUE_AREA, built["patience"]) + seating.volumes(model))
     if run:
+        v.take_companions()       # nothing left over from another build
         tags = shift.build(model, {e["serves"]: guests.role_id(model, e) for e in model["menu"]},
                            debug)
+        # Its companions: the per-day pacing volumes (shift.py).
+        pacing = [v.volume(f"shift_{n}", eff, t) for n, (eff, t) in enumerate(v.take_companions())]
         pads.build(model, debug)
         layout.append({"x": SIGN_X, "y": ground, "z": PADS_Z, "name": shift.ids(model)["sign"]})
         for k, n in enumerate(pads.numbers(model)):
             layout.append({"x": PADS_X + 2 * k, "y": ground, "z": PADS_Z,
                            "name": pads.ids(model)["pad"](n)})
             entities.append(pads.pad_entity(n, PADS_X + 2 * k, ground, PADS_Z))
-        return base + shift.volumes(model, tags) + pads.volumes(model), (layout, entities)
+        return (base + shift.volumes(model, tags) + pacing + pads.volumes(model),
+                (layout, entities))
 
     # Callers and the listener.
     effect = settings.game_id(model["theme"]["prefix"], "spike_front")

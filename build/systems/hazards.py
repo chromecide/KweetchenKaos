@@ -131,43 +131,45 @@ def build(model, debug=True, dispenser=False):
                   [v.cell([block], to), v.sound(1.2)] + rep(f"mopped.{n}", f"mopped a {block}"))
     rules.add(90, [v.at(hazards + dirty_mats), v.not_holding(h["mop"])],
               [v.say("kk.hazards.needmop", words["mop_needed"])])
-    # 10+: a messy guest got up -- a mess round its chair (the guest is still on it).
-    heard = [signals.heard(signals.HAZARD_KEY, signals.MESS)]
-    rules.add(999, heard, rep("mess", "a guest left a mess", "SIGNAL_RECEIVED"))
+    # EVERY DROP IN A VOLUME OF ITS OWN (volumes.companion): one volume's cost grows with
+    # the square of its rules, so the main volume keeps only the mop, its message and the
+    # reset. A drop answering a guest's signal carries the hazard tag, so the signal
+    # reaches it; the rest answer block events, which reach every volume over the room.
+    def chain(key, gate, event, drop, report, signal=False, origin="Event"):
+        r = v.Entries()
+        r.add(1, gate, rep(key, report, event))
+        v.drop_around(r, 2, key, drop["sizes"], gate, event, origin=origin,
+                      large=drop["large"], on_large=drop["on_large"], absorb=drop["absorb"],
+                      overflow=drop["overflow"])
+        name = f"{h['effect']}_{key}"
+        r.write(name, f"Hazards: one drop ({key}), in a volume of its own. "
+                      f"See build/systems/hazards.py.")
+        v.companion(name, {signals.HAZARD_KEY: "drop"} if signal else {})
+
     mess = blocks.hazard_drop(model, "mess")
-    # Each drop_around takes up to v.DROP_RULES numbers: they start 100 apart.
-    v.drop_around(rules, 1000, "mess", mess["sizes"], heard, "SIGNAL_RECEIVED", origin="Entity",
-                  large=mess["large"], on_large=mess["on_large"], absorb=mess["absorb"],
-                  overflow=mess["overflow"])
-    # 150+: ANY guest got up -- a mess round its chair at the rules' chance.
+    # A messy guest got up -- a mess round its chair (the guest is still on it).
+    chain("mess", [signals.heard(signals.HAZARD_KEY, signals.MESS)], "SIGNAL_RECEIVED", mess,
+          "a guest left a mess", signal=True, origin="Entity")
+    # ANY guest got up -- a mess round its chair at the rules' chance.
     chance = model["rules"].get("hazards", {}).get("guest_mess_chance", 0)
     if chance:
-        got_up = [signals.heard(signals.HAZARD_KEY, signals.GOT_UP),
-                  {"Type": "RandomChanceCondition", "Event": "SIGNAL_RECEIVED",
-                   "Chance": float(chance)}]
-        v.drop_around(rules, 1100, "gotup", mess["sizes"], got_up, "SIGNAL_RECEIVED",
-                      origin="Entity", large=mess["large"], on_large=mess["on_large"],
-                      absorb=mess["absorb"], overflow=mess["overflow"])
-    # 1300+: SPREADING -- a large hazard, or a full mat, that something lands on. It's put
-    # down again as that kind's hop-1 block (a spreading large one, or an overflowing mat);
-    # placing it is a BLOCK_PLACED at ITS cell, answered here with a drop round it, which
+        chain("gotup", [signals.heard(signals.HAZARD_KEY, signals.GOT_UP),
+                        {"Type": "RandomChanceCondition", "Event": "SIGNAL_RECEIVED",
+                         "Chance": float(chance)}],
+              "SIGNAL_RECEIVED", mess, "a guest got up and left a mess", signal=True,
+              origin="Entity")
+    # SPREADING -- a large hazard, or a full mat, that something lands on. It's put down
+    # again as that kind's hop-1 block (a spreading large one, or an overflowing mat);
+    # placing it is a BLOCK_PLACED at ITS cell, answered by that hop's drop round it, which
     # can land on another large one or full mat and put the next hop over that. The last
     # hop's drop finds them full, so a spread goes at most `spreads` hops from where it
     # began. Hazards and mats spread as one: food mess and water alike.
-    first = 1300
     for kind in blocks.hazard_kinds(model):
         spreading = blocks.hazard_spreading(model, kind)
         for hop, block in enumerate(spreading):
             at_hop = [block, mats["overflow"][kind][hop]]
-            d = blocks.hazard_drop(model, kind, hop + 1)
-            rules.add(first - 1, [v.at(at_hop, event="BLOCK_PLACED")],
-                      rep(f"spread.{kind}.{hop}", f"a {kind} spread (hop {hop + 1})",
-                          "BLOCK_PLACED"))
-            v.drop_around(rules, first, f"{kind}spread{hop}", d["sizes"],
-                          [v.at(at_hop, event="BLOCK_PLACED")], "BLOCK_PLACED",
-                          large=d["large"], on_large=d["on_large"], absorb=d["absorb"],
-                          overflow=d["overflow"])
-            first += 100
+            chain(f"{kind}spread{hop}", [v.at(at_hop, event="BLOCK_PLACED")], "BLOCK_PLACED",
+                  blocks.hazard_drop(model, kind, hop + 1), f"a {kind} spread (hop {hop + 1})")
     # RESET: a new run starts with a clean floor.
     rules.add(95, [signals.heard(signals.RESET, signals.RESET)],
               [{"Type": "ReplaceBlockType", "Event": "SIGNAL_RECEIVED",
@@ -181,14 +183,13 @@ def build(model, debug=True, dispenser=False):
             "Press to drop a mess where you stand", "Spike only. See build/systems/hazards.py.",
             tint="#6b4a2a")
         # Round the presser, the way a guest's mess lands round its chair.
-        rules.add(1199, [v.at([h["dispenser"]])], rep("dropped", "a mess dropped by hand"))
-        v.drop_around(rules, 1200, "hand", mess["sizes"], [v.at([h["dispenser"]])], "BLOCK_USED",
-                      origin="Entity", large=mess["large"], on_large=mess["on_large"],
-                      absorb=mess["absorb"], overflow=mess["overflow"])
+        chain("hand", [v.at([h["dispenser"]])], "BLOCK_USED", mess, "a mess dropped by hand",
+              origin="Entity")
     rules.write(h["effect"], "Hazards: messes and the mop. See build/systems/hazards.py.")
     return h["effect"]
 
 
 def volumes(model, box=v.WORLD_BOX):
+    """The main volume. Its drops are companions (volumes.take_companions after build)."""
     return [v.volume("hazards", ids(model)["effect"],
                      {signals.HAZARD_KEY: "system", **signals.RESET_TAGS}, box=box)]

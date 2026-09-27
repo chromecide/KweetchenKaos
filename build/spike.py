@@ -356,8 +356,14 @@ def build(model, name, debug=True):
     # HAZARDS where the spike says (the game's spikes, and the hazards probe). Before the
     # stations: a station that causes one (a sink's spill) needs to know.
     model["hazards"] = spike.get("hazards", False)
-    mounted = [v.volume(f"spike_{st}", systems.for_station(model, st).build(model, st, debug),
-                        systems.tags_for(model, st, {"spike": st})) for st in stations]
+    v.take_companions()           # nothing left over from another build
+    mounted = []
+    for st in stations:
+        mounted.append(v.volume(f"spike_{st}", systems.for_station(model, st).build(model, st, debug),
+                                systems.tags_for(model, st, {"spike": st})))
+        # Its companion volumes (volumes.companion): its hazard drops, each in its own.
+        mounted += [v.volume(f"spike_{st}_{n}", eff, tags)
+                    for n, (eff, tags) in enumerate(v.take_companions())]
     front = None
     model["in_run"] = spike.get("run", False)
     if spike.get("card_every"):
@@ -373,6 +379,8 @@ def build(model, name, debug=True):
         from systems import hazards
         hazards.build(model, debug, dispenser=spike.get("dispenser", False))
         mounted += hazards.volumes(model)
+        mounted += [v.volume(f"hazards_{n}", eff, tags)
+                    for n, (eff, tags) in enumerate(v.take_companions())]
     extra = []
     if spike.get("tip_dial"):
         extra += _tip_dial(model, debug)

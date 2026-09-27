@@ -42,6 +42,7 @@ import pack
 import settings
 import signals
 import systems
+import volumes as v
 from systems import hazards, moods, pads, queue, seating, shift
 
 ZONE_MARGIN = 1          # a worked-out queue zone reaches this far round the spots and pool
@@ -100,10 +101,14 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     built_q = queue.build(model, roles, debug, patience=patience)
     seating_effect = seating.build(model, debug)
     guests.build(model, debug)
+    v.take_companions()           # nothing left over from another build
     shift_tags = shift.build(model, {e["serves"]: guests.role_id(model, e) for e in model["menu"]},
                              debug, exit_on_lose=exit_on_lose)
+    shift_pacing = v.take_companions()        # its per-day pacing volumes
     pads.build(model, debug)
+    v.take_companions()           # nothing left over from another build
     hazards_effect = hazards.build(model, debug)
+    hazard_drops = v.take_companions()        # its drops, each in a volume of its own
 
     # `built` is the room as the creator left it; `out_blocks` what the slots became. One
     # cell holds ONE block, or the game refuses the whole prefab ("Block is already present
@@ -193,10 +198,14 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
            (ROOM_SIZE + ROOM_MARGIN, layouts.AUTHOR_HEIGHT + 8, ROOM_SIZE + ROOM_MARGIN))
     crates = [sid for sid, st in model["stations"].items()
               if st["role"] == "crate" and not st.get("upgrade_of")]
+    v.take_companions()           # nothing left over from another build
     for sid in sorted(used) + crates:
         effect = systems.for_station(model, sid).build(model, sid, debug)
         entities.append(_carried(f"station_{sid}", effect,
                                  systems.tags_for(model, sid, {"station": sid}), box))
+        # Its companion volumes (volumes.companion): its hazard drops, each in its own.
+        for n, (eff, tags) in enumerate(v.take_companions()):
+            entities.append(_carried(f"station_{sid}_{n}", eff, tags, box))
     qi, si = queue.ids(model), shift.ids(model)
     entities.append(_carried("queue", qi["world_effect"], {"queue": "system"}, box))
     if area:
@@ -206,12 +215,16 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     entities.append(_carried("seating", seating_effect,
                              {"seating": "system", "refused": "0", "guestreset": "1"}, box))
     entities.append(_carried("shift", si["effect"], shift_tags, box))
+    for n, (eff, tags) in enumerate(shift_pacing):
+        entities.append(_carried(f"shift_{n}", eff, tags, box))
     entities.append(_carried("shift_service_lock", si["lock"], {"servicelock": "1"}, box,
                              extra={"Enabled": False, "RulesActive": True,
                                     "Rules": [{"Type": "NoBuild"}, {"Type": "NoDestroy"}]}))
     entities.append(_carried("pads", pads.ids(model)["world_effect"], {"pads": "system"}, box))
     entities.append(_carried("hazards", hazards_effect,
                              {signals.HAZARD_KEY: "system", **signals.RESET_TAGS}, box))
+    for n, (eff, tags) in enumerate(hazard_drops):
+        entities.append(_carried(f"hazards_{n}", eff, tags, box))
 
     taken = {(b["x"], b["y"], b["z"]) for b in out_blocks}
     for b in built:

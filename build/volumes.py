@@ -131,11 +131,33 @@ def drop_around(rules, first, key, sizes, gate, event, origin="Event", dy=0.0, l
     rules.add(first + 1 + stride * len(AROUND), [tag(going, 1)], [put(going, 0)])
 
 
-def station_hazard(rules, first, key, model, station, gate, dy=0.0, event="BLOCK_USED"):
-    """A station's HAZARD ({"kind": "spill", "chance": 0.25}): rules first..first+99 drop
-    one round the station (dy up from the pressed block) when `gate` passes, at the chance.
-    Nothing where hazards aren't mounted (model["hazards"]): the blocks are the hazard
-    system's."""
+# COMPANION VOLUMES. A volume costs, per event, about rules x (conditions + effects): the
+# engine rescans its whole condition and effect lists for every rule number (and TICK does
+# that per player per tick). So a self-contained chain of rules -- a drop, a day's pacing --
+# goes in a volume OF ITS OWN, never piled into its system's: twenty small volumes are a
+# fraction of the work of one big one. A system registers each with companion() as it
+# builds; whoever mounts the system mounts its companions beside it (take_companions(),
+# right after that system's build), over the same box.
+_companions = []
+
+
+def companion(effect, tags=None):
+    """Register an effect written by the system being built, to be mounted beside it."""
+    _companions.append((effect, dict(tags or {})))
+
+
+def take_companions():
+    """The companions registered since the last call -- the system just built's."""
+    out = list(_companions)
+    _companions.clear()
+    return out
+
+
+def station_hazard(owner, key, model, station, gate, dy=0.0, event="BLOCK_USED"):
+    """A station's HAZARD ({"kind": "spill", "chance": 0.25}): a drop round the station (dy
+    up from the pressed block) when `gate` passes, at the chance -- in a companion volume of
+    its own, `<owner>_<key>`. Nothing where hazards aren't mounted (model["hazards"]): the
+    blocks are the hazard system's."""
     import blocks
     hz = station.get("hazard")
     if not hz or not model.get("hazards"):
@@ -143,9 +165,14 @@ def station_hazard(rules, first, key, model, station, gate, dy=0.0, event="BLOCK
     drop = blocks.hazard_drop(model, hz["kind"])
     chance = ([{"Type": "RandomChanceCondition", "Event": event, "Chance": float(hz["chance"])}]
               if hz["chance"] < 1 else [])
-    drop_around(rules, first, key, drop["sizes"], list(gate) + chance, event, dy=dy,
+    rules = Entries()
+    drop_around(rules, 1, key, drop["sizes"], list(gate) + chance, event, dy=dy,
                 large=drop["large"], on_large=drop["on_large"], absorb=drop["absorb"],
                 overflow=drop["overflow"])
+    name = f"{owner}_{key}"
+    rules.write(name, f"A station's {hz['kind']} drop, in a volume of its own. "
+                      f"See volumes.station_hazard.")
+    companion(name)
 
 
 def holding(item, event="BLOCK_USED"):

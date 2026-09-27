@@ -47,6 +47,7 @@ import signals
 import volumes as v
 
 FIXTURE = "shift"
+PACE, OPENED, COUNTED = "pacing", "opened", "counted"   # the shift <-> its pacing volumes
 AFTER_CLEAR = 0.5     # PlaceBlock only fills an empty cell, and a clear lands at tick end
 TIPS = range(-3, 6)   # the tip levels there are rules for: coins added to (or taken off) each
                       # guest served
@@ -176,7 +177,12 @@ def build(model, roles, debug=True, exit_on_lose=False):
                # once. Setting one here as well brought TWO guests at opening.
                {"Type": "EnableVolume", "Event": "BLOCK_USED", "MatchKey": "servicelock",
                 "MatchValue": "1", "Radius": 128.0, "Center": "Volume"},
-               signals.to_pads("BLOCK_USED", signals.CLEAR)]
+               signals.to_pads("BLOCK_USED", signals.CLEAR),
+               _set("BLOCK_USED", "served", 0),
+               # THE DAY'S GUESTS: the pacing volume for today sets how many, then says so
+               # (PACE "counted", below) -- a signal, since rule order between volumes isn't
+               # guaranteed. Sent after this rule's tags (open) are set.
+               signals.from_volume("BLOCK_USED", PACE, OPENED, match=(PACE, "1"))]
               )
     # 13+: THE DAY GROWS (rules day_growth): every few days it's longer -- more room for the
     # same kind of rush, as PlateUp does. Rule 10 has just set `open` (tags are instant) and
@@ -236,27 +242,48 @@ def build(model, roles, debug=True, exit_on_lose=False):
         steps = (day - 1) // growth["every_days"] if growth.get("seconds") else 0
         return rules_["day_seconds"] + growth.get("seconds", 0) * steps
 
+    # THE PACING VOLUMES (volumes.companion): one per day, each holding only that day's
+    # rules, for the extra-guest totals the day can reach (a card day adds at most
+    # `max_gain`). A volume's cost grows with the square of its rules; these tables were
+    # most of the shift's, so they're split off. They read the shift's tags and set its
+    # `to_arrive`, `expected` and `beat` from outside (signals.shift_reads/shift_changes).
+    #   opening (the shift's PACE "opened")  ->  today's guests set, then PACE "counted"
+    #   while open                           ->  a BEAT every day_length / guests seconds;
+    #                                            the first the moment it opens (its
+    #                                            cooldown is long spent by then)
+    max_first = max(f for f, _ in gains)
+    max_gain = max([l for _, l in gains] + [c.get("guests", 0) for c in customers] + [0])
     for day in range(1, last_day + 1):
-        on_day = [_t("BLOCK_USED", signals.DAY, day, "AtLeast" if day == last_day else "Exactly")]
-        on_tick = [_t("TICK", signals.DAY, day, "AtLeast" if day == last_day else "Exactly")]
-        for extra in range(lo, hi + 1):
+        at_day = lambda ev: signals.shift_reads(ev, signals.DAY,
+                                                "AtLeast" if day == last_day else "Exactly", day)
+        cards_by = (day - 1) // every
+        top = hi if day == last_day else min(hi, max_first + cards_by * max_gain)
+        pr = v.Entries()
+        for extra in range(lo, top + 1):
             n = expected(day, extra)
             k = extra - lo
-            rules.add(20000 + day * 1000 + k,
-                      [v.at([s["sign"]]), _t("BLOCK_USED", "open", 1), *on_day,
-                       _t("BLOCK_USED", "extra", extra)],
-                      [_set("BLOCK_USED", "to_arrive", n), _set("BLOCK_USED", "expected", n),
-                       _set("BLOCK_USED", "served", 0)])
+            pr.add(100 + k, [signals.heard(PACE, OPENED), at_day("SIGNAL_RECEIVED"),
+                             signals.shift_reads("SIGNAL_RECEIVED", "extra", "Exactly", extra)],
+                   [signals.shift_changes("SIGNAL_RECEIVED", "to_arrive", "Set", n),
+                    signals.shift_changes("SIGNAL_RECEIVED", "expected", "Set", n),
+                    signals.from_volume("SIGNAL_RECEIVED", PACE, COUNTED)])
             gap = round(day_length(day) / n, 1)
-            rules.add(60000 + day * 1000 + k,
-                      [_t("TICK", "open", 1), _t("TICK", "closing", 0), _t("TICK", "beat", 0),
-                       _t("TICK", "to_arrive", 1, "AtLeast"), *on_tick,
-                       _t("TICK", "extra", extra), _every(gap)],
-                      [_set("TICK", "beat", 1), EVERY_TICK])
-    rules.add(59999, [v.at([s["sign"]]), _t("BLOCK_USED", "open", 1)],
-              say("BLOCK_USED", "opened", "[shift] Day {day} - OPEN. Expecting {expected} "
-                                          "guests. Purse: {money} coins.")
-              + announce("BLOCK_USED", "open", "Day {day}", "Expecting {expected} guests"))
+            pr.add(1000 + k, [signals.shift_reads("TICK", "open", "Exactly", 1),
+                              signals.shift_reads("TICK", "closing", "Exactly", 0),
+                              signals.shift_reads("TICK", "beat", "Exactly", 0),
+                              signals.shift_reads("TICK", "to_arrive", "AtLeast", 1),
+                              at_day("TICK"),
+                              signals.shift_reads("TICK", "extra", "Exactly", extra),
+                              _every(gap)],
+                   [signals.shift_changes("TICK", "beat", "Set", 1), EVERY_TICK])
+        name = f"{s['effect']}_Pacing_{day}"
+        pr.write(name, f"The shift's day {day}{'+' if day == last_day else ''}: how many guests, "
+                       f"and their pace. See build/systems/shift.py.")
+        v.companion(name, {PACE: "1"})
+    rules.add(59999, [signals.heard(PACE, COUNTED)],
+              say("SIGNAL_RECEIVED", "opened", "[shift] Day {day} - OPEN. Expecting {expected} "
+                                               "guests. Purse: {money} coins.")
+              + announce("SIGNAL_RECEIVED", "open", "Day {day}", "Expecting {expected} guests"))
 
     def fair_pick(base, gate, options):
         """The fair chain over `options` while `gate` holds: sets choice = k + 1."""

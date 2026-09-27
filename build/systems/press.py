@@ -158,8 +158,8 @@ def build(model, station_id, debug=True):
     # ITS HAZARD (the station's "hazard": a spill for the sink, scraps for the board): a
     # chance each press, dropped round the station. Pressing what's on top is the station
     # one below.
-    v.station_hazard(rules, 8000, "hazard", model, st, [v.at(ladder)])
-    v.station_hazard(rules, 8100, "hazardtop", model, st, [v.at(shown_in)], dy=-1.0)
+    v.station_hazard(b["effect"], "hazard", model, st, [v.at(ladder)])
+    v.station_hazard(b["effect"], "hazardtop", model, st, [v.at(shown_in)], dy=-1.0)
 
     _auto_variants(model, station_id, table, rules, debug)
 
@@ -218,7 +218,7 @@ def _auto_variants(model, station_id, table, rules, debug):
         rules.add(3951 + 2 * k, [v.at([free, busy], event="BLOCK_BROKEN")],
                   [v.cell(working + ready, "Empty", dy=1, event="BLOCK_BROKEN")])
         # ITS HAZARD (a cheap dishwasher drips): a chance each time a clean plate comes out.
-        v.station_hazard(rules, 8200 + 200 * k, f"hazard{k}", model, vs,
+        v.station_hazard(ids(model, station_id)["effect"], f"hazard{k}", model, vs,
                          [v.at([busy]), v.at(ready, dy=1)])
-        v.station_hazard(rules, 8300 + 200 * k, f"hazardtop{k}", model, vs,
+        v.station_hazard(ids(model, station_id)["effect"], f"hazardtop{k}", model, vs,
                          [v.at(ready), v.at([busy], dy=-1)], dy=-1.0)

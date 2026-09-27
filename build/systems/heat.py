@@ -129,9 +129,9 @@ def build(model, station_id, debug=True):
     # ITS HAZARD (a scorch mark) when BURNT food comes off -- the last stage of every
     # ladder -- round the stove. Pressing the burnt food is the stove one below.
     burnt = [b["on"](h, h["stages"][-1]["id"]) for h in heats]
-    v.station_hazard(rules, 50000, "hazard", model, st, [v.at(burnt), v.at(busies, dy=-1)],
+    v.station_hazard(b["effect"], "hazard", model, st, [v.at(burnt), v.at(busies, dy=-1)],
                      dy=-1.0)
-    v.station_hazard(rules, 50100, "hazardtop", model, st, [v.at(busies), v.at(burnt, dy=1)])
+    v.station_hazard(b["effect"], "hazardtop", model, st, [v.at(busies), v.at(burnt, dy=1)])
 
     # BREAKING: a dish broken frees its stove; a stove broken takes its dish.
     rules.add(90, [v.at(on_top, event="BLOCK_BROKEN")],
