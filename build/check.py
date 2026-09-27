@@ -74,6 +74,32 @@ def check(model):
                 if st["id"] not in o["weights"]:
                     problems.append(f"rules offers.json: '{o.get('station') or o.get('fixture')}' "
                                     f"has no weight for stage '{st['id']}'")
+    # Customer cards: unique ids, real moods, chances 0-1, and a tip level that stays within
+    # the levels the shift pays (every card taken, the tips add up).
+    if rules:
+        from systems import moods, shift
+        cards = rules.get("customers", {}).get("cards", [])
+        seen = set()
+        for c in cards:
+            where = f"rules customers.json: '{c.get('id')}'"
+            if c.get("id") in seen or c.get("id") in model.get("dishes", {}):
+                problems.append(f"{where}: its id is used twice (or by a dish)")
+            seen.add(c.get("id"))
+            for m, chance in c.get("moods", {}).items():
+                if m not in moods.MOODS or not 0 < chance <= 1:
+                    problems.append(f"{where}: mood '{m}' needs to be one of "
+                                    f"{', '.join(moods.MOODS)}, at a chance above 0, up to 1")
+            if int(c.get("guests", 0)) < 0:
+                problems.append(f"{where}: guests can't be fewer")
+            for k in ("label", "text"):
+                if not c.get(k):
+                    problems.append(f"{where}: needs a {k}")
+        up = sum(max(0, c.get("tip", 0)) for c in cards)
+        down = sum(min(0, c.get("tip", 0)) for c in cards)
+        if up > shift.TIPS[-1] or down < shift.TIPS[0]:
+            problems.append(f"rules customers.json: the tips add up to {down}..{up}, beyond the "
+                            f"levels the shift pays ({shift.TIPS[0]}..{shift.TIPS[-1]})")
+
     # A station's hazard names a kind the theme has (a fixtures look marked "hazard").
     kinds = [k for k, look in model["fixtures"]["looks"].items() if look.get("hazard")]
     for s in stations.values():

@@ -19,8 +19,12 @@
 - **Card days follow PlateUp:** the start of day 4, then every third day. You must
   choose a card before you can open, and the day's blueprints come once you have
   (they no longer skip that day).
-- **Tips:** the shift can pay a tip on every guest served, for customer cards to
-  come.
+- **Customer cards** (PlateUp's): on a card day, a customer card sits beside the
+  recipe card, and you choose one of the two. Six to start: Impatient crowd, Messy
+  crowd, Word of mouth, Affordable, Relaxed but busy, Hasty lunch. Each changes the
+  guests for the rest of the run: moods, more guests, tips.
+- **Guest moods:** a guest may arrive impatient, relaxed or messy (and can be one of
+  the first two AND messy), shown on its name tag.
 - **Cheap dishwasher** (35): washes by itself, but slower than the dishwasher (60),
   and it drips.
 - Recipe spikes: `python3 deploy.py dish:<dish>` lays out one dish's kitchen.

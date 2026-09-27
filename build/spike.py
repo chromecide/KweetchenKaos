@@ -105,6 +105,13 @@ SPIKES = {
     # blocks: up, down) standing in for the customer cards that will move the level.
     "tips": {"stations": {"crates": 0, "board": 1, "counter": 2, "stove": 1, "bin": 1,
                           "rack": 1}, "front": True, "run": True, "tip_dial": True},
+    # CUSTOMER CARDS: a small run whose card day comes EVERY day (card_every), so each day
+    # ends with a recipe card beside a customer card. A kitchen that can make any dish, and
+    # hazards and a mop stand for a messy crowd. Watch: the opening title's guest count,
+    # the purse (tips), and the name tags (moods).
+    "cards": {"stations": {"crates": 0, "board": 1, "counter": 2, "stove": 1, "bin": 1,
+                           "rack": 1, "sink": 1, "mop_stand": 1}, "front": True, "run": True,
+              "hazards": True, "card_every": 1},
     # THE GAME, service only: the kitchen, the queue, chairs and guests, called by hand.
     "service": {"stations": KITCHEN, "front": True, "hazards": True},
     # THE GAME, a full RUN: the shift runs the days. Crates at 0: mounted (so delivered ones
@@ -353,6 +360,8 @@ def build(model, name, debug=True):
                         systems.tags_for(model, st, {"spike": st})) for st in stations]
     front = None
     model["in_run"] = spike.get("run", False)
+    if spike.get("card_every"):
+        model["rules"]["cards"] = dict(model["rules"]["cards"], every_days=spike["card_every"])
     # The moods in play (systems/moods.py, built with the front of house).
     model["mood_chances"] = spike.get("moods", {})
     if spike.get("front"):

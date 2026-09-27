@@ -409,6 +409,7 @@ Pasted anywhere, the room works. Two things make that possible:
   | `rack` | the plate rack | two racks, a sink; a dirty plate |
   | `dish:<dish>` | one recipe, start to paid | its chain's stations and crates, a bin if it cooks; plates; callers for its orders |
   | `moods` | guests' moods on their two tracks | the front of house, hazards (for messy guests' messes) |
+  | `cards` | card days with customer cards: a recipe card beside a customer card, every day | a small kitchen, hazards, a mop stand, the shift |
   | `tips` | the tip level paid on every guest served, and card days | a small kitchen (board, 2 counters, stove, bin, rack), the shift, a tip dial |
   | `mats` | mats soaking up, overflowing, and rubber mats | a sink, the mop stand, a mess dispenser; 6 mats, 3 rubber mats, dirty plates |
   | `hazards` | every hazard and the mop | sink, board, stove, mop stand, the front (every guest messy), a mess dispenser; a dirty plate, a pumpkin, corn |

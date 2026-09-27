@@ -398,7 +398,8 @@ rules/
     offers.json      what the pads can offer (stations, plain or upgraded, and chairs) as
                      blueprints, prices, weights,
                      and from which day each pad offers
-    cards.json       recipe cards: every N days, how many to choose from
+    cards.json       card days: every N days (recipe and customer cards alike)
+    customers.json   the customer card deck (docs/customer-cards.md)
 ```
 
 ```json

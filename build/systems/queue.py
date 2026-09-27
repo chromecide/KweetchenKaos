@@ -241,9 +241,12 @@ def _spot_rules(q, boost_by, debug, moods=()):
     # spot counts: the guest reads its marks once, the first time it stands in line. The
     # queue only marks; what a mood is, and means, is the mood system's business. A roll
     # that lands takes off the other moods on its track: last roll wins, within a track.
-    for k, (effect, chance, others) in enumerate(moods):
-        rules.add(40 + k, [{"Type": "RandomChanceCondition", "Event": "ENTER",
-                            "Chance": float(chance)}],
+    # A card's roll only once the card is chosen: its tag on the shift (read from here, as
+    # the pads read the purse). Numbered 200+: clear of the spot's own rules.
+    for k, (effect, chance, others, gate) in enumerate(moods):
+        rules.add(200 + k, ([signals.shift_reads("ENTER", gate, "AtLeast", 1)] if gate else [])
+                  + [{"Type": "RandomChanceCondition", "Event": "ENTER",
+                      "Chance": float(chance)}],
                   [{"Type": "EntityEffect", "Event": "ENTER", "Effect": other,
                     "Mode": "Remove"} for other in others]
                   + [{"Type": "EntityEffect", "Event": "ENTER", "Effect": effect,

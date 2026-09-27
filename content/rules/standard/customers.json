@@ -1,0 +1,55 @@
+{
+  "$comment": "CUSTOMER CARDS (PlateUp's): on a card day, one of these is offered beside a recipe card, and the players choose one of the two. A card changes the guests for the rest of the run; it's never offered twice in a run. Effects: moods {mood: chance} -- the chance (0-1) a guest has that mood (impatient, relaxed: patience; messy: tidiness), rolled in this file's order, last roll wins within a track; guests -- extra guests every day; tip -- coins on top of every dish served (negative: less). Word the text as 'X% chance a guest is Y'.",
+  "cards": [
+    {
+      "id": "impatient_crowd",
+      "label": "Impatient crowd",
+      "text": "40% chance a guest is impatient. Every guest tips 1 more.",
+      "moods": {
+        "impatient": 0.4
+      },
+      "tip": 1
+    },
+    {
+      "id": "messy_crowd",
+      "label": "Messy crowd",
+      "text": "30% chance a guest is messy. Every guest tips 1 more.",
+      "moods": {
+        "messy": 0.3
+      },
+      "tip": 1
+    },
+    {
+      "id": "word_of_mouth",
+      "label": "Word of mouth",
+      "text": "3 more guests every day.",
+      "guests": 3
+    },
+    {
+      "id": "affordable",
+      "label": "Affordable",
+      "text": "Every dish pays 1 less. 2 more guests every day.",
+      "tip": -1,
+      "guests": 2
+    },
+    {
+      "id": "relaxed_but_busy",
+      "label": "Relaxed, but busy",
+      "text": "2 more guests every day. 40% chance a guest is relaxed.",
+      "guests": 2,
+      "moods": {
+        "relaxed": 0.4
+      }
+    },
+    {
+      "id": "hasty_lunch",
+      "label": "Hasty lunch",
+      "text": "25% chance a guest is impatient. 1 more guest every day. Every guest tips 2 more.",
+      "moods": {
+        "impatient": 0.25
+      },
+      "guests": 1,
+      "tip": 2
+    }
+  ]
+}

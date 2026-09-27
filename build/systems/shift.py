@@ -112,6 +112,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
                          tint=sign.get("open_tint"))
     guests = list(roles.values())
     every = rules_["cards"]["every_days"]
+    customers = rules_.get("customers", {}).get("cards", [])
     assert rules_["cards"]["choices"] in (1, 2), "cards.json: choices must be 1 or 2"
     starters = [d for d, dish in dishes.items() if dish["unlock"] == "start"]
     pads = offers.pad_numbers(model)
@@ -221,10 +222,12 @@ def build(model, roles, debug=True, exit_on_lose=False):
         own = dish.get("guests")
         return (0 if own is None else own - g["per_card"], g["per_card"] if own is None else own)
 
-    # Every total the menu can reach: the first dish's, plus any of the rest's.
+    # Every total the menu can reach: the first dish's, plus any of the rest's -- plus every
+    # customer card's guests.
     gains = [extra_guests(dh) for dh in dishes.values()]
     lo = min(f for f, _ in gains) + sum(min(0, l) for _, l in gains)
-    hi = max(f for f, _ in gains) + sum(max(0, l) for _, l in gains)
+    hi = (max(f for f, _ in gains) + sum(max(0, l) for _, l in gains)
+          + sum(c.get("guests", 0) for c in customers))
 
     def expected(day, extra):
         return max(1, g["day_1"] + g["per_day"] * (day - 1) + extra)
@@ -290,45 +293,74 @@ def build(model, roles, debug=True, exit_on_lose=False):
                          "{served} of {expected} served - {money} coins")
               + logged("TICK", "dayover", "[shift] The last guest has gone - {served} of "
                                           "{expected} served. Purse: {money} coins."))
-    # 51: a CARD DAY (PlateUp's rhythm: the start of day 4, then every third day), if there's
-    # something left to learn. The cards FIRST, and one MUST be chosen (`cardwait` holds the
-    # sign); choosing one puts the day's blueprints out (700+). Later a customer card will
-    # take pad 2 -- until there are any, both cards are recipes, as PlateUp does when one
-    # kind runs out.
+    # 51, 52: a CARD DAY (PlateUp's rhythm: the start of day 4, then every third day). Two
+    # cards, and one MUST be chosen (`cardwait` holds the sign); choosing one puts the day's
+    # blueprints out (1000+). Pad 1 a RECIPE card, pad 2 a CUSTOMER card -- or, when one
+    # kind has run out (every dish learned, every customer card taken), two of the other.
+    # No card day when both have.
+    card_day = lambda first: ([_set("TICK", "cardpick", first), _set("TICK", "cards_in", every),
+                               _set("TICK", "cardwait", 1), _set("TICK", "dayover", 0),
+                               EVERY_TICK]
+                              + say("TICK", "cards", "[shift] Card day - choose a card on the "
+                                                     "pads. The blueprints come once you have."))
     rules.add(51, [_t("TICK", "dayover", 1), _t("TICK", "cards_in", 0, "AtMost"),
-                   _t("TICK", "locked", 1, "AtLeast")],
-              [_set("TICK", "cardpick", 1), _set("TICK", "cards_in", every),
-               _set("TICK", "cardwait", 1), _set("TICK", "dayover", 0), EVERY_TICK]
-              + say("TICK", "cards", "[shift] Card day - choose a card on the pads. The "
-                                     "blueprints come once you have."))
-    rules.add(52, [_t("TICK", "dayover", 1)],
+                   _t("TICK", "locked", 1, "AtLeast")], card_day(1))
+    rules.add(52, [_t("TICK", "dayover", 1), _t("TICK", "cards_in", 0, "AtMost"),
+                   _t("TICK", "locked", 0, "AtMost"), _t("TICK", "ccards_left", 1, "AtLeast")],
+              card_day(3))
+    rules.add(53, [_t("TICK", "dayover", 1)],
               [signals.to_pads("TICK", signals.PLACE, delay=AFTER_CLEAR),
                _set("TICK", "dayover", 0), EVERY_TICK]
               + say("TICK", "offers", "[shift] Today's offers are on the pads."))
 
-    # 60+: the cards -- the first (A) to pad 1, the second (B, different) to pad 2. Each is
-    # the fair pick over every dish, accepted only if it isn't on the menu (and B not A).
-    dlist = list(dishes)
+    # THE PICKS, as a chain of `cardpick` states. Each is the fair pick over its kind,
+    # accepted only if it's still to be had (and not the card on the other pad).
+    #   1: a recipe card to pad 1 -> 2
+    #   2: to pad 2 a customer card if there's one (-> 4), else a second recipe card (or none)
+    #   3: a customer card to pad 1 (the dishes have run out) -> 4
+    #   4: a customer card to pad 2 (if one is left beside pad 1's) -> done
+    dlist, clist = list(dishes), [c["id"] for c in customers]
+    assert len(dlist) <= 20 and len(clist) <= 40, "too many cards for the pick's rule numbers"
+    no_offered = lambda: [_set("TICK", f"offered_{d}", 0) for d in dlist]
+    no_offeredc = lambda: [_set("TICK", f"offeredc_{c}", 0) for c in clist]
     fair_pick(300, _t("TICK", "cardpick", 1), dlist)
     for k, d in enumerate(dlist):
         rules.add(400 + k, [_t("TICK", "cardpick", 1), _t("TICK", "choice", k + 1),
                             _t("TICK", f"has_{d}", 0)],
                   [signals.to_pad("TICK", pads[0], signals.CARD, d, delay=AFTER_CLEAR),
-                   _set("TICK", f"offered_{d}", 1),
-                   # One card only: done. Two: go on to pick the second.
-                   _set("TICK", "cardpick", 2 if rules_["cards"]["choices"] == 2 else 0),
-                   EVERY_TICK])
+                   _set("TICK", f"offered_{d}", 1), _set("TICK", "cardpick", 2), EVERY_TICK])
+    rules.add(440, [_t("TICK", "cardpick", 2), _t("TICK", "ccards_left", 1, "AtLeast")],
+              [_set("TICK", "cardpick", 4), EVERY_TICK] + no_offered())
+    if rules_["cards"]["choices"] == 1:
+        rules.add(445, [_t("TICK", "cardpick", 2)],
+                  [_set("TICK", "cardpick", 0), EVERY_TICK] + no_offered())
     rules.add(450, [_t("TICK", "cardpick", 2), _t("TICK", "locked", 1, "AtMost")],
-              [_set("TICK", "cardpick", 0), EVERY_TICK]
-              + [_set("TICK", f"offered_{d}", 0) for d in dlist])
-    if rules_["cards"]["choices"] == 2:
-        fair_pick(500, _t("TICK", "cardpick", 2), dlist)
-        for k, d in enumerate(dlist):
-            rules.add(600 + k, [_t("TICK", "cardpick", 2), _t("TICK", "choice", k + 1),
-                                _t("TICK", f"has_{d}", 0), _t("TICK", f"offered_{d}", 0)],
-                      [signals.to_pad("TICK", pads[1], signals.CARD, d, delay=AFTER_CLEAR),
-                       _set("TICK", "cardpick", 0), EVERY_TICK]
-                      + [_set("TICK", f"offered_{x}", 0) for x in dlist])
+              [_set("TICK", "cardpick", 0), EVERY_TICK] + no_offered())
+    fair_pick(500, _t("TICK", "cardpick", 2), dlist)
+    for k, d in enumerate(dlist):
+        rules.add(600 + k, [_t("TICK", "cardpick", 2), _t("TICK", "choice", k + 1),
+                            _t("TICK", f"has_{d}", 0), _t("TICK", f"offered_{d}", 0)],
+                  [signals.to_pad("TICK", pads[1], signals.CARD, d, delay=AFTER_CLEAR),
+                   _set("TICK", "cardpick", 0), EVERY_TICK] + no_offered())
+    if clist:
+        fair_pick(320, _t("TICK", "cardpick", 3), clist)
+        for k, c in enumerate(clist):
+            rules.add(360 + k, [_t("TICK", "cardpick", 3), _t("TICK", "choice", k + 1),
+                                _t("TICK", f"card_{c}", 0)],
+                      [signals.to_pad("TICK", pads[0], signals.CUSTOMER, c, delay=AFTER_CLEAR),
+                       _set("TICK", f"offeredc_{c}", 1), _set("TICK", "cpad1", 1),
+                       _set("TICK", "cardpick", 4), EVERY_TICK])
+        rules.add(455, [_t("TICK", "cardpick", 4), _t("TICK", "cpad1", 1),
+                        _t("TICK", "ccards_left", 1, "AtMost")],
+                  [_set("TICK", "cardpick", 0), _set("TICK", "cpad1", 0), EVERY_TICK]
+                  + no_offeredc())
+        fair_pick(540, _t("TICK", "cardpick", 4), clist)
+        for k, c in enumerate(clist):
+            rules.add(640 + k, [_t("TICK", "cardpick", 4), _t("TICK", "choice", k + 1),
+                                _t("TICK", f"card_{c}", 0), _t("TICK", f"offeredc_{c}", 0)],
+                      [signals.to_pad("TICK", pads[1], signals.CUSTOMER, c, delay=AFTER_CLEAR),
+                       _set("TICK", "cardpick", 0), _set("TICK", "cpad1", 0), EVERY_TICK]
+                      + no_offeredc())
     # 699: a pick is spent, taken or not -- after every rule that reads it.
     rules.add(699, [_t("TICK", "picked", 1)],
               [_set("TICK", "picked", 0), _set("TICK", "choice", 0), EVERY_TICK])
@@ -365,6 +397,28 @@ def build(model, roles, debug=True, exit_on_lose=False):
                       + say("SIGNAL_RECEIVED", f"deliver.{d}.{c}",
                             f"[shift] {'An' if stations[c]['label'][0].lower() in 'aeiou' else 'A'} "
                             f"{stations[c]['label'].lower()} is delivered."))
+
+    # A CUSTOMER CARD was chosen: it's in play for the rest of the run (its tag, which the
+    # queue's mood rolls read), its guests and tip are added, the other card goes -- and on a
+    # card day the day goes on (the blueprints). Never offered again: card_<id> is 1.
+    for c in customers:
+        cid = c["id"]
+        rules.add(next(num), [signals.heard(signals.CHOSE_CUSTOMER, cid),
+                              _t("SIGNAL_RECEIVED", "cardwait", 1)],
+                  [_set("SIGNAL_RECEIVED", "cardwait", 0),
+                   signals.to_pads("SIGNAL_RECEIVED", signals.PLACE, delay=3 * AFTER_CLEAR)]
+                  + say("SIGNAL_RECEIVED", "offers.aftercustomer",
+                        "[shift] Today's offers are on the pads."))
+        rules.add(next(num), [signals.heard(signals.CHOSE_CUSTOMER, cid)],
+                  [_set("SIGNAL_RECEIVED", f"card_{cid}", 1),
+                   _set("SIGNAL_RECEIVED", "ccards_left", -1, op="Increment"),
+                   signals.to_pads("SIGNAL_RECEIVED", signals.CLEAR)]
+                  + ([_set("SIGNAL_RECEIVED", "extra", c["guests"], op="Increment")]
+                     if c.get("guests") else [])
+                  + ([_set("SIGNAL_RECEIVED", "tip", c["tip"], op="Increment")]
+                     if c.get("tip") else [])
+                  + announce("SIGNAL_RECEIVED", f"cust_{cid}", c["label"], c["text"])
+                  + logged("SIGNAL_RECEIVED", f"cust.{cid}", f"[shift] customer card: {c['label']}"))
 
     # PAYMENTS. A wrong dish pays nothing, and isn't a loss.
     for e in menu:
@@ -495,12 +549,14 @@ def build(model, roles, debug=True, exit_on_lose=False):
     tags = {**signals.LISTENER_TAGS, signals.MONEY: "0", signals.DAY: "1", "open": "0",
             "closing": "0", "time_left": "0", "beat": "0", "picked": "0", "choice": "0",
             "lost": "0", "started": "0", "dayover": "0", "cardpick": "0", "cardwait": "0",
-            "tip": "0",
+            "tip": "0", "ccards_left": str(len(customers)), "cpad1": "0",
             "cards_in": str(every), "locked": str(locked), "onmenu": "0",
             "to_arrive": "0", "expected": "0", "served": "0", "extra": "0",
             **{f"t_{k}": "0" for k in announcements}}
     tags.update({f"has_{d}": "0" for d in dishes})
     tags.update({f"offered_{d}": "0" for d in dishes})
+    tags.update({f"card_{c['id']}": "0" for c in customers})
+    tags.update({f"offeredc_{c['id']}": "0" for c in customers})
     tags.update({f"own_{c}": "0" for c in offers.crates(model)})
     return tags
 

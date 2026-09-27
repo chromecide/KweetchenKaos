@@ -1,8 +1,7 @@
-# Customer cards (planned)
+# Customer cards
 
-Status: **designed, not built.** The per-guest roll it depends on is proven (the
-`impatient` spike, `python3 deploy.py impatient`), and so is the messy guest (the
-`hazards` spike): a messy guest always leaves a mess round its chair as it gets up.
+Status: **built** (2026-09-27); try them in the `cards` spike (`python3 deploy.py cards
+practice`), where a card day comes every day.
 
 Customer cards are PlateUp's: every few days you must pick one of two, and it changes
 the guests for the rest of the run. Every card carries a downside and an upside.
@@ -16,8 +15,6 @@ or a change to the guests, never both. Until then the open sign refuses, and say
 Choosing one puts the day's blueprints out, as on any other day. When one kind runs out
 (every dish learned, or every customer card taken), both cards are the other kind.
 
-This is built for recipe cards already (both cards are recipes until customer cards
-exist); customer cards take pad 2.
 
 - **No repeats:** a card that has been chosen is not offered again in the same run.
 
@@ -46,25 +43,25 @@ the first queue spot, the moment the guest reads its mood, gives exactly one rol
 
 ```json
 {
-  "every_days": 5,
-  "choices": 2,
   "cards": [
     {
-      "id": "impatient",
+      "id": "impatient_crowd",
       "label": "Impatient crowd",
       "text": "40% chance a guest is impatient. Every guest tips 1 more.",
-      "mood": ["impatient", 0.4],
+      "moods": { "impatient": 0.4 },
       "tip": 1
     }
   ]
 }
 ```
 
+When card days come is `cards.json`'s `every_days` (3), shared with the recipe cards.
+
 A card combines any of these effects:
 
 | Effect | Value | What it does |
 |---|---|---|
-| `mood` | `[mood, chance]` | chance (0-1) a guest has the mood: `impatient`, `relaxed` (patience) or `messy` (tidiness) |
+| `moods` | `{mood: chance}` | chance (0-1) a guest has each mood: `impatient`, `relaxed` (patience) or `messy` (tidiness) |
 | `guests` | whole number | extra guests every day |
 | `tip` | whole number | extra coins for every guest served; negative is a price cut |
 
@@ -81,25 +78,17 @@ Word card text as **"X% chance a guest is Y"**, not "X% of guests".
 | Relaxed, but busy | +2 guests a day | 40% chance a guest is relaxed |
 | Hasty lunch | 25% chance a guest is impatient, +1 guest a day | +2 coins per guest served |
 
-## How it will be built
+## How it's built
 
-- **The shift** already runs card days (the countdown, `cardwait` holding the sign, the
-  blueprints once a card is chosen). A customer card is the second card on those days,
-  and choosing it applies its effects instead of adding a dish.
-- **The pads** show a customer card as a blueprint in its own colour (the offers are
-  blue), with the card's text on hover. Pressing it sends "chose" to the shift.
-- **The queue spots** keep a count per card and roll each chosen card's mood when a
-  guest steps on (`systems/queue.py`). The shift tells them when a card is chosen, and
-  a new run clears the counts.
-- **The guest** reads its moods once, one per track, and acts on them: its patience
-  clocks, and a mess as it gets up (`systems/guest.py`, `build/guests.py`).
-
-## What has to be built first
-
-| Piece | State |
-|---|---|
-| Moods on separate tracks | built: `systems/moods.py` (the `moods` spike) -- impatient ⅔, relaxed 1.5x, messy |
-| `guests` effect | the shift's extra-guests count, already there |
-| `tip` effect | built: the shift's tip level (`tips` spike) |
-| Card days (every 3rd from day 4, must pick, the sign held, then the blueprints) | built, for recipe cards |
-| The customer card on pad 2 | to build |
+- **The shift** runs card days: the countdown, `cardwait` holding the sign, and the picks --
+  a recipe card to pad 1 and a customer card to pad 2, or two of one kind when the other
+  has run out. Choosing a customer card sets its `card_<id>` tag (never offered again),
+  adds its `guests` to the day's extra guests and its `tip` to the tip level, shows its
+  name and text to everyone as a title, and lets the day go on (the blueprints).
+- **The pads** show a customer card as a gold blueprint (the offers are blue), with its
+  text on hover; pressing it tells the shift which was chosen.
+- **The queue spots** roll each card's moods, but only once the shift's `card_<id>` tag
+  is set -- they read it, as the pads read the purse (`systems/moods.py`, `queue.py`).
+- **The guest** reads its moods once, one per track, and acts on them.
+- **The build checks** the deck: unique ids, real moods at chances above 0 up to 1, and
+  every card's tips added up staying within the tip levels the shift pays (-3 to +5).

@@ -309,11 +309,13 @@ def load_theme(theme_id):
 
 
 def load_rules(rules_id):
-    """A rules set: rules.json, offers.json, cards.json, as one dict."""
+    """A rules set: rules.json, offers.json, cards.json, customers.json, as one dict."""
     root = os.path.join(settings.CONTENT, "rules", rules_id)
     out = _read(os.path.join(root, "rules.json"))
     out["offers"] = _read(os.path.join(root, "offers.json"))
     out["cards"] = _read(os.path.join(root, "cards.json"))
+    customers = os.path.join(root, "customers.json")
+    out["customers"] = _read(customers) if os.path.exists(customers) else {"cards": []}
     return out
 
 

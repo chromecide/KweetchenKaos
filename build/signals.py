@@ -46,6 +46,8 @@ PADS_KEY, PADS_VALUE, PAD_KEY = "offerpad", "1", "pad"
 OFFERS, PLACE, CLEAR = "offers", "place", "clear"
 DELIVER, CARD = "deliver", "card"
 SHORT, BOUGHT, CHOSE = "short", "bought", "chose"
+# A CUSTOMER card on a pad (value: its id), and the one CHOSEN (to the shift).
+CUSTOMER, CHOSE_CUSTOMER = "customer", "chosecustomer"
 # A booking desk asks the shift for the next guest now (booking.py).
 CALL = "call"
 # TIPS: the shift's tip level (extra coins per guest served) goes UP or DOWN -- a customer

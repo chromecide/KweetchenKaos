@@ -10,6 +10,9 @@ THE PAD SYSTEM: numbered pads out front where, between days, things arrive for t
     the shift DELIVERS       ->  a crate appears on one pad, free: press to take it
     the shift shows a CARD   ->  a recipe card on one pad: press to choose it -- the dish
                                  goes on the menu, and the shift delivers any crates it needs
+    the shift shows a
+    CUSTOMER card            ->  a customer card on one pad (gold): press to choose it -- the
+                                 shift applies it (its moods, guests, tip)
     the shift says CLEAR     ->  unbought offers and unchosen cards vanish. Deliveries stay
                                  until taken: they are yours.
 
@@ -47,6 +50,7 @@ def ids(model):
             "offer": lambda key: gid(f"pad_offer_{key}"),
             "delivery": lambda crate: gid(f"pad_delivery_{crate}"),
             "card": lambda dish: gid(f"pad_card_{dish}"),
+            "customer": lambda card: gid(f"pad_customer_{card}"),
             "prefab": lambda n: gid(f"pad_{n}_volume"),
             "world_effect": gid("pads_system")}
 
@@ -66,7 +70,8 @@ def _rules(model, n, debug):
     cat = catalogue(model)
     offers = [p["offer"](c["key"]) for c in cat]
     deliveries = [p["delivery"](c) for c in crates(model)]
-    cards = [p["card"](d) for d in model["dishes"]]
+    customers = model["rules"].get("customers", {}).get("cards", [])
+    cards = [p["card"](d) for d in model["dishes"]] + [p["customer"](c["id"]) for c in customers]
     rules = v.Entries()
     tag = lambda event, key, value, cmp="Exactly": {
         "Type": "TagCondition", "Event": event, "Source": "Self", "TagKey": key,
@@ -114,6 +119,9 @@ def _rules(model, n, debug):
     for d in model["dishes"]:
         rules.add(next(num), [signals.heard(signals.CARD, d)],
                   [put(p["card"](d)), set_("SIGNAL_RECEIVED", "sold", 0)])
+    for c in customers:
+        rules.add(next(num), [signals.heard(signals.CUSTOMER, c["id"])],
+                  [put(p["customer"](c["id"])), set_("SIGNAL_RECEIVED", "sold", 0)])
 
     # BUY -- "not enough" FIRST (see the top of this file).
     for c in cat:
@@ -144,6 +152,14 @@ def _rules(model, n, debug):
         rules.add(next(num), [v.at([cd]), tag("BLOCK_USED", "sold", 0)],
                   [set_("BLOCK_USED", "sold", 1),
                    signals.from_volume("BLOCK_USED", signals.CHOSE, dish), v.sound(1.4)])
+
+    # CHOOSE a customer card: the shift applies it.
+    for c in customers:
+        cc = p["customer"](c["id"])
+        rules.add(next(num), [v.at([cc]), tag("BLOCK_USED", "sold", 0)],
+                  [set_("BLOCK_USED", "sold", 1),
+                   signals.from_volume("BLOCK_USED", signals.CHOSE_CUSTOMER, c["id"]),
+                   v.sound(1.4)])
 
     rules.add(990, [v.at([p["pad"](m) for m in numbers(model)], event="BLOCK_BROKEN")],
               [{"Type": "DeleteVolume", "Event": "BLOCK_BROKEN"}])
@@ -193,6 +209,11 @@ def build(model, debug=True):
     for d, dish in model["dishes"].items():
         blocks.display_block(p["card"](d), f"Recipe card: {dish['label']}", looks["card"],
                              words["card"].format(label=dish["label"]), note)
+    for c in model["rules"].get("customers", {}).get("cards", []):
+        blocks.display_block(p["customer"](c["id"]), f"Customer card: {c['label']}",
+                             looks["customer_card"],
+                             words["customer_card"].format(label=c["label"], text=c["text"]),
+                             note)
 
     world = v.Entries()
     for n in numbers(model):

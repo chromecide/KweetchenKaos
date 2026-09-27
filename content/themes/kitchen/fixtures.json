@@ -113,6 +113,12 @@
       "model": "Blocks/Structures/Roofs/Cloth_Roof_Horizontal.blockymodel",
       "texture": "Blocks/Structures/Roofs/Cloth_Roof_Textures/Tent_Blue.png",
       "icon": "Icons/ItemsGenerated/Cloth_Roof_Blue_Flat.png"
+    },
+    "customer_card": {
+      "model": "Items/Consumables/Recipes/Recipe.blockymodel",
+      "texture": "Items/Consumables/Recipes/Recipe_Texture.png",
+      "icon": "Icons/ItemsGenerated/Recipe_Page.png",
+      "tint": "#d0a030"
     }
   },
   "words": {
@@ -133,7 +139,8 @@
     "scorch": "A scorch mark - hold [{key}] with a mop to clean it up",
     "mat": "Mat - soaks up a mess that lands here",
     "mat_dirty": "Dirty mat - hold [{key}] with a mop to clean it",
-    "mat_rubber": "Rubber mat - no mess lands here"
+    "mat_rubber": "Rubber mat - no mess lands here",
+    "customer_card": "Customer card - {label}: {text} Press to choose it"
   },
   "slots": {}
 }

@@ -13,14 +13,17 @@ have one from each: PATIENCE (impatient or relaxed) and TIDINESS (messy). Last r
 WITHIN a track: a roll that lands takes off the other moods on its track only -- relaxed can
 replace impatient, but nothing a messy roll does touches patience.
 
-Which moods are in play, and at what chance, comes from whoever sets the game up: a spike
-(its "moods"), and customer cards (to come). A mood not in play is never rolled, but every
-guest can still carry it.
+Which moods are in play, and at what chance: a spike's "moods" (always), and each CUSTOMER
+CARD's (rules customers.json: rolled only once that card is chosen -- the shift's
+"card_<id>" tag). Rolls go in that order, the cards in their file's order. A mood not in
+play is never rolled, but every guest can still carry it.
 
 HOW IT'S JOINED, without any system importing another: `build` writes the marks and puts
 plain DATA in the model (model["moods"]) --
 
-    arrival   [(mark, chance, [marks it takes off])]: what a queue spot rolls (queue.py)
+    arrival   [(mark, chance, [marks it takes off], gate)]: what a queue spot rolls
+              (queue.py); `gate`, if any, is a tag of the shift's that must be 1 first --
+              a customer card's ("card_<id>"), set when it's chosen
     flags     {mood: flag}: what a guest carries once it has read its marks
     combos    every mix of moods, most specific first, with its patience factor and the
               words for its name tag (systems/guest.py uses them for its clocks)
@@ -53,6 +56,11 @@ def flag(mood):
     return f"mood_{mood}"
 
 
+def card_tag(card_id):
+    """The shift's tag that says a customer card has been chosen (systems/shift.py)."""
+    return f"card_{card_id}"
+
+
 def _read(track):
     return f"mood_read_{track}"
 
@@ -68,9 +76,11 @@ def build(model):
     for mood in chances:
         if mood not in MOODS:
             raise SystemExit(f"no mood '{mood}' (moods: {', '.join(MOODS)})")
-    arrival = [(mark(model, m), c, [mark(model, o) for o in MOODS
-                                    if o != m and MOODS[o][0] == MOODS[m][0]])
-               for m, c in chances.items()]
+    others = lambda m: [mark(model, o) for o in MOODS if o != m and MOODS[o][0] == MOODS[m][0]]
+    arrival = [(mark(model, m), c, others(m), None) for m, c in chances.items()]
+    for card in model.get("rules", {}).get("customers", {}).get("cards", []):
+        arrival += [(mark(model, m), c, others(m), card_tag(card["id"]))
+                    for m, c in card.get("moods", {}).items()]
     per_track = [[None] + [m for m in MOODS if MOODS[m][0] == t] for t in TRACKS]
     combos = []
     for mix in itertools.product(*per_track):
