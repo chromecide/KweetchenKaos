@@ -79,9 +79,10 @@ def build(model, station_id, debug=True):
     to_busy = lambda dy=0.0: [v.cell([f], bz, dy=dy) for f, bz in zip(frees, busies)]
     to_free = lambda dy=0.0: [v.cell([bz], f, dy=dy) for f, bz in zip(frees, busies)]
 
-    on_top = []
+    on_top, stage_blocks_of = [], {}
     for h in heats:
         stage_blocks = [b["on"](h, st_["id"]) for st_ in h["stages"]]
+        stage_blocks_of[h["owner"]] = stage_blocks
         for st_, block in zip(h["stages"], stage_blocks):
             # Every stage speeds up on a fast stove; the safety stage holds on a safe one.
             listen = [mods[k] for k in ("fast",) if k in mods] + (
@@ -112,14 +113,18 @@ def build(model, station_id, debug=True):
                       [*to_busy(), v.place(b["on"](h, st_["id"])),
                        v.sound(1.2, 0.8, "SFX_Campfire_Processing")]
                       + rep(f"on.{held}", f"{name(held)} on - {st_['word']}"))
-        # TAKE OFF at any stage: press what's on top, or the stove under it.
+        # TAKE OFF at any stage: press what's on top, or the stove under it. It clears ANY
+        # stage on top, not just the one pressed: the stove's growth can move the food on a
+        # stage in the same instant (well done -> burnt), and clearing only the stage that
+        # was read left the next one behind, on a stove already set free -- stuck there.
+        # The player keeps the stage they pressed on.
         for st_ in stages:
             block = b["on"](h, st_["id"])
             for dy, where in ((0.0, [v.at([block]), v.at(busies, dy=-1)]),
                               (1.0, [v.at(busies), v.at([block], dy=1)])):
                 rules.add(next(n), where,
                           [v.give(game(st_["gives"])),
-                           v.cell([block], "Empty", dy=dy),
+                           v.cell(stage_blocks_of[h["owner"]], "Empty", dy=dy),
                            *to_free(dy - 1),
                            v.sound(0.9)]
                           + rep(f"off.{h['owner']}.{st_['id']}",

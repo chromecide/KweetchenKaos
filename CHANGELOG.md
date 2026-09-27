@@ -7,6 +7,8 @@
 - The press count shows on what's on the board or in the sink too, not just the station.
 - Tap F with the mop to put it back on its stand (cleaning a mess still takes the hold).
 - Burnt food has its own icon (black petals).
+- Fixed: taking food off the stove the instant it burnt left the burnt food stuck on
+  the stove.
 
 ## 0.3.0 (2026-09-27)
 
