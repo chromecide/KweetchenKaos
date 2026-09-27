@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 (2026-09-27)
 
 - **Messes and spills** (PlateUp's): any guest may leave a mess by its chair as it
   gets up (5%), and the sink spills water now and then (25% a scrub). They slow you
