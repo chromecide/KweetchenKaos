@@ -216,6 +216,18 @@ in the `bestrun` probe).
 - **Death resets every stat**, so rooms and HQ keep players in with barriers: falling
   into the void is the only way to die.
 
+## Franchising (probed, not built)
+
+The idea (2026-09-27): a player past day 15 saves **franchise rewards** on themselves
+(stats); in HQ a **franchise desk** hands them over as **items** -- a dishwasher, a
+safety stove -- which they carry into the restaurant and put down. In co-op each
+player brings their own kit. The `franchise` spike proved it:
+
+- A block's own F can run an interaction chain that reads the saved rewards, gives each
+  as an item (`ModifyInventory` -- `AddItem` checks its item before the pack's items
+  have loaded, and is thrown out) and sets it back to 0: a one-time claim.
+- Items in the inventory survive a world change, so a kit goes through a portal.
+
 ## Front of house
 
 ### Moods (`moods.py`)

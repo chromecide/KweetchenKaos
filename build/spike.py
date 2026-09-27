@@ -123,6 +123,11 @@ SPIKES = {
                 "endgame_blocks": True,
                 # A handful of guests a day, not day 9's crowd.
                 "guests": {"day_1": 2, "per_day": 0, "per_card": 1}},
+    # PROBE: a FRANCHISE KIT carried into a restaurant as items (see _franchise): save a
+    # reward, claim it at the desk, change worlds, put it down. A sink and a stove, so the
+    # dishwasher and the safety stove (their rules are theirs) work once put down.
+    "franchise": {"stations": {"sink": 1, "stove": 1}, "franchise_probe": True,
+                  "give": ["plate_dirty", "corn"]},
     # PROBE: can a run remember the best day on the player, and can it be read back? Four
     # blocks, nothing else (see _best_run).
     "bestrun": {"stations": {}, "best_probe": True, "give": []},
@@ -186,6 +191,84 @@ def _endgame_blocks(model):
         rules.add(10 + n, [v.at([gid])], effects + [v.sound(1.2)])
         out.append({"x": ENDGAME_ROW[0] + 2 * n, "y": GROUND, "z": ENDGAME_ROW[1], "name": gid})
     rules.write(ENDGAME_EFFECT, "Spike only: the endgame spike's blocks. See build/spike.py.")
+    return out
+
+
+FRANCHISE_ROW = (4, 4)        # x, z of the first of the franchise probe's blocks, 2 apart in x
+
+
+def _franchise(model):
+    """PROBE: a franchise KIT carried into a restaurant as items. Save a reward (a stat on
+    the player: what a day-15 pad would do), then press the FRANCHISE DESK: for each
+    reward saved, it gives the item (ModifyInventory) and sets the reward back to 0 -- a
+    one-time claim --
+    all in one interaction chain (the desk's own F, no volume). Then the items go through a
+    world change (/kk hq, /kk spike) and are put down. Returns layout blocks."""
+    prefix = model["theme"]["prefix"]
+    title = lambda key: "_".join(p.capitalize() for p in key.split("_"))   # asset names
+    gid = lambda local: settings.game_id(prefix, local)
+    say = lambda key, text: (pack.say(key, text), f"server.{key}")[1]
+    rewards = [("dishwasher", "Dishwasher", gid("dishwasher")),
+               ("stove_safe", "Safety stove", gid("stove_safe"))]
+    look = {"sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+            "top": "BlockTextures/Wood_Softwood_Planks_Side.png", "sound": "Wood"}
+
+    def root(name, interaction):
+        rid = f"{settings.NAMESPACE}_Probe_Franchise_{name}"
+        pack.write(pack.out("Item", "RootInteractions", settings.NAMESPACE, f"{rid}.json"),
+                   {"$Comment": "Probe: see build/spike.py (_franchise).",
+                    "Interactions": [interaction]})
+        return rid
+
+    out = []
+    for n, (key, label, item) in enumerate(rewards):
+        st = f"{settings.NAMESPACE}_Franchise_{title(key)}"
+        pack.write(pack.out("Entity", "Stats", settings.NAMESPACE, f"{st}.json"), {
+            "$Comment": f"Probe: a saved franchise reward ({label}). See build/spike.py.",
+            "InitialValue": 0, "Min": 0, "Max": 1})
+        rewards[n] = (key, label, item, st)
+        rid = root(f"Save_{title(key)}", {"Type": "Serial", "Interactions": [
+            {"Type": "ChangeStat", "StatModifiers": {st: 1}, "ValueType": "Absolute",
+             "Behaviour": "Set"},
+            {"Type": "SendMessage", "Key": say(f"kk.probe.fr.saved.{key}",
+                                               f"Franchise reward saved: {label}")}]})
+        bid = f"{settings.NAMESPACE}_Spike_Franchise_Save_{title(key)}"
+        blocks.station_block(bid, f"Save: {label}", look, f"Press to save a {label.lower()}",
+                             "Spike only: the franchise probe. See build/spike.py.",
+                             tint="#3c8a5c", extra={"Interactions": {"Use": rid}})
+        out.append({"x": FRANCHISE_ROW[0] + 2 * n, "y": GROUND, "z": FRANCHISE_ROW[1],
+                    "name": bid})
+
+    # THE DESK: each reward in turn -- saved? give it, zero it -- then the next, whichever
+    # way that went (a tree: both branches go on to the next reward).
+    def chain(i, got):
+        if i == len(rewards):
+            return {"Type": "SendMessage",
+                    "Key": say("kk.probe.fr.done" if got else "kk.probe.fr.none",
+                               "Franchise kit claimed." if got else
+                               "Nothing saved to claim.")}
+        key, label, item, st = rewards[i]
+        return {"Type": "StatsCondition", "Costs": {st: 1}, "ValueType": "Absolute",
+                "LessThan": False,
+                "Next": {"Type": "Serial", "Interactions": [
+                    # ModifyInventory, not AddItem: AddItem checks its item exists as it
+                    # loads -- before this pack's items have -- and was thrown out; an
+                    # item stack's check is a LATE one, once everything has loaded.
+                    {"Type": "ModifyInventory", "ItemToAdd": {"Id": item, "Quantity": 1}},
+                    {"Type": "ChangeStat", "StatModifiers": {st: 0}, "ValueType": "Absolute",
+                     "Behaviour": "Set"},
+                    {"Type": "SendMessage", "Key": say(f"kk.probe.fr.got.{key}",
+                                                       f"From your franchise: {label}")},
+                    chain(i + 1, True)]},
+                "Failed": chain(i + 1, got)}
+    desk_root = root("Desk", chain(0, False))
+    desk = f"{settings.NAMESPACE}_Spike_Franchise_Desk"
+    blocks.station_block(desk, "Franchise desk", dict(look, top="BlockTextures/Soil_Snow.png"),
+                         "Press to claim your franchise kit",
+                         "Spike only: the franchise probe. See build/spike.py.",
+                         tint="#c08a3a", extra={"Interactions": {"Use": desk_root}})
+    out.append({"x": FRANCHISE_ROW[0] + 2 * len(rewards), "y": GROUND, "z": FRANCHISE_ROW[1],
+                "name": desk})
     return out
 
 
@@ -498,6 +581,8 @@ def build(model, name, debug=True):
     if spike.get("endgame_blocks"):
         extra += _endgame_blocks(model)
         mounted.append(v.volume("spike_endgame", ENDGAME_EFFECT, {"spike": "endgame"}))
+    if spike.get("franchise_probe"):
+        extra += _franchise(model)
     if spike.get("best_probe"):
         extra += _best_run(model, debug)
         mounted.append(v.volume("spike_best", BEST_EFFECT, {"spike": "best"}))
