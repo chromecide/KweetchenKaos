@@ -9,41 +9,32 @@ sign. When a restaurant is built, each slot becomes that theme's block -- a stov
 stove in the kitchen and a cauldron in witchery. You live with the ugly room while building
 it (docs/content-schema.md, Layouts).
 
-    /kk author     open the authoring world (creative, and it keeps what you build)
-    /kk grid [n]   mark the plots' edges (the first n; PLOTS without) -- OUTSIDE what is
-                   saved, so it never touches a build: safe to run again, and to add plots
-    /kk plot n     go to plot n (in front of its edge)
+ONE AUTHORING WORLD PER LAYOUT, each with a single plot, so no world gets crowded:
+
+    /kk author border          the border (below)
+    /kk author hq              HQ
+    /kk author practice        the practice room
+    /kk author floorplan 7     a restaurant room: floorplans 1 to FLOORPLANS
     /kk slots      hand over the slot blocks -- all of them; "/kk slots hq" just HQ's
-                   (the arrival, portals 1-8), "/kk slots plot" just a restaurant plot's
-    /kk save [n]   save the plots as prefabs (K2_Save_00, _01, ...; the first n)
-    /kk restore    paste the kept layouts back into their plots (RESTORE below) -- for a
-                   new authoring world
-    /kk restore n  put plot n back as it was LAST SAVED, throwing away changes since
+                   (the arrival, portals 1-8), "/kk slots plot" just a room's
+    /kk save floorplan 7       save that world's plot (K2_Save_Floorplan_07). It goes into
+                               that world first, so it can only save the world it names.
+    /kk restore floorplan 7    put it back as it was LAST SAVED, throwing away changes since
+                               (there once it has a save)
 
-THE PLOTS, in a row along x, six chunks apart so no guest can see or walk into the next:
+Each world is creative and persistent. /kk author marks the plot's edges every time you go:
+a line of edge blocks one block OUTSIDE what is saved, so it never touches a build.
 
-    plot 0         the BORDER plot (below)
-    plot 1         HQ
-    plots 2-9      restaurant layouts
+A room plot is 32 x 32 (two chunks square), its corner at 0, 0; build inside it, floor and
+all -- everything from ROOM_BELOW under the floor up to AUTHOR_HEIGHT above it is saved. The
+world has real ground (stone, dirt, grass at FLOOR), so gravel rests and you can dig down.
 
-A room plot is 32 x 32 (two chunks square); build inside it, floor and all -- everything
-from ROOM_BELOW under the floor up to AUTHOR_HEIGHT above it is saved. The world has real
-ground (stone, dirt, grass at FLOOR), so gravel rests and you can dig down. /kk grid draws a line of EDGE blocks round each
-plot one block OUTSIDE it, so the markers are never saved and the grid never touches what
-is inside: more plots can be added (PLOTS) and the grid run again at any time.
-
-THE BORDER PLOT is a BACKDROP: a ring one chunk thick round a room-sized hole, 64 x 64 in
-all. Build scenery on the ring (up to BORDER_HEIGHT); its edge line runs outside the ring,
-and a second one marks the hole from just inside it. The hole is left out when the border is
-imported, and every world pastes the border round its room (world.json "border"):
-
-    python3 build/layouts.py import 0 meadow "Meadow"      -> content/layouts/meadow/
-
-The border saves BORDER_BELOW under the floor: sculpt the underside of a floating island
-there (under the hole too, below the room's own ground).
-
-RESTORE: the imported layouts named in RESTORE are pasted back into their plots by
-/kk restore (they are corner-anchored, so each goes at its plot's corner).
+THE BORDER is a BACKDROP: a ring one chunk thick round a room-sized hole, 64 x 64 in all.
+Build scenery on the ring (up to BORDER_HEIGHT); its edge line runs outside the ring, and a
+second one marks the hole from just inside it. The hole is left out when the border is
+imported, and every world pastes the border round its room (world.json "border"). The
+border saves BORDER_BELOW under the floor: sculpt the underside of a floating island there
+(under the hole too, below the room's own ground).
 
 ZONES are drawn, not placed: draw a trigger volume with the game's volume tool and name it.
 Today there is one, "queue" -- the area where guests wait (the spots and the pool). The
@@ -54,7 +45,7 @@ SAVES ARE RESCUED, then IMPORTED. `prefab save` writes into the DEPLOYED mod fol
 every deploy wipes, so deploy.py copies K2_Save_* home (content/layouts/_saves/) first.
 Importing turns a save into a layout:
 
-    python3 build/layouts.py import 3 corner_pass "Corner pass"
+    python3 build/layouts.py import floorplan_07 corner_pass "Corner pass"
 
 which re-anchors it (a save comes back CENTRE-anchored; everything else is corner-anchored
 0..31, so it is shifted), keeps the zones you drew, lists the slots it found, and writes
@@ -73,11 +64,12 @@ import settings
 
 CHUNK = 16
 LAYOUT = 2 * CHUNK            # a plot is 32 x 32 blocks
-PITCH = 6 * CHUNK             # plots are 96 blocks apart on x
 AUTHOR_HEIGHT = 48             # saved above a room's floor: tall enough for a room up a tree
-PLOTS = 10                    # plot 0 the border, 1 HQ, 2-9 layouts; more can be added
-MAX_PLOTS = 32
-# THE GROUND: stone, then dirt, then the grass the plots stand on at FLOOR -- deep enough to
+# THE AUTHORING WORLDS, one per layout: the border, HQ, the practice room, and the
+# floorplans (restaurant rooms), numbered 1 to FLOORPLANS. Each is its own world with one
+# plot, so a room is built and saved on its own.
+FLOORPLANS = 99
+# THE GROUND: stone, then dirt, then the grass the plot stands on at FLOOR -- deep enough to
 # dig into and for gravel to rest on. A plot saves some of the ground under its floor too
 # (a room ROOM_BELOW deep, the border BORDER_BELOW -- room for an island's underside); an
 # import puts the floor back at y 0, so what is under it is at negative y.
@@ -85,13 +77,11 @@ FLOOR = 32
 ROOM_BELOW, BORDER_BELOW = 3, 16
 GROUND = [{"From": 0, "To": FLOOR - 3, "BlockType": "Rock_Stone"},
           {"From": FLOOR - 3, "To": FLOOR, "BlockType": "Soil_Dirt"},
-          {"From": FLOOR, "To": FLOOR + 1, "BlockType": "Soil_Grass"}]                # "/kk grid 20", "/kk save 20": up to this many
+          {"From": FLOOR, "To": FLOOR + 1, "BlockType": "Soil_Grass"}]
 BORDER = CHUNK                # a border plot's ring is one chunk thick
-BORDER_PLOTS = {0}            # which plots are borders
 BORDER_HEIGHT = 48
 BORDER_EDGE = f"{settings.NAMESPACE}_Border_Edge"
 EDGE_TINT = "#e0c020"
-RESTORE = {0: "backdrop", 1: "hq", 2: "test_room"}   # plot -> the layout pasted back
 AUTHOR = f"{settings.NAMESPACE}_Author"
 SAVE_PREFIX = f"{settings.NAMESPACE}_Save_"
 SAVES = os.path.join(settings.CONTENT, "layouts", "_saves")
@@ -105,7 +95,12 @@ DEPLOYED_PREFABS = (os.path.join(settings.SERVER, "mods",
 STATION_TINT, SEAT_TINT, QUEUE_TINT, PAD_TINT, SIGN_TINT = \
     "#e08a30", "#3c7ad0", "#40a060", "#8a6ad0", "#d04040"
 PORTAL_TINT, ARRIVAL_TINT = "#30c8d8", "#f0f0f0"
-PORTALS = 8                     # HQ portal slots: a restaurant for each, eventually
+# HQ's PORTALS: one per room size, each picking one of that size's rooms at random as a
+# run starts (world.py), and one to the practice room. A room's size is a slot in it. The
+# STARTER is a tiny room, good for one player.
+SIZES = ["starter", "small", "medium", "large"]
+PORTALS = ["practice"] + SIZES
+SIZE_TINT = "#e0e040"
 BARRIER_TINT = "#ff40ff"
 BARRIER = "Barrier"             # what a barrier slot becomes: the game's invisible wall
 SLOTS = (
@@ -128,9 +123,13 @@ SLOTS = (
     # Any layout: an invisible wall in game. The game's own Barrier can hardly be seen while
     # building, so it's built as this and becomes a Barrier (barrier()).
     + [("barrier", "Slot: barrier (an invisible wall in game)", BARRIER_TINT)]
-    # HQ only: a walk-in portal per restaurant (world.json says which).
-    + [(f"portal_{n}", f"Slot: HQ portal {n} (restaurant {n} in world.json)", PORTAL_TINT)
-       for n in range(1, PORTALS + 1)])
+    # A restaurant room: its SIZE, one of these -- which HQ portal it's picked from.
+    + [(f"size_{s}", f"Slot: room size - {s} (picked by HQ's {s} portal)", SIZE_TINT)
+       for s in SIZES]
+    # HQ only: a walk-in portal per size, and to the practice room.
+    + [(f"portal_{k}", f"Slot: HQ portal - " + ("the practice room" if k == "practice"
+                                                 else f"{k} rooms"), PORTAL_TINT)
+       for k in PORTALS])
 # PRACTICE rooms only: a CRATE per ingredient (a run's crates are delivered; a practice
 # room has nothing to deliver them) -- from the theme, like the shelves.
 CRATE_SLOTS = []
@@ -138,6 +137,10 @@ CRATE_SLOTS = []
 # from the theme and rules when the slots are written (write_slots), so kept apart from SLOTS.
 SHELF_TINT = "#c08a3a"
 SHELF_SLOTS = []
+# A portal slot is the portal pad itself (world.py puts the portal where it stands).
+PORTAL_LOOK = {"model": "Blocks/Miscellaneous/Platform_Magic_Exit.blockymodel",
+               "texture": "Blocks/Miscellaneous/Platform_Magic_Blue2.png",
+               "icon": "Icons/ItemsGenerated/Portal_Return.png"}
 CHAIR_LOOK = {"model": "Blocks/Decorative_Sets/Tavern/Chair.blockymodel",
               "texture": "Blocks/Decorative_Sets/Tavern/Chair_Texture.png",
               "icon": "Icons/ItemsGenerated/Furniture_Tavern_Chair.png"}
@@ -155,33 +158,73 @@ def floor_at(blocks_, x, y, z, default="Wood_Softwood_Planks"):
 
 
 def barrier(b):
-    """A barrier slot is a Barrier in the built game; any other block is itself."""
-    return dict(b, name=BARRIER) if b["name"] == slot_id("barrier") else b
+    """A barrier slot is a Barrier in the built game, a builder's light an invisible light
+    (LIGHTS); any other block is itself."""
+    if b["name"] == slot_id("barrier"):
+        return dict(b, name=BARRIER)
+    if b["name"].startswith(LIGHT_FROM) and b["name"][len(LIGHT_FROM):] in LIGHTS:
+        return dict(b, name=light_id(b["name"][len(LIGHT_FROM):]))
+    return b
+
+
+# INVISIBLE LIGHTS. The game has no invisible light source: its builder lights
+# (Build_Lightsource_<colour>) are glowing cubes. So a layout is built with those -- you
+# can see where they are -- and each becomes one of these in the game: no look, nothing to
+# bump into, the same light. Colours as the game's own builder lights give.
+LIGHT_FROM = "Build_Lightsource_"
+LIGHTS = {"White": "#eee", "Yellow": "#a98", "YellowLight": "#aa8", "Orange": "#a72",
+          "Red": "#811", "Pink": "#618", "Blue": "#778", "Cyan": "#599", "Green": "#485"}
+
+
+def light_id(colour):
+    return f"{settings.NAMESPACE}_Light_{colour}"
+
+
+def write_lights():
+    for colour, rgb in LIGHTS.items():
+        blocks.item(light_id(colour), f"Invisible light ({colour.lower()})",
+                    f"Icons/ItemsGenerated/{LIGHT_FROM}{colour}.png",
+                    {"Material": "Empty", "DrawType": "Empty", "Opacity": "Transparent",
+                     "Light": {"Color": rgb}},
+                    f"A builder's light ({LIGHT_FROM}{colour}), made invisible. "
+                    f"See build/layouts.py.")
 
 
 def slot_id(name):
     return f"{settings.NAMESPACE}_Slot_" + "_".join(p.capitalize() for p in name.split("_"))
 
 
-def plot_origin(i):
-    """The corner of plot i -- for a border plot, the corner of its HOLE."""
-    return i * PITCH, 0
+def sources():
+    """Every authoring world, by its key: "border", "hq", "practice", "floorplan_01" ..."""
+    return ["border", "hq", "practice"] + [f"floorplan_{n:02d}" for n in range(1, FLOORPLANS + 1)]
 
 
-def below(i):
-    """How deep under the floor plot i saves."""
-    return BORDER_BELOW if i in BORDER_PLOTS else ROOM_BELOW
+def spoken(src):
+    """How a world is named in a command: "floorplan 7"."""
+    return f"floorplan {int(src.rsplit('_', 1)[1])}" if src.startswith("floorplan_") else src
 
 
-def plot_box(i):
-    """(x1, z1, x2, z2, y1, y2): what plot i saves -- a border plot, its ring too -- from
-    below(i) under the floor up."""
-    x, z = plot_origin(i)
-    y1 = FLOOR - below(i)
-    if i in BORDER_PLOTS:
-        return (x - BORDER, z - BORDER, x + LAYOUT + BORDER - 1, z + LAYOUT + BORDER - 1,
+def title(src):
+    return "_".join(p.capitalize() for p in src.split("_"))
+
+
+def is_border(src):
+    return src == "border"
+
+
+def below(src):
+    """How deep under the floor a world's plot saves."""
+    return BORDER_BELOW if is_border(src) else ROOM_BELOW
+
+
+def plot_box(src):
+    """(x1, z1, x2, z2, y1, y2): what a world's plot saves -- the border's, its ring too --
+    from below() under the floor up. The plot (the border's HOLE) has its corner at 0, 0."""
+    y1 = FLOOR - below(src)
+    if is_border(src):
+        return (-BORDER, -BORDER, LAYOUT + BORDER - 1, LAYOUT + BORDER - 1,
                 y1, FLOOR + BORDER_HEIGHT - 1)
-    return x, z, x + LAYOUT - 1, z + LAYOUT - 1, y1, FLOOR + AUTHOR_HEIGHT - 1
+    return 0, 0, LAYOUT - 1, LAYOUT - 1, y1, FLOOR + AUTHOR_HEIGHT - 1
 
 
 def _rect(a, b, c, d):
@@ -194,14 +237,13 @@ def _rect(a, b, c, d):
     return out
 
 
-def _lay_edges(i):
-    """Commands marking plot i: a line one block OUTSIDE what it saves -- and for a border
-    plot, a second just inside its hole (the hole is dropped on import)."""
-    x1, z1, x2, z2, _, _ = plot_box(i)
+def _lay_edges(src):
+    """Commands marking a world's plot: a line one block OUTSIDE what it saves -- and for
+    the border, a second just inside its hole (the hole is dropped on import)."""
+    x1, z1, x2, z2, _, _ = plot_box(src)
     out = _rect(x1 - 1, z1 - 1, x2 + 1, z2 + 1)
-    if i in BORDER_PLOTS:
-        hx, hz = plot_origin(i)
-        out += _rect(hx, hz, hx + LAYOUT - 1, hz + LAYOUT - 1)
+    if is_border(src):
+        out += _rect(0, 0, LAYOUT - 1, LAYOUT - 1)
     return out
 
 
@@ -211,6 +253,7 @@ def write_slots(model=None):
     theme's station -- a stove slot is an iron stove with its trim -- so a room reads as it
     will play; the fixtures keep their tinted markers."""
     blocks.write_noop()
+    write_lights()
     stations = {}
     for st in (model or {}).get("stations", {}).values():
         if not st.get("upgrade_of"):
@@ -248,6 +291,14 @@ def write_slots(model=None):
                      "Interactions": {"Use": blocks.NOOP}}
             blocks.item(slot_id(name), label, CHAIR_LOOK["icon"], block,
                         "A layout slot. See build/layouts.py.")
+        elif name.startswith("portal_"):
+            # A portal slot is the portal's own pad, so it is placed exactly where the
+            # portal will be (it takes the slot's place in game).
+            block = dict(blocks.block_for(PORTAL_LOOK), Material="Solid", HitboxType="Pad_Portal",
+                         Tint=[tint], InteractionHint=blocks.hint(slot_id(name), label, keyed=False),
+                         Interactions={"Use": blocks.NOOP})
+            blocks.item(slot_id(name), label, PORTAL_LOOK["icon"], block,
+                        "A layout slot. See build/layouts.py.")
         elif name.startswith("station_") and name[len("station_"):] in stations:
             st = stations[name[len("station_"):]]
             # Its free look: no turn (you place it the way you like) and no in-use states.
@@ -273,112 +324,71 @@ def _give(slots, kit=None):
             for _ in range(4 if n == "chair" else 1)]
 
 
+def world_name(src):
+    return f"{AUTHOR}_{title(src)}"
+
+
 def write_authoring(release=False):
-    """The authoring world and its commands. `release`: without this project's own plots --
-    no saves and no /kk restore (they're the author's working copies, not the game)."""
+    """The authoring worlds and their commands. `release`: without this project's own
+    saves -- no /kk restore (they're the author's working copies, not the game)."""
     manifest = json.load(open(os.path.join(settings.PACK, "manifest.json")))
     pack_id = f"{manifest['Group']}:{manifest['Name']}"
-    pack.write(pack.out("Instances", AUTHOR, "instance.bson"), {
-        "$Comment": "The layout workshop: creative, and PERSISTENT -- what you build here is "
-                    "still here tomorrow. See build/layouts.py.",
-        "Version": 2,
-        "WorldGen": {"Type": "Flat", "Layers": GROUND},
-        "SpawnProvider": {"Id": "Global", "SpawnPoint": {
-            # In front of HQ's plot (plot 1), outside its edge.
-            "X": PITCH + LAYOUT / 2, "Y": FLOOR + 2.0, "Z": -4.0, "Pitch": 0.0, "Yaw": 0.0,
-            "Roll": 0.0}},
-        "GameMode": "Creative", "GameTime": "0001-01-01T12:00:00Z", "IsGameTimePaused": True,
-        "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False, "IsBlockSpawnersEnabled": False,
-        "DeleteOnRemove": False, "DeleteOnUniverseStart": False,
-        "Plugin": {"Instance": {"InstanceKey": AUTHOR.lower()}}})
-    enter = [f"instances spawn {AUTHOR}", "wait 4", "gamemode creative"]
-    def grid(n):
-        out = list(enter)
-        for i in range(n):
-            x1, z1, x2, z2, _, _ = plot_box(i)
-            # set writes only into LOADED chunks: stand over each plot first.
-            out += [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 3",
-                    *_lay_edges(i)]
-        return out
-
-    def save(n):
-        out = []
-        for i in range(n):
-            x1, z1, x2, z2, y1, y2 = plot_box(i)
-            # Stand over the plot first: its chunks must be loaded to be read.
-            out += [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 3",
-                    f"pos1 --x={x1} --y={y1} --z={z1}", f"pos2 --x={x2} --y={y2} --z={z2}",
-                    # --entities, or the zones you drew are left out of the save.
-                    f"prefab save {SAVE_PREFIX}{i:02d} --overwrite --entities --pack={pack_id}"]
-        return out
-
-    macros = [("KKAuthor", "kk author", "Open the layout authoring world", enter),
-              ("KKGrid", "kk grid", f"Mark the {PLOTS} authoring plots' edges (safe to rerun)",
-               grid(PLOTS)),
-              ("KKSave", "kk save", f"Save the {PLOTS} authoring plots as prefabs", save(PLOTS)),
-              ("KKSlots", "kk slots", "Hand over every slot block",
+    macros = [("KKSlots", "kk slots", "Hand over every slot block",
                _give(SLOTS + SHELF_SLOTS + CRATE_SLOTS)),
               ("KKSlotsHq", "kk slots hq", "Hand over HQ's slot blocks (arrival, portals, "
                                            "franchise shelves)",
                _give(SLOTS + SHELF_SLOTS, "hq")),
-              ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant plot's slot blocks "
+              ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant room's slot blocks "
                                                "(and a practice room's)",
                _give(SLOTS + CRATE_SLOTS, "plot"))]
-    # "/kk barriers": every real Barrier in the plots becomes a barrier SLOT (which you can
-    # see) -- for barriers placed before the slot existed. Once; the build turns them back.
-    barriers = list(enter)
-    for n in range(PLOTS):
-        x1, z1, x2, z2, y1, y2 = plot_box(n)
-        barriers += [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 3",
-                     f"pos1 --x={x1} --y={y1} --z={z1}", f"pos2 --x={x2} --y={y2} --z={z2}",
-                     f"replace {BARRIER} {slot_id('barrier')}", "wait 1"]
-    macros.append(("KKBarriers", "kk barriers",
-                   "Turn the plots' Barrier blocks into visible barrier slots", barriers))
-    # "/kk plot 3": go and stand just in front of plot 3's edge, looking in (+z).
-    for n in range(MAX_PLOTS):
-        x1, z1, x2, _, _, _ = plot_box(n)
-        macros.append((f"KKPlot{n}", f"kk plot {n}", f"Go to authoring plot {n}",
-                       enter + [f"tp {(x1 + x2) // 2} {FLOOR + 3} {z1 - 5}"]))
-    # "/kk grid 20", "/kk save 20": the same for the first n plots -- a macro can't loop,
-    # so each count is its own subcommand.
-    for n in range(1, MAX_PLOTS + 1):
-        macros += [(f"KKGrid{n}", f"kk grid {n}", f"Mark the first {n} plots' edges", grid(n)),
-                   (f"KKSave{n}", f"kk save {n}", f"Save the first {n} plots", save(n))]
-    # RESTORE: the kept layouts pasted back at their plots' corners (they are corner-
-    # anchored). paste writes only into LOADED chunks, so stand in each plot first.
-    restore = list(enter)
-    for plot, lid in ([] if release else sorted(RESTORE.items())):
-        src = os.path.join(settings.CONTENT, "layouts", lid, "room.prefab.json")
-        name = f"{settings.NAMESPACE}_Restore_Plot_{plot}"
-        pack.write(pack.out("Prefabs", f"{name}.prefab.json"),
-                   dict(json.load(open(src)), **{"$Comment": f"Layout {lid}, for /kk restore. "
-                                                            f"See build/layouts.py."}))
-        x1, z1, x2, z2, _, _ = plot_box(plot)
-        # An imported layout has its floor at y 0 (the ground under it below).
-        restore += [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 5",
-                    f"prefab load {name}", "wait 1", f"paste {x1} {FLOOR} {z1}", "wait 3"]
-    if not release:
-        macros.append(("KKRestore", "kk restore",
-                       "Paste the kept layouts back into their plots", restore))
-    # "/kk restore 3": plot 3 back to its LAST SAVE, throwing away what was built since. The
-    # saves go into the pack (a deploy wipes the server's copy). Only for plots that HAVE a
-    # save: a macro carries on past a failed step, so with no save to paste it would clear
-    # the plot and leave it empty. Load first, then clear the whole box, ground and all (the
-    # save holds every block of it), then paste -- a save is anchored at the centre on x and z
-    # and at the BOTTOM on y, so at the box's centre cell on its lowest layer.
-    for n in ([] if release else range(MAX_PLOTS)):
-        src = latest_save(n, quiet=True)
-        if src is None:
-            continue
-        shutil.copy2(src, pack.out("Prefabs", os.path.basename(src)))
-        x1, z1, x2, z2, y1, y2 = plot_box(n)
-        macros.append((f"KKRestore{n}", f"kk restore {n}",
-                       f"Put plot {n} back as it was last saved", list(enter) + [
-            f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 5",
-            f"prefab load {SAVE_PREFIX}{n:02d}", "wait 1",
-            f"pos1 --x={x1} --y={y1} --z={z1}", f"pos2 --x={x2} --y={y2} --z={z2}",
-            "set Empty",
-            f"paste {x1 + (x2 - x1) // 2} {y1} {z1 + (z2 - z1) // 2}", "wait 3"]))
+    for src in sources():
+        name, said = world_name(src), spoken(src)
+        pack.write(pack.out("Instances", name, "instance.bson"), {
+            "$Comment": f"Authoring world: {said}. Creative, and PERSISTENT -- what you build "
+                        f"here is still here tomorrow. See build/layouts.py.",
+            "Version": 2,
+            "WorldGen": {"Type": "Flat", "Layers": GROUND},
+            "SpawnProvider": {"Id": "Global", "SpawnPoint": {
+                # In front of the plot, outside its edge (the border's: outside its ring).
+                "X": LAYOUT / 2, "Y": FLOOR + 2.0,
+                "Z": -4.0 - (BORDER if is_border(src) else 0), "Pitch": 0.0, "Yaw": 0.0,
+                "Roll": 0.0}},
+            "GameMode": "Creative", "GameTime": "0001-01-01T12:00:00Z", "IsGameTimePaused": True,
+            "IsSpawningNPC": False, "IsSpawnMarkersEnabled": False, "IsBlockSpawnersEnabled": False,
+            "DeleteOnRemove": False, "DeleteOnUniverseStart": False,
+            "Plugin": {"Instance": {"InstanceKey": name.lower()}}})
+        enter = [f"instances spawn {name}", "wait 4", "gamemode creative"]
+        x1, z1, x2, z2, y1, y2 = plot_box(src)
+        over = [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 3"]
+        # AUTHOR: into the world, the plot's edges marked (outside what is saved, so safe
+        # every time; set writes only into LOADED chunks, so from over the plot), and back
+        # in front of it.
+        macros.append((f"KKAuthor{title(src)}", f"kk author {said}",
+                       f"Open the authoring world for {said}",
+                       enter + over + _lay_edges(src)
+                       + [f"tp {LAYOUT // 2} {FLOOR + 2} {z1 - 5}"]))
+        # SAVE: into that world first, so it can only ever save the world it names.
+        # --entities, or the zones you drew are left out of the save.
+        macros.append((f"KKSave{title(src)}", f"kk save {said}", f"Save {said}",
+                       enter + over + [f"pos1 --x={x1} --y={y1} --z={z1}",
+                                       f"pos2 --x={x2} --y={y2} --z={z2}",
+                                       f"prefab save {SAVE_PREFIX}{title(src)} --overwrite "
+                                       f"--entities --pack={pack_id}"]))
+        # RESTORE: the plot back to its LAST SAVE, throwing away what was built since. The
+        # saves go into the pack (a deploy wipes the server's copy). Only for a world that
+        # HAS a save: a macro carries on past a failed step, so with no save to paste it
+        # would clear the plot and leave it empty. Load first, then clear the whole box,
+        # ground and all (the save holds every block of it), then paste -- a save is
+        # anchored at the centre on x and z and at the BOTTOM on y.
+        save = None if release else latest_save(src, quiet=True)
+        if save:
+            shutil.copy2(save, pack.out("Prefabs", os.path.basename(save)))
+            macros.append((f"KKRestore{title(src)}", f"kk restore {said}",
+                           f"Put {said} back as it was last saved", enter + over + [
+                f"prefab load {SAVE_PREFIX}{title(src)}", "wait 1",
+                f"pos1 --x={x1} --y={y1} --z={z1}", f"pos2 --x={x2} --y={y2} --z={z2}",
+                "set Empty",
+                f"paste {x1 + (x2 - x1) // 2} {y1} {z1 + (z2 - z1) // 2}", "wait 3"]))
     for file, name, desc, commands in macros:
         key = f"commands.{name.replace(' ', '.')}.desc"
         pack.say(key, desc)
@@ -387,18 +397,20 @@ def write_authoring(release=False):
             "Description": f"server.{key}", "Commands": commands})
 
 
-def latest_save(plot, quiet=False):
-    """Plot's last save, kept in content/layouts/_saves/ -- or None. A save made since the
-    last deploy is still only in the server's copy of the mod (the deploy rescues it): it is
-    taken from there first, or this would give the previous save."""
-    src = os.path.join(SAVES, f"{SAVE_PREFIX}{plot:02d}.prefab.json")
-    live = os.path.join(DEPLOYED_PREFABS, os.path.basename(src)) if DEPLOYED_PREFABS else ""
-    if live and os.path.exists(live) and (not os.path.exists(src)
-                                 or os.path.getmtime(live) > os.path.getmtime(src)):
-        shutil.copy2(live, src)
+def latest_save(src, quiet=False):
+    """A world's last save (src: "hq", "floorplan_07" ...), kept in content/layouts/_saves/
+    -- or None. A save made since the last deploy is still only in the server's copy of the
+    mod (the deploy rescues it): it is taken from there first, or this would give the
+    previous save."""
+    path = os.path.join(SAVES, f"{SAVE_PREFIX}{title(src)}.prefab.json")
+    live = os.path.join(DEPLOYED_PREFABS, os.path.basename(path)) if DEPLOYED_PREFABS else ""
+    if live and os.path.exists(live) and (not os.path.exists(path)
+                                 or os.path.getmtime(live) > os.path.getmtime(path)):
+        os.makedirs(SAVES, exist_ok=True)
+        shutil.copy2(live, path)
         if not quiet:
-            print(f"plot {plot}: took the newer save from the server")
-    return src if os.path.exists(src) else None
+            print(f"{spoken(src)}: took the newer save from the server")
+    return path if os.path.exists(path) else None
 
 
 # What a room needs to be PLAYABLE: every kind of station, and the fixtures a run can't do
@@ -409,7 +421,6 @@ NEEDED = (["station_press", "station_combine", "station_heat", "station_wash", "
 # A PRACTICE room needs its kitchen and front of house and the call slot -- no sign, pads or
 # booking desk (its crates are warned about when it's built).
 PRACTICE_NEEDED = ([n for n in NEEDED if n not in ("sign", "station_call")] + ["practice_call"])
-RESTAURANT_PLOTS_FROM = 2       # 0 is the border, 1 HQ
 
 
 def room_slots(save_path):
@@ -420,68 +431,78 @@ def room_slots(save_path):
 
 
 def reimport():
-    """Import again every layout whose plot has a save newer than the layout: each layout
-    knows its plot (layout.json from_plot). What to run after /kk save.
+    """Import again every layout whose world has a save newer than the layout: each layout
+    knows its world (layout.json "source"). What to run after /kk save.
 
-    A plot saved but never imported is picked up too, when it is a playable room (NEEDED),
-    as plot_<n> / "Plot <n>" -- rename it with `import` (a new id) or in layout.json's name."""
+    A world saved but never imported is picked up too -- the practice room or a floorplan,
+    once it is a playable room (NEEDED), as its world's id: floorplan_07 / "Floorplan 7".
+    Rename it with `import` (a new id) or in layout.json's name."""
     done = 0
     known = set()
     for meta_path in glob.glob(os.path.join(settings.CONTENT, "layouts", "*", "layout.json")):
-        known.add(json.load(open(meta_path)).get("from_plot"))
-    for plot in range(RESTAURANT_PLOTS_FROM, MAX_PLOTS):
-        if plot in known:
+        known.add(json.load(open(meta_path)).get("source"))
+    for src in sources():
+        if src in known:
             continue
-        src = latest_save(plot, quiet=True)
-        if not src:
+        path = latest_save(src, quiet=True)
+        if not path:
             continue
-        have = room_slots(src)
+        have = room_slots(path)
         if not have:
-            continue            # an empty plot
+            continue            # nothing built yet
+        if src in ("border", "hq"):
+            print(f"  NOTE: {src} is saved but no layout comes from it -- import it: "
+                  f"python3 build/layouts.py import {src} <id> \"<Name>\"")
+            continue
         missing = [n for n in (PRACTICE_NEEDED if "practice_call" in have else NEEDED)
                    if n not in have]
         if missing:
-            print(f"  NOTE: plot {plot} isn't a playable room yet -- missing: {', '.join(missing)}")
+            print(f"  NOTE: {spoken(src)} isn't a playable room yet -- missing: {', '.join(missing)}")
             continue
-        print(f"plot {plot} -> plot_{plot} (new)")
-        import_save(plot, f"plot_{plot}", f"Plot {plot}")
+        name = spoken(src).capitalize()
+        print(f"{spoken(src)} -> {src} (new)")
+        import_save(src, src, name)
         done += 1
     for meta_path in sorted(glob.glob(os.path.join(settings.CONTENT, "layouts", "*", "layout.json"))):
         meta = json.load(open(meta_path))
-        plot = meta.get("from_plot")
-        if plot is None:
+        src = meta.get("source")
+        if src is None:
             continue
-        src = latest_save(plot, quiet=True)
+        path = latest_save(src, quiet=True)
         room = os.path.join(os.path.dirname(meta_path), "room.prefab.json")
-        if src and (not os.path.exists(room) or os.path.getmtime(src) > os.path.getmtime(room)):
-            print(f"plot {plot} -> {meta['id']}")
-            import_save(plot, meta["id"], meta["name"])
+        if path and (not os.path.exists(room) or os.path.getmtime(path) > os.path.getmtime(room)):
+            print(f"{spoken(src)} -> {meta['id']}")
+            import_save(src, meta["id"], meta["name"])
             done += 1
-    print(f"{done} layout(s) re-imported" if done else "every layout is up to date with its plot")
+    print(f"{done} layout(s) re-imported" if done else "every layout is up to date with its world")
 
 
 def import_save(plot, layout_id, name):
-    """A rescued save -> content/layouts/<layout_id>/ (corner-anchored, slots listed)."""
+    """A rescued save -> content/layouts/<layout_id>/ (corner-anchored, slots listed).
+    `plot`: the world it was saved in ("hq", "floorplan_07" ...)."""
+    if plot not in sources():
+        raise SystemExit(f"no authoring world '{plot}': border, hq, practice, "
+                         f"floorplan_01 ... floorplan_{FLOORPLANS}")
     if not re.fullmatch(r"[a-z][a-z0-9_]*", layout_id or ""):
         raise SystemExit(f"a layout id is lower case letters, digits and _, starting with a "
                          f"letter: '{layout_id}'")
     src = latest_save(plot)
     if src is None:
-        raise SystemExit(f"plot {plot}: never saved")
+        raise SystemExit(f"{spoken(plot)}: never saved")
     data = json.load(open(src))
     placed = data.get("blocks") or []
     if not placed:
-        raise SystemExit(f"plot {plot}: nothing was built there")
-    border = plot in BORDER_PLOTS
+        raise SystemExit(f"{spoken(plot)}: nothing was built there")
+    border = is_border(plot)
     size = LAYOUT + 2 * BORDER if border else LAYOUT
     shift = size // 2 - 1         # the save's anchor is the selection's centre
     if min(b["x"] for b in placed) >= 0:
-        raise SystemExit(f"plot {plot}: already corner-anchored -- not a fresh save")
+        raise SystemExit(f"{spoken(plot)}: already corner-anchored -- not a fresh save")
     # A save starts below(plot) under the floor, so its bottom layer is the world's ground
     # (dirt or stone). One whose bottom is a floor was saved before the ground went in.
     bottom = [b["name"] for b in placed if b["y"] == 0]
     if not bottom or max(set(bottom), key=bottom.count) not in ("Soil_Dirt", "Rock_Stone"):
-        raise SystemExit(f"plot {plot}: saved before the authoring world had ground under "
+        raise SystemExit(f"{spoken(plot)}: saved before the authoring world had ground under "
                          f"its floor -- save it again")
     down = below(plot)
     for b in placed:
@@ -527,7 +548,7 @@ def import_save(plot, layout_id, name):
     with open(os.path.join(out, "room.prefab.json"), "w") as fh:
         json.dump(data, fh)
     with open(os.path.join(out, "layout.json"), "w") as fh:
-        json.dump(dict({"id": layout_id, "name": name, "from_plot": plot, "zones": zones},
+        json.dump(dict({"id": layout_id, "name": name, "source": plot, "zones": zones},
                        **({"kind": "border", "ring": BORDER} if border else {})), fh, indent=2)
         fh.write("\n")
     print(f"layout {layout_id}: {len(placed)} blocks, zones {sorted(zones) or 'none'}")
@@ -541,6 +562,6 @@ if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "reimport":
         reimport()
     elif len(sys.argv) >= 4 and sys.argv[1] == "import":
-        import_save(int(sys.argv[2]), sys.argv[3], " ".join(sys.argv[4:]) or sys.argv[3])
+        import_save(sys.argv[2], sys.argv[3], " ".join(sys.argv[4:]) or sys.argv[3])
     else:
         print(__doc__)

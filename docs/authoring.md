@@ -15,49 +15,42 @@ Set up and deploy once first ([getting-started.md](getting-started.md)).
 
 ## The whole process
 
-1. `/kk author`: go to the authoring world.
-2. `/kk grid`: mark the plots (first time, or after adding plots).
-3. `/kk slots plot`: take the slot blocks.
-4. Build the room in a plot.
-5. `/kk save`: save the plots.
-6. `python3 deploy.py`: a new playable room is imported as a layout by itself,
-   added to `content/world/world.json` on the next free HQ portal, built and
-   installed.
-7. `/kk hq`, and step on its portal.
+1. `/kk author floorplan 7`: go to floorplan 7's authoring world.
+2. `/kk slots plot`: take the slot blocks.
+3. Build the room in the plot, with a **room size** slot (starter, small, medium or large).
+4. `/kk save floorplan 7`: save it.
+5. `python3 deploy.py`: a new playable room is imported as a layout by itself,
+   and its size's HQ portal starts picking it. Built and installed.
+6. `/kk hq`, and step on that size's portal (it picks one of its rooms at random
+   each run).
 
-**After that, a tweak is just:** `/kk save` in game, then `python3 deploy.py`.
-It picks up every plot saved since, builds and installs.
+**After that, a tweak is just:** `/kk save floorplan 7` in game, then
+`python3 deploy.py`. It picks up every world saved since, builds and installs.
 
-**Naming it:** a room picked up by itself is `plot_4` / "Plot 4". Change its
-`name` in `world.json` for what players see, or import it under an id of your own
-(below) and remove the `plot_4` entry.
+**Naming it:** a room picked up by itself is `floorplan_07` / "Floorplan 7"
+(shown as players arrive). Change `name` in its `layout.json`, or import it
+under an id of your own (below).
 
 Each step is explained below.
 
-## The authoring world
+## The authoring worlds
 
-`/kk author` takes you to the authoring world, in creative mode. It is a flat
-world with real ground (stone, dirt, grass), and it **keeps what you build**
-between visits.
+Every layout has an **authoring world of its own**, with a single plot, so no
+world gets crowded. Each is a flat world with real ground (stone, dirt, grass),
+in creative mode, and it **keeps what you build** between visits.
 
-It is laid out as **plots** in a row along x, six chunks (96 blocks) apart, so
-no guest can see or walk into the next one:
-
-| Plot | What it's for | Size |
+| Command | World | Plot size |
 |---|---|---|
-| 0 | the **border**: the backdrop around every room | 64 × 64, with a 32 × 32 hole in the middle |
-| 1 | **HQ** | 32 × 32 |
-| 2–9 | **restaurant layouts** | 32 × 32 each |
+| `/kk author border` | the **border**: the backdrop around every room | 64 × 64, with a 32 × 32 hole in the middle |
+| `/kk author hq` | **HQ** | 32 × 32 |
+| `/kk author practice` | the **practice room** | 32 × 32 |
+| `/kk author floorplan 7` | a **restaurant room**: floorplans 1 to 99 | 32 × 32 |
 
-**`/kk plot 3`** takes you to plot 3 (standing just in front of it); any plot
-number works.
+`/kk author` also draws a yellow line of edge blocks one block **outside** the
+plot, every time. The line is never saved and never touches what's inside. You
+arrive standing just in front of it.
 
-**`/kk grid`** draws a yellow line of edge blocks one block **outside** each
-plot. The line is never saved and never touches what's inside, so it is safe to
-run any time. `/kk grid 14` marks the first 14 plots, if you want more than the
-usual 10.
-
-Each plot's floor is at **y 32**, the top of the grass. What gets saved:
+The plot's floor is at **y 32**, the top of the grass. What gets saved:
 
 - **A room plot:** from 3 blocks below the floor to 48 above it (room for a room up a tree). The ground
   under the floor comes with the room. That's what gravel rests on, and it is
@@ -72,7 +65,7 @@ Build the floor as part of the room: a new plot is just grass.
 | Command | Gives you |
 |---|---|
 | `/kk slots plot` | everything a restaurant room uses |
-| `/kk slots hq` | the arrival slot and portals 1–8 |
+| `/kk slots hq` | the arrival slot, the five portals and the franchise shelves |
 | `/kk slots` | all of them |
 
 | Slot | Becomes | Rules |
@@ -95,10 +88,8 @@ Build the floor as part of the room: a new plot is just grass.
 | **open sign** | the sign that starts each day | one |
 | **arrival** | where players appear | set it in the floor; it becomes the floor around it. Optional: without it, players arrive in front of the room |
 | **barrier** | an invisible wall (the game's `Barrier`) | anywhere, in any layout, HQ and the border: a clearly visible block while you build |
-| **HQ portal 1–8** | (HQ only) the portal to restaurant 1–8 in `world.json` | set in the floor |
-
-Barriers placed as the game's own `Barrier` block (hard to see) can be turned
-into barrier slots with **`/kk barriers`**, once.
+| **room size - starter / small / medium / large** | which HQ portal picks this room; floor in game | one in every restaurant room (not the practice room) |
+| **HQ portal - practice / starter / small / medium / large** | (HQ only) the portal itself: it looks like the portal pad | place it on the floor, exactly where the portal goes |
 
 Look at any slot to see which it is. Station slots look like the kitchen theme's
 stations (a stove slot is an iron stove with its trim); the other slots are tinted
@@ -128,63 +119,73 @@ menu, and players place them.
 
 ## HQ
 
-HQ is plot 1, built the same way with the HQ slots: one **arrival** slot and a
-**portal** slot for each restaurant. Portal *n* leads to the restaurant that
-`world.json` hangs on portal *n*. Players arrive on the arrival spot, both when
-they join and when they come back from a run. To see every portal slot filled while you
-line them up, `python3 deploy.py hq` puts a placeholder portal on each empty one.
+HQ has its own world (`/kk author hq`), built the same way with the HQ slots: one **arrival** slot and
+five **portal** slots: the practice room, and starter, small, medium and large
+rooms (the starter is a tiny room, good for one player). A
+size portal starts a run in one of that size's rooms, picked at random each time
+a run starts; everyone who steps on it while that run is going joins it. Players arrive on the arrival spot, both when
+they join and when they come back from a run. A portal with no rooms yet is left out;
+`python3 deploy.py hq` puts a placeholder portal on each empty one.
 
 ## The border
 
-Plot 0 is the backdrop pasted around every room and around HQ: trees, rocks,
+The border (`/kk author border`) is the backdrop pasted around every room and around HQ: trees, rocks,
 whatever you like on the 16-block ring around the hole. The hole is left out,
 so it doesn't matter what's in it. The border saves 16 blocks below the floor,
 so you can shape the underside of a floating island.
 
 ## Saving
 
-**`/kk save`** saves every plot (`/kk save 14` for the first 14). It flies
-you over each plot as it saves. The saves go into the installed pack, and
-`deploy.py` copies them back into `content/layouts/_saves/` before it replaces
-the pack. Nothing is lost between deploys.
+**`/kk save floorplan 7`** saves floorplan 7 (and `/kk save border`,
+`/kk save hq`, `/kk save practice`). It takes you into that world first, so it
+can only ever save the world it names, wherever you run it from. The saves go
+into the installed pack, and `deploy.py` copies them back into
+`content/layouts/_saves/` before it replaces the pack. Nothing is lost between
+deploys.
 
-**Undo:** `/kk restore 2` puts plot 2 back as it was at its last save, throwing
-away what you've built since. It exists for every plot that has been saved.
+**Undo:** `/kk restore floorplan 7` puts it back as it was at its last save,
+throwing away what you've built since. It exists for every world that has been
+saved (after the next deploy).
 
 ## Importing
 
-`python3 deploy.py` does this for you: a saved plot that is a **playable room**
-(every kind of station, chairs, all four queue spots, the pool and the sign) and
-not yet a layout is imported as `plot_<n>`. A plot with some slots but not all is
+`python3 deploy.py` does this for you: a saved floorplan (or the practice room)
+that is a **playable room** (every kind of station, chairs, all four queue
+spots, the pool and the sign) and not yet a layout is imported as
+`floorplan_<nn>`. One with some slots but not all is
 reported as unfinished, with what's missing. To choose the id and name yourself,
 import it by hand. A save is raw; importing turns it into a layout the build can
 use:
 
 ```
-python3 build/layouts.py import 2 corner_pass "Corner pass"
+python3 build/layouts.py import floorplan_07 corner_pass "Corner pass"
 ```
 
-- `2` is the plot number; `corner_pass` is the layout's id, used in
+- `floorplan_07` is the world it was saved in (`border`, `hq`, `practice` or
+  `floorplan_01` to `floorplan_99`); `corner_pass` is the layout's id, used in
   `world.json`; `"Corner pass"` is its name.
 - It writes `content/layouts/corner_pass/`: `room.prefab.json`, the room, and
   `layout.json`, its name and any zones you drew.
 - It lists the slots it found. Check the list: a room with no stove slot, for
   instance, builds with a warning.
 - It takes the newest save, even one made since the last deploy.
-- Importing again replaces the layout. Import the border (plot 0) and HQ
-  (plot 1) the same way; the border is recognised by its plot number.
+- Importing again replaces the layout. Import the border and HQ the same way;
+  the border is recognised by its world.
 
 **After any later `/kk save`, just deploy.** `python3 deploy.py` first imports
-again every layout whose plot has a newer save (each layout remembers its plot in
-`layout.json`), then builds and installs. `python3 build/layouts.py reimport` does
+again every layout whose world has a newer save (each layout remembers its world
+in `layout.json`, as `source`), then builds and installs. `python3 build/layouts.py reimport` does
 only the import step, if you want it on its own.
 
 ## Putting a room in the game
 
-Every restaurant layout not yet in `content/world/world.json` is **added by
-itself** when you deploy: on the next free portal, with the kitchen theme and the
-standard rules. After that it's yours to edit: rename it, change its theme,
-rules or portal. `world.json` says what HQ offers:
+Nothing to list: every room is **picked up by itself** when you deploy. A room
+with a **room size** slot goes into that size's portal; the practice room (a
+room with a **call a guest** slot) into the practice portal. The deploy says how
+many rooms each portal has, and names any room with no size slot (no portal
+picks it).
+
+`content/world/world.json` says how HQ and its portals play:
 
 ```json
 {
@@ -192,12 +193,13 @@ rules or portal. `world.json` says what HQ offers:
   "ground": "void",
   "weather": "Zone1_Sunny",
   "border": "backdrop",
-  "restaurants": [
-    { "id": "test_kitchen", "name": "Test kitchen", "theme": "kitchen",
-      "layout": "test_room", "rules": "standard", "portal": 1 },
-    { "id": "corner_pass", "name": "Corner pass", "theme": "kitchen",
-      "layout": "corner_pass", "rules": "standard", "portal": 2 }
-  ]
+  "portals": {
+    "practice": { "name": "Practice", "theme": "kitchen", "rules": "standard" },
+    "starter":  { "name": "Starter",  "theme": "kitchen", "rules": "standard" },
+    "small":    { "name": "Small",    "theme": "kitchen", "rules": "standard" },
+    "medium":   { "name": "Medium",   "theme": "kitchen", "rules": "standard" },
+    "large":    { "name": "Large",    "theme": "kitchen", "rules": "standard" }
+  }
 }
 ```
 
@@ -207,11 +209,13 @@ rules or portal. `world.json` says what HQ offers:
 | `ground` | `"void"` (floating in the sky) or `"flat"` (grass to the horizon), for HQ and every restaurant |
 | `weather` | a shipped weather held for good, e.g. `Zone1_Sunny`; leave it out for the world's own |
 | `border` | the layout pasted around every room; `"none"` for none |
-| `restaurants` | one per portal: `id` (any unique name), `name` (shown in game), `theme`, `layout`, `rules` (`standard`, or `practice` for short, easy days) and `portal` (1–8) |
+| `portals` | the five portals: `name` (shown in game), `theme` and `rules` (`standard`, or `practice` for short, easy days) |
 
-A restaurant can override `ground`, `weather` and `border` for itself.
+A portal can override `ground`, `weather` and `border` for itself. Each player's
+best is kept per portal ("Your best at Medium: day 15+").
 
-Then `python3 deploy.py`, `/kk hq`, and step on the portal.
+A room built before size slots can be given one in its `layout.json` instead:
+`"size": "medium"`.
 
 ## Testing a room on its own
 
@@ -227,14 +231,11 @@ and press it: the room is laid out beside it with everything working, under the
 `practice` rules, which have short days and patient guests. Other test worlds,
 of single stations or the whole kitchen, are listed in `build/spike.py`.
 
-## Starting a fresh authoring world
+## Starting an authoring world again
 
-The authoring world keeps everything. To start again from nothing:
-
-1. Stop the server, and delete `universe/worlds/k2_author` in the server folder.
-2. Start it, then `/kk author` (a new world) and `/kk grid`.
-3. `/kk restore` pastes the layouts named in `RESTORE` (in `build/layouts.py`:
-   the backdrop, HQ and the test room) back into their plots.
+Each world keeps everything. To start one again from nothing, stop the server,
+delete its folder in the server's `universe/worlds/` (`k2_author_floorplan_07`,
+say), start it, and `/kk author floorplan 7`.
 
 ## Choosing looks
 

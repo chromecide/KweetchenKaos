@@ -47,7 +47,7 @@ content/
   themes/kitchen/   the kitchen theme: stations, ingredients, dishes, looks
   layouts/          rooms built in game (hq, test_room, backdrop), and raw saves
   rules/            how a run plays: standard, practice
-  world/world.json  HQ and the restaurants its portals lead to
+  world/world.json  HQ and how its portals play
 build/              the build: reads content, checks it, writes the pack
   systems/          one system per job (stove, counter, queue, shift...)
 docs/               the docs above
@@ -66,8 +66,8 @@ pack/               build output (not committed)
 | `python3 deploy.py` | pick up new layout saves, build the game and install it (all you need after `/kk save`) |
 | `python3 deploy.py <spike> [rules]` | build a test world instead (see [systems.md](docs/systems.md#testing-and-debugging)) |
 | `python3 build/build.py --check` | check the content and print every dish's chain, crate to plate |
-| `python3 build/layouts.py import <plot> <id> "<Name>"` | turn a saved plot into a new layout |
-| `python3 build/layouts.py reimport` | import again every layout whose plot has been saved since |
+| `python3 build/layouts.py import <world> <id> "<Name>"` | turn a saved authoring world (`floorplan_07`, say) into a new layout |
+| `python3 build/layouts.py reimport` | import again every layout whose world has been saved since |
 | `python3 release.py` | package a release zip in `dist/` and boot-test it (version in `build/settings.py`) |
 
 **In game:**
@@ -75,13 +75,10 @@ pack/               build output (not committed)
 | Command | Does |
 |---|---|
 | `/kk hq` | go to HQ |
-| `/kk author` | go to the authoring world |
-| `/kk plot <n>` | go to authoring plot *n* (0 the border, 1 HQ, 2+ layouts) |
-| `/kk grid [n]` | mark the authoring plots' edges |
+| `/kk author <world>` | go to an authoring world: `border`, `hq`, `practice` or `floorplan <n>` (1-99) |
 | `/kk slots [hq\|plot]` | take the slot blocks |
-| `/kk barriers` | turn Barrier blocks in the plots into visible barrier slots |
-| `/kk save [n]` | save the authoring plots |
-| `/kk restore [n]` | put plot *n* back as last saved; with no number, restore the kept layouts to a new authoring world |
+| `/kk save <world>` | save that world's plot |
+| `/kk restore <world>` | put it back as last saved |
 | `/kk spike`, `/kk kit` | (in a test build) open the test world, take its setup kit |
 
 ## Status

@@ -72,7 +72,7 @@ Then copy the `pack/` folder into your server's `mods/` folder, name it
 ## Playing
 
 Join the server and type **`/kk hq`**. You arrive at HQ: a lobby with a portal
-for each restaurant. Step on a portal and you, and anyone who steps on after
+for each room size (starter, small, medium, large) and one to the practice room. Step on a portal and you, and anyone who steps on after
 you, are taken into that restaurant together. Each restaurant is a fresh world
 of its own, floating in the sky, and it is thrown away when everyone has left.
 

@@ -249,7 +249,7 @@ picked up or carried out. The `practice` spike has it all.
 
 **A practice room** is a layout with a **call a guest** slot: built with the practice
 system instead of the shift, pads, sign, records and franchise, and reached through its
-own HQ portal like any restaurant. Its crates come from **crate slots** (one per
+own HQ portal (the practice portal). Its crates come from **crate slots** (one per
 ingredient -- nothing delivers them), and it's picked up by itself once it has its
 stations, queue, pool, chairs and the call slot.
 
@@ -399,7 +399,9 @@ Pasted anywhere, the room works. Two things make that possible:
 
 - **HQ** is a layout built by hand, with an arrival slot and portal slots. It's
   one shared world, never torn down.
-- **A portal** is a block that sends you into a new world for its restaurant.
+- **A portal** is a block that sends you into a new world: the practice room, or
+  a room of its size, picked at random as the world is made (the arrival volume's
+  fair pick; every later arrival lands in the same room).
   The block remembers the world it opened, so everyone who steps on it while
   the run exists joins the same run. It also sets each player's way back: HQ's
   arrival spot.

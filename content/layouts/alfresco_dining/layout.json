@@ -1,6 +1,6 @@
 {
   "id": "alfresco_dining",
   "name": "Alfresco Dining",
-  "from_plot": 4,
-  "zones": {}
+  "zones": {},
+  "size": "medium"
 }

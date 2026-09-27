@@ -48,9 +48,8 @@ FRONT = (16.0, 2.0, -4.0)    # a restaurant's arrival, relative to its room: in 
 # over a void there is nothing under them for a moment: arrive standing, not dropping in.
 STAND = 1.0
 ARRIVAL_CATCH = (1.0, 3.0)   # seconds after arriving that a player is put back on the arrival
-PORTAL_LOOK = {"model": "Blocks/Miscellaneous/Platform_Magic_Exit.blockymodel",
-               "texture": "Blocks/Miscellaneous/Platform_Magic_Blue2.png",
-               "icon": "Icons/ItemsGenerated/Portal_Return.png"}
+PICK_MAX = 40                # rooms a random pick can choose among (_paste_on_arrival)
+PORTAL_LOOK = layouts.PORTAL_LOOK
 
 
 def load():
@@ -108,52 +107,77 @@ def _border(world, r=None):
 
 
 def _paste_on_arrival(name, prefab, text, border=(None, 0), welcome=None, spawn=None,
-                      on_arrive=None):
-    """A volume that pastes `prefab` at AT the first time a player is in the world -- and
+                      on_arrive=None, choices=None, debug=False):
+    """A volume that pastes a room at AT the first time a player is in the world -- and
     its BORDER round it, after (the border's hole is the room's plot). `spawn`: where every
     arriving player is put back, a moment after arriving. `text`: a chat line
     then (None: none). `welcome` (title, subtitle): shown to EVERY player as they arrive --
-    ENTER is the arriving player's own event, so the title reaches them."""
+    ENTER is the arriving player's own event, so the title reaches them.
+
+    `choices`: A RANDOM ROOM instead of `prefab` -- [{"prefab", "spawn", "welcome", "label"}],
+    one picked as the world is made (a fair pick: each in turn at 1/(choices left), the
+    first that lands pastes and stops the pick). The pick is kept (`pick` = its number, 1 up),
+    so every later arrival is put on THAT room's arrival spot and shown its welcome."""
+    if choices is None:
+        choices = [{"prefab": prefab, "spawn": spawn, "welcome": welcome, "label": name}]
+    if len(choices) > PICK_MAX:
+        raise SystemExit(f"{name}: {len(choices)} rooms to pick from -- at most {PICK_MAX}")
     effect = f"{name}_Arrival"
+    tag = lambda key, value: {"Type": "ModifyTags", "Event": "ENTER", "Operation": "Set",
+                              "TagKey": key, "TagValue": str(value)}
+    has = lambda key, value: {"Type": "TagCondition", "Event": "ENTER", "Source": "Self",
+                              "TagKey": key, "Comparison": "Exactly", "TagValue": str(value)}
     rules = v.Entries()
-    if spawn:
-        # BACK ON THE ARRIVAL SPOT, a moment after arriving: the first player lands before
-        # the room is pasted, and an arrival up a tree left them falling to the ground. Every
-        # arriving player is put back on it (harmless when the room was already there).
-        rules.add(3, [], [{"Type": "Teleport", "Event": "ENTER", "Delay": d, "ResetVelocity": True,
-                           "Position": {"X": float(spawn[0]), "Y": float(spawn[1]),
-                                        "Z": float(spawn[2])}} for d in ARRIVAL_CATCH])
+    # THE FIRST ARRIVAL makes the room: marks it built, and starts the pick.
+    rules.add(1, [has("built", 0)], [tag("built", 1), tag("going", 1)])
+    for k, c in enumerate(choices):
+        left = len(choices) - k
+        chance = ([] if left == 1 else
+                  [{"Type": "RandomChanceCondition", "Event": "ENTER", "Chance": round(1.0 / left, 4)}])
+        # The ROOM first -- it holds the arrival spot -- then the border (scenery).
+        rules.add(10 + k, [has("going", 1)] + chance,
+                  [{"Type": "PastePrefab", "Event": "ENTER", "Prefab": c["prefab"],
+                    "Origin": "WorldAbsolute",
+                    "Position": {"X": float(AT[0]), "Y": float(AT[1]), "Z": float(AT[2])},
+                    "ShowParticles": False},
+                   tag("pick", k + 1), tag("going", 0)]
+                  + ([{"Type": "PastePrefab", "Event": "ENTER", "Prefab": border[0],
+                       "Origin": "WorldAbsolute",
+                       "Position": {"X": float(AT[0] - border[1]), "Y": float(AT[1]),
+                                    "Z": float(AT[2] - border[1])},
+                       "ShowParticles": False}] if border[0] else [])
+                  + ([v.say(f"kk.world.{name.lower()}", text, event="ENTER")] if text else [])
+                  + v.report(f"kk.world.{name.lower()}.pick.{k + 1}",
+                             f"[world] {name}: picked {c['label']} ({k + 1} of {len(choices)})",
+                             debug, event="ENTER"))
+        # EVERY ARRIVAL, on the picked room: its welcome, and back on its arrival spot a
+        # moment after arriving -- the first player lands before the room is pasted, and an
+        # arrival up a tree left them falling to the ground (harmless once it's there).
+        effects = []
+        if c.get("welcome"):
+            key = f"kk.world.{name.lower()}.title" + (f".{k + 1}" if len(choices) > 1 else "")
+            effects.append(v.title(key, c["welcome"][0], f"{key}.sub", c["welcome"][1],
+                                   event="ENTER", seconds=5.0))
+        if c.get("spawn"):
+            sx, sy, sz = c["spawn"]
+            effects += [{"Type": "Teleport", "Event": "ENTER", "Delay": d, "ResetVelocity": True,
+                         "Position": {"X": float(sx), "Y": float(sy), "Z": float(sz)}}
+                        for d in ARRIVAL_CATCH]
+        if effects:
+            rules.add(10 + PICK_MAX + k, [has("pick", k + 1)], effects)
     if on_arrive:
         # Root interactions run on each arriving player: their bests (systems/records.py),
         # their franchise pick reset (systems/franchise.py).
-        rules.add(4, [], [{"Type": "RunRootInteraction", "Event": "ENTER", "RootInteraction": r,
-                           "Delay": 2.0} for r in ([on_arrive] if isinstance(on_arrive, str)
-                                                   else on_arrive)])
-    if welcome:
-        rules.add(2, [], [v.title(f"kk.world.{name.lower()}.title", welcome[0],
-                                  f"kk.world.{name.lower()}.title.sub", welcome[1],
-                                  event="ENTER", seconds=5.0)])
-    rules.add(1, [{"Type": "TagCondition", "Event": "ENTER", "Source": "Self", "TagKey": "built",
-                   "Comparison": "Exactly", "TagValue": "0"}],
-              # The ROOM first -- it holds the arrival spot -- then the border (scenery).
-              [{"Type": "PastePrefab", "Event": "ENTER", "Prefab": prefab,
-                "Origin": "WorldAbsolute",
-                "Position": {"X": float(AT[0]), "Y": float(AT[1]), "Z": float(AT[2])},
-                "ShowParticles": False},
-               {"Type": "ModifyTags", "Event": "ENTER", "Operation": "Set", "TagKey": "built",
-                "TagValue": "1"},
-              ] + ([{"Type": "PastePrefab", "Event": "ENTER", "Prefab": border[0],
-                     "Origin": "WorldAbsolute",
-                     "Position": {"X": float(AT[0] - border[1]), "Y": float(AT[1]),
-                                  "Z": float(AT[2] - border[1])},
-                     "ShowParticles": False}] if border[0] else [])
-              + ([v.say(f"kk.world.{name.lower()}", text, event="ENTER")] if text else []))
+        rules.add(10 + 2 * PICK_MAX, [],
+                  [{"Type": "RunRootInteraction", "Event": "ENTER", "RootInteraction": r,
+                    "Delay": 2.0} for r in ([on_arrive] if isinstance(on_arrive, str)
+                                            else on_arrive)])
     rules.write(effect, "Pastes the room when the first player arrives. See build/world.py.")
-    return v.volume(f"{name}_arrival", effect, {"built": "0"})
+    return v.volume(f"{name}_arrival", effect, {"built": "0", "going": "0", "pick": "0"})
 
 
-def _instance_name(r):
-    return f"{NS}_R_" + "_".join(p.capitalize() for p in r["id"].split("_"))
+def _instance_name(kind):
+    return f"{NS}_R_{kind.capitalize()}"
 
 
 PLACEHOLDER = f"{NS}_Portal_Placeholder"
@@ -170,91 +194,91 @@ def _placeholder_portal():
                 "A stand-in portal for the hq spike. See build/world.py.")
 
 
-def register_layouts(world):
-    """Every restaurant LAYOUT not yet in world.json is added to it, on the next free portal,
-    with the first theme and the standard rules -- and world.json is written back, so it can
-    be renamed, re-themed or moved to another portal there. Border and HQ layouts are not
-    restaurants. Returns notes for the build report."""
-    notes = []
-    listed = {r["layout"] for r in world["restaurants"]}
-    taken = {r["portal"] for r in world["restaurants"]}
-    theme = sorted(os.listdir(os.path.join(settings.CONTENT, "themes")))[0]
+def pools(world):
+    """{portal kind: [layout id]}: which rooms each HQ portal picks from -- a room's size
+    slot says (layouts.SIZES), a practice room goes to the practice portal. Every layout but
+    the border and HQ is a room. Returns (pools, notes)."""
+    out, notes = {k: [] for k in layouts.PORTALS}, []
     for meta_path in sorted(glob.glob(os.path.join(settings.CONTENT, "layouts", "*", "layout.json"))):
         meta = json.load(open(meta_path))
         lid = meta["id"]
-        if lid in listed or lid == world["hq"] or meta.get("kind") == "border" or lid.startswith("_"):
+        if lid == world["hq"] or meta.get("kind") == "border" or lid.startswith("_"):
             continue
-        free = next((n for n in range(1, layouts.PORTALS + 1) if n not in taken), None)
-        if free is None:
-            notes.append(f"layout {lid} isn't in world.json: every HQ portal is taken")
-            continue
-        world["restaurants"].append({"id": lid, "name": meta["name"], "theme": theme,
-                                     "layout": lid, "rules": "standard", "portal": free})
-        taken.add(free)
-        notes.append(f"added '{meta['name']}' ({lid}) to world.json on portal {free}")
-    if any(n.startswith("added") for n in notes):
-        path = os.path.join(settings.CONTENT, "world", "world.json")
-        with open(path, "w") as fh:
-            json.dump(world, fh, indent=2)
-            fh.write("\n")
-    return notes
+        _, room = restaurant.load_layout(lid)
+        have = {n for n in (restaurant._slot(b["name"]) for b in room["blocks"]) if n}
+        # layout.json "size" stands in for the slot (a room built before size slots).
+        sizes = [s for s in layouts.SIZES if f"size_{s}" in have] or \
+            ([meta["size"]] if meta.get("size") in layouts.SIZES else [])
+        if "practice_call" in have:
+            out["practice"].append(lid)
+        elif len(sizes) == 1:
+            out[sizes[0]].append(lid)
+        elif sizes:
+            notes.append(f"layout {lid} has more than one size slot ({', '.join(sizes)}) -- "
+                         f"left out; keep one")
+        else:
+            notes.append(f"layout {lid} has no size slot -- no portal picks it")
+    return out, notes
 
 
 def build(debug=True, fill_portals=False):
-    """`fill_portals`: every portal slot gets a portal -- a placeholder where no restaurant
-    is hung (the hq spike: `python3 deploy.py hq`)."""
+    """`fill_portals`: every portal slot gets a portal -- a placeholder where no room is
+    there to pick yet (the hq spike: `python3 deploy.py hq`)."""
     if fill_portals:
         _placeholder_portal()
     world = load()
-    notes = register_layouts(world)
-    portal_of, practice_rooms = {}, set()
-    for r in world["restaurants"]:
-        model = content.load(r["theme"], r["rules"])
-        room, problems, info = restaurant.build(model, r["layout"], debug=debug,
-                                                exit_on_lose=True, label=r["name"])
-        notes += [f"{r['name']}: {p}" for p in problems]
-        inst = _instance_name(r)
-        prefab = f"{inst}_Room"
-        pack.write(pack.out("Prefabs", f"{prefab}.prefab.json"),
-                   dict(room, **{"$Comment": f"{r['name']}: {info['name']} in {r['theme']}, "
-                                             f"{r['rules']} rules. See build/world.py."}))
-        if info["arrival"]:
-            ax, ay, az = info["arrival"]
-            spawn = (AT[0] + ax + 0.5, AT[1] + ay + STAND, AT[2] + az + 0.5)
-        else:
-            notes.append(f"{r['name']}: no arrival slot -- players arrive in front of the room")
-            spawn = (AT[0] + FRONT[0], AT[1] + FRONT[1], AT[2] + FRONT[2])
-        # A title for each player as they arrive (their own event, so it reaches them), not
-        # a chat line: the restaurant's name, and the rules it plays under.
-        rules_name = model["rules"].get("name", r["rules"])
-        if info.get("practice"):
-            # A PRACTICE room: nothing counts, so no best to show and no pick to reset.
-            practice_rooms.add(r["layout"])
-            arrive = _paste_on_arrival(inst, prefab, None, _border(world, r),
-                                       welcome=(f"Welcome to {r['name']}",
-                                                "Practice - guests come by themselves, nothing counts"),
-                                       spawn=spawn)
-        else:
-            arrive = _paste_on_arrival(inst, prefab, None, _border(world, r),
-                                       welcome=(f"Welcome to {r['name']}", f"{rules_name} rules"),
-                                       spawn=spawn,
-                                       on_arrive=[records.show(model, r["layout"], r["name"]),
-                                                  model["franchise"]["reset"]])
-        _instance(inst, spawn, [arrive],
-                  f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True,
-                  ground=r.get("ground", world.get("ground", "flat")),
-                  weather=r.get("weather", world.get("weather")))
-        portal_of[r["portal"]] = (r, inst)
+    rooms, notes = pools(world)
+    portal_of = {}
+    for kind in layouts.PORTALS:
+        if not rooms[kind]:
+            notes.append(f"the {kind} portal has no rooms yet"
+                         + ("" if kind == "practice" else f" (a room with a size_{kind} slot)"))
+            continue
+        p = world["portals"][kind]
+        inst = _instance_name(kind)
+        choices, model = [], None
+        for lid in rooms[kind]:
+            # A fresh model per room: a build fills it in for the room it dresses.
+            model = content.load(p["theme"], p["rules"])
+            room, problems, info = restaurant.build(model, lid, debug=debug, exit_on_lose=True,
+                                                    label=p["name"], record_as=kind)
+            notes += [f"{p['name']} / {info['name']}: {x}" for x in problems]
+            prefab = f"{inst}_Room_" + "_".join(w.capitalize() for w in lid.split("_"))
+            pack.write(pack.out("Prefabs", f"{prefab}.prefab.json"),
+                       dict(room, **{"$Comment": f"{p['name']}: {info['name']} in {p['theme']}, "
+                                                 f"{p['rules']} rules. See build/world.py."}))
+            if info["arrival"]:
+                ax, ay, az = info["arrival"]
+                spawn = (AT[0] + ax + 0.5, AT[1] + ay + STAND, AT[2] + az + 0.5)
+            else:
+                notes.append(f"{info['name']}: no arrival slot -- players arrive in front of the room")
+                spawn = (AT[0] + FRONT[0], AT[1] + FRONT[1], AT[2] + FRONT[2])
+            # A title for each player as they arrive (their own event, so it reaches them):
+            # the room picked, and the rules it plays under.
+            sub = ("Practice - guests come by themselves, nothing counts" if kind == "practice"
+                   else f"{p['name']} - {model['rules'].get('name', p['rules'])} rules")
+            choices.append({"prefab": prefab, "spawn": spawn, "label": info["name"],
+                            "welcome": (f"Welcome to {info['name']}", sub)})
+        # A PRACTICE room: nothing counts, so no best to show and no pick to reset.
+        on_arrive = (None if kind == "practice" else
+                     [records.show(model, kind, p["name"]), model["franchise"]["reset"]])
+        arrive = _paste_on_arrival(inst, None, None, _border(world, p), choices=choices,
+                                   on_arrive=on_arrive, debug=debug)
+        _instance(inst, choices[0]["spawn"], [arrive],
+                  f"HQ's {p['name']} portal: one of {len(choices)} rooms. See build/world.py.",
+                  clock_on=True, ground=p.get("ground", world.get("ground", "flat")),
+                  weather=p.get("weather", world.get("weather")))
+        portal_of[kind] = (p, inst, rooms[kind])
 
-    # HQ: its layout with the HQ slots swapped: portals on the floor above their slots,
+    # HQ: its layout with the HQ slots swapped: a portal in each portal slot's place,
     # the arrival marked by where players spawn.
     meta = json.load(open(os.path.join(settings.CONTENT, "layouts", world["hq"], "layout.json")))
     room = json.load(open(os.path.join(settings.CONTENT, "layouts", world["hq"], "room.prefab.json")))
     out, arrival, portal_at = [], None, {}
     # THE FRANCHISE STOREROOM (systems/franchise.py): each shelf slot the HQ layout holds
     # becomes that item's shelf, with the item on it, and gets a volume of its own.
-    hq_model = (content.load(world["restaurants"][0]["theme"], world["restaurants"][0]["rules"])
-                if world["restaurants"] else None)
+    first = world["portals"][layouts.SIZES[0]]
+    hq_model = content.load(first["theme"], first["rules"])
     shelves, shelf_keys = {}, set()
     if hq_model:
         fr_roots = franchise.build(hq_model)
@@ -270,37 +294,41 @@ def build(debug=True, fill_portals=False):
         if name == layouts.slot_id("arrival"):
             arrival = (b["x"], b["y"], b["z"])
             out.append(dict(b, name=layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
-        elif name.startswith(layouts.slot_id("portal_")[:-1]):
-            n = int(name.rsplit("_", 1)[1])
-            out.append(dict(b, name=layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
+        elif name.startswith(layouts.slot_id("portal_x")[:-1]):
+            if "filler" in b:
+                # The pad is 3 x 3: a save lists its 8 filler cells too. Only the pad's own
+                # cell becomes the portal (which brings its own fillers).
+                continue
+            n = name[len(layouts.slot_id("portal_x")) - 1:].lower()
+            # The slot IS the pad (layouts.PORTAL_LOOK): the portal takes its place.
             # A fence joining up to the pad beside it swallowed the pad (seen in game): say so.
             if any(c["name"].startswith(("Wood_", "Metal_", "Rock_")) and "Fence" in c["name"]
-                   and (c["x"] - b["x"], c["y"] - b["y"] - 1, c["z"] - b["z"]) in
+                   and (c["x"] - b["x"], c["y"] - b["y"], c["z"] - b["z"]) in
                    ((1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1))
                    for c in room["blocks"]):
                 notes.append(f"HQ: portal slot {n} has a fence right beside it -- the fence can "
                              f"hide the portal; keep it a block clear")
             if n in portal_of:
-                out.append({"x": b["x"], "y": b["y"] + 1, "z": b["z"], "name": f"{NS}_Portal_{n}"})
-                portal_at[n] = (b["x"], b["y"] + 1, b["z"])
+                out.append({"x": b["x"], "y": b["y"], "z": b["z"], "name": f"{NS}_Portal_{n.capitalize()}"})
+                portal_at[n] = (b["x"], b["y"], b["z"])
             elif fill_portals:
-                out.append({"x": b["x"], "y": b["y"] + 1, "z": b["z"], "name": PLACEHOLDER})
+                out.append({"x": b["x"], "y": b["y"], "z": b["z"], "name": PLACEHOLDER})
             else:
-                notes.append(f"HQ: portal slot {n} has no restaurant in world.json")
+                pass                  # said above: no rooms for it yet
         else:
             out.append(layouts.barrier(b))
     for n in portal_of:
-        if not any(b["name"] == f"{NS}_Portal_{n}" for b in out):
-            notes.append(f"HQ: no portal slot {n} for '{portal_of[n][0]['name']}'")
+        if not any(b["name"] == f"{NS}_Portal_{n.capitalize()}" for b in out):
+            notes.append(f"HQ: no {n} portal slot")
     if arrival is None:
         notes.append("HQ: no arrival slot -- players arrive at the plot's front")
         arrival = (16, 0, 2)
-    # THE PORTALS: one block per restaurant, stepped on to go. Each remembers where its
+    # THE PORTALS: one block per kind, stepped on to go. Each remembers where its
     # players come back to -- the ARRIVAL, where HQ's own spawn is: a return point is the
     # portal block (its hitbox middle) plus PositionOffset, so each portal's offset is the
     # way from it to the arrival.
-    for n, (r, inst) in portal_of.items():
-        key = f"{NS}_Portal_{n}"
+    for n, (r, inst, _) in portal_of.items():
+        key = f"{NS}_Portal_{n.capitalize()}"
         px, py, pz = portal_at.get(n, arrival)
         back = {"X": float(arrival[0] - px), "Y": 0.1, "Z": float(arrival[2] - pz)}
         block = dict(blocks.block_for(PORTAL_LOOK), Material="Solid", HitboxType="Pad_Portal",
@@ -319,8 +347,7 @@ def build(debug=True, fill_portals=False):
                dict(room, blocks=out, entities=[], fluids=[],
                     **{"$Comment": f"HQ: {meta['name']}. See build/world.py."}))
     spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + STAND, AT[2] + arrival[2] + 0.5)
-    real = [(r["layout"], r["name"]) for r in world["restaurants"]
-            if r["layout"] not in practice_rooms]
+    real = [(k, portal_of[k][0]["name"]) for k in layouts.SIZES if k in portal_of]
     best = records.show_all(hq_model, real) if real else None
     # The shelves' volumes, over HQ's room: one each (a shelf's rules are its own).
     hq_box = ((AT[0] - 8, AT[1] - 16, AT[2] - 8), (AT[0] + 48, AT[1] + 48, AT[2] + 48))
@@ -341,5 +368,5 @@ def build(debug=True, fill_portals=False):
         "$Comment": "Go to HQ. See build/world.py.", "Name": "kk hq",
         "Description": "server.commands.kk.hq.desc",
         "Commands": [f"instances spawn {HQ}", "wait 4", "gamemode adventure"]})
-    return [f"{r['name']} on portal {n}: {r['layout']} in {r['theme']}, {r['rules']} rules"
-            for n, (r, _) in sorted(portal_of.items())], notes
+    return [f"{r['name']} portal: {len(lids)} room(s) ({', '.join(lids)}) in {r['theme']}, "
+            f"{r['rules']} rules" for n, (r, _, lids) in portal_of.items()], notes

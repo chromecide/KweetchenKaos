@@ -482,7 +482,46 @@ def build_room(model, layout_id, debug=True):
 
 
 
+# THE PICK SPIKE: a random room each time the world is made (world._paste_on_arrival with
+# choices -- what the HQ's size portals will use). Three marker rooms, a colour each, a
+# pillar in a different corner and an arrival spot of their own. Nothing else: no stations.
+PICK_ROOMS = [("red", "#d03030", (1, 1), (7, 7)), ("green", "#30b040", (7, 1), (1, 7)),
+              ("blue", "#3050e0", (4, 7), (4, 1))]     # colour, tint, pillar x z, arrival x z
+PICK_SIZE, PICK_PILLAR = 9, 6
+
+
+def build_pick(debug=True):
+    import world
+    choices = []
+    for colour, tint, (px, pz), (ax, az) in PICK_ROOMS:
+        block = f"{settings.NAMESPACE}_Spike_Pick_{colour.capitalize()}"
+        blocks.station_block(block, f"Room {colour}", {
+            "sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+            "top": "BlockTextures/Wood_Softwood_Planks_Side.png", "sound": "Wood"},
+            f"The {colour} room", "Spike only: a pick marker. See build/spike.py.",
+            tint=tint, use=False)
+        cells = [{"x": x, "y": 0, "z": z, "name": block}
+                 for x in range(PICK_SIZE) for z in range(PICK_SIZE)]
+        cells += [{"x": px, "y": y, "z": pz, "name": block} for y in range(1, PICK_PILLAR + 1)]
+        prefab = f"{settings.NAMESPACE}_Spike_Pick_Room_{colour.capitalize()}"
+        pack.write(pack.out("Prefabs", f"{prefab}.prefab.json"), {
+            "$Comment": f"Spike only: the {colour} pick room. See build/spike.py.",
+            "version": 8, "blockIdVersion": 11, "anchorX": 0, "anchorY": 0, "anchorZ": 0,
+            "blocks": cells, "fluids": [], "entities": []})
+        spawn = (world.AT[0] + ax + 0.5, world.AT[1] + world.STAND, world.AT[2] + az + 0.5)
+        choices.append({"prefab": prefab, "spawn": spawn, "label": f"the {colour} room",
+                        "welcome": (f"The {colour.upper()} room",
+                                    "Leave, /kk spike again: a new pick each world")})
+    arrive = world._paste_on_arrival(f"{settings.NAMESPACE}_Spike_Pick", None, None,
+                                     choices=choices, debug=debug)
+    note = "a random room: " + ", ".join(c for c, *_ in PICK_ROOMS)
+    _world(note, False, [arrive], [])
+    return note, []
+
+
 def build(model, name, debug=True):
+    if name == "pick":
+        return build_pick(debug)
     if name.startswith("room:"):
         return build_room(model, name[len("room:"):], debug)
     if name.startswith("dish:"):

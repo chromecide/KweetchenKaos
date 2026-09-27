@@ -15,6 +15,14 @@
 - **Practice kitchen:** a room to try things in, through its own portal -- guests come by
   themselves, patient ones, and nothing counts (no days, money or losing). Build one with
   a "call a guest" slot and a crate slot per ingredient.
+- **HQ has five portals:** practice, and starter (a tiny room for one player), small,
+  medium and large rooms. A size portal
+  starts each run in one of that size's rooms, at random (PlateUp's floorplans). Your
+  best is kept per portal.
+- **For builders: one authoring world per layout.** `/kk author border`, `/kk author hq`,
+  `/kk author practice` and `/kk author floorplan 1`-`99`, each with a single plot; save
+  and undo the same way (`/kk save floorplan 7`, `/kk restore floorplan 7`). A save always
+  goes into the world it names. Replaces the one shared world of numbered plots.
 - **Overtime:** once every dish and customer card is taken, card days bring a squeeze
   instead, in turn: busier (a guest more a day), hurried (guests less patient), messier
   (more guest mess). Each has a limit.

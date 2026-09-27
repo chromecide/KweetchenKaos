@@ -80,8 +80,11 @@ def _carried(name, effect, tags, box, targets=("Player",), extra=None):
                       "Rotation": {"Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0}}}}
 
 
-def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label=None):
-    """(room prefab dict, problems, info): the layout dressed, carrying its systems."""
+def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label=None,
+          record_as=None):
+    """(room prefab dict, problems, info): the layout dressed, carrying its systems.
+    `record_as`: whose best a run here counts toward (records.py) -- an HQ portal's, so
+    every room it picks shares one; the layout's own without."""
     meta, room = load_layout(layout_id)
     problems = []
     # A PRACTICE ROOM (systems/practice.py) is one with a "call a guest" slot: no shift, pads,
@@ -118,7 +121,7 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
         shift_pacing = v.take_companions()        # its per-day pacing volumes, its tokens
         # Each player's best here, remembered on the player (systems/records.py): its
         # recorder is a companion beside the shift.
-        records.build(model, layout_id, label or meta["name"])
+        records.build(model, record_as or layout_id, label or meta["name"])
         shift_pacing += v.take_companions()
         # The franchise (systems/franchise.py) before the pads: they read its cards.
         franchise.build(model)
@@ -137,7 +140,7 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
     for b in room["blocks"]:
         name = _slot(b["name"])
         if name is None:
-            built.append(b)
+            built.append(layouts.barrier(b))      # a builder's light made invisible, too
             continue
         at = lambda block, dx=0, dz=0, dy=0, rotation=None: dict(
             {"x": b["x"] + dx, "y": b["y"] + dy, "z": b["z"] + dz, "name": block},
@@ -192,6 +195,9 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
             out_blocks.append(at(layouts.BARRIER))
         elif name == "arrival":
             arrival = (b["x"], b["y"], b["z"])
+            out_blocks.append(at(layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
+        elif name.startswith("size_"):
+            # Which HQ portal picks this room (world.py reads it): floor in game.
             out_blocks.append(at(layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
 
     for role, sid in by_role.items():

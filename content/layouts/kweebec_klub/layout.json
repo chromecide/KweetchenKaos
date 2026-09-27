@@ -1,6 +1,6 @@
 {
   "id": "kweebec_klub",
   "name": "KweebecKlub",
-  "from_plot": 3,
-  "zones": {}
+  "zones": {},
+  "size": "medium"
 }

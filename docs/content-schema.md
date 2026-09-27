@@ -20,7 +20,7 @@ Four separate questions, each with its own folder of small JSON files:
 | **Theme** | *What* the restaurant is: stations, items, recipes, menu, guests, words | `content/themes/<theme>/` |
 | **Layout** | *Where*: the room, its slots and zones | `content/layouts/<layout>/` (built by hand: [authoring.md](authoring.md)) |
 | **Rules** | *How a run plays*: day length, guests, offers, prices, recipe cards | `content/rules/<rules>/` |
-| **World** | *How you get there*: HQ, and which restaurants its portals lead to | `content/world/world.json` |
+| **World** | *How you get there*: HQ, and how its portals play | `content/world/world.json` |
 
 A **restaurant** is one of each: a theme, a layout and a rules set, picked in
 HQ. The same layout can be played as a kitchen or as witchery, and the same
@@ -357,24 +357,26 @@ it.
 ```
 layouts/
   corner_pass/
-    layout.json        id, name, the plot it came from, zones drawn
+    layout.json        id, name, the authoring world it came from, zones drawn
     room.prefab.json   the room as built: floor at y 0, the ground under it below, slots not stations
   _saves/              raw saves (/kk save), kept by deploy.py; import turns one into a layout
 ```
 
 ```json
-{ "id": "corner_pass", "name": "Corner pass", "from_plot": 2, "zones": {} }
+{ "id": "corner_pass", "name": "Corner pass", "source": "floorplan_07", "zones": {} }
 ```
 
 - **Slots** are the station roles (`station_press`, `station_heat`,
   `station_combine`, `station_wash`, `station_bin`, `station_rack`) plus the
   fixtures the systems own: `chair` (with its table in front), `queue_1`–`queue_4`,
-  `pool`, `pad_1`–`pad_4`, `sign`, and `arrival`. HQ adds `portal_1`–`portal_4`.
+  `pool`, `pad_1`–`pad_4`, `sign`, `arrival`, and a room size (`size_starter`, `size_small`,
+  `size_medium` or `size_large`: which HQ portal picks it). HQ adds `portal_practice`,
+  `portal_starter`, `portal_small`, `portal_medium` and `portal_large`.
   The build warns about any role or pad the room is missing.
 - **Zones** are trigger volumes the creator draws and names. Today there is one:
   `queue`, the area where guests wait. Without it, the area is worked out around
   the spots and the pool.
-- **A border** (`"kind": "border"`) is a layout from the border plot: a 64 × 64
+- **A border** (`"kind": "border"`) is a layout from the border's authoring world: a 64 × 64
   backdrop with a 32 × 32 hole, pasted around rooms (`world.json` `border`).
 
 **Decided: no doors.** A closed door stops NPC pathfinding, so no layout has one.
@@ -451,7 +453,7 @@ rules/
 
 ```
 world/
-  world.json         HQ, the ground and weather, the border, and the restaurants HQ's portals lead to
+  world.json         HQ, the ground and weather, the border, and how HQ's portals play
 ```
 
 ```json
@@ -460,10 +462,13 @@ world/
   "ground": "void",
   "weather": "Zone1_Sunny",
   "border": "backdrop",
-  "restaurants": [
-    { "id": "test_kitchen", "name": "Test kitchen", "theme": "kitchen",
-      "layout": "test_room", "rules": "standard", "portal": 1 }
-  ]
+  "portals": {
+    "practice": { "name": "Practice", "theme": "kitchen", "rules": "standard" },
+    "starter":  { "name": "Starter",  "theme": "kitchen", "rules": "standard" },
+    "small":    { "name": "Small",    "theme": "kitchen", "rules": "standard" },
+    "medium":   { "name": "Medium",   "theme": "kitchen", "rules": "standard" },
+    "large":    { "name": "Large",    "theme": "kitchen", "rules": "standard" }
+  }
 }
 ```
 
@@ -471,8 +476,10 @@ world/
 - `ground`: `"void"` (the room floats in the sky) or `"flat"` (grass).
 - `weather`: a shipped weather id held for good; leave it out for none.
 - `border`: a border layout pasted around every room and HQ; `"none"` for none.
-- `restaurants`: each is a theme + a layout + a rules set, hung on an HQ portal
-  by number. A restaurant may set its own `ground`, `weather` and `border`.
+- `portals`: `practice`, `starter`, `small`, `medium` and `large`, each a name + a theme + a
+  rules set. A size portal picks one of its rooms (the layouts with that size slot)
+  at random as each run starts. A portal may set its own `ground`, `weather` and
+  `border`.
 
 ## Not content
 

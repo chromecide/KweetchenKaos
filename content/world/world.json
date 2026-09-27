@@ -3,31 +3,32 @@
   "ground": "void",
   "weather": "Zone1_Sunny",
   "border": "backdrop",
-  "$comment": "The world: HQ (a layout), and the restaurants its portals lead to. Each restaurant is a theme + a layout + a rules set, hung on an HQ portal slot by number.",
-  "restaurants": [
-    {
-      "id": "test_kitchen",
-      "name": "Test kitchen",
+  "$comment": "The world: HQ (a layout), and its portals: one to the practice room, and one per room size (starter, small, medium, large), which picks one of that size's rooms at random each run (a room's size slot says which). Each portal plays a theme and a rules set.",
+  "portals": {
+    "practice": {
+      "name": "Practice",
       "theme": "kitchen",
-      "layout": "test_room",
-      "rules": "standard",
-      "portal": 1
+      "rules": "standard"
     },
-    {
-      "id": "kweebec_klub",
-      "name": "KweebecKlub",
+    "starter": {
+      "name": "Starter",
       "theme": "kitchen",
-      "layout": "kweebec_klub",
-      "rules": "standard",
-      "portal": 2
+      "rules": "standard"
     },
-    {
-      "id": "alfresco_dining",
-      "name": "Alfresco Dining",
+    "small": {
+      "name": "Small",
       "theme": "kitchen",
-      "layout": "alfresco_dining",
-      "rules": "standard",
-      "portal": 3
+      "rules": "standard"
+    },
+    "medium": {
+      "name": "Medium",
+      "theme": "kitchen",
+      "rules": "standard"
+    },
+    "large": {
+      "name": "Large",
+      "theme": "kitchen",
+      "rules": "standard"
     }
-  ]
+  }
 }

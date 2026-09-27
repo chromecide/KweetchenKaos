@@ -1,7 +1,7 @@
 {
   "id": "backdrop",
   "name": "Backdrop",
-  "from_plot": 0,
+  "source": "border",
   "zones": {},
   "kind": "border",
   "ring": 16
