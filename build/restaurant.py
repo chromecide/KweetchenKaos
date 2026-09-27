@@ -140,7 +140,7 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
     for b in room["blocks"]:
         name = _slot(b["name"])
         if name is None:
-            built.append(layouts.barrier(b))      # a builder's light made invisible, too
+            built.append(layouts.barrier(b))
             continue
         at = lambda block, dx=0, dz=0, dy=0, rotation=None: dict(
             {"x": b["x"] + dx, "y": b["y"] + dy, "z": b["z"] + dz, "name": block},

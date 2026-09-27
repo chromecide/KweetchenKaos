@@ -7687,13 +7687,6 @@
     },
     {
       "x": -7,
-      "y": 6,
-      "z": -8,
-      "name": "Build_Lightsource_White",
-      "rotation": 5
-    },
-    {
-      "x": -7,
       "y": 7,
       "z": -8,
       "name": "Rock_Calcite_Brick_Smooth_Half",
@@ -7889,13 +7882,6 @@
       "y": 3,
       "z": -2,
       "name": "Rock_Chalk_Brick_Smooth"
-    },
-    {
-      "x": -7,
-      "y": 6,
-      "z": -2,
-      "name": "Build_Lightsource_White",
-      "rotation": 5
     },
     {
       "x": -7,
@@ -8621,10 +8607,10 @@
     },
     {
       "x": -6,
-      "y": 7,
+      "y": 8,
       "z": -7,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 4
     },
     {
       "x": -6,
@@ -8745,10 +8731,10 @@
     },
     {
       "x": -6,
-      "y": 7,
+      "y": 8,
       "z": -3,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 4
     },
     {
       "x": -6,
@@ -11258,10 +11244,10 @@
     },
     {
       "x": -3,
-      "y": 7,
+      "y": 8,
       "z": -7,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 4
     },
     {
       "x": -3,
@@ -11382,10 +11368,10 @@
     },
     {
       "x": -3,
-      "y": 7,
+      "y": 8,
       "z": -3,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 4
     },
     {
       "x": -3,
@@ -12110,13 +12096,6 @@
     },
     {
       "x": -2,
-      "y": 6,
-      "z": -8,
-      "name": "Build_Lightsource_White",
-      "rotation": 5
-    },
-    {
-      "x": -2,
       "y": 7,
       "z": -8,
       "name": "Rock_Calcite_Brick_Smooth_Half",
@@ -12300,13 +12279,6 @@
       "y": 3,
       "z": -2,
       "name": "Rock_Slate_Brick_Smooth"
-    },
-    {
-      "x": -2,
-      "y": 6,
-      "z": -2,
-      "name": "Build_Lightsource_White",
-      "rotation": 4
     },
     {
       "x": -2,
@@ -13936,13 +13908,6 @@
     },
     {
       "x": 0,
-      "y": 6,
-      "z": -10,
-      "name": "Build_Lightsource_White",
-      "rotation": 5
-    },
-    {
-      "x": 0,
       "y": 7,
       "z": -10,
       "name": "Rock_Calcite_Brick_Smooth_Half",
@@ -14095,13 +14060,6 @@
       "y": 3,
       "z": -5,
       "name": "Wood_Hardwood_Planks"
-    },
-    {
-      "x": 0,
-      "y": 6,
-      "z": -5,
-      "name": "Build_Lightsource_White",
-      "rotation": 4
     },
     {
       "x": 0,
@@ -14895,10 +14853,10 @@
     },
     {
       "x": 1,
-      "y": 7,
+      "y": 8,
       "z": -9,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 5
     },
     {
       "x": 1,
@@ -14995,10 +14953,10 @@
     },
     {
       "x": 1,
-      "y": 7,
+      "y": 8,
       "z": -6,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 4
     },
     {
       "x": 1,
@@ -16037,10 +15995,10 @@
     },
     {
       "x": 2,
-      "y": 7,
+      "y": 8,
       "z": -3,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 5
     },
     {
       "x": 2,
@@ -16934,10 +16892,10 @@
     },
     {
       "x": 3,
-      "y": 7,
+      "y": 8,
       "z": -3,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 5
     },
     {
       "x": 3,
@@ -17632,10 +17590,10 @@
     },
     {
       "x": 4,
-      "y": 7,
+      "y": 8,
       "z": -9,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 5
     },
     {
       "x": 4,
@@ -17732,10 +17690,10 @@
     },
     {
       "x": 4,
-      "y": 7,
+      "y": 8,
       "z": -6,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 4
     },
     {
       "x": 4,
@@ -18538,12 +18496,6 @@
     },
     {
       "x": 5,
-      "y": 6,
-      "z": -10,
-      "name": "Build_Lightsource_White"
-    },
-    {
-      "x": 5,
       "y": 7,
       "z": -10,
       "name": "Rock_Calcite_Brick_Smooth_Half",
@@ -18696,13 +18648,6 @@
       "y": 3,
       "z": -5,
       "name": "Wood_Hardwood_Planks"
-    },
-    {
-      "x": 5,
-      "y": 6,
-      "z": -5,
-      "name": "Build_Lightsource_White",
-      "rotation": 4
     },
     {
       "x": 5,
@@ -38707,13 +38652,6 @@
     },
     {
       "x": -7,
-      "y": 6,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -7,
       "y": 7,
       "z": -8,
       "name": "Empty",
@@ -38932,13 +38870,6 @@
     {
       "x": -7,
       "y": 3,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -7,
-      "y": 6,
       "z": -2,
       "name": "Empty",
       "level": 0
@@ -39785,7 +39716,7 @@
     },
     {
       "x": -6,
-      "y": 7,
+      "y": 8,
       "z": -7,
       "name": "Empty",
       "level": 0
@@ -39925,7 +39856,7 @@
     },
     {
       "x": -6,
-      "y": 7,
+      "y": 8,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -42837,7 +42768,7 @@
     },
     {
       "x": -3,
-      "y": 7,
+      "y": 8,
       "z": -7,
       "name": "Empty",
       "level": 0
@@ -42977,7 +42908,7 @@
     },
     {
       "x": -3,
-      "y": 7,
+      "y": 8,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -43824,13 +43755,6 @@
     },
     {
       "x": -2,
-      "y": 6,
-      "z": -8,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -2,
       "y": 7,
       "z": -8,
       "name": "Empty",
@@ -44035,13 +43959,6 @@
     {
       "x": -2,
       "y": 3,
-      "z": -2,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -2,
-      "y": 6,
       "z": -2,
       "name": "Empty",
       "level": 0
@@ -45938,13 +45855,6 @@
     },
     {
       "x": 0,
-      "y": 6,
-      "z": -10,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 0,
       "y": 7,
       "z": -10,
       "name": "Empty",
@@ -46114,13 +46024,6 @@
     {
       "x": 0,
       "y": 3,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 0,
-      "y": 6,
       "z": -5,
       "name": "Empty",
       "level": 0
@@ -47044,7 +46947,7 @@
     },
     {
       "x": 1,
-      "y": 7,
+      "y": 8,
       "z": -9,
       "name": "Empty",
       "level": 0
@@ -47156,7 +47059,7 @@
     },
     {
       "x": 1,
-      "y": 7,
+      "y": 8,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -48360,7 +48263,7 @@
     },
     {
       "x": 2,
-      "y": 7,
+      "y": 8,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -49396,7 +49299,7 @@
     },
     {
       "x": 3,
-      "y": 7,
+      "y": 8,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -50208,7 +50111,7 @@
     },
     {
       "x": 4,
-      "y": 7,
+      "y": 8,
       "z": -9,
       "name": "Empty",
       "level": 0
@@ -50320,7 +50223,7 @@
     },
     {
       "x": 4,
-      "y": 7,
+      "y": 8,
       "z": -6,
       "name": "Empty",
       "level": 0
@@ -51258,13 +51161,6 @@
     },
     {
       "x": 5,
-      "y": 6,
-      "z": -10,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
       "y": 7,
       "z": -10,
       "name": "Empty",
@@ -51434,13 +51330,6 @@
     {
       "x": 5,
       "y": 3,
-      "z": -5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 6,
       "z": -5,
       "name": "Empty",
       "level": 0

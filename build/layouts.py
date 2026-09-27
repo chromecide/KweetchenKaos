@@ -161,12 +161,14 @@ def floor_at(blocks_, x, y, z, default="Wood_Softwood_Planks"):
     return max(set(names), key=names.count) if names else default
 
 
-def barrier(b):
-    """A barrier slot is a Barrier in the built game, a builder's light an invisible light
-    (LIGHTS); any other block is itself."""
+def barrier(b, lights=False):
+    """A barrier slot is a Barrier in the built game; with `lights`, a builder's light is an
+    invisible light (LIGHTS) -- HQ only, for now: the rooms and the border keep theirs
+    as they are (another way to light them is still to be found); any other block is
+    itself."""
     if b["name"] == slot_id("barrier"):
         return dict(b, name=BARRIER)
-    if b["name"].startswith(LIGHT_FROM) and b["name"][len(LIGHT_FROM):] in LIGHTS:
+    if lights and b["name"].startswith(LIGHT_FROM) and b["name"][len(LIGHT_FROM):] in LIGHTS:
         return dict(b, name=light_id(b["name"][len(LIGHT_FROM):]))
     return b
 

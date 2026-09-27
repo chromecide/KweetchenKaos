@@ -321,7 +321,7 @@ def build(debug=True, fill_portals=False):
             else:
                 pass                  # said above: no rooms for it yet
         else:
-            out.append(layouts.barrier(b))
+            out.append(layouts.barrier(b, lights=True))      # HQ's builder lights: invisible
     for n in portal_of:
         if not any(b["name"] == f"{NS}_Portal_{n.capitalize()}" for b in out):
             notes.append(f"HQ: no {n} portal slot")

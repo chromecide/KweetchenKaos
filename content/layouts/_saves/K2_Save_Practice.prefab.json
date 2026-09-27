@@ -10525,13 +10525,6 @@
     },
     {
       "x": -4,
-      "y": 6,
-      "z": -4,
-      "name": "Build_Lightsource_White",
-      "rotation": 4
-    },
-    {
-      "x": -4,
       "y": 7,
       "z": -4,
       "name": "Rock_Calcite_Brick_Smooth_Half",
@@ -10677,13 +10670,6 @@
       "y": 4,
       "z": 0,
       "name": "K2_Slot_Crate_Flour"
-    },
-    {
-      "x": -4,
-      "y": 6,
-      "z": 0,
-      "name": "Build_Lightsource_White",
-      "rotation": 5
     },
     {
       "x": -4,
@@ -10869,13 +10855,6 @@
       "y": 4,
       "z": 5,
       "name": "K2_Slot_Crate_Stick"
-    },
-    {
-      "x": -4,
-      "y": 6,
-      "z": 5,
-      "name": "Build_Lightsource_White",
-      "rotation": 4
     },
     {
       "x": -4,
@@ -11841,10 +11820,10 @@
     },
     {
       "x": -3,
-      "y": 7,
+      "y": 8,
       "z": -3,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 5
     },
     {
       "x": -3,
@@ -12058,10 +12037,10 @@
     },
     {
       "x": -3,
-      "y": 7,
+      "y": 8,
       "z": 4,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 4
     },
     {
       "x": -3,
@@ -12880,10 +12859,10 @@
     },
     {
       "x": -2,
-      "y": 7,
+      "y": 8,
       "z": 0,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 4
     },
     {
       "x": -2,
@@ -12911,10 +12890,10 @@
     },
     {
       "x": -2,
-      "y": 7,
+      "y": 8,
       "z": 1,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 4
     },
     {
       "x": -2,
@@ -13739,10 +13718,10 @@
     },
     {
       "x": -1,
-      "y": 7,
+      "y": 8,
       "z": -3,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 5
     },
     {
       "x": -1,
@@ -13956,10 +13935,10 @@
     },
     {
       "x": -1,
-      "y": 7,
+      "y": 8,
       "z": 4,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 4
     },
     {
       "x": -1,
@@ -14654,13 +14633,6 @@
     },
     {
       "x": 0,
-      "y": 6,
-      "z": -4,
-      "name": "Build_Lightsource_White",
-      "rotation": 5
-    },
-    {
-      "x": 0,
       "y": 7,
       "z": -4,
       "name": "Rock_Calcite_Brick_Smooth_Half",
@@ -14782,13 +14754,6 @@
       "y": 3,
       "z": 0,
       "name": "Rock_Chalk_Brick_Smooth"
-    },
-    {
-      "x": 0,
-      "y": 6,
-      "z": 0,
-      "name": "Build_Lightsource_White",
-      "rotation": 5
     },
     {
       "x": 0,
@@ -14950,13 +14915,6 @@
       "y": 4,
       "z": 5,
       "name": "K2_Slot_Station_Heat"
-    },
-    {
-      "x": 0,
-      "y": 6,
-      "z": 5,
-      "name": "Build_Lightsource_White",
-      "rotation": 4
     },
     {
       "x": 0,
@@ -16694,13 +16652,6 @@
     },
     {
       "x": 2,
-      "y": 6,
-      "z": -4,
-      "name": "Build_Lightsource_White",
-      "rotation": 4
-    },
-    {
-      "x": 2,
       "y": 7,
       "z": -4,
       "name": "Rock_Calcite_Brick_Smooth_Half",
@@ -16853,13 +16804,6 @@
       "y": 3,
       "z": 1,
       "name": "Wood_Hardwood_Planks"
-    },
-    {
-      "x": 2,
-      "y": 6,
-      "z": 1,
-      "name": "Build_Lightsource_White",
-      "rotation": 5
     },
     {
       "x": 2,
@@ -17798,10 +17742,9 @@
     },
     {
       "x": 3,
-      "y": 7,
+      "y": 8,
       "z": -3,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White"
     },
     {
       "x": 3,
@@ -17891,10 +17834,9 @@
     },
     {
       "x": 3,
-      "y": 7,
+      "y": 8,
       "z": 0,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White"
     },
     {
       "x": 3,
@@ -18021,16 +17963,10 @@
     },
     {
       "x": 3,
-      "y": 6,
+      "y": 8,
       "z": 4,
-      "name": "Build_Lightsource_White"
-    },
-    {
-      "x": 3,
-      "y": 7,
-      "z": 4,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 5
     },
     {
       "x": 3,
@@ -19931,16 +19867,10 @@
     },
     {
       "x": 5,
-      "y": 6,
+      "y": 8,
       "z": 4,
-      "name": "Build_Lightsource_White"
-    },
-    {
-      "x": 5,
-      "y": 7,
-      "z": 4,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White",
+      "rotation": 5
     },
     {
       "x": 5,
@@ -21724,13 +21654,6 @@
     },
     {
       "x": 7,
-      "y": 6,
-      "z": -4,
-      "name": "Build_Lightsource_White",
-      "rotation": 4
-    },
-    {
-      "x": 7,
       "y": 7,
       "z": -4,
       "name": "Rock_Calcite_Brick_Smooth_Half",
@@ -21762,134 +21685,127 @@
     },
     {
       "x": 7,
-      "y": 7,
+      "y": 8,
       "z": -3,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
-      "y": 0,
-      "z": -2,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 1,
-      "z": -2,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 2,
-      "z": -2,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 3,
-      "z": -2,
-      "name": "Wood_Hardwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 7,
-      "z": -2,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
-      "y": 0,
-      "z": -1,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 1,
-      "z": -1,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 2,
-      "z": -1,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 3,
-      "z": -1,
-      "name": "Wood_Hardwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 7,
-      "z": -1,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
-      "y": 0,
-      "z": 0,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 1,
-      "z": 0,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 2,
-      "z": 0,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 3,
-      "z": 0,
-      "name": "Wood_Hardwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 7,
-      "z": 0,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
-    },
-    {
-      "x": 7,
-      "y": 0,
-      "z": 1,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 1,
-      "z": 1,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 2,
-      "z": 1,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 7,
-      "y": 3,
-      "z": 1,
-      "name": "Wood_Hardwood_Planks"
-    },
-    {
-      "x": 7,
-      "y": 6,
-      "z": 1,
       "name": "Build_Lightsource_White",
-      "rotation": 4
+      "rotation": 5
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "z": -2,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 1,
+      "z": -2,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 2,
+      "z": -2,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 3,
+      "z": -2,
+      "name": "Wood_Hardwood_Planks"
+    },
+    {
+      "x": 7,
+      "y": 7,
+      "z": -2,
+      "name": "Rock_Calcite_Brick_Smooth_Half",
+      "rotation": 8
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "z": -1,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 1,
+      "z": -1,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 2,
+      "z": -1,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 3,
+      "z": -1,
+      "name": "Wood_Hardwood_Planks"
+    },
+    {
+      "x": 7,
+      "y": 7,
+      "z": -1,
+      "name": "Rock_Calcite_Brick_Smooth_Half",
+      "rotation": 8
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "z": 0,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 1,
+      "z": 0,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 2,
+      "z": 0,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 3,
+      "z": 0,
+      "name": "Wood_Hardwood_Planks"
+    },
+    {
+      "x": 7,
+      "y": 8,
+      "z": 0,
+      "name": "Build_Lightsource_White",
+      "rotation": 5
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "z": 1,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 1,
+      "z": 1,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 2,
+      "z": 1,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 7,
+      "y": 3,
+      "z": 1,
+      "name": "Wood_Hardwood_Planks"
     },
     {
       "x": 7,
@@ -25895,10 +25811,9 @@
     },
     {
       "x": 11,
-      "y": 7,
+      "y": 8,
       "z": -3,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
+      "name": "Build_Lightsource_White"
     },
     {
       "x": 11,
@@ -25995,757 +25910,750 @@
     },
     {
       "x": 11,
-      "y": 7,
+      "y": 8,
       "z": 0,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 1,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 1,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 1,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 1,
-      "name": "Wood_Hardwood_Planks"
-    },
-    {
-      "x": 11,
-      "y": 7,
-      "z": 1,
-      "name": "Rock_Calcite_Brick_Smooth_Half",
-      "rotation": 8
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 2,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 2,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 2,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 2,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 4,
-      "z": 2,
-      "name": "Rock_Calcite_Brick_Decorative"
-    },
-    {
-      "x": 11,
-      "y": 5,
-      "z": 2,
-      "name": "Rock_Lime_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 6,
-      "z": 2,
-      "name": "Rock_Lime_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 7,
-      "z": 2,
-      "name": "Rock_Lime_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 8,
-      "z": 2,
-      "name": "Rock_Calcite_Brick_Smooth_Half"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 3,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 3,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 3,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 3,
-      "name": "Rock_Ledge_Brick_Decorative"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 4,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 4,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 4,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 4,
-      "name": "Rock_Ledge_Brick_Decorative"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 5,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 5,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 5,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 5,
-      "name": "Rock_Ledge_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 6,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 6,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 6,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 6,
-      "name": "Rock_Ledge_Brick_Decorative"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 7,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 7,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 7,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 7,
-      "name": "Rock_Ledge_Brick"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 8,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 8,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 8,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 8,
-      "name": "Rock_Ledge_Brick_Ornate"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 9,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 9,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 9,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 9,
-      "name": "Rock_Ledge_Cobble"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 10,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 10,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 10,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 10,
-      "name": "Rock_Ledge_Brick"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 11,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 11,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 11,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 11,
-      "name": "Rock_Ledge_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 12,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 12,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 12,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 12,
-      "name": "Rock_Ledge_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 13,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 13,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 13,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 13,
-      "name": "Rock_Ledge_Brick_Smooth"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 14,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 14,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 14,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 14,
-      "name": "Rock_Ledge_Brick_Ornate"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 15,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 15,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 15,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 15,
-      "name": "Rock_Ledge_Brick"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "z": 16,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 1,
-      "z": 16,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 2,
-      "z": 16,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "z": 16,
-      "name": "Rock_Ledge_Brick"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -15,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -15,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -15,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -15,
-      "name": "Rock_Ledge_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -14,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -14,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -14,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -14,
-      "name": "Rock_Ledge_Brick_Decorative"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -13,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -13,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -13,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -13,
-      "name": "Rock_Ledge_Cobble"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -12,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -12,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -12,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -12,
-      "name": "Rock_Ledge_Brick_Ornate"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -11,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -11,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -11,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -11,
-      "name": "Rock_Ledge_Brick_Decorative"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -10,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -10,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -10,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -10,
-      "name": "Rock_Ledge_Cobble"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -9,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -9,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -9,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -9,
-      "name": "Rock_Ledge_Brick_Ornate"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -8,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -8,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -8,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -8,
-      "name": "Rock_Ledge_Cobble"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -7,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -7,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -7,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -7,
-      "name": "Rock_Ledge_Cobble"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -6,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -6,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -6,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -6,
-      "name": "Rock_Ledge_Brick"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -5,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -5,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -5,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -5,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 4,
-      "z": -5,
-      "name": "Rock_Calcite_Brick_Decorative"
-    },
-    {
-      "x": 12,
-      "y": 5,
-      "z": -5,
-      "name": "Rock_Lime_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 6,
-      "z": -5,
-      "name": "Rock_Lime_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 7,
-      "z": -5,
-      "name": "Rock_Lime_Brick_Smooth"
-    },
-    {
-      "x": 12,
-      "y": 8,
-      "z": -5,
-      "name": "Rock_Calcite_Brick_Smooth_Half"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "z": -4,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 1,
-      "z": -4,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 2,
-      "z": -4,
-      "name": "Soil_Dirt"
-    },
-    {
-      "x": 12,
-      "y": 3,
-      "z": -4,
-      "name": "Wood_Hardwood_Planks"
-    },
-    {
-      "x": 12,
-      "y": 6,
-      "z": -4,
       "name": "Build_Lightsource_White"
     },
     {
+      "x": 11,
+      "y": 0,
+      "z": 1,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 1,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 1,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 1,
+      "name": "Wood_Hardwood_Planks"
+    },
+    {
+      "x": 11,
+      "y": 7,
+      "z": 1,
+      "name": "Rock_Calcite_Brick_Smooth_Half",
+      "rotation": 8
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 2,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 2,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 2,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 2,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 4,
+      "z": 2,
+      "name": "Rock_Calcite_Brick_Decorative"
+    },
+    {
+      "x": 11,
+      "y": 5,
+      "z": 2,
+      "name": "Rock_Lime_Brick_Smooth"
+    },
+    {
+      "x": 11,
+      "y": 6,
+      "z": 2,
+      "name": "Rock_Lime_Brick_Smooth"
+    },
+    {
+      "x": 11,
+      "y": 7,
+      "z": 2,
+      "name": "Rock_Lime_Brick_Smooth"
+    },
+    {
+      "x": 11,
+      "y": 8,
+      "z": 2,
+      "name": "Rock_Calcite_Brick_Smooth_Half"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 3,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 3,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 3,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 3,
+      "name": "Rock_Ledge_Brick_Decorative"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 4,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 4,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 4,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 4,
+      "name": "Rock_Ledge_Brick_Decorative"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 5,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 5,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 5,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 5,
+      "name": "Rock_Ledge_Brick_Smooth"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 6,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 6,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 6,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 6,
+      "name": "Rock_Ledge_Brick_Decorative"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 7,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 7,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 7,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 7,
+      "name": "Rock_Ledge_Brick"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 8,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 8,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 8,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 8,
+      "name": "Rock_Ledge_Brick_Ornate"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 9,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 9,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 9,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 9,
+      "name": "Rock_Ledge_Cobble"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 10,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 10,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 10,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 10,
+      "name": "Rock_Ledge_Brick"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 11,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 11,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 11,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 11,
+      "name": "Rock_Ledge_Brick_Smooth"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 12,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 12,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 12,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 12,
+      "name": "Rock_Ledge_Brick_Smooth"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 13,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 13,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 13,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 13,
+      "name": "Rock_Ledge_Brick_Smooth"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 14,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 14,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 14,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 14,
+      "name": "Rock_Ledge_Brick_Ornate"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 15,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 15,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 15,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 15,
+      "name": "Rock_Ledge_Brick"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "z": 16,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 1,
+      "z": 16,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 2,
+      "z": 16,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 11,
+      "y": 3,
+      "z": 16,
+      "name": "Rock_Ledge_Brick"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -15,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -15,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -15,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -15,
+      "name": "Rock_Ledge_Brick_Smooth"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -14,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -14,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -14,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -14,
+      "name": "Rock_Ledge_Brick_Decorative"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -13,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -13,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -13,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -13,
+      "name": "Rock_Ledge_Cobble"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -12,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -12,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -12,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -12,
+      "name": "Rock_Ledge_Brick_Ornate"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -11,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -11,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -11,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -11,
+      "name": "Rock_Ledge_Brick_Decorative"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -10,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -10,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -10,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -10,
+      "name": "Rock_Ledge_Cobble"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -9,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -9,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -9,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -9,
+      "name": "Rock_Ledge_Brick_Ornate"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -8,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -8,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -8,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -8,
+      "name": "Rock_Ledge_Cobble"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -7,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -7,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -7,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -7,
+      "name": "Rock_Ledge_Cobble"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -6,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -6,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -6,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -6,
+      "name": "Rock_Ledge_Brick"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -5,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -5,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -5,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -5,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 4,
+      "z": -5,
+      "name": "Rock_Calcite_Brick_Decorative"
+    },
+    {
+      "x": 12,
+      "y": 5,
+      "z": -5,
+      "name": "Rock_Lime_Brick_Smooth"
+    },
+    {
+      "x": 12,
+      "y": 6,
+      "z": -5,
+      "name": "Rock_Lime_Brick_Smooth"
+    },
+    {
+      "x": 12,
+      "y": 7,
+      "z": -5,
+      "name": "Rock_Lime_Brick_Smooth"
+    },
+    {
+      "x": 12,
+      "y": 8,
+      "z": -5,
+      "name": "Rock_Calcite_Brick_Smooth_Half"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "z": -4,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 1,
+      "z": -4,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 2,
+      "z": -4,
+      "name": "Soil_Dirt"
+    },
+    {
+      "x": 12,
+      "y": 3,
+      "z": -4,
+      "name": "Wood_Hardwood_Planks"
+    },
+    {
       "x": 12,
       "y": 7,
       "z": -4,
@@ -26899,13 +26807,6 @@
       "y": 3,
       "z": 1,
       "name": "Wood_Hardwood_Planks"
-    },
-    {
-      "x": 12,
-      "y": 6,
-      "z": 1,
-      "name": "Build_Lightsource_White",
-      "rotation": 5
     },
     {
       "x": 12,
@@ -43789,13 +43690,6 @@
     },
     {
       "x": -4,
-      "y": 6,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -4,
       "y": 7,
       "z": -4,
       "name": "Empty",
@@ -43964,13 +43858,6 @@
     },
     {
       "x": -4,
-      "y": 6,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -4,
       "y": 7,
       "z": 0,
       "name": "Empty",
@@ -44175,13 +44062,6 @@
     {
       "x": -4,
       "y": 4,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": -4,
-      "y": 6,
       "z": 5,
       "name": "Empty",
       "level": 0
@@ -45308,7 +45188,7 @@
     },
     {
       "x": -3,
-      "y": 7,
+      "y": 8,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -45553,7 +45433,7 @@
     },
     {
       "x": -3,
-      "y": 7,
+      "y": 8,
       "z": 4,
       "name": "Empty",
       "level": 0
@@ -46505,7 +46385,7 @@
     },
     {
       "x": -2,
-      "y": 7,
+      "y": 8,
       "z": 0,
       "name": "Empty",
       "level": 0
@@ -46540,7 +46420,7 @@
     },
     {
       "x": -2,
-      "y": 7,
+      "y": 8,
       "z": 1,
       "name": "Empty",
       "level": 0
@@ -47499,7 +47379,7 @@
     },
     {
       "x": -1,
-      "y": 7,
+      "y": 8,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -47744,7 +47624,7 @@
     },
     {
       "x": -1,
-      "y": 7,
+      "y": 8,
       "z": 4,
       "name": "Empty",
       "level": 0
@@ -48556,13 +48436,6 @@
     },
     {
       "x": 0,
-      "y": 6,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 0,
       "y": 7,
       "z": -4,
       "name": "Empty",
@@ -48697,13 +48570,6 @@
     {
       "x": 0,
       "y": 3,
-      "z": 0,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 0,
-      "y": 6,
       "z": 0,
       "name": "Empty",
       "level": 0
@@ -48886,13 +48752,6 @@
     {
       "x": 0,
       "y": 4,
-      "z": 5,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 0,
-      "y": 6,
       "z": 5,
       "name": "Empty",
       "level": 0
@@ -50915,13 +50774,6 @@
     },
     {
       "x": 2,
-      "y": 6,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 2,
       "y": 7,
       "z": -4,
       "name": "Empty",
@@ -51091,13 +50943,6 @@
     {
       "x": 2,
       "y": 3,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 2,
-      "y": 6,
       "z": 1,
       "name": "Empty",
       "level": 0
@@ -52189,7 +52034,7 @@
     },
     {
       "x": 3,
-      "y": 7,
+      "y": 8,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -52294,7 +52139,7 @@
     },
     {
       "x": 3,
-      "y": 7,
+      "y": 8,
       "z": 0,
       "name": "Empty",
       "level": 0
@@ -52441,14 +52286,7 @@
     },
     {
       "x": 3,
-      "y": 6,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 3,
-      "y": 7,
+      "y": 8,
       "z": 4,
       "name": "Empty",
       "level": 0
@@ -54646,14 +54484,7 @@
     },
     {
       "x": 5,
-      "y": 6,
-      "z": 4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 5,
-      "y": 7,
+      "y": 8,
       "z": 4,
       "name": "Empty",
       "level": 0
@@ -56725,13 +56556,6 @@
     },
     {
       "x": 7,
-      "y": 6,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
       "y": 7,
       "z": -4,
       "name": "Empty",
@@ -56767,7 +56591,7 @@
     },
     {
       "x": 7,
-      "y": 7,
+      "y": 8,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -56872,7 +56696,7 @@
     },
     {
       "x": 7,
-      "y": 7,
+      "y": 8,
       "z": 0,
       "name": "Empty",
       "level": 0
@@ -56901,13 +56725,6 @@
     {
       "x": 7,
       "y": 3,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 7,
-      "y": 6,
       "z": 1,
       "name": "Empty",
       "level": 0
@@ -61555,7 +61372,7 @@
     },
     {
       "x": 11,
-      "y": 7,
+      "y": 8,
       "z": -3,
       "name": "Empty",
       "level": 0
@@ -61667,7 +61484,7 @@
     },
     {
       "x": 11,
-      "y": 7,
+      "y": 8,
       "z": 0,
       "name": "Empty",
       "level": 0
@@ -62535,13 +62352,6 @@
     },
     {
       "x": 12,
-      "y": 6,
-      "z": -4,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
       "y": 7,
       "z": -4,
       "name": "Empty",
@@ -62711,13 +62521,6 @@
     {
       "x": 12,
       "y": 3,
-      "z": 1,
-      "name": "Empty",
-      "level": 0
-    },
-    {
-      "x": 12,
-      "y": 6,
       "z": 1,
       "name": "Empty",
       "level": 0

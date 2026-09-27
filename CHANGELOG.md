@@ -2,30 +2,52 @@
 
 ## Unreleased
 
+- **A new HQ, new rooms and a new border**, all built from scratch:
+  - **HQ** has the franchise storeroom.
+  - **The rooms:** The Diner (starter), Cafe 1 (small) and Bistro 1 (medium). The first
+    three rooms (Test kitchen, KweebecKlub, Alfresco Dining) are retired.
+  - **The border** is a new backdrop, with an invisible wall round every room so nobody
+    walks off the edge.
+- **HQ has five portals:** practice, and starter (a tiny room for one player), small,
+  medium and large rooms. A size portal starts each run in one of that size's rooms, at
+  random (PlateUp's floorplans). A portal with no rooms yet stays hidden (large, for now).
 - **Milestones:** reaching the end of day 10, 15, 20, 25, 30, 40 and 50 gets a title of
   its own, and day 15 a big one. The run is open ended: it goes on until you lose.
-- **Your best is remembered:** each restaurant remembers the furthest milestone you've
-  passed there (day 5, 10, 15 ...), and tells you as you arrive -- and HQ lists them all.
-  (It's kept on your player; dying resets it, so don't fall off.)
+- **Your best is remembered:** each portal (starter, small, medium, large) remembers the
+  furthest milestone you've passed through it (day 5, 10, 15 ...), and tells you as you
+  arrive -- and HQ lists them all. (It's kept on your player; dying resets it, so don't
+  fall off.)
 - **Franchise** (PlateUp's): at the end of day 15, pick a franchise item -- any station,
   chair or mat, start coins, or a recipe -- and it's banked on you for later runs. Take
   your banked items from the shelves in HQ's storeroom (put back what you don't want),
   and bring them in: put a station down, or press the open sign with start coins or a
   recipe. In co-op, everyone banks their own.
-- **Practice kitchen:** a room to try things in, through its own portal -- guests come by
-  themselves, patient ones, and nothing counts (no days, money or losing). Build one with
-  a "call a guest" slot and a crate slot per ingredient.
-- **HQ has five portals:** practice, and starter (a tiny room for one player), small,
-  medium and large rooms. A size portal
-  starts each run in one of that size's rooms, at random (PlateUp's floorplans). Your
-  best is kept per portal.
-- **For builders: one authoring world per layout.** `/kk author border`, `/kk author hq`,
-  `/kk author practice` and `/kk author floorplan 1`-`99`, each with a single plot; save
-  and undo the same way (`/kk save floorplan 7`, `/kk restore floorplan 7`). A save always
-  goes into the world it names. Replaces the one shared world of numbered plots.
+- **Practice kitchen:** a room to try things in, through its own portal. Guests are
+  patient and nothing counts (no days, money or losing):
+  - **The sign turns guests on and off.** It starts off, so you can get ready first.
+  - **Call a guest** brings one in now, even with the sign off.
+  - **A recipe picker:** press a dish and every guest from then on wants it; *any dish*
+    goes back to the whole menu.
+  - Every ingredient's crate stands ready. The stations stay put for now.
 - **Overtime:** once every dish and customer card is taken, card days bring a squeeze
   instead, in turn: busier (a guest more a day), hurried (guests less patient), messier
   (more guest mess). Each has a limit.
+- **Smaller pies and bread:** pies at three quarters of their old size, bread at 60%,
+  at every stage.
+- **For builders:**
+  - **One authoring world per layout:** `/kk author border`, `/kk author hq`,
+    `/kk author practice` and `/kk author floorplan 1`-`99`, each with a single plot.
+    Saving and undoing work the same way (`/kk save floorplan 7`,
+    `/kk restore floorplan 7`), and a save always goes into the world it names. This
+    replaces the one shared world of numbered plots.
+  - **A room's size is a slot** (starter, small, medium or large), which is gone in game.
+  - **HQ's portal slots** look like the portal pad, and the portal stands exactly where you
+    put it.
+  - **`/kk slots practice`** hands over what a practice room adds: call a guest, a crate
+    per ingredient, and the recipe picker.
+  - **Builder lights** (the game's light blocks) become invisible lights in HQ.
+  - **Switching things off:** `"enabled": false` switches off a portal (`world.json`) or
+    takes a room out of the rotation (its `layout.json`).
 
 ## 0.3.1 (2026-09-27)
 
