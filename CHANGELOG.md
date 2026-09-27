@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.1 (2026-09-27)
 
 - **Much snappier:** the game's big rule sets are split into many small ones; pressing
   and picking things up no longer lags.
