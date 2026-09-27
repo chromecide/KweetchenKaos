@@ -207,7 +207,7 @@ def build(debug=True, fill_portals=False):
         _placeholder_portal()
     world = load()
     notes = register_layouts(world)
-    portal_of = {}
+    portal_of, practice_rooms = {}, set()
     for r in world["restaurants"]:
         model = content.load(r["theme"], r["rules"])
         room, problems, info = restaurant.build(model, r["layout"], debug=debug,
@@ -227,13 +227,20 @@ def build(debug=True, fill_portals=False):
         # A title for each player as they arrive (their own event, so it reaches them), not
         # a chat line: the restaurant's name, and the rules it plays under.
         rules_name = model["rules"].get("name", r["rules"])
-        _instance(inst, spawn, [_paste_on_arrival(inst, prefab, None, _border(world, r),
-                                                  welcome=(f"Welcome to {r['name']}",
-                                                           f"{rules_name} rules"),
-                                                  spawn=spawn,
-                                                  on_arrive=[records.show(model, r["layout"],
-                                                                          r["name"]),
-                                                             model["franchise"]["reset"]])],
+        if info.get("practice"):
+            # A PRACTICE room: nothing counts, so no best to show and no pick to reset.
+            practice_rooms.add(r["layout"])
+            arrive = _paste_on_arrival(inst, prefab, None, _border(world, r),
+                                       welcome=(f"Welcome to {r['name']}",
+                                                "Practice - guests come by themselves, nothing counts"),
+                                       spawn=spawn)
+        else:
+            arrive = _paste_on_arrival(inst, prefab, None, _border(world, r),
+                                       welcome=(f"Welcome to {r['name']}", f"{rules_name} rules"),
+                                       spawn=spawn,
+                                       on_arrive=[records.show(model, r["layout"], r["name"]),
+                                                  model["franchise"]["reset"]])
+        _instance(inst, spawn, [arrive],
                   f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True,
                   ground=r.get("ground", world.get("ground", "flat")),
                   weather=r.get("weather", world.get("weather")))
@@ -312,8 +319,9 @@ def build(debug=True, fill_portals=False):
                dict(room, blocks=out, entities=[], fluids=[],
                     **{"$Comment": f"HQ: {meta['name']}. See build/world.py."}))
     spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + STAND, AT[2] + arrival[2] + 0.5)
-    best = records.show_all(hq_model, [(r["layout"], r["name"]) for r in world["restaurants"]]) \
-        if world["restaurants"] else None
+    real = [(r["layout"], r["name"]) for r in world["restaurants"]
+            if r["layout"] not in practice_rooms]
+    best = records.show_all(hq_model, real) if real else None
     # The shelves' volumes, over HQ's room: one each (a shelf's rules are its own).
     hq_box = ((AT[0] - 8, AT[1] - 16, AT[2] - 8), (AT[0] + 48, AT[1] + 48, AT[2] + 48))
     shelf_volumes = [v.volume(f"shelf_{k}", franchise.shelf_volume(hq_model, k, fr_roots),

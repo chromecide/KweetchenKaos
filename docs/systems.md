@@ -245,8 +245,13 @@ losing, records or franchise picks). Guests arrive by themselves -- one every 15
 seconds while fewer than 3 are about, wanting any dish -- and a **Call a guest** block
 brings one now. Every guest has the **practice** mood (five times the patience,
 "(practice)" on its name tag). The service lock is on for good, so stations can't be
-picked up or carried out. The `practice` spike has it all; a practice restaurant (its
-own layout, through a portal) is to come.
+picked up or carried out. The `practice` spike has it all.
+
+**A practice room** is a layout with a **call a guest** slot: built with the practice
+system instead of the shift, pads, sign, records and franchise, and reached through its
+own HQ portal like any restaurant. Its crates come from **crate slots** (one per
+ingredient -- nothing delivers them), and it's picked up by itself once it has its
+stations, queue, pool, chairs and the call slot.
 
 ## Front of house
 

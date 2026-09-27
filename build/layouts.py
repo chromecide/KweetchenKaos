@@ -122,12 +122,18 @@ SLOTS = (
     + [("sign", "Slot: open sign", SIGN_TINT)]
     # Any layout: where players appear (HQ or a restaurant; it becomes the floor round it).
     + [("arrival", "Slot: arrival (players appear here)", ARRIVAL_TINT)]
+    # A PRACTICE room (systems/practice.py): where the "call a guest" block goes -- a room
+    # with one is built as a practice kitchen.
+    + [("practice_call", "Slot: call a guest (makes this a practice room)", QUEUE_TINT)]
     # Any layout: an invisible wall in game. The game's own Barrier can hardly be seen while
     # building, so it's built as this and becomes a Barrier (barrier()).
     + [("barrier", "Slot: barrier (an invisible wall in game)", BARRIER_TINT)]
     # HQ only: a walk-in portal per restaurant (world.json says which).
     + [(f"portal_{n}", f"Slot: HQ portal {n} (restaurant {n} in world.json)", PORTAL_TINT)
        for n in range(1, PORTALS + 1)])
+# PRACTICE rooms only: a CRATE per ingredient (a run's crates are delivered; a practice
+# room has nothing to deliver them) -- from the theme, like the shelves.
+CRATE_SLOTS = []
 # HQ only: a FRANCHISE SHELF per item a player can bank (systems/franchise.py) -- worked out
 # from the theme and rules when the slots are written (write_slots), so kept apart from SLOTS.
 SHELF_TINT = "#c08a3a"
@@ -217,7 +223,20 @@ def write_slots(model=None):
         from systems import franchise
         SHELF_SLOTS[:] = [(f"shelf_{key}", f"Slot: franchise shelf - {label}", SHELF_TINT)
                           for key, label, _, _ in franchise.items(model)]
-    for name, label, tint in SLOTS + SHELF_SLOTS:
+    if model and model.get("stations"):
+        CRATE_SLOTS[:] = [(sid, f"Slot: crate - {model['items'][st['ingredient']]['label']} "
+                                f"(practice rooms)", STATION_TINT)
+                          for sid, st in sorted(model["stations"].items())
+                          if st["role"] == "crate" and not st.get("upgrade_of")]
+    for name, label, tint in SLOTS + SHELF_SLOTS + CRATE_SLOTS:
+        if name.startswith("crate_") and name in (model or {}).get("stations", {}):
+            # A crate slot looks like its crate.
+            st = model["stations"][name]
+            look = {k: v for k, v in st["look"].items() if k in ("sides", "top", "trim", "sound")}
+            blocks.station_block(slot_id(name), label, look, label,
+                                 "A layout slot. See build/layouts.py.", tint=st["look"].get("tint"),
+                                 keyed=False)
+            continue
         if name == "chair":
             # A chair has a FACING (its table goes in front), so its slot is a chair.
             block = {"CustomModel": CHAIR_LOOK["model"],
@@ -297,12 +316,14 @@ def write_authoring(release=False):
               ("KKGrid", "kk grid", f"Mark the {PLOTS} authoring plots' edges (safe to rerun)",
                grid(PLOTS)),
               ("KKSave", "kk save", f"Save the {PLOTS} authoring plots as prefabs", save(PLOTS)),
-              ("KKSlots", "kk slots", "Hand over every slot block", _give(SLOTS + SHELF_SLOTS)),
+              ("KKSlots", "kk slots", "Hand over every slot block",
+               _give(SLOTS + SHELF_SLOTS + CRATE_SLOTS)),
               ("KKSlotsHq", "kk slots hq", "Hand over HQ's slot blocks (arrival, portals, "
                                            "franchise shelves)",
                _give(SLOTS + SHELF_SLOTS, "hq")),
-              ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant plot's slot blocks",
-               _give(SLOTS, "plot"))]
+              ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant plot's slot blocks "
+                                               "(and a practice room's)",
+               _give(SLOTS + CRATE_SLOTS, "plot"))]
     # "/kk barriers": every real Barrier in the plots becomes a barrier SLOT (which you can
     # see) -- for barriers placed before the slot existed. Once; the build turns them back.
     barriers = list(enter)
@@ -385,6 +406,9 @@ def latest_save(plot, quiet=False):
 # said to be unfinished.
 NEEDED = (["station_press", "station_combine", "station_heat", "station_wash", "station_bin",
            "station_rack", "station_call", "chair", "pool", "sign"] + [f"queue_{i}" for i in range(1, 5)])
+# A PRACTICE room needs its kitchen and front of house and the call slot -- no sign, pads or
+# booking desk (its crates are warned about when it's built).
+PRACTICE_NEEDED = ([n for n in NEEDED if n not in ("sign", "station_call")] + ["practice_call"])
 RESTAURANT_PLOTS_FROM = 2       # 0 is the border, 1 HQ
 
 
@@ -414,7 +438,8 @@ def reimport():
         have = room_slots(src)
         if not have:
             continue            # an empty plot
-        missing = [n for n in NEEDED if n not in have]
+        missing = [n for n in (PRACTICE_NEEDED if "practice_call" in have else NEEDED)
+                   if n not in have]
         if missing:
             print(f"  NOTE: plot {plot} isn't a playable room yet -- missing: {', '.join(missing)}")
             continue

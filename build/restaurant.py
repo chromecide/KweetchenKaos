@@ -44,6 +44,7 @@ import signals
 import systems
 import volumes as v
 from systems import franchise, hazards, moods, pads, queue, records, seating, shift
+from systems import practice as practice_system
 
 ZONE_MARGIN = 1          # a worked-out queue zone reaches this far round the spots and pool
 ROOM_SIZE, ROOM_MARGIN = 32, 4
@@ -83,9 +84,15 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
     """(room prefab dict, problems, info): the layout dressed, carrying its systems."""
     meta, room = load_layout(layout_id)
     problems = []
+    # A PRACTICE ROOM (systems/practice.py) is one with a "call a guest" slot: no shift, pads,
+    # records or franchise -- guests come by themselves, every one in the practice mood, the
+    # stations locked in place, and its crates laid out by crate slots (nothing delivers them).
+    practice = any(_slot(b["name"]) == "practice_call" for b in room["blocks"])
     # Built as part of a run: stations that behave differently between days (crates) read
-    # the shift.
-    model["in_run"] = True
+    # the shift. A practice room has no days: its crates are always open.
+    model["in_run"] = not practice
+    if practice:
+        model["mood_chances"] = {"practice": 1.0}
     # Hazards are on in every restaurant: a station that causes one (a sink's spill) needs
     # to know before it's built.
     model["hazards"] = True
@@ -102,16 +109,20 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
     seating_effect = seating.build(model, debug)
     guests.build(model, debug)
     v.take_companions()           # nothing left over from another build
-    shift_tags = shift.build(model, {e["serves"]: guests.role_id(model, e) for e in model["menu"]},
-                             debug, exit_on_lose=exit_on_lose)
-    shift_pacing = v.take_companions()        # its per-day pacing volumes
-    # Each player's best here, remembered on the player (systems/records.py): its recorder
-    # is a companion beside the shift.
-    records.build(model, layout_id, label or meta["name"])
-    shift_pacing += v.take_companions()
-    # The franchise (systems/franchise.py) before the pads: they read its cards.
-    franchise.build(model)
-    pads.build(model, debug)
+    roles_by = {e["serves"]: guests.role_id(model, e) for e in model["menu"]}
+    shift_tags, shift_pacing = None, []
+    if practice:
+        practice_system.build(model, roles_by, debug)
+    else:
+        shift_tags = shift.build(model, roles_by, debug, exit_on_lose=exit_on_lose)
+        shift_pacing = v.take_companions()        # its per-day pacing volumes, its tokens
+        # Each player's best here, remembered on the player (systems/records.py): its
+        # recorder is a companion beside the shift.
+        records.build(model, layout_id, label or meta["name"])
+        shift_pacing += v.take_companions()
+        # The franchise (systems/franchise.py) before the pads: they read its cards.
+        franchise.build(model)
+        pads.build(model, debug)
     v.take_companions()           # nothing left over from another build
     hazards_effect = hazards.build(model, debug)
     hazard_drops = v.take_companions()        # its drops, each in a volume of its own
@@ -121,6 +132,7 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
     # in column") -- so what the slots make wins, and each block it displaces is noted: a
     # chair's table put where a rug lay, say.
     built, out_blocks, entities, used, queue_cells, pad_numbers = [], [], [], set(), [], set()
+    crate_cells = set()
     arrival = None
     for b in room["blocks"]:
         name = _slot(b["name"])
@@ -159,8 +171,23 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
             pad_numbers.add(n)
             out_blocks.append(at(pads.ids(model)["pad"](n)))
             entities.append(pads.pad_entity(n, b["x"], b["y"], b["z"]))
-        elif name == "sign":
+        elif name == "sign" and not practice:
             out_blocks.append(at(shift.ids(model)["sign"]))
+        elif name.startswith("crate_"):
+            # A CRATE SLOT (one per ingredient): the crate, in a practice room -- a run's
+            # crates are delivered, so a normal room ignores them.
+            sid = name
+            if not practice:
+                problems.append(f"a {sid} slot at ({b['x']}, {b['y']}, {b['z']}): crate slots "
+                                f"are for practice rooms (a run delivers its crates) -- left out")
+            elif sid not in model["stations"]:
+                problems.append(f"a {sid} slot, but the theme has no such crate")
+            else:
+                crate_cells.add(sid)
+                for dy, block in systems.for_station(model, sid).layout(model, sid):
+                    out_blocks.append(at(block, dy=dy))
+        elif name == "practice_call":
+            out_blocks.append(at(practice_system.ids(model)["call"]))
         elif name == "barrier":
             out_blocks.append(at(layouts.BARRIER))
         elif name == "arrival":
@@ -168,12 +195,18 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
             out_blocks.append(at(layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
 
     for role, sid in by_role.items():
-        if sid not in used:
+        if sid not in used and not (practice and role == "call"):
             problems.append(f"no {role} slot: the room has no "
                             f"{model['stations'][sid]['label'].lower()}")
     missing = set(pads.numbers(model)) - pad_numbers
-    if missing:
+    if missing and not practice:
         problems.append(f"no offer pad slot for pad(s) {sorted(missing)}")
+    if practice:
+        # Every crate the menu needs, since nothing will deliver one.
+        needed = sorted({c for d in model["dishes"].values() for c in d["needs"]} - crate_cells)
+        if needed:
+            problems.append(f"practice room: no crate slot for {', '.join(needed)} -- dishes "
+                            f"needing them can't be made")
     # The fixtures a run can't do without.
     names = [_slot(b["name"]) for b in room["blocks"]]
     if "chair" not in names:
@@ -183,7 +216,7 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
         problems.append(f"queue spots missing: {sorted({f'queue_{i}' for i in range(1, 5)} - spots)}")
     if "pool" not in names:
         problems.append("no queue pool slot: guests have nowhere to arrive")
-    if "sign" not in names:
+    if "sign" not in names and not practice:
         problems.append("no open sign slot: the day can't be opened")
 
     # THE QUEUE ZONE, in room coordinates: drawn, or worked out round the spots and pool.
@@ -220,13 +253,21 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
                                  area, targets=("Npc",)))
     entities.append(_carried("seating", seating_effect,
                              {"seating": "system", "refused": "0", "guestreset": "1"}, box))
-    entities.append(_carried("shift", si["effect"], shift_tags, box))
-    for n, (eff, tags) in enumerate(shift_pacing):
-        entities.append(_carried(f"shift_{n}", eff, tags, box))
-    entities.append(_carried("shift_service_lock", si["lock"], {"servicelock": "1"}, box,
-                             extra={"Enabled": False, "RulesActive": True,
-                                    "Rules": [{"Type": "NoBuild"}, {"Type": "NoDestroy"}]}))
-    entities.append(_carried("pads", pads.ids(model)["world_effect"], {"pads": "system"}, box))
+    if practice:
+        pi = practice_system.ids(model)
+        entities.append(_carried("practice", pi["effect"], {"practice": "1"}, box))
+        # The lock, on for good: nothing picked up, broken, or carried out of practice.
+        entities.append(_carried("practice_lock", pi["lock"], {"servicelock": "1"}, box,
+                                 extra={"Enabled": True, "RulesActive": True,
+                                        "Rules": [{"Type": "NoBuild"}, {"Type": "NoDestroy"}]}))
+    else:
+        entities.append(_carried("shift", si["effect"], shift_tags, box))
+        for n, (eff, tags) in enumerate(shift_pacing):
+            entities.append(_carried(f"shift_{n}", eff, tags, box))
+        entities.append(_carried("shift_service_lock", si["lock"], {"servicelock": "1"}, box,
+                                 extra={"Enabled": False, "RulesActive": True,
+                                        "Rules": [{"Type": "NoBuild"}, {"Type": "NoDestroy"}]}))
+        entities.append(_carried("pads", pads.ids(model)["world_effect"], {"pads": "system"}, box))
     entities.append(_carried("hazards", hazards_effect,
                              {signals.HAZARD_KEY: "system", **signals.RESET_TAGS}, box))
     for n, (eff, tags) in enumerate(hazard_drops):
@@ -239,4 +280,5 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
                             f"what a slot makes there (a chair's table, or on top of a station)")
     out_blocks = [b for b in built if (b["x"], b["y"], b["z"]) not in taken] + out_blocks
     prefab = dict(room, blocks=out_blocks, entities=entities)
-    return prefab, problems, {"name": meta["name"], "area": area, "arrival": arrival}
+    return prefab, problems, {"name": meta["name"], "area": area, "arrival": arrival,
+                              "practice": practice}

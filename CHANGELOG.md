@@ -12,6 +12,9 @@
   your banked items from the shelves in HQ's storeroom (put back what you don't want),
   and bring them in: put a station down, or press the open sign with start coins or a
   recipe. In co-op, everyone banks their own.
+- **Practice kitchen:** a room to try things in, through its own portal -- guests come by
+  themselves, patient ones, and nothing counts (no days, money or losing). Build one with
+  a "call a guest" slot and a crate slot per ingredient.
 - **Overtime:** once every dish and customer card is taken, card days bring a squeeze
   instead, in turn: busier (a guest more a day), hurried (guests less patient), messier
   (more guest mess). Each has a limit.
