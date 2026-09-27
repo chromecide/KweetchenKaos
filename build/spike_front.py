@@ -22,6 +22,7 @@ import settings
 import signals
 import volumes as v
 from systems import franchise, moods, pads, queue, records, seating, shift
+from systems import practice as practice_system
 
 QUEUE_X, SPOT_Z, POOL_Z = 2, (8, 10, 12, 14), 18   # spot 1 (the front) first
 CHAIRS_X, CHAIRS_Z = (12, 14, 16), 4
@@ -35,7 +36,7 @@ def caller_id(model, entry):
     return settings.game_id(model["theme"]["prefix"], f"spike_call_{entry['serves']}")
 
 
-def build(model, ground, debug=True, run=False):
+def build(model, ground, debug=True, run=False, practice=False):
     """Write the front of house; return (volumes, (layout blocks, layout entities))."""
     roles = guests.roles(model)
     # The moods first: the queue rolls them and the guests read them (systems/moods.py).
@@ -75,6 +76,14 @@ def build(model, ground, debug=True, run=False):
             entities.append(pads.pad_entity(n, PADS_X + 2 * k, ground, PADS_Z))
         return (base + shift.volumes(model, tags) + pacing + pads.volumes(model),
                 (layout, entities))
+
+    # PRACTICE (systems/practice.py): guests come by themselves, a CALL A GUEST block, and
+    # the stations locked in place -- instead of a caller per dish and the listener.
+    if practice:
+        roles_by = {e["serves"]: guests.role_id(model, e) for e in model["menu"]}
+        p = practice_system.build(model, roles_by, debug)
+        layout.append({"x": CALLERS_X, "y": ground, "z": CALLERS_Z, "name": p["call"]})
+        return base + practice_system.volumes(model), (layout, entities)
 
     # Callers and the listener.
     effect = settings.game_id(model["theme"]["prefix"], "spike_front")

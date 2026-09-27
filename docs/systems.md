@@ -238,6 +238,16 @@ Items a player banks by reaching day 15, and brings into later runs.
   and the count's message is its own interaction; a take can put the item straight into
   an empty hand, so a shelf marks the press as a take and skips its return rule.
 
+## Practice (`practice.py`)
+
+A kitchen to try things in, where nothing counts: no shift (no days, purse, cards,
+losing, records or franchise picks). Guests arrive by themselves -- one every 15
+seconds while fewer than 3 are about, wanting any dish -- and a **Call a guest** block
+brings one now. Every guest has the **practice** mood (five times the patience,
+"(practice)" on its name tag). The service lock is on for good, so stations can't be
+picked up or carried out. The `practice` spike has it all; a practice restaurant (its
+own layout, through a portal) is to come.
+
 ## Front of house
 
 ### Moods (`moods.py`)
@@ -454,6 +464,7 @@ Pasted anywhere, the room works. Two things make that possible:
   | `dish:<dish>` | one recipe, start to paid | its chain's stations and crates, a bin if it cooks; plates; callers for its orders |
   | `moods` | guests' moods on their two tracks | the front of house, hazards (for messy guests' messes) |
   | `cards` | card days with customer cards: a recipe card beside a customer card, every day | a small kitchen, hazards, a mop stand, the shift |
+  | `practice` | the practice kitchen: guests by themselves, nothing counts, stations fixed | the whole kitchen, hazards, the front of house in practice mode |
   | `franchise` | earning, the shelves, and spending tokens | a run from day 14, End the day / Reset my franchise pick, franchise cards on the pads, a shelf per item, a small kitchen |
   | `endgame` | milestone titles, overtime and bests, without playing the days | the shift from day 9 with every card taken; End the day / Show my best / Forget my best blocks; a small kitchen |
   | `tips` | the tip level paid on every guest served, and card days | a small kitchen (board, 2 counters, stove, bin, rack), the shift, a tip dial |

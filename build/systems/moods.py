@@ -51,6 +51,9 @@ MOODS = {"impatient": ("patience", 2 / 3, "impatient"),
 PRESSURE_LEVELS = 6               # the most there can be; the rules' overtime.patience says how many
 for _k in range(1, PRESSURE_LEVELS + 1):
     MOODS[f"hurried_{_k}"] = ("pressure", round(0.85 ** _k, 3), None)
+# PRACTICE (systems/practice.py): every guest in a practice kitchen, on the pressure track
+# too (a practice kitchen has no overtime): five times the patience, and shown.
+MOODS["practice"] = ("pressure", 5.0, "practice")
 TRACKS = ("patience", "tidiness", "pressure")
 MARK_SECONDS = 600.0
 

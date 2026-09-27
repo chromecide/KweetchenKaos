@@ -134,6 +134,12 @@ SPIKES = {
     # PROBE: can a run remember the best day on the player, and can it be read back? Four
     # blocks, nothing else (see _best_run).
     "bestrun": {"stations": {}, "best_probe": True, "give": []},
+    # THE PRACTICE KITCHEN (systems/practice.py): the whole kitchen and the front of house,
+    # guests arriving by themselves (and a CALL A GUEST block), every one in the practice
+    # mood (five times the patience), the stations locked in place, hazards and the mop.
+    # No shift: nothing counts.
+    "practice": {"stations": KITCHEN, "front": True, "practice": True, "hazards": True,
+                 "moods": {"practice": 1.0}},
     # THE GAME, service only: the kitchen, the queue, chairs and guests, called by hand.
     "service": {"stations": KITCHEN, "front": True, "hazards": True},
     # THE GAME, a full RUN: the shift runs the days. Crates at 0: mounted (so delivered ones
@@ -515,7 +521,8 @@ def build(model, name, debug=True):
     model["mood_chances"] = spike.get("moods", {})
     if spike.get("front"):
         front_volumes, front_layout = spike_front.build(model, GROUND, debug,
-                                                        run=spike.get("run", False))
+                                                        run=spike.get("run", False),
+                                                        practice=spike.get("practice", False))
         mounted += front_volumes
         front = front_layout
     if spike.get("hazards"):
