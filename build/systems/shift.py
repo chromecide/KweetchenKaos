@@ -48,6 +48,13 @@ import volumes as v
 
 FIXTURE = "shift"
 PACE, OPENED, COUNTED = "pacing", "opened", "counted"   # the shift <-> its pacing volumes
+# MILESTONES: the days whose end gets its own title (day 15 the big one, PlateUp's), and
+# OVERTIME: once every card is taken, each card day squeezes a little harder instead, in
+# turn -- more guests, less patience, more mess -- each up to its cap.
+MILESTONES = (10, 15, 20, 25, 30, 40, 50)      # each is a day end (+3 rules): kept few
+BIG_DAY = 15
+# The caps (levels of each squeeze) are the rules' "overtime", shared with the mood and
+# hazard systems, which act on the patience and mess levels.
 AFTER_CLEAR = 0.5     # PlaceBlock only fills an empty cell, and a clear lands at tick end
 TIPS = range(-3, 6)   # the tip levels there are rules for: coins added to (or taken off) each
                       # guest served
@@ -114,6 +121,8 @@ def build(model, roles, debug=True, exit_on_lose=False):
     guests = list(roles.values())
     every = rules_["cards"]["every_days"]
     customers = rules_.get("customers", {}).get("cards", [])
+    ot = rules_.get("overtime", {})
+    OT_GUESTS, OT_PATIENCE, OT_MESS = ot.get("guests", 0), ot.get("patience", 0), ot.get("mess", 0)
     assert rules_["cards"]["choices"] in (1, 2), "cards.json: choices must be 1 or 2"
     starters = [d for d, dish in dishes.items() if dish["unlock"] == "start"]
     pads = offers.pad_numbers(model)
@@ -141,8 +150,8 @@ def build(model, roles, debug=True, exit_on_lose=False):
     # (a PER-PLAYER cooldown, longer than the countdown) until it runs out.
     announcements = {}
 
-    def announce(event, key, title, sub):
-        announcements[key] = (title, sub)
+    def announce(event, key, title, sub, seconds=4.0):
+        announcements[key] = (title, sub, seconds)
         return [_set(event, f"t_{key}", ANNOUNCE_SECONDS)]
 
     def deliver(event, crate, pad, delay=None):
@@ -233,7 +242,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
     gains = [extra_guests(dh) for dh in dishes.values()]
     lo = min(f for f, _ in gains) + sum(min(0, l) for _, l in gains)
     hi = (max(f for f, _ in gains) + sum(max(0, l) for _, l in gains)
-          + sum(c.get("guests", 0) for c in customers))
+          + sum(c.get("guests", 0) for c in customers) + OT_GUESTS)
 
     def expected(day, extra):
         return max(1, g["day_1"] + g["per_day"] * (day - 1) + extra)
@@ -252,7 +261,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
     #                                            the first the moment it opens (its
     #                                            cooldown is long spent by then)
     max_first = max(f for f, _ in gains)
-    max_gain = max([l for _, l in gains] + [c.get("guests", 0) for c in customers] + [0])
+    max_gain = max([l for _, l in gains] + [c.get("guests", 0) for c in customers] + [1])
     for day in range(1, last_day + 1):
         at_day = lambda ev: signals.shift_reads(ev, signals.DAY,
                                                 "AtLeast" if day == last_day else "Exactly", day)
@@ -305,10 +314,10 @@ def build(model, roles, debug=True, exit_on_lose=False):
                                                    f"{e['label']})"))
 
     # 50-52: the day ends (after closing time, the last guest gone).
-    rules.add(50, [_t("TICK", "open", 1), _t("TICK", "closing", 1),
-                   {"Type": "EntityCountCondition", "Event": "TICK", "EntityType": guests,
-                    "Comparison": "AtMost", "Count": 0}],
-              [_set("TICK", "open", 0), _set("TICK", "closing", 0),
+    day_ends = [_t("TICK", "open", 1), _t("TICK", "closing", 1),
+                {"Type": "EntityCountCondition", "Event": "TICK", "EntityType": guests,
+                 "Comparison": "AtMost", "Count": 0}]
+    day_end = [_set("TICK", "open", 0), _set("TICK", "closing", 0),
                _set("TICK", signals.DAY, 1, op="Increment"),
                _set("TICK", "cards_in", -1, op="Increment"), _set("TICK", "dayover", 1),
                {"Type": "ReplaceBlockType", "Event": "TICK",
@@ -316,8 +325,17 @@ def build(model, roles, debug=True, exit_on_lose=False):
                {"Type": "DisableVolume", "Event": "TICK", "MatchKey": "servicelock",
                 "MatchValue": "1", "Radius": 128.0, "Center": "Volume"},
                signals.to_pads("TICK", signals.CLEAR), EVERY_TICK]
-              + announce("TICK", "dayover", "Day over",
-                         "{served} of {expected} served - {money} coins")
+    served_line = "{served} of {expected} served - {money} coins"
+    # 30+: a MILESTONE day ends -- the same day end, with its own title (and day 15 the big
+    # one, on screen longer). BEFORE rule 50, which then finds the day already closed.
+    for k, m in enumerate(MILESTONES):
+        title, sub, secs = ((f"You made it to day {m}!", "A real restaurant now - " + served_line,
+                             8.0) if m == BIG_DAY else (f"Day {m} done!", served_line, 5.0))
+        rules.add(30 + k, day_ends + [_t("TICK", signals.DAY, m)],
+                  day_end + announce("TICK", f"milestone_{m}", title, sub, secs)
+                  + logged("TICK", f"milestone.{m}", f"[shift] Day {m} done - a milestone."))
+    rules.add(50, day_ends,
+              day_end + announce("TICK", "dayover", "Day over", served_line)
               + logged("TICK", "dayover", "[shift] The last guest has gone - {served} of "
                                           "{expected} served. Purse: {money} coins."))
     # 51, 52: a CARD DAY (PlateUp's rhythm: the start of day 4, then every third day). Two
@@ -335,7 +353,27 @@ def build(model, roles, debug=True, exit_on_lose=False):
     rules.add(52, [_t("TICK", "dayover", 1), _t("TICK", "cards_in", 0, "AtMost"),
                    _t("TICK", "locked", 0, "AtMost"), _t("TICK", "ccards_left", 1, "AtLeast")],
               card_day(3))
-    rules.add(53, [_t("TICK", "dayover", 1)],
+    # 54-60: OVERTIME -- a card day with every card taken. It squeezes instead, the next in
+    # turn (ot_next: 0 guests, 1 patience, 2 mess), skipping one at its cap; `cards_in`
+    # going back up closes the gate, so one squeeze a card day. What they do: `extra` (one
+    # more guest a day), `ot_patience` (read by the mood system: every guest arrives
+    # hurried), `ot_mess` (read by the hazard system: another chance of a mess).
+    ot_gate = [_t("TICK", "dayover", 1), _t("TICK", "cards_in", 0, "AtMost"),
+               _t("TICK", "locked", 0, "AtMost"), _t("TICK", "ccards_left", 0, "AtMost")]
+    squeezes = [("ot_guests", OT_GUESTS, "Busier", "1 more guest every day",
+                 [_set("TICK", "extra", 1, op="Increment")]),
+                ("ot_patience", OT_PATIENCE, "Hurried", "Every guest is a little less patient", []),
+                ("ot_mess", OT_MESS, "Messier", "Guests leave more mess", [])]
+    for k, (tag, cap, title, sub, more) in enumerate(squeezes):
+        rules.add(54 + 2 * k, ot_gate + [_t("TICK", "ot_next", k), _t("TICK", tag, cap - 1, "AtMost")],
+                  [_set("TICK", tag, 1, op="Increment"), _set("TICK", "ot_next", (k + 1) % 3),
+                   _set("TICK", "cards_in", every), EVERY_TICK] + more
+                  + announce("TICK", f"ot_{tag}", f"Overtime: {title}", sub)
+                  + logged("TICK", f"ot.{tag}", f"[shift] overtime: {title.lower()}"))
+        rules.add(55 + 2 * k, ot_gate + [_t("TICK", "ot_next", k), _t("TICK", tag, cap, "AtLeast")],
+                  [_set("TICK", "ot_next", (k + 1) % 3), EVERY_TICK])
+    rules.add(60, ot_gate, [_set("TICK", "cards_in", every), EVERY_TICK])   # all at their caps
+    rules.add(62, [_t("TICK", "dayover", 1)],
               [signals.to_pads("TICK", signals.PLACE, delay=AFTER_CLEAR),
                _set("TICK", "dayover", 0), EVERY_TICK]
               + say("TICK", "offers", "[shift] Today's offers are on the pads."))
@@ -554,14 +592,14 @@ def build(model, roles, debug=True, exit_on_lose=False):
 
     # 9000+: THE ANNOUNCEMENTS (see announce): every player's tick shows a running one to
     # them once; a whole-volume beat counts it down.
-    for k, (key, (title, sub)) in enumerate(sorted(announcements.items())):
+    for k, (key, (title, sub, seconds)) in enumerate(sorted(announcements.items())):
         tag = f"t_{key}"
         rules.add(9000 + 2 * k,
                   [_t("TICK", tag, 1, "AtLeast"),
                    {"Type": "CooldownCondition", "Event": "TICK",
                     "Cooldown": float(ANNOUNCE_SECONDS + 4), "Scope": "PerPlayer"}],
                   [v.title(f"kk.shift.title.{key}", title, f"kk.shift.title.{key}.sub", sub,
-                           event="TICK"), EVERY_TICK])
+                           event="TICK", seconds=seconds), EVERY_TICK])
         rules.add(9001 + 2 * k, [_t("TICK", tag, 1, "AtLeast"), _every(1.0)],
                   [_set("TICK", tag, -1, op="Increment"), EVERY_TICK])
 
@@ -573,11 +611,16 @@ def build(model, roles, debug=True, exit_on_lose=False):
     lock.add(1, [], [carry.in_service_mark()])
     lock.write(s["lock"], "The service lock. See build/systems/shift.py.")
     locked = len(dishes)          # nothing is on the menu until a starter is chosen
-    tags = {**signals.LISTENER_TAGS, signals.MONEY: "0", signals.DAY: "1", "open": "0",
+    # A spike can start a run later on (model["start_day"]) and with every card already taken
+    # (model["cards_done"]) -- the endgame spike, to reach milestones and overtime quickly.
+    done = model.get("cards_done", False)
+    tags = {**signals.LISTENER_TAGS, signals.MONEY: "0",
+            signals.DAY: str(model.get("start_day", 1)), "open": "0",
             "closing": "0", "time_left": "0", "beat": "0", "picked": "0", "choice": "0",
             "lost": "0", "started": "0", "dayover": "0", "cardpick": "0", "cardwait": "0",
-            "tip": "0", "ccards_left": str(len(customers)), "cpad1": "0",
-            "cards_in": str(every), "locked": str(locked), "onmenu": "0",
+            "tip": "0", "ccards_left": "0" if done else str(len(customers)), "cpad1": "0",
+            "ot_next": "0", "ot_guests": "0", "ot_patience": "0", "ot_mess": "0",
+            "cards_in": str(every), "locked": "0" if done else str(locked), "onmenu": "0",
             "to_arrive": "0", "expected": "0", "served": "0", "extra": "0",
             **{f"t_{k}": "0" for k in announcements}}
     tags.update({f"has_{d}": "0" for d in dishes})

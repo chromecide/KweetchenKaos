@@ -158,6 +158,16 @@ def build(model, debug=True, dispenser=False):
                          "Chance": float(chance)}],
               "SIGNAL_RECEIVED", mess, "a guest got up and left a mess", signal=True,
               origin="Entity")
+    # OVERTIME'S MESS (systems/shift.py): each level of the shift's `ot_mess` is one more
+    # chance, the same again, that any guest getting up leaves a mess -- a volume per level.
+    ot = model["rules"].get("overtime", {})
+    for k in range(1, ot.get("mess", 0) + 1):
+        chain(f"otmess{k}", [signals.heard(signals.HAZARD_KEY, signals.GOT_UP),
+                             signals.shift_reads("SIGNAL_RECEIVED", "ot_mess", "AtLeast", k),
+                             {"Type": "RandomChanceCondition", "Event": "SIGNAL_RECEIVED",
+                              "Chance": float(ot.get("mess_chance", 0.05))}],
+              "SIGNAL_RECEIVED", mess, f"overtime mess (level {k})", signal=True,
+              origin="Entity")
     # SPREADING -- a large hazard, or a full mat, that something lands on. It's put down
     # again as that kind's hop-1 block (a spreading large one, or an overflowing mat);
     # placing it is a BLOCK_PLACED at ITS cell, answered by that hop's drop round it, which

@@ -112,6 +112,15 @@ SPIKES = {
     "cards": {"stations": {"crates": 0, "board": 1, "counter": 2, "stove": 1, "bin": 1,
                            "rack": 1, "sink": 1, "mop_stand": 1}, "front": True, "run": True,
               "hazards": True, "card_every": 1},
+    # THE ENDGAME: a small run that starts on day 14 with every card already taken, and a
+    # card day every day -- so day 14's end brings overtime's first squeeze (busier), day
+    # 15's the big milestone title and the next squeeze (hurried), day 16's the last (messier).
+    "endgame": {"stations": {"crates": 0, "board": 1, "counter": 2, "stove": 1, "bin": 1,
+                             "rack": 1, "sink": 1, "mop_stand": 1}, "front": True, "run": True,
+                "hazards": True, "card_every": 1, "start_day": 14, "cards_done": True,
+                # A handful of guests a day, not day 14's crowd: it's the titles and the
+                # squeezes that are being watched, not surviving them.
+                "guests": {"day_1": 2, "per_day": 0, "per_card": 1}},
     # THE GAME, service only: the kitchen, the queue, chairs and guests, called by hand.
     "service": {"stations": KITCHEN, "front": True, "hazards": True},
     # THE GAME, a full RUN: the shift runs the days. Crates at 0: mounted (so delivered ones
@@ -366,6 +375,10 @@ def build(model, name, debug=True):
                     for n, (eff, tags) in enumerate(v.take_companions())]
     front = None
     model["in_run"] = spike.get("run", False)
+    model["start_day"] = spike.get("start_day", 1)
+    model["cards_done"] = spike.get("cards_done", False)
+    if spike.get("guests"):
+        model["rules"]["guests"] = dict(model["rules"]["guests"], **spike["guests"])
     if spike.get("card_every"):
         model["rules"]["cards"] = dict(model["rules"]["cards"], every_days=spike["card_every"])
     # The moods in play (systems/moods.py, built with the front of house).

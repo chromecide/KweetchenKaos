@@ -293,6 +293,13 @@ day, purse, what's on the menu, guests expected, still to come, served.
   Two cards go on the pads and **one must be chosen** before the day can open;
   choosing one puts the day's blueprints out. Today both are recipe cards; with
   customer cards, it will be one of each.
+- **Milestones:** the end of days 10, 15, 20, 25, 30, 40 and 50 gets its own title;
+  day 15 the big one ("You made it to day 15!"), as PlateUp's franchise day. The run
+  goes on: it's open ended, until the restaurant goes out of business.
+- **Overtime:** once every card (dish and customer) is taken, each card day squeezes
+  instead, in turn: **busier** (a guest more a day), **hurried** (every guest a level
+  less patient: 15% a level, a mood on its own track), **messier** (another chance a
+  guest leaves a mess). Each up to its cap: the rules' `overtime`.
 - **Tips:** every guest served pays the shift's **tip level** on top of its dish
   (negative: less). It starts at 0; customer cards will move it (the `tips` spike
   has a dial).
@@ -410,6 +417,7 @@ Pasted anywhere, the room works. Two things make that possible:
   | `dish:<dish>` | one recipe, start to paid | its chain's stations and crates, a bin if it cooks; plates; callers for its orders |
   | `moods` | guests' moods on their two tracks | the front of house, hazards (for messy guests' messes) |
   | `cards` | card days with customer cards: a recipe card beside a customer card, every day | a small kitchen, hazards, a mop stand, the shift |
+  | `endgame` | milestone titles and overtime | a small kitchen, the shift, starting on day 14 with every card taken, 2 guests a day |
   | `tips` | the tip level paid on every guest served, and card days | a small kitchen (board, 2 counters, stove, bin, rack), the shift, a tip dial |
   | `mats` | mats soaking up, overflowing, and rubber mats | a sink, the mop stand, a mess dispenser; 6 mats, 3 rubber mats, dirty plates |
   | `hazards` | every hazard and the mop | sink, board, stove, mop stand, the front (every guest messy), a mess dispenser; a dirty plate, a pumpkin, corn |

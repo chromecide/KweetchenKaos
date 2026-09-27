@@ -244,7 +244,8 @@ def _spot_rules(q, boost_by, debug, moods=()):
     # A card's roll only once the card is chosen: its tag on the shift (read from here, as
     # the pads read the purse). Numbered 200+: clear of the spot's own rules.
     for k, (effect, chance, others, gate) in enumerate(moods):
-        rules.add(200 + k, ([signals.shift_reads("ENTER", gate, "AtLeast", 1)] if gate else [])
+        rules.add(200 + k, ([signals.shift_reads("ENTER", gate[0], "AtLeast", gate[1])]
+                            if gate else [])
                   + [{"Type": "RandomChanceCondition", "Event": "ENTER",
                       "Chance": float(chance)}],
                   [{"Type": "EntityEffect", "Event": "ENTER", "Effect": other,

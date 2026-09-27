@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- **Milestones:** reaching the end of day 10, 15, 20, 25, 30, 40 and 50 gets a title of
+  its own, and day 15 a big one. The run is open ended: it goes on until you lose.
+- **Overtime:** once every dish and customer card is taken, card days bring a squeeze
+  instead, in turn: busier (a guest more a day), hurried (guests less patient), messier
+  (more guest mess). Each has a limit.
+
 ## 0.3.1 (2026-09-27)
 
 - **Much snappier:** the game's big rule sets are split into many small ones; pressing

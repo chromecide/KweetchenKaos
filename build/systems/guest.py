@@ -78,7 +78,8 @@ def _phase(model, tag, patience, on_out, name_text):
         out.append(npc.branch(
             f"Phase {tag}: start its clocks - {combo['words']} (x{combo['patience']:.2f}).",
             npc.all_of(*[npc.flag(f) for f in combo["flags"]]), npc.STILL,
-            start(round(patience * combo["patience"], 2), f"{name_text} ({combo['words']})")))
+            start(round(patience * combo["patience"], 2),
+                  f"{name_text} ({combo['words']})" if combo["words"] else name_text)))
     out.append(npc.branch(f"Phase {tag}: start its clocks (the flag proves they were started).",
                           {"Type": "Any"}, npc.STILL, start(patience, name_text)))
     return out

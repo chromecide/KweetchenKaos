@@ -22,8 +22,9 @@ HOW IT'S JOINED, without any system importing another: `build` writes the marks 
 plain DATA in the model (model["moods"]) --
 
     arrival   [(mark, chance, [marks it takes off], gate)]: what a queue spot rolls
-              (queue.py); `gate`, if any, is a tag of the shift's that must be 1 first --
-              a customer card's ("card_<id>"), set when it's chosen
+              (queue.py); `gate`, if any, is (a tag of the shift's, the level it must
+              reach first) -- a customer card's ("card_<id>", 1), set when it's chosen, or
+              overtime's ("ot_patience", level)
     flags     {mood: flag}: what a guest carries once it has read its marks
     combos    every mix of moods, most specific first, with its patience factor and the
               words for its name tag (systems/guest.py uses them for its clocks)
@@ -40,11 +41,17 @@ import npc
 import pack
 import settings
 
-# mood: (track, patience factor, the word on its name tag)
+# mood: (track, patience factor, the word on its name tag -- None: not shown)
 MOODS = {"impatient": ("patience", 2 / 3, "impatient"),
          "relaxed": ("patience", 1.5, "relaxed"),
          "messy": ("tidiness", 1.0, "messy")}
-TRACKS = ("patience", "tidiness")
+# PRESSURE: overtime's patience squeeze (systems/shift.py). Every guest arrives HURRIED once
+# the shift's `ot_patience` reaches a level -- each level 15% less patience -- on its own
+# track, so it stacks with impatient or relaxed. Not shown: everyone has it.
+PRESSURE_LEVELS = 6               # the most there can be; the rules' overtime.patience says how many
+for _k in range(1, PRESSURE_LEVELS + 1):
+    MOODS[f"hurried_{_k}"] = ("pressure", round(0.85 ** _k, 3), None)
+TRACKS = ("patience", "tidiness", "pressure")
 MARK_SECONDS = 600.0
 
 
@@ -79,8 +86,13 @@ def build(model):
     others = lambda m: [mark(model, o) for o in MOODS if o != m and MOODS[o][0] == MOODS[m][0]]
     arrival = [(mark(model, m), c, others(m), None) for m, c in chances.items()]
     for card in model.get("rules", {}).get("customers", {}).get("cards", []):
-        arrival += [(mark(model, m), c, others(m), card_tag(card["id"]))
+        arrival += [(mark(model, m), c, others(m), (card_tag(card["id"]), 1))
                     for m, c in card.get("moods", {}).items()]
+    # Overtime's pressure, a level at a time: the highest level reached rolls last and wins.
+    levels = model.get("rules", {}).get("overtime", {}).get("patience", 0)
+    assert levels <= PRESSURE_LEVELS, f"overtime patience: at most {PRESSURE_LEVELS} levels"
+    arrival += [(mark(model, f"hurried_{k}"), 1.0, others(f"hurried_{k}"), ("ot_patience", k))
+                for k in range(1, levels + 1)]
     per_track = [[None] + [m for m in MOODS if MOODS[m][0] == t] for t in TRACKS]
     combos = []
     for mix in itertools.product(*per_track):
@@ -91,7 +103,7 @@ def build(model):
         for m in moods:
             factor *= MOODS[m][1]
         combos.append({"flags": [flag(m) for m in moods], "patience": factor,
-                       "words": ", ".join(MOODS[m][2] for m in moods)})
+                       "words": ", ".join(MOODS[m][2] for m in moods if MOODS[m][2])})
     combos.sort(key=lambda c: -len(c["flags"]))
     model["moods"] = {"arrival": arrival, "flags": {m: flag(m) for m in MOODS},
                       "combos": combos}
@@ -111,6 +123,8 @@ def read_branches(model):
                               npc.no(done), None, [npc.set_flag(_read(track))], cont=True))
     shown = npc.flag("mood_shown")
     for combo in model["moods"]["combos"]:
+        if not combo["words"]:
+            continue                      # nothing to show (the pressure track alone)
         out.append(npc.branch(f"Show its moods: {combo['words']}.",
                               npc.all_of(npc.no(shown), *[npc.flag(f) for f in combo["flags"]]),
                               None, [npc.set_flag("mood_shown"),

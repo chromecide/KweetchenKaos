@@ -414,6 +414,10 @@ rules/
 
 - **Hazards:** `guest_mess_chance` is the chance (0-1) any guest leaves a mess
   round its chair as it gets up.
+- **Overtime** (`"overtime": {"guests": 6, "patience": 4, "mess": 4, "mess_chance":
+  0.05}`): once every card is taken, each card day squeezes instead, in turn -- one
+  more guest a day, every guest a level more hurried (15% less patience a level),
+  another `mess_chance` a guest leaves a mess -- each up to its number of levels.
 
 - **Expected guests** each day are `day_1`, plus `per_day` for every day
   after the first, plus what each dish on the menu brings. A dish's `guests`
