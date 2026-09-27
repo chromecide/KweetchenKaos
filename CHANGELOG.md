@@ -4,6 +4,9 @@
 
 - **Milestones:** reaching the end of day 10, 15, 20, 25, 30, 40 and 50 gets a title of
   its own, and day 15 a big one. The run is open ended: it goes on until you lose.
+- **Your best is remembered:** each restaurant remembers the furthest milestone you've
+  passed there (day 5, 10, 15 ...), and tells you as you arrive -- and HQ lists them all.
+  (It's kept on your player; dying resets it, so don't fall off.)
 - **Overtime:** once every dish and customer card is taken, card days bring a squeeze
   instead, in turn: busier (a guest more a day), hurried (guests less patient), messier
   (more guest mess). Each has a limit.

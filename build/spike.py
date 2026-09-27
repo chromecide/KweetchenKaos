@@ -112,14 +112,16 @@ SPIKES = {
     "cards": {"stations": {"crates": 0, "board": 1, "counter": 2, "stove": 1, "bin": 1,
                            "rack": 1, "sink": 1, "mop_stand": 1}, "front": True, "run": True,
               "hazards": True, "card_every": 1},
-    # THE ENDGAME: a small run that starts on day 14 with every card already taken, and a
-    # card day every day -- so day 14's end brings overtime's first squeeze (busier), day
-    # 15's the big milestone title and the next squeeze (hurried), day 16's the last (messier).
+    # THE ENDGAME, without playing it: a run that starts on day 9 with every card taken and
+    # a card day every day, and three blocks -- END THE DAY (the day ends at once: its title,
+    # a milestone's, overtime's squeeze, the blueprints), SHOW MY BEST and FORGET MY BEST
+    # (systems/records.py). Six presses pass the day 10 and 15 milestones and all three
+    # squeezes. The kitchen is there to try a squeeze on real guests between presses.
     "endgame": {"stations": {"crates": 0, "board": 1, "counter": 2, "stove": 1, "bin": 1,
                              "rack": 1, "sink": 1, "mop_stand": 1}, "front": True, "run": True,
-                "hazards": True, "card_every": 1, "start_day": 14, "cards_done": True,
-                # A handful of guests a day, not day 14's crowd: it's the titles and the
-                # squeezes that are being watched, not surviving them.
+                "hazards": True, "card_every": 1, "start_day": 9, "cards_done": True,
+                "endgame_blocks": True,
+                # A handful of guests a day, not day 9's crowd.
                 "guests": {"day_1": 2, "per_day": 0, "per_card": 1}},
     # PROBE: can a run remember the best day on the player, and can it be read back? Four
     # blocks, nothing else (see _best_run).
@@ -146,6 +148,47 @@ DISH_PLATES = 4
 
 
 TIP_DIAL_EFFECT = f"{settings.NAMESPACE}_Spike_Tip_Dial"
+ENDGAME_EFFECT = f"{settings.NAMESPACE}_Spike_Endgame"
+ENDGAME_ROW = (4, 4)          # x, z of the first of its three blocks, 2 apart in x
+
+
+def _endgame_blocks(model):
+    """Spike only: END THE DAY -- the day counts as done whatever state it's in: the guests
+    go (and the queue and chairs are reset, as when a run is lost), no more arrive, and the
+    shift's open and closing are set, so its day end runs on the next tick (a milestone's
+    on a milestone day, overtime's squeeze on a card day). SHOW MY BEST and FORGET MY BEST
+    (the spike's record: systems/records.py). Returns layout blocks."""
+    import guests as guest_roles
+    from systems import records
+    look = {"sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+            "top": "BlockTextures/Wood_Softwood_Planks_Side.png", "sound": "Wood"}
+    blocks_ = [("end", "End the day", "#d04040",
+                [{"Type": "RemoveEntities", "Event": "BLOCK_USED", "IncludeNpcs": True,
+                  "IncludePlayers": False, "IgnoreInvulnerability": True,
+                  "Roles": guest_roles.roles(model)},
+                 signals.reset_everything("BLOCK_USED"),
+                 signals.shift_changes("BLOCK_USED", "to_arrive", "Set", 0),
+                 signals.shift_changes("BLOCK_USED", "beat", "Set", 0),
+                 signals.shift_changes("BLOCK_USED", "open", "Set", 1),
+                 signals.shift_changes("BLOCK_USED", "closing", "Set", 1)]),
+               ("show", "Show my best", "#3c6a8a",
+                [{"Type": "RunRootInteraction", "Event": "BLOCK_USED",
+                  "RootInteraction": records.show(model, "spike", "the spike")}]),
+               ("forget", "Forget my best", "#806040",
+                [{"Type": "RunRootInteraction", "Event": "BLOCK_USED",
+                  "RootInteraction": records.forget(model, "spike")}])]
+    rules = v.Entries()
+    out = []
+    for n, (key, text, tint, effects) in enumerate(blocks_):
+        gid = f"{settings.NAMESPACE}_Spike_Endgame_{key.capitalize()}"
+        blocks.station_block(gid, text, look, f"Press to {text[0].lower() + text[1:]}",
+                             "Spike only: the endgame spike. See build/spike.py.", tint=tint)
+        rules.add(10 + n, [v.at([gid])], effects + [v.sound(1.2)])
+        out.append({"x": ENDGAME_ROW[0] + 2 * n, "y": GROUND, "z": ENDGAME_ROW[1], "name": gid})
+    rules.write(ENDGAME_EFFECT, "Spike only: the endgame spike's blocks. See build/spike.py.")
+    return out
+
+
 BEST_EFFECT = f"{settings.NAMESPACE}_Spike_Best"
 BEST_STAT = f"{settings.NAMESPACE}_Best_Probe"
 BEST_ROW = (4, 4)             # x, z of the first of the probe's four blocks, 2 apart in x
@@ -452,6 +495,9 @@ def build(model, name, debug=True):
     if spike.get("tip_dial"):
         extra += _tip_dial(model, debug)
         mounted.append(v.volume("spike_tip_dial", TIP_DIAL_EFFECT, {"spike": "tipdial"}))
+    if spike.get("endgame_blocks"):
+        extra += _endgame_blocks(model)
+        mounted.append(v.volume("spike_endgame", ENDGAME_EFFECT, {"spike": "endgame"}))
     if spike.get("best_probe"):
         extra += _best_run(model, debug)
         mounted.append(v.volume("spike_best", BEST_EFFECT, {"spike": "best"}))

@@ -51,8 +51,8 @@ PACE, OPENED, COUNTED = "pacing", "opened", "counted"   # the shift <-> its paci
 # MILESTONES: the days whose end gets its own title (day 15 the big one, PlateUp's), and
 # OVERTIME: once every card is taken, each card day squeezes a little harder instead, in
 # turn -- more guests, less patience, more mess -- each up to its cap.
-MILESTONES = (10, 15, 20, 25, 30, 40, 50)      # each is a day end (+3 rules): kept few
-BIG_DAY = 15
+# The milestone days are the rules' "milestones" (shared with systems/records.py, which
+# remembers the best): each is a day end (+3 rules), so kept few.
 # The caps (levels of each squeeze) are the rules' "overtime", shared with the mood and
 # hazard systems, which act on the patience and mess levels.
 AFTER_CLEAR = 0.5     # PlaceBlock only fills an empty cell, and a clear lands at tick end
@@ -121,6 +121,8 @@ def build(model, roles, debug=True, exit_on_lose=False):
     guests = list(roles.values())
     every = rules_["cards"]["every_days"]
     customers = rules_.get("customers", {}).get("cards", [])
+    ms = rules_.get("milestones", {})
+    MILESTONES, BIG_DAY = ms.get("days", []), ms.get("big")
     ot = rules_.get("overtime", {})
     OT_GUESTS, OT_PATIENCE, OT_MESS = ot.get("guests", 0), ot.get("patience", 0), ot.get("mess", 0)
     assert rules_["cards"]["choices"] in (1, 2), "cards.json: choices must be 1 or 2"

@@ -21,7 +21,7 @@ import guests
 import settings
 import signals
 import volumes as v
-from systems import moods, pads, queue, seating, shift
+from systems import moods, pads, queue, records, seating, shift
 
 QUEUE_X, SPOT_Z, POOL_Z = 2, (8, 10, 12, 14), 18   # spot 1 (the front) first
 CHAIRS_X, CHAIRS_Z = (12, 14, 16), 4
@@ -63,6 +63,8 @@ def build(model, ground, debug=True, run=False):
         tags = shift.build(model, {e["serves"]: guests.role_id(model, e) for e in model["menu"]},
                            debug)
         # Its companions: the per-day pacing volumes (shift.py).
+        # ...and a player's best in the spike (systems/records.py), beside it.
+        records.build(model, "spike", "the spike")
         pacing = [v.volume(f"shift_{n}", eff, t) for n, (eff, t) in enumerate(v.take_companions())]
         pads.build(model, debug)
         layout.append({"x": SIGN_X, "y": ground, "z": PADS_Z, "name": shift.ids(model)["sign"]})

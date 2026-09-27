@@ -43,7 +43,7 @@ import settings
 import signals
 import systems
 import volumes as v
-from systems import hazards, moods, pads, queue, seating, shift
+from systems import hazards, moods, pads, queue, records, seating, shift
 
 ZONE_MARGIN = 1          # a worked-out queue zone reaches this far round the spots and pool
 ROOM_SIZE, ROOM_MARGIN = 32, 4
@@ -79,7 +79,7 @@ def _carried(name, effect, tags, box, targets=("Player",), extra=None):
                       "Rotation": {"Pitch": 0.0, "Yaw": 0.0, "Roll": 0.0}}}}
 
 
-def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
+def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label=None):
     """(room prefab dict, problems, info): the layout dressed, carrying its systems."""
     meta, room = load_layout(layout_id)
     problems = []
@@ -105,6 +105,10 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False):
     shift_tags = shift.build(model, {e["serves"]: guests.role_id(model, e) for e in model["menu"]},
                              debug, exit_on_lose=exit_on_lose)
     shift_pacing = v.take_companions()        # its per-day pacing volumes
+    # Each player's best here, remembered on the player (systems/records.py): its recorder
+    # is a companion beside the shift.
+    records.build(model, layout_id, label or meta["name"])
+    shift_pacing += v.take_companions()
     pads.build(model, debug)
     v.take_companions()           # nothing left over from another build
     hazards_effect = hazards.build(model, debug)

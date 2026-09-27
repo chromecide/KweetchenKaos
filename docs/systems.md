@@ -201,18 +201,20 @@ spike.
 - **Fire:** a stove left with burnt food catches fire, the fire spreads to the
   stations beside it, and an extinguisher puts it out.
 
-## Remembering the best run (probed, not built)
+## Records (`records.py`): each player's best
 
-A run's world is thrown away, and HQ is rebuilt on a restart, so a best day has to live
-on the **player**. The `bestrun` spike proved, in game (2026-09-27):
+Each player's best day at each restaurant, remembered between runs, as a stat on the
+**player** (a run's world is thrown away; a player's stats survive a restart -- proved
+in the `bestrun` probe).
 
-- A custom player stat (`Server/Entity/Stats/`) survives a server restart.
-- A volume can write it: `RunRootInteraction` -> `ChangeStat` with `Behaviour: Max`,
-  so it keeps the higher of the best and today, in one step (recording 3 after 7 left 7).
-- It can be read back only by threshold (`StatsCondition`: "at least N?"), not printed:
-  HQ would show brackets, e.g. "Best here: day 15+".
-- **Death resets every stat** (`/kill` wiped it). Falling into the void is the only way
-  to die in Kweetchen Kaos.
+- **Recording:** a companion volume beside the shift gives every player in the room the
+  last milestone passed -- day 5, then the rules' milestone days -- with `ChangeStat`,
+  `Behaviour: Max`, so a best only ever goes up.
+- **Showing:** arriving at a restaurant, "Your best at KweebecKlub: day 15+"; arriving
+  at HQ, the same for every restaurant. Read back by threshold (`StatsCondition`), so a
+  best is shown as the bracket it's in.
+- **Death resets every stat**, so rooms and HQ keep players in with barriers: falling
+  into the void is the only way to die.
 
 ## Front of house
 
@@ -430,7 +432,7 @@ Pasted anywhere, the room works. Two things make that possible:
   | `dish:<dish>` | one recipe, start to paid | its chain's stations and crates, a bin if it cooks; plates; callers for its orders |
   | `moods` | guests' moods on their two tracks | the front of house, hazards (for messy guests' messes) |
   | `cards` | card days with customer cards: a recipe card beside a customer card, every day | a small kitchen, hazards, a mop stand, the shift |
-  | `endgame` | milestone titles and overtime | a small kitchen, the shift, starting on day 14 with every card taken, 2 guests a day |
+  | `endgame` | milestone titles, overtime and bests, without playing the days | the shift from day 9 with every card taken; End the day / Show my best / Forget my best blocks; a small kitchen |
   | `tips` | the tip level paid on every guest served, and card days | a small kitchen (board, 2 counters, stove, bin, rack), the shift, a tip dial |
   | `mats` | mats soaking up, overflowing, and rubber mats | a sink, the mop stand, a mess dispenser; 6 mats, 3 rubber mats, dirty plates |
   | `hazards` | every hazard and the mop | sink, board, stove, mop stand, the front (every guest messy), a mess dispenser; a dirty plate, a pumpkin, corn |

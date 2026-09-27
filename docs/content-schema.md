@@ -414,6 +414,9 @@ rules/
 
 - **Hazards:** `guest_mess_chance` is the chance (0-1) any guest leaves a mess
   round its chair as it gets up.
+- **Milestones** (`"milestones": {"days": [10, 15, ...], "big": 15, "best_from": 5}`): the
+  days whose end gets a title of its own (`big`: the big one), and the brackets a
+  player's best is kept in (`best_from` before the first).
 - **Overtime** (`"overtime": {"guests": 6, "patience": 4, "mess": 4, "mess_chance":
   0.05}`): once every card is taken, each card day squeezes instead, in turn -- one
   more guest a day, every guest a level more hurried (15% less patience a level),

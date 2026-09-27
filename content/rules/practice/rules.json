@@ -43,5 +43,19 @@
     "patience": 4,
     "mess": 4,
     "mess_chance": 0.05
+  },
+  "milestones": {
+    "$comment": "Days whose end gets its own title (big: the big one); a player's best at each restaurant is remembered as the last of these completed (and best_from, before the first).",
+    "days": [
+      10,
+      15,
+      20,
+      25,
+      30,
+      40,
+      50
+    ],
+    "big": 15,
+    "best_from": 5
   }
 }

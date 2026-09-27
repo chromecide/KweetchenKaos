@@ -34,6 +34,7 @@ import content
 import layouts
 import pack
 import restaurant
+from systems import records
 import settings
 import volumes as v
 
@@ -106,7 +107,8 @@ def _border(world, r=None):
     return name, meta["ring"]
 
 
-def _paste_on_arrival(name, prefab, text, border=(None, 0), welcome=None, spawn=None):
+def _paste_on_arrival(name, prefab, text, border=(None, 0), welcome=None, spawn=None,
+                      on_arrive=None):
     """A volume that pastes `prefab` at AT the first time a player is in the world -- and
     its BORDER round it, after (the border's hole is the room's plot). `spawn`: where every
     arriving player is put back, a moment after arriving. `text`: a chat line
@@ -121,6 +123,10 @@ def _paste_on_arrival(name, prefab, text, border=(None, 0), welcome=None, spawn=
         rules.add(3, [], [{"Type": "Teleport", "Event": "ENTER", "Delay": d, "ResetVelocity": True,
                            "Position": {"X": float(spawn[0]), "Y": float(spawn[1]),
                                         "Z": float(spawn[2])}} for d in ARRIVAL_CATCH])
+    if on_arrive:
+        # A root interaction run on each arriving player: their bests (systems/records.py).
+        rules.add(4, [], [{"Type": "RunRootInteraction", "Event": "ENTER", "RootInteraction": on_arrive,
+                           "Delay": 2.0}])
     if welcome:
         rules.add(2, [], [v.title(f"kk.world.{name.lower()}.title", welcome[0],
                                   f"kk.world.{name.lower()}.title.sub", welcome[1],
@@ -203,7 +209,7 @@ def build(debug=True, fill_portals=False):
     for r in world["restaurants"]:
         model = content.load(r["theme"], r["rules"])
         room, problems, info = restaurant.build(model, r["layout"], debug=debug,
-                                                exit_on_lose=True)
+                                                exit_on_lose=True, label=r["name"])
         notes += [f"{r['name']}: {p}" for p in problems]
         inst = _instance_name(r)
         prefab = f"{inst}_Room"
@@ -222,7 +228,9 @@ def build(debug=True, fill_portals=False):
         _instance(inst, spawn, [_paste_on_arrival(inst, prefab, None, _border(world, r),
                                                   welcome=(f"Welcome to {r['name']}",
                                                            f"{rules_name} rules"),
-                                                  spawn=spawn)],
+                                                  spawn=spawn,
+                                                  on_arrive=records.show(model, r["layout"],
+                                                                         r["name"]))],
                   f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True,
                   ground=r.get("ground", world.get("ground", "flat")),
                   weather=r.get("weather", world.get("weather")))
@@ -287,10 +295,14 @@ def build(debug=True, fill_portals=False):
                dict(room, blocks=out, entities=[], fluids=[],
                     **{"$Comment": f"HQ: {meta['name']}. See build/world.py."}))
     spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + STAND, AT[2] + arrival[2] + 0.5)
+    best = records.show_all(content.load(world["restaurants"][0]["theme"],
+                                         world["restaurants"][0]["rules"]),
+                            [(r["layout"], r["name"]) for r in world["restaurants"]]) \
+        if world["restaurants"] else None
     _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", None, _border(world),
                                             welcome=("Welcome to Kweetchen Kaos",
                                                      "Step on a portal to play"),
-                                            spawn=spawn)],
+                                            spawn=spawn, on_arrive=best)],
               "HQ: where runs start. One shared world. See build/world.py.", clock_on=False,
               ground=world.get("ground", "flat"), weather=world.get("weather"),
               # NEVER REMOVED: a run's players come back to it. With an "empty" timeout it was
