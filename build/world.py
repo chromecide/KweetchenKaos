@@ -230,6 +230,9 @@ def build(debug=True, fill_portals=False):
     rooms, notes = pools(world)
     portal_of = {}
     for kind in layouts.PORTALS:
+        if world["portals"][kind].get("enabled", True) is False:
+            notes.append(f"the {kind} portal is switched off (world.json)")
+            continue
         if not rooms[kind]:
             notes.append(f"the {kind} portal has no rooms yet"
                          + ("" if kind == "practice" else f" (a room with a size_{kind} slot)"))

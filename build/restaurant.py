@@ -197,8 +197,8 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
             arrival = (b["x"], b["y"], b["z"])
             out_blocks.append(at(layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
         elif name.startswith("size_"):
-            # Which HQ portal picks this room (world.py reads it): floor in game.
-            out_blocks.append(at(layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
+            # Which HQ portal picks this room (world.py reads it): nothing in game (air).
+            pass
 
     for role, sid in by_role.items():
         if sid not in used and not (practice and role == "call"):

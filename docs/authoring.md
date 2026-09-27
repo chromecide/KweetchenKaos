@@ -88,7 +88,7 @@ Build the floor as part of the room: a new plot is just grass.
 | **open sign** | the sign that starts each day | one |
 | **arrival** | where players appear | set it in the floor; it becomes the floor around it. Optional: without it, players arrive in front of the room |
 | **barrier** | an invisible wall (the game's `Barrier`) | anywhere, in any layout, HQ and the border: a clearly visible block while you build |
-| **room size - starter / small / medium / large** | which HQ portal picks this room; floor in game | one in every restaurant room (not the practice room) |
+| **room size - starter / small / medium / large** | which HQ portal picks this room; gone (air) in game | one in every restaurant room (not the practice room) |
 | **HQ portal - practice / starter / small / medium / large** | (HQ only) the portal itself: it looks like the portal pad | place it on the floor, exactly where the portal goes |
 
 Look at any slot to see which it is. Station slots look like the kitchen theme's
@@ -211,7 +211,9 @@ picks it).
 | `border` | the layout pasted around every room; `"none"` for none |
 | `portals` | the five portals: `name` (shown in game), `theme` and `rules` (`standard`, or `practice` for short, easy days) |
 
-A portal can override `ground`, `weather` and `border` for itself. Each player's
+A portal can override `ground`, `weather` and `border` for itself, and
+`"enabled": false` switches it off (no portal in HQ). The practice portal is off
+for now. Each player's
 best is kept per portal ("Your best at Medium: day 15+").
 
 A room built before size slots can be given one in its `layout.json` instead:

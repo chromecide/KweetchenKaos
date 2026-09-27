@@ -89,6 +89,24 @@ recipe cards, upgrades, the booking desk, messes and the mop, losing). One theme
 rejected, and each system was tested in game on its own before being put
 together.
 
+### To do
+
+- **Enter with empty hands.** Nothing stops a player from carrying items into a
+  restaurant or the practice room today. They could bring tools to break and rearrange a
+  layout, bring food from one run into the next, or carry a practice station out
+  into a run. The practice room is switched off until this is solved (its portal has
+  `"enabled": false` in `world.json`); a recipe picker for it waits on the
+  `practice-picker` branch.
+  The plan: HQ is the gate. Every portal out of HQ refuses a player who is carrying
+  anything (the game's trigger volumes can check for an empty inventory), and HQ
+  gets chests for dumping gear. Franchise items would be **packed** at the shelves
+  instead of taken as items, and handed over on arrival in a run. There would be reminders of
+  what's packed when you arrive at HQ and when you step on a portal, and a
+  "hands must be empty" message when a portal refuses you. It also needs a
+  home portal in HQ, back to the server's default world, and an exit from the practice room.
+  Unproven: the empty-inventory check, a volume sending a player through a portal (a
+  pad can't check inventory itself), and handing over items on arrival.
+
 This started as the second version of the Kitchen POC (`../tools`, `../pack`),
 which is untouched and still loads beside it: every game id here starts with
 `K2_`, so nothing collides.
