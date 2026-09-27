@@ -417,6 +417,9 @@ rules/
 - **Milestones** (`"milestones": {"days": [10, 15, ...], "big": 15, "best_from": 5}`): the
   days whose end gets a title of its own (`big`: the big one), and the brackets a
   player's best is kept in (`best_from` before the first).
+- **Franchise** (`"franchise": {"start_coins": 20}`): what a start coins token adds to the
+  purse. What can be banked is worked out: everything in `offers.json`, start coins, and
+  a recipe token per dish.
 - **Overtime** (`"overtime": {"guests": 6, "patience": 4, "mess": 4, "mess_chance":
   0.05}`): once every card is taken, each card day squeezes instead, in turn -- one
   more guest a day, every guest a level more hurried (15% less patience a level),

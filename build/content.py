@@ -221,6 +221,14 @@ def load_theme(theme_id):
                         problems.append(f"{f}: serves {' and '.join(sorted(served & set(made)))} "
                                         f"but not '{food}' - add it to serve (a stage that "
                                         f"comes off the stove must be plateable)")
+    # RECIPE TOKENS: a franchise reward per dish (systems/franchise.py) -- pressed on the
+    # open sign, the dish goes on the menu. The recipe card's look.
+    for did, dish in dishes.items():
+        define({"id": f"recipe_{did}", "label": f"Recipe: {dish['label']}",
+                "look": fixtures["looks"]["card"], "quality": "Epic", "bin": "refuse"},
+               dish["file"])
+        items[f"recipe_{did}"]["description"] = (f"A franchise reward: press the open sign with "
+                                                 f"it, and {dish['label'].lower()} is on the menu.")
     for f, d, e in serving:
         food = e["item"]
         if food not in items:

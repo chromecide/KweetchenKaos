@@ -83,6 +83,7 @@ Build the floor as part of the room: a new plot is just grass.
 | **sink (wash)** | the sink | at least one |
 | **bin** | the bin | at least one |
 | **booking desk** | the booking desk (call the next guest in now, for coins) | one: every room has one |
+| **franchise shelf** (HQ, one per item) | a shelf in the franchise storeroom: players take their banked items here, and put them back | as many as you like; only the shelves you place appear |
 | **mop stand** | the mop stand, with the mop on it (to clean messes and spills) | one: every room has one; without it, messes can't be cleaned |
 | **plate rack** | the plate rack, starting with plates | at least one; the only source of plates |
 | **chair** | a chair, and **its own table in front of it** | place it facing where you want the table; the cell in front must be free |

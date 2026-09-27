@@ -48,6 +48,8 @@ DELIVER, CARD = "deliver", "card"
 SHORT, BOUGHT, CHOSE = "short", "bought", "chose"
 # A CUSTOMER card on a pad (value: its id), and the one CHOSEN (to the shift).
 CUSTOMER, CHOSE_CUSTOMER = "customer", "chosecustomer"
+# A recipe token spent on the open sign (franchise.py): the shift puts the dish on the menu.
+FRANCHISE_DISH = "franchisedish"
 # A booking desk asks the shift for the next guest now (booking.py).
 CALL = "call"
 # TIPS: the shift's tip level (extra coins per guest served) goes UP or DOWN -- a customer

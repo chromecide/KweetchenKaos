@@ -7,6 +7,11 @@
 - **Your best is remembered:** each restaurant remembers the furthest milestone you've
   passed there (day 5, 10, 15 ...), and tells you as you arrive -- and HQ lists them all.
   (It's kept on your player; dying resets it, so don't fall off.)
+- **Franchise** (PlateUp's): at the end of day 15, pick a franchise item -- any station,
+  chair or mat, start coins, or a recipe -- and it's banked on you for later runs. Take
+  your banked items from the shelves in HQ's storeroom (put back what you don't want),
+  and bring them in: put a station down, or press the open sign with start coins or a
+  recipe. In co-op, everyone banks their own.
 - **Overtime:** once every dish and customer card is taken, card days bring a squeeze
   instead, in turn: busier (a guest more a day), hurried (guests less patient), messier
   (more guest mess). Each has a limit.

@@ -43,7 +43,7 @@ import settings
 import signals
 import systems
 import volumes as v
-from systems import hazards, moods, pads, queue, records, seating, shift
+from systems import franchise, hazards, moods, pads, queue, records, seating, shift
 
 ZONE_MARGIN = 1          # a worked-out queue zone reaches this far round the spots and pool
 ROOM_SIZE, ROOM_MARGIN = 32, 4
@@ -109,6 +109,8 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
     # is a companion beside the shift.
     records.build(model, layout_id, label or meta["name"])
     shift_pacing += v.take_companions()
+    # The franchise (systems/franchise.py) before the pads: they read its cards.
+    franchise.build(model)
     pads.build(model, debug)
     v.take_companions()           # nothing left over from another build
     hazards_effect = hazards.build(model, debug)

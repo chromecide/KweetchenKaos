@@ -178,13 +178,35 @@ def build(model, roles, debug=True, exit_on_lose=False):
     # and the press doesn't open the day (or say what opening needs): those rules check
     # the token isn't in hand. Rule 28 comes AFTER them, since spending it takes it away.
     coins_token = model["items"].get("start_coins", {}).get("game_id")
-    no_token = [v.not_holding(coins_token)] if coins_token else []
+    recipe_tokens = {d: model["items"][f"recipe_{d}"]["game_id"] for d in dishes
+                     if f"recipe_{d}" in model["items"]}
+    # Every franchise token: no opening (or saying what it needs) while one is in hand.
+    no_token = [v.not_holding(t) for t in [coins_token] + list(recipe_tokens.values()) if t]
+    # SPENDING TOKENS, in a companion volume of its own (volumes.companion): start coins
+    # (+coins on the purse) and recipe tokens (the dish on the menu -- FRANCHISE_DISH, answered
+    # with the card's rules below -- or, already on it, simply spent). It reads and sets this
+    # volume's tags from outside.
+    tok = v.Entries()
     if coins_token:
         amount = rules_.get("franchise", {}).get("start_coins", 20)
-        rules.add(28, [v.at([s["sign"]]), v.holding(coins_token)],
-                  [_set("BLOCK_USED", signals.MONEY, amount, op="Increment"), v.sound(1.5)]
-                  + say("BLOCK_USED", "startcoins", f"[shift] +{amount} coins from your "
-                                                    f"franchise - purse: {{money}}"))
+        tok.add(1, [v.at([s["sign"]]), v.holding(coins_token)],
+                [signals.shift_changes("BLOCK_USED", signals.MONEY, "Increment", amount),
+                 v.sound(1.5), v.say("kk.shift.startcoins", f"+{amount} coins from your franchise.")])
+    for k, (d, t) in enumerate(recipe_tokens.items()):
+        label = dishes[d]["label"]
+        tok.add(10 + 2 * k, [v.at([s["sign"]]),
+                             signals.shift_reads("BLOCK_USED", f"has_{d}", "Exactly", 0), v.holding(t)],
+                [signals.from_volume("BLOCK_USED", signals.FRANCHISE_DISH, d), v.sound(1.5),
+                 v.say(f"kk.shift.token.{d}", f"From your franchise: {label} is on the menu.")])
+        tok.add(11 + 2 * k, [v.at([s["sign"]]),
+                             signals.shift_reads("BLOCK_USED", f"has_{d}", "Exactly", 1), v.holding(t)],
+                [v.say(f"kk.shift.token.had.{d}", f"{label} was already on the menu - the recipe "
+                                                  f"is spent.")])
+    if coins_token or recipe_tokens:
+        tname = f"{s['effect']}_Tokens"
+        tok.write(tname, "The shift: franchise tokens spent on the open sign. "
+                         "See build/systems/shift.py.")
+        v.companion(tname, {"tokens": "1"})
     # 9: a card is waiting to be chosen -- no opening until it is.
     rules.add(9, [v.at([s["sign"]]), _t("BLOCK_USED", "cardwait", 1)] + no_token,
               say("BLOCK_USED", "cardwait", "[shift] Choose a card on the pads first."))
@@ -201,7 +223,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
                {"Type": "EnableVolume", "Event": "BLOCK_USED", "MatchKey": "servicelock",
                 "MatchValue": "1", "Radius": 128.0, "Center": "Volume"},
                signals.to_pads("BLOCK_USED", signals.CLEAR),
-               _set("BLOCK_USED", "served", 0),
+               _set("BLOCK_USED", "served", 0), _set("BLOCK_USED", "fday", 0),
                # THE DAY'S GUESTS: the pacing volume for today sets how many, then says so
                # (PACE "counted", below) -- a signal, since rule order between volumes isn't
                # guaranteed. Sent after this rule's tags (open) are set.
@@ -345,8 +367,11 @@ def build(model, roles, debug=True, exit_on_lose=False):
     for k, m in enumerate(MILESTONES):
         title, sub, secs = ((f"You made it to day {m}!", "A real restaurant now - " + served_line,
                              8.0) if m == BIG_DAY else (f"Day {m} done!", served_line, 5.0))
+        # The big day also brings FRANCHISE CARDS (franchise.py): `fday`, read by the pads
+        # when they next put out offers, until the next day opens.
         rules.add(30 + k, day_ends + [_t("TICK", signals.DAY, m)],
-                  day_end + announce("TICK", f"milestone_{m}", title, sub, secs)
+                  day_end + ([_set("TICK", "fday", 1)] if m == BIG_DAY else [])
+                  + announce("TICK", f"milestone_{m}", title, sub, secs)
                   + logged("TICK", f"milestone.{m}", f"[shift] Day {m} done - a milestone."))
     rules.add(50, day_ends,
               day_end + announce("TICK", "dayover", "Day over", served_line)
@@ -446,36 +471,43 @@ def build(model, roles, debug=True, exit_on_lose=False):
 
     # 700+: a card was chosen: the dish is on the menu, the other card goes, and any crate
     # it needs that the restaurant doesn't own is delivered.
+    # A RECIPE TOKEN's dish (FRANCHISE_DISH) goes on the menu by the same rules -- `added`,
+    # below -- but doesn't release a card day or clear the pads: only a chosen card does.
     for d, dish in dishes.items():
+        added = [(signals.CHOSE, "card")] + (
+            [(signals.FRANCHISE_DISH, "token")] if d in recipe_tokens else [])
         # THE GUESTS IT BRINGS (extra_guests below): the run's first dish or a later one.
         # FIRST, before the menu count below goes up.
         first, later = extra_guests(dish)
-        for gate, add in ((0, first), (1, later)):
-            if add:
-                rules.add(next(num), [signals.heard(signals.CHOSE, d),
-                                      _t("SIGNAL_RECEIVED", "onmenu", gate,
-                                         "Exactly" if gate == 0 else "AtLeast")],
-                          [_set("SIGNAL_RECEIVED", "extra", add, op="Increment")])
+        for key, how in added:
+            for gate, add in ((0, first), (1, later)):
+                if add:
+                    rules.add(next(num), [signals.heard(key, d),
+                                          _t("SIGNAL_RECEIVED", "onmenu", gate,
+                                             "Exactly" if gate == 0 else "AtLeast")],
+                              [_set("SIGNAL_RECEIVED", "extra", add, op="Increment")])
         # On a card day, choosing lets the day go on: the blueprints, once the pads are clear
         # and any crates delivered (they skip a pad holding one). Not for the starter.
         rules.add(next(num), [signals.heard(signals.CHOSE, d), _t("SIGNAL_RECEIVED", "cardwait", 1)],
                   [_set("SIGNAL_RECEIVED", "cardwait", 0),
                    signals.to_pads("SIGNAL_RECEIVED", signals.PLACE, delay=3 * AFTER_CLEAR)]
                   + say("SIGNAL_RECEIVED", "offers.after", "[shift] Today's offers are on the pads."))
-        rules.add(next(num), [signals.heard(signals.CHOSE, d)],
-                  [_set("SIGNAL_RECEIVED", f"has_{d}", 1),
-                   _set("SIGNAL_RECEIVED", "locked", -1, op="Increment"),
-                   _set("SIGNAL_RECEIVED", "onmenu", 1, op="Increment"),
-                   signals.to_pads("SIGNAL_RECEIVED", signals.CLEAR)]
-                  + say("SIGNAL_RECEIVED", f"chose.{d}",
-                        f"[shift] {dish['label']} is on the menu from the next day."))
-        for j, c in enumerate(dish["needs"]):
-            rules.add(next(num), [signals.heard(signals.CHOSE, d),
-                                  _t("SIGNAL_RECEIVED", f"own_{c}", 0)],
-                      deliver("SIGNAL_RECEIVED", c, pads[j % len(pads)], delay=AFTER_CLEAR)
-                      + say("SIGNAL_RECEIVED", f"deliver.{d}.{c}",
-                            f"[shift] {'An' if stations[c]['label'][0].lower() in 'aeiou' else 'A'} "
-                            f"{stations[c]['label'].lower()} is delivered."))
+        for key, how in added:
+            rules.add(next(num), [signals.heard(key, d)],
+                      [_set("SIGNAL_RECEIVED", f"has_{d}", 1),
+                       _set("SIGNAL_RECEIVED", "locked", -1, op="Increment"),
+                       _set("SIGNAL_RECEIVED", "onmenu", 1, op="Increment")]
+                      + ([signals.to_pads("SIGNAL_RECEIVED", signals.CLEAR)] if how == "card" else [])
+                      + (say("SIGNAL_RECEIVED", f"chose.{d}",
+                             f"[shift] {dish['label']} is on the menu from the next day.")
+                         if how == "card" else []))
+            for j, c in enumerate(dish["needs"]):
+                rules.add(next(num), [signals.heard(key, d),
+                                      _t("SIGNAL_RECEIVED", f"own_{c}", 0)],
+                          deliver("SIGNAL_RECEIVED", c, pads[j % len(pads)], delay=AFTER_CLEAR)
+                          + say("SIGNAL_RECEIVED", f"deliver.{how}.{d}.{c}",
+                                f"[shift] {'An' if stations[c]['label'][0].lower() in 'aeiou' else 'A'} "
+                                f"{stations[c]['label'].lower()} is delivered."))
 
     # A CUSTOMER CARD was chosen: it's in play for the rest of the run (its tag, which the
     # queue's mood rolls read), its guests and tip are added, the other card goes -- and on a
@@ -633,7 +665,7 @@ def build(model, roles, debug=True, exit_on_lose=False):
             "closing": "0", "time_left": "0", "beat": "0", "picked": "0", "choice": "0",
             "lost": "0", "started": "0", "dayover": "0", "cardpick": "0", "cardwait": "0",
             "tip": "0", "ccards_left": "0" if done else str(len(customers)), "cpad1": "0",
-            "ot_next": "0", "ot_guests": "0", "ot_patience": "0", "ot_mess": "0",
+            "ot_next": "0", "ot_guests": "0", "ot_patience": "0", "ot_mess": "0", "fday": "0",
             "cards_in": str(every), "locked": "0" if done else str(locked), "onmenu": "0",
             "to_arrive": "0", "expected": "0", "served": "0", "extra": "0",
             **{f"t_{k}": "0" for k in announcements}}

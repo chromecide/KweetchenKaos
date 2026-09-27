@@ -216,26 +216,27 @@ in the `bestrun` probe).
 - **Death resets every stat**, so rooms and HQ keep players in with barriers: falling
   into the void is the only way to die.
 
-## Franchising (probed, not built)
+## Franchise (`franchise.py`)
 
-The idea (2026-09-27): a player past day 15 saves **franchise rewards** on themselves
-(stats); in HQ a **franchise desk** hands them over as **items** -- a dishwasher, a
-safety stove -- which they carry into the restaurant and put down. In co-op each
-player brings their own kit. The `franchise` spike proved it:
+Items a player banks by reaching day 15, and brings into later runs.
 
-- A block's own F can run an interaction chain that reads the saved rewards, gives each
-  as an item (`ModifyInventory` -- `AddItem` checks its item before the pack's items
-  have loaded, and is thrown out) and sets it back to 0: a one-time claim.
-- Items in the inventory survive a world change, so a kit goes through a portal.
-
-**The storeroom** (the `storeroom` spike, proved 2026-09-27): each franchise item is
-**banked as a count** on the player (a stat per item), earned one at a time. A **shelf**
-per item: press it to take one (the count goes down), or press it holding one to put it
-back (up); it says the count after each. Start coins are a **token**: pressed on the open
-sign, +20 coins (the rules' `franchise.start_coins`), without opening the day. What was
-learned: nothing after `ModifyInventory` in an interaction chain runs, so the item comes
-last and the message is its own interaction; and a take can land the item straight in an
-empty hand, so the shelf marks the press as a take and skips the return rule for it.
+- **Earning:** when a run's day 15 ends, pads 1-3 each show a **franchise card** (a
+  purple blueprint) instead of an offer; pad 4 still sells. Each player presses one to
+  bank that item -- **one pick per run**, reset as they arrive at a restaurant.
+- **What can be banked:** everything the pads sell (stations, plain or upgraded, chairs,
+  mats), **start coins**, and a **recipe token** per dish. A count per item, on the player
+  (a stat each: it outlives the run and a restart; death resets it).
+- **The storeroom** (HQ): a **shelf** per item, placed by the author (`/kk slots hq`: a
+  "franchise shelf" slot per item). Press to take one (the count goes down), or press
+  holding one to put it back (up); it says the count after each, up to "9+".
+- **Tokens,** pressed on the closed open sign: start coins add the rules'
+  `franchise.start_coins` to the purse; a recipe token puts its dish on the menu (its
+  crates delivered, its guests added -- the recipe card's own rules) or, already there,
+  is spent anyway. Spent in a companion volume beside the shift.
+- What the probes taught: items are given with `ModifyInventory` (`AddItem` is checked
+  before the pack's items load) and nothing after it in a chain runs, so it comes last
+  and the count's message is its own interaction; a take can put the item straight into
+  an empty hand, so a shelf marks the press as a take and skips its return rule.
 
 ## Front of house
 
@@ -453,6 +454,7 @@ Pasted anywhere, the room works. Two things make that possible:
   | `dish:<dish>` | one recipe, start to paid | its chain's stations and crates, a bin if it cooks; plates; callers for its orders |
   | `moods` | guests' moods on their two tracks | the front of house, hazards (for messy guests' messes) |
   | `cards` | card days with customer cards: a recipe card beside a customer card, every day | a small kitchen, hazards, a mop stand, the shift |
+  | `franchise` | earning, the shelves, and spending tokens | a run from day 14, End the day / Reset my franchise pick, franchise cards on the pads, a shelf per item, a small kitchen |
   | `endgame` | milestone titles, overtime and bests, without playing the days | the shift from day 9 with every card taken; End the day / Show my best / Forget my best blocks; a small kitchen |
   | `tips` | the tip level paid on every guest served, and card days | a small kitchen (board, 2 counters, stove, bin, rack), the shift, a tip dial |
   | `mats` | mats soaking up, overflowing, and rubber mats | a sink, the mop stand, a mess dispenser; 6 mats, 3 rubber mats, dirty plates |

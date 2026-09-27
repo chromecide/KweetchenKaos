@@ -128,6 +128,10 @@ SLOTS = (
     # HQ only: a walk-in portal per restaurant (world.json says which).
     + [(f"portal_{n}", f"Slot: HQ portal {n} (restaurant {n} in world.json)", PORTAL_TINT)
        for n in range(1, PORTALS + 1)])
+# HQ only: a FRANCHISE SHELF per item a player can bank (systems/franchise.py) -- worked out
+# from the theme and rules when the slots are written (write_slots), so kept apart from SLOTS.
+SHELF_TINT = "#c08a3a"
+SHELF_SLOTS = []
 CHAIR_LOOK = {"model": "Blocks/Decorative_Sets/Tavern/Chair.blockymodel",
               "texture": "Blocks/Decorative_Sets/Tavern/Chair_Texture.png",
               "icon": "Icons/ItemsGenerated/Furniture_Tavern_Chair.png"}
@@ -209,7 +213,11 @@ def write_slots(model=None):
                          "Plot edge (outside what is saved)",
                          "Marks a plot's edge. See build/layouts.py.", tint=EDGE_TINT,
                          use=False)
-    for name, label, tint in SLOTS:
+    if model and model.get("rules"):
+        from systems import franchise
+        SHELF_SLOTS[:] = [(f"shelf_{key}", f"Slot: franchise shelf - {label}", SHELF_TINT)
+                          for key, label, _, _ in franchise.items(model)]
+    for name, label, tint in SLOTS + SHELF_SLOTS:
         if name == "chair":
             # A chair has a FACING (its table goes in front), so its slot is a chair.
             block = {"CustomModel": CHAIR_LOOK["model"],
@@ -238,7 +246,7 @@ def slot_kit(name):
     restaurant layout uses -- the arrival too)."""
     if name in ("arrival", "barrier"):
         return {"hq", "plot"}
-    return {"hq"} if name.startswith("portal_") else {"plot"}
+    return {"hq"} if name.startswith(("portal_", "shelf_")) else {"plot"}
 
 
 def _give(slots, kit=None):
@@ -289,9 +297,10 @@ def write_authoring(release=False):
               ("KKGrid", "kk grid", f"Mark the {PLOTS} authoring plots' edges (safe to rerun)",
                grid(PLOTS)),
               ("KKSave", "kk save", f"Save the {PLOTS} authoring plots as prefabs", save(PLOTS)),
-              ("KKSlots", "kk slots", "Hand over every slot block", _give(SLOTS)),
-              ("KKSlotsHq", "kk slots hq", "Hand over HQ's slot blocks (arrival, portals)",
-               _give(SLOTS, "hq")),
+              ("KKSlots", "kk slots", "Hand over every slot block", _give(SLOTS + SHELF_SLOTS)),
+              ("KKSlotsHq", "kk slots hq", "Hand over HQ's slot blocks (arrival, portals, "
+                                           "franchise shelves)",
+               _give(SLOTS + SHELF_SLOTS, "hq")),
               ("KKSlotsPlot", "kk slots plot", "Hand over a restaurant plot's slot blocks",
                _give(SLOTS, "plot"))]
     # "/kk barriers": every real Barrier in the plots becomes a barrier SLOT (which you can

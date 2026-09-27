@@ -71,7 +71,9 @@ def _rules(model, n, debug):
     offers = [p["offer"](c["key"]) for c in cat]
     deliveries = [p["delivery"](c) for c in crates(model)]
     customers = model["rules"].get("customers", {}).get("cards", [])
-    cards = [p["card"](d) for d in model["dishes"]] + [p["customer"](c["id"]) for c in customers]
+    franchise = model.get("franchise", {}).get("cards", [])
+    cards = ([p["card"](d) for d in model["dishes"]] + [p["customer"](c["id"]) for c in customers]
+             + [block for _, block, _ in franchise])
     rules = v.Entries()
     tag = lambda event, key, value, cmp="Exactly": {
         "Type": "TagCondition", "Event": event, "Source": "Self", "TagKey": key,
@@ -85,6 +87,19 @@ def _rules(model, n, debug):
                                             event=event, to_log=False)
     num = iter(range(100, 100000))
 
+    # FRANCHISE CARDS (systems/franchise.py, via model["franchise"]): after a run's day 15
+    # (the shift's `fday`), pads 1-3 each show one instead of an offer -- a fair pick over
+    # every item -- and it stays for every player to press: each banks one, once a run.
+    if franchise and n <= 3:
+        left = len(franchise)
+        for k, (key, block, _) in enumerate(franchise):
+            rules.add(50 + k, [signals.heard(signals.OFFERS, signals.PLACE),
+                               signals.shift_reads("SIGNAL_RECEIVED", "fday", "AtLeast", 1),
+                               tag("SIGNAL_RECEIVED", "picked", 0), tag("SIGNAL_RECEIVED", "busy", 0),
+                               {"Type": "RandomChanceCondition", "Event": "SIGNAL_RECEIVED",
+                                "Chance": round(1.0 / (left - k), 4)}],
+                      [set_("SIGNAL_RECEIVED", "picked", 1), put(block)]
+                      + rep(f"franchise.{key}", f"franchise card: {key}", "SIGNAL_RECEIVED"))
     # PLACE: a weighted chain per stage of the run. Not on a pad holding a delivery.
     for stage in stages:
         weighted = [(c, c["weights"][stage["id"]]) for c in cat if c["weights"][stage["id"]] > 0]
@@ -153,6 +168,11 @@ def _rules(model, n, debug):
                   [set_("BLOCK_USED", "sold", 1),
                    signals.from_volume("BLOCK_USED", signals.CHOSE, dish), v.sound(1.4)])
 
+    # PRESS a franchise card: it's banked for whoever pressed (their own stat; once a run).
+    for key, block, earn in franchise:
+        rules.add(next(num), [v.at([block])],
+                  [{"Type": "RunRootInteraction", "Event": "BLOCK_USED", "RootInteraction": earn},
+                   v.sound(1.4)])
     # CHOOSE a customer card: the shift applies it.
     for c in customers:
         cc = p["customer"](c["id"])

@@ -34,7 +34,7 @@ import content
 import layouts
 import pack
 import restaurant
-from systems import records
+from systems import franchise, records
 import settings
 import volumes as v
 
@@ -124,9 +124,11 @@ def _paste_on_arrival(name, prefab, text, border=(None, 0), welcome=None, spawn=
                            "Position": {"X": float(spawn[0]), "Y": float(spawn[1]),
                                         "Z": float(spawn[2])}} for d in ARRIVAL_CATCH])
     if on_arrive:
-        # A root interaction run on each arriving player: their bests (systems/records.py).
-        rules.add(4, [], [{"Type": "RunRootInteraction", "Event": "ENTER", "RootInteraction": on_arrive,
-                           "Delay": 2.0}])
+        # Root interactions run on each arriving player: their bests (systems/records.py),
+        # their franchise pick reset (systems/franchise.py).
+        rules.add(4, [], [{"Type": "RunRootInteraction", "Event": "ENTER", "RootInteraction": r,
+                           "Delay": 2.0} for r in ([on_arrive] if isinstance(on_arrive, str)
+                                                   else on_arrive)])
     if welcome:
         rules.add(2, [], [v.title(f"kk.world.{name.lower()}.title", welcome[0],
                                   f"kk.world.{name.lower()}.title.sub", welcome[1],
@@ -229,8 +231,9 @@ def build(debug=True, fill_portals=False):
                                                   welcome=(f"Welcome to {r['name']}",
                                                            f"{rules_name} rules"),
                                                   spawn=spawn,
-                                                  on_arrive=records.show(model, r["layout"],
-                                                                         r["name"]))],
+                                                  on_arrive=[records.show(model, r["layout"],
+                                                                          r["name"]),
+                                                             model["franchise"]["reset"]])],
                   f"The restaurant '{r['name']}'. See build/world.py.", clock_on=True,
                   ground=r.get("ground", world.get("ground", "flat")),
                   weather=r.get("weather", world.get("weather")))
@@ -241,8 +244,22 @@ def build(debug=True, fill_portals=False):
     meta = json.load(open(os.path.join(settings.CONTENT, "layouts", world["hq"], "layout.json")))
     room = json.load(open(os.path.join(settings.CONTENT, "layouts", world["hq"], "room.prefab.json")))
     out, arrival, portal_at = [], None, {}
+    # THE FRANCHISE STOREROOM (systems/franchise.py): each shelf slot the HQ layout holds
+    # becomes that item's shelf, with the item on it, and gets a volume of its own.
+    hq_model = (content.load(world["restaurants"][0]["theme"], world["restaurants"][0]["rules"])
+                if world["restaurants"] else None)
+    shelves, shelf_keys = {}, set()
+    if hq_model:
+        fr_roots = franchise.build(hq_model)
+        shelves = {layouts.slot_id(f"shelf_{k}"): (k, blk)
+                   for k, blk in franchise.shelf_blocks(hq_model).items()}
     for b in room["blocks"]:
         name = b["name"]
+        if name in shelves:
+            key, (shelf, top) = shelves[name]
+            out += [dict(b, name=shelf), {"x": b["x"], "y": b["y"] + 1, "z": b["z"], "name": top}]
+            shelf_keys.add(key)
+            continue
         if name == layouts.slot_id("arrival"):
             arrival = (b["x"], b["y"], b["z"])
             out.append(dict(b, name=layouts.floor_at(room["blocks"], b["x"], b["y"], b["z"])))
@@ -295,14 +312,16 @@ def build(debug=True, fill_portals=False):
                dict(room, blocks=out, entities=[], fluids=[],
                     **{"$Comment": f"HQ: {meta['name']}. See build/world.py."}))
     spawn = (AT[0] + arrival[0] + 0.5, AT[1] + arrival[1] + STAND, AT[2] + arrival[2] + 0.5)
-    best = records.show_all(content.load(world["restaurants"][0]["theme"],
-                                         world["restaurants"][0]["rules"]),
-                            [(r["layout"], r["name"]) for r in world["restaurants"]]) \
+    best = records.show_all(hq_model, [(r["layout"], r["name"]) for r in world["restaurants"]]) \
         if world["restaurants"] else None
+    # The shelves' volumes, over HQ's room: one each (a shelf's rules are its own).
+    hq_box = ((AT[0] - 8, AT[1] - 16, AT[2] - 8), (AT[0] + 48, AT[1] + 48, AT[2] + 48))
+    shelf_volumes = [v.volume(f"shelf_{k}", franchise.shelf_volume(hq_model, k, fr_roots),
+                              {"took": "0"}, box=hq_box) for k in sorted(shelf_keys)]
     _instance(HQ, spawn, [_paste_on_arrival(HQ, f"{HQ}_Room", None, _border(world),
                                             welcome=("Welcome to Kweetchen Kaos",
                                                      "Step on a portal to play"),
-                                            spawn=spawn, on_arrive=best)],
+                                            spawn=spawn, on_arrive=best)] + shelf_volumes,
               "HQ: where runs start. One shared world. See build/world.py.", clock_on=False,
               ground=world.get("ground", "flat"), weather=world.get("weather"),
               # NEVER REMOVED: a run's players come back to it. With an "empty" timeout it was
