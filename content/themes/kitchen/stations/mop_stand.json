@@ -11,12 +11,19 @@
     "trim": "#3a78b8",
     "icon": "Icons/ItemsGenerated/Halloween_Broomstick.png"
   },
+  "stand": {
+    "$comment": "The stand itself: a tinted mat on the floor (what shows when the mop is out). The cube look above is only its authoring slot.",
+    "model": "Blocks/Structures/Roofs/Cloth_Roof_Horizontal.blockymodel",
+    "texture": "Blocks/Structures/Roofs/Cloth_Roof_Textures/Tent_White.png",
+    "tint": "#3a78b8"
+  },
   "on_top": {
     "label": "Mop",
     "model": "Items/Halloween_Props/Broomstick.blockymodel",
     "texture": "Items/Halloween_Props/Broomstick_Texture.png",
-    "scale": 0.8,
-    "icon": "Icons/ItemsGenerated/Halloween_Broomstick.png"
+    "scale": 0.3,
+    "icon": "Icons/ItemsGenerated/Halloween_Broomstick.png",
+    "$comment": "The mop standing on its stand (the stand's block while the mop is on it)."
   },
   "words": {
     "free": "Mop stand - press to take the mop",

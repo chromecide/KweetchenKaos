@@ -34,6 +34,8 @@
   (more guest mess). Each has a limit.
 - **Smaller pies and bread:** pies at three quarters of their old size, bread at 60%,
   at every stage.
+- **The mop stand is no longer a block:** the mop stands on the floor, and takes up less
+  room. Once it's taken, a blue mat marks where it goes back.
 - **For builders:**
   - **One authoring world per layout:** `/kk author border`, `/kk author hq`,
     `/kk author practice` and `/kk author floorplan 1`-`99`, each with a single plot.
