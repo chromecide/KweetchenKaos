@@ -27,7 +27,8 @@ Each world is creative and persistent. /kk author marks the plot's edges every t
 a line of edge blocks one block OUTSIDE what is saved, so it never touches a build.
 
 A room plot is 32 x 32 (two chunks square), its corner at 0, 0; build inside it, floor and
-all -- everything from ROOM_BELOW under the floor up to AUTHOR_HEIGHT above it is saved. The
+all -- everything from ROOM_BELOW under the floor up to the theme's room_height above it
+(theme.json; AUTHOR_HEIGHT without one) is saved. The
 world has real ground (stone, dirt, grass at FLOOR), so gravel rests and you can dig down.
 
 THE BORDER is a BACKDROP: a ring one chunk thick round a room-sized hole, 64 x 64 in all.
@@ -65,7 +66,10 @@ import settings
 
 CHUNK = 16
 LAYOUT = 2 * CHUNK            # a plot is 32 x 32 blocks
-AUTHOR_HEIGHT = 48             # saved above a room's floor: tall enough for a room up a tree
+# HOW TALL A ROOM IS: what a room plot saves above its floor, and what the room's volumes
+# cover (restaurant.py). The theme sets it (theme.json "room_height"); this is the fallback,
+# tall enough for a room up a tree. Keep it low: every room volume is this tall, plus margins.
+AUTHOR_HEIGHT = 48
 # THE AUTHORING WORLDS, one per layout: the border, HQ, the practice room, and the
 # floorplans (restaurant rooms), numbered 1 to FLOORPLANS. Each is its own world with one
 # plot, so a room is built and saved on its own.
@@ -223,14 +227,20 @@ def below(src):
     return BORDER_BELOW if is_border(src) else ROOM_BELOW
 
 
-def plot_box(src):
+def room_height(model=None):
+    """How far above its floor a room reaches: the theme's "room_height", else AUTHOR_HEIGHT."""
+    return int(model["theme"].get("room_height", AUTHOR_HEIGHT)) if model else AUTHOR_HEIGHT
+
+
+def plot_box(src, height=AUTHOR_HEIGHT):
     """(x1, z1, x2, z2, y1, y2): what a world's plot saves -- the border's, its ring too --
-    from below() under the floor up. The plot (the border's HOLE) has its corner at 0, 0."""
+    from below() under the floor up; a room's up to `height` above it (room_height), the
+    border's up to BORDER_HEIGHT. The plot (the border's HOLE) has its corner at 0, 0."""
     y1 = FLOOR - below(src)
     if is_border(src):
         return (-BORDER, -BORDER, LAYOUT + BORDER - 1, LAYOUT + BORDER - 1,
                 y1, FLOOR + BORDER_HEIGHT - 1)
-    return 0, 0, LAYOUT - 1, LAYOUT - 1, y1, FLOOR + AUTHOR_HEIGHT - 1
+    return 0, 0, LAYOUT - 1, LAYOUT - 1, y1, FLOOR + height - 1
 
 
 def _rect(a, b, c, d):
@@ -352,9 +362,10 @@ def world_name(src):
     return f"{AUTHOR}_{title(src)}"
 
 
-def write_authoring(release=False):
+def write_authoring(release=False, height=AUTHOR_HEIGHT):
     """The authoring worlds and their commands. `release`: without this project's own
-    saves -- no /kk restore (they're the author's working copies, not the game)."""
+    saves -- no /kk restore (they're the author's working copies, not the game). `height`:
+    how far above the floor a room plot saves (room_height)."""
     manifest = json.load(open(os.path.join(settings.PACK, "manifest.json")))
     pack_id = f"{manifest['Group']}:{manifest['Name']}"
     macros = [("KKSlots", "kk slots", "Hand over every slot block",
@@ -385,8 +396,8 @@ def write_authoring(release=False):
             "DeleteOnRemove": False, "DeleteOnUniverseStart": False,
             "Plugin": {"Instance": {"InstanceKey": name.lower()}}})
         enter = [f"instances spawn {name}", "wait 4", "gamemode creative"]
-        x1, z1, x2, z2, y1, y2 = plot_box(src)
-        over = [f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 3"]
+        x1, z1, x2, z2, y1, y2 = plot_box(src, height)
+        over =[f"tp {(x1 + x2) // 2} {FLOOR + 30} {(z1 + z2) // 2}", "wait 3"]
         # AUTHOR: into the world, the plot's edges marked (outside what is saved, so safe
         # every time; set writes only into LOADED chunks, so from over the plot), and back
         # in front of it.

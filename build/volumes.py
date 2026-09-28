@@ -23,6 +23,8 @@ the Kitchen POC (kitchen-poc/docs/systems.md has the full record):
     was removed before it could log anything.
   * Chat (say) is for the tester; it never reaches a log file.
 """
+import json
+
 import pack
 import settings
 
@@ -292,9 +294,44 @@ def report(key, text, debug, event="BLOCK_USED", to_log=True):
 WORLD_BOX = ((-64.0, -8.0, -64.0), (64.0, 40.0, 64.0))
 
 
+# TRACKING COSTS EVERY TICK. For each entity a volume tracks, every tick, the engine walks
+# ALL of the volume's rules looking for TICK work -- even when it has no TICK, ENTER or EXIT
+# rules at all (TriggerVolumeTickingSystem, the per-entity loop). A player standing in the
+# room paid for the Counter's whole 309-rule table 30 times a second for nothing.
+# Block and signal events don't need tracking: they reach a volume whatever its TargetTypes.
+# So a volume tracks no one unless its rules need it: an ENTER/TICK/EXIT rule, a
+# PlayerCountCondition (it counts TRACKED players) or a world-weather reset (it waits for
+# the volume to have no tracked entities left).
+# An empty list is dropped when the server saves a world and reads back as ["Player"]; only
+# a world reloaded from its own save sees that (runs are fresh copies), and then it costs
+# speed only.
+LIFECYCLE_EVENTS = {"ENTER", "TICK", "EXIT"}
+
+
+def needs_tracking(rules):
+    """True when a volume with these rules (an effect file's dict) must track entities."""
+    for r in (rules.get("Conditions", []) + rules.get("Effects", [])
+              + rules.get("RejectionEffects", [])):
+        if r.get("Event") in LIFECYCLE_EVENTS or r.get("Type") == "PlayerCountCondition":
+            return True
+        if r.get("Type") == "SetWeather" and r.get("ResetWeather") and not r.get("PlayerOnly", True):
+            return True
+    return False
+
+
+def targets_for(rules, targets):
+    """The TargetTypes to write: `targets` if these rules need tracking, else none."""
+    return list(targets) if needs_tracking(rules) else []
+
+
+def effect_rules(effect):
+    """An effect file the build has written, read back."""
+    return json.load(open(pack.out("TriggerVolumes", "Effects", f"{effect}.json")))
+
+
 def volume(name, effect, tags, targets=("Player",), box=WORLD_BOX):
     """A system mounted in a box ((min x, y, z), (max x, y, z)) -- by default the whole
-    test world."""
+    test world. Tracks `targets` only if its rules need it (targets_for)."""
     # POSITION IS THE BOX'S CENTRE, and the shape is drawn round it. A signal's reach (and
     # a tag read from another volume) is measured from the volume's POSITION -- with every
     # position at the origin and the box drawn out at the room, a pool 70 blocks from the
@@ -305,5 +342,6 @@ def volume(name, effect, tags, targets=("Player",), box=WORLD_BOX):
             "Shape": {"Type": "Box",
                       "Min": {"X": x0 - cx, "Y": y0 - cy, "Z": z0 - cz},
                       "Max": {"X": x1 - cx, "Y": y1 - cy, "Z": z1 - cz}},
-            "EffectAsset": effect, "TargetTypes": list(targets), "Enabled": True,
+            "EffectAsset": effect, "TargetTypes": targets_for(effect_rules(effect), targets),
+            "Enabled": True,
             "KeepLoaded": False, "Tags": dict(tags), "Name": name}

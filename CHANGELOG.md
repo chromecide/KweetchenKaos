@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Faster rooms:** a room's systems no longer do work every tick for each player standing
+  in them. Stations, crates, seating, the queue, pads and hazards only react to presses
+  and signals, so they stop watching who is inside. The shift and practice still do.
+- **Room height is a theme setting** (`room_height` in `theme.json`, 16 for the kitchen).
+  `/kk save` and `/kk restore` cover a room plot up to that height, and a room's volumes
+  are built that tall, half their old height. The border keeps its own, taller save.
 - **A new HQ, new rooms and a new border**, all built from scratch:
   - **HQ** has the franchise storeroom.
   - **The rooms:** The Diner (starter), Cafe 1 (small) and Bistro 1 (medium). The first

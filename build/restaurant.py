@@ -65,14 +65,15 @@ def _slot(name):
 
 def _carried(name, effect, tags, box, targets=("Player",), extra=None):
     """A system's volume as a room entity: its rules read back from the effect file the
-    system wrote, inline; positioned at the middle of `box` (room coordinates)."""
-    rules = json.load(open(pack.out("TriggerVolumes", "Effects", f"{effect}.json")))
+    system wrote, inline; positioned at the middle of `box` (room coordinates). Tracks
+    `targets` only if its rules need it (volumes.targets_for)."""
+    rules = v.effect_rules(effect)
     (x0, y0, z0), (x1, y1, z1) = box
     cx, cy, cz = (x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2
     tv = {"Shape": {"Type": "Box", "Min": {"X": x0 - cx, "Y": y0 - cy, "Z": z0 - cz},
                     "Max": {"X": x1 - cx, "Y": y1 - cy, "Z": z1 - cz}},
           "Conditions": rules["Conditions"], "Effects": rules["Effects"],
-          "Enabled": True, "TargetTypes": list(targets), "Tags": dict(tags),
+          "Enabled": True, "TargetTypes": v.targets_for(rules, targets), "Tags": dict(tags),
           "Name": name, "PrefabIndex": 0, **(extra or {})}
     return {"Components": {
         "TriggerVolume": tv,
@@ -253,9 +254,10 @@ def build(model, layout_id, debug=True, patience=None, exit_on_lose=False, label
         problems.append("no queue spots, so no queue")
         area = None
 
-    # THE ROOM'S OWN VOLUMES: every system over the room (its plot and a little round it).
+    # THE ROOM'S OWN VOLUMES: every system over the room (its plot and a little round it),
+    # as tall as the theme's rooms (layouts.room_height).
     box = ((-ROOM_MARGIN, -8, -ROOM_MARGIN),
-           (ROOM_SIZE + ROOM_MARGIN, layouts.AUTHOR_HEIGHT + 8, ROOM_SIZE + ROOM_MARGIN))
+           (ROOM_SIZE + ROOM_MARGIN, layouts.room_height(model) + 8, ROOM_SIZE + ROOM_MARGIN))
     crates = [sid for sid, st in model["stations"].items()
               if st["role"] == "crate" and not st.get("upgrade_of")]
     v.take_companions()           # nothing left over from another build

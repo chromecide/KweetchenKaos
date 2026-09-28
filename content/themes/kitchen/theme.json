@@ -2,6 +2,7 @@
   "id": "kitchen",
   "name": "Kitchen",
   "prefix": "Kitchen",
+  "room_height": 16,
   "defaults": {
     "heat_seconds": 8,
     "order_patience": 200,

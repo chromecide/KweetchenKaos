@@ -144,6 +144,7 @@ with the vessel, washing is a press at the wash station.
   "id": "kitchen",
   "name": "Kitchen",
   "prefix": "Kitchen",
+  "room_height": 16,
   "defaults": {
     "heat_seconds": 8,
     "order_patience": 30,
@@ -154,6 +155,12 @@ with the vessel, washing is a press at the wash station.
   "guest": { "appearance": "Klops" }
 }
 ```
+
+`room_height` is how many blocks above its floor a room reaches. `/kk save` saves a
+room plot up to that height, and the room's trigger volumes are built that tall (plus a
+small margin). Anything built higher is cut off when the plot is saved. Leave it out and
+rooms get 48, room for a restaurant up a tree. Keep it as low as the rooms allow: every
+room volume is that tall. The border keeps its own height.
 
 ### `vessel.json`
 
