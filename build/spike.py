@@ -47,6 +47,7 @@ What was learned in the POC and is built in here:
 """
 import blocks
 import clock
+import npc
 import pack
 import restaurant
 import settings
@@ -134,6 +135,9 @@ SPIKES = {
     # PROBE: can a run remember the best day on the player, and can it be read back? Four
     # blocks, nothing else (see _best_run).
     "bestrun": {"stations": {}, "best_probe": True, "give": []},
+    # PROBE: food as carried blocks, one thing at a time, F only (see _carry_food). Its own
+    # blocks and two guests; the kit is popcorn, to see the hotbar go out of play.
+    "carry": {"stations": {}, "carry_probe": True, "give": []},
     # THE PRACTICE KITCHEN (systems/practice.py): the whole kitchen and the front of house,
     # guests arriving by themselves (and a CALL A GUEST block), every one in the practice
     # mood (five times the patience), the stations locked in place, hazards and the mop.
@@ -279,6 +283,198 @@ def _best_run(model, debug):
         out.append({"x": BEST_ROW[0] + 2 * n, "y": GROUND, "z": BEST_ROW[1], "name": gid})
     rules.write(BEST_EFFECT, "Spike only: the best-run probe. See build/spike.py.")
     return out
+
+
+CARRY_EFFECT = f"{settings.NAMESPACE}_Spike_Carry"
+CARRY_PAD_EFFECT = f"{settings.NAMESPACE}_Spike_Carry_Pad"
+CARRY_ROW = 12                # z of the probe's row of blocks
+CARRY_GUEST_DZ = 3            # a guest stands this far past its caller (+z)
+
+
+def _carry_food(model, debug):
+    """PROBE: food as CARRIED BLOCKS, so a player holds one thing at a time -- with F as the
+    only key. Returns layout blocks; writes its own volume (CARRY_EFFECT) and a small one
+    round guest B (CARRY_PAD_EFFECT).
+
+    Food is a block. F on it with empty hands runs the block's own Use: CarryBlock. While
+    carrying, EVERY interaction comes from the carried item's CarryInteractions (the hotbar
+    is out of play), and its Use is: hand it to a guest (ContextualUseNPC), else pass the
+    press to the block looked at (UseBlock), whose volume checks what is carried
+    (ItemCondition Location Carried) and takes it (Consume). No right-click put-down.
+
+    The row, left to right (x), at z CARRY_ROW:
+      4   CRATE   corn on top. F on the corn picks it up; a new one comes 1.5 s later.
+      6   COUNTER F carrying food: it goes on top. F on it again: back in hand. Movable
+                  (left-click) between shifts, like the game's: left-click on the FOOD on
+                  it should do nothing, and on the counter pick the counter up.
+      8   STOVE   F carrying raw corn: in; 3 s later roasted corn sits on top. F: take it.
+      12  CALLER A  a guest 3 blocks behind it
+      16  CALLER B  a guest 3 blocks behind it, standing in a PAD volume
+    Serving, two ways, one per food (the consume is the unknown):
+      roasted corn: hand over, then ModifyInventory -1 (how KK serves a held dish today)
+      raw corn:     hand over, then UseEntity -- a real entity use, which the pad around
+                    guest B hears, and takes the carried corn (so: raw to B empties, raw to
+                    A is the control and should NOT)
+    Also watched: F on food while already carrying (the pick-up fails -- does its volume
+    still hear the press? decides combining on a counter), Q while carrying, and the
+    popcorn in the kit (right-click eats it -- not while carrying?)."""
+    ns = settings.NAMESPACE
+    gid = lambda local: f"{ns}_Probe_Carry_{local}"
+    comment = "Probe only: carried food. See build/spike.py (_carry_food)."
+    say = lambda key, text: (pack.say(key, text), f"server.{key}")[1]
+    root = lambda rid, first: pack.write(pack.out("Item", "RootInteractions", ns, f"{rid}.json"),
+                                         {"$Comment": comment, "Interactions": [first]})
+
+    # --- the food: a block you pick up with F, carried with its own F
+    pick = gid("Pick")
+    root(pick, {"Type": "CarryBlock"})
+    guest_roles = {"a": gid("Guest_A"), "b": gid("Guest_B")}
+    ctx = {"raw": gid("Serve_Raw"), "cooked": gid("Serve_Cooked")}
+    then = {"raw": {"Type": "UseEntity"},
+            "cooked": {"Type": "ModifyInventory", "AdjustHeldItemQuantity": -1}}
+    food = {"raw": (gid("Corn"), "Corn (probe)", {
+                "model": "Resources/Ingredients/Corn.blockymodel",
+                "texture": "Resources/Ingredients/Corn_Texture.png", "scale": 0.75,
+                "icon": "Icons/ItemsGenerated/Plant_Crop_Corn.png"}),
+            "cooked": (gid("Corn_Roasted"), "Roasted corn (probe)", {
+                "model": "Items/Consumables/Food/Corn_Roasted.blockymodel",
+                "texture": "Resources/Ingredients/Corn_Texture.png",
+                "icon": "Icons/ItemsGenerated/Food_Roasted_Corn.png"})}
+    for kind, (fid, label, look) in food.items():
+        use = f"{fid}_Carried_Use"
+        root(use, {"Type": "ContextualUseNPC", "Context": ctx[kind],
+                   "Effects": {"WorldSoundEventId": "SFX_Player_Pickup_Item"},
+                   "Next": then[kind], "Failed": {"Type": "UseBlock"}})
+        block = dict(blocks.block_for(look),
+                     InteractionHint=blocks.hint(fid, f"Press to pick up the {label.lower()}"),
+                     Interactions={"Use": pick, "Primary": blocks.NOOP},
+                     SupportDropType="Destroy")
+        pack.say(f"items.{fid}.name", label)
+        pack.write_item(fid, {
+            "$Comment": comment, "TranslationProperties": {"Name": f"server.items.{fid}.name"},
+            "Icon": look["icon"], "PlayerAnimationsId": "Block", "BlockType": block,
+            "CarryInteractions": {"Use": use},
+            "CarryHudInputBindings": {"Use": "BlockInteractAction"},
+            "Tags": {"Type": ["Furniture"], "Family": ["Kitchen"]}})
+    raw, cooked = food["raw"][0], food["cooked"][0]
+
+    # --- the stations: plain blocks with a state each
+    wood = {"sides": "BlockTextures/Wood_Softwood_Planks_Side.png",
+            "top": "BlockTextures/Wood_Softwood_Planks_Side.png", "sound": "Wood"}
+    st = {k: gid(k) for k in ("Crate", "Counter", "Counter_Full", "Stove", "Stove_Cooking",
+                              "Stove_Done", "Caller_A", "Caller_B")}
+    blocks.station_block(st["Crate"], "Corn crate (probe)", wood, "Take the corn on top",
+                         comment, tint="#c0a040", keyed=False)
+    blocks.station_block(st["Counter"], "Counter (probe)", wood,
+                         "Press carrying food to put it here", comment, tint="#8a8a8a",
+                         movable=True)
+    blocks.station_block(st["Counter_Full"], "Counter, food on it (probe)", wood,
+                         "Something is on it", comment, tint="#6a6a6a", movable=True)
+    blocks.station_block(st["Stove"], "Stove (probe)", wood, "Press carrying raw corn to cook it",
+                         comment, tint="#404040")
+    blocks.station_block(st["Stove_Cooking"], "Stove, cooking (probe)", wood, "Cooking...",
+                         comment, tint="#c05020")
+    blocks.station_block(st["Stove_Done"], "Stove, done (probe)", wood, "Take the roasted corn",
+                         comment, tint="#40a040")
+    for g in ("A", "B"):
+        blocks.station_block(st[f"Caller_{g}"], f"Call guest {g} (probe)", wood,
+                             f"Press to call guest {g}", comment, tint="#3c6a8a")
+
+    # --- the guests: stand still, always take a dish, and say what they got
+    for g, role_id in guest_roles.items():
+        hint_key = say(f"kk.probe.carry.guest.{g}", "Give the corn")
+        got = lambda what: [{"Type": "Log", "Message": f"[carry] guest {g.upper()} got: {what}"},
+                            npc.name_tag(f"Guest {g.upper()}: got {what}")]
+        # SetInteractable is only valid in the INTERACTION instructions, not the behaviour.
+        npc.role(role_id, f"Guest {g.upper()} (probe)", "Idle", {"Idle": [
+            npc.branch("Stand still.", {"Type": "Any"}, npc.STILL)]},
+            interactions=[
+                npc.branch("Always interactable, with a prompt.", {"Type": "Any"}, None,
+                           [{"Type": "SetInteractable", "Interactable": True,
+                             "ShowPrompt": True, "Hint": hint_key}], cont=True),
+                npc.branch("Handed raw corn.", {"Type": "InteractionContext", "Context": ctx["raw"]},
+                           None, got("RAW corn")),
+                npc.branch("Handed roasted corn.",
+                           {"Type": "InteractionContext", "Context": ctx["cooked"]},
+                           None, got("ROASTED corn")),
+                npc.branch("Pressed.", {"Type": "HasInteracted"}, None, got("a press"))],
+            display=f"Guest {g.upper()}", comment=comment)
+
+    # --- the rules
+    chat = lambda key, text, event: v.say(f"kk.probe.carry.{key}", f"[carry] {text}", event)
+    rep = lambda key, text, event: [chat(key, text, event)] + v.report(
+        f"kk.probe.carry.{key}", f"[carry] {text}", debug, event, to_log=True)
+    under = lambda what, event: {"Type": "BlockTypeCondition", "Event": event, "BlockType": [what],
+                                 "PositionSource": "Event",
+                                 "PositionOffset": {"X": 0.0, "Y": -1.0, "Z": 0.0}}
+    put = lambda block, dy, event, delay=None: dict(
+        {"Type": "PlaceBlock", "Event": event, "BlockType": block, "Origin": "Event",
+         "Position": {"X": 0.0, "Y": float(dy), "Z": 0.0}, "ReplaceMode": "Always"},
+        **({"Delay": delay} if delay else {}))
+    carrying = lambda fid, event="BLOCK_USED": {"Type": "ItemCondition", "Event": event,
+                                                "Item": fid, "Location": "Carried",
+                                                "Consume": True}
+    carrying_check = lambda fid: {"Type": "ItemCondition", "Event": "BLOCK_USED", "Item": fid,
+                                  "Location": "Carried"}
+    rules = v.Entries()
+    b = "BLOCK_BROKEN"
+    # THE CRATE: the corn on it taken (a carry is a real break) -> a new one, a moment later.
+    rules.add(10, [v.at([raw], event=b), under(st["Crate"], b)],
+              [dict(put(raw, 0, b, 1.5), ReplaceMode="OnlyAir")]
+              + rep("crate.take", "picked up corn from the crate (a new one in 1.5 s)", b))
+    # THE COUNTER: F carrying food -> the counter takes it and shows it on top.
+    for n, (kind, fid) in enumerate((("raw", raw), ("cooked", cooked))):
+        rules.add(20 + n, [v.at([st["Counter"]]), carrying(fid)],
+                  [put(st["Counter_Full"], 0, "BLOCK_USED"), put(fid, 1, "BLOCK_USED"),
+                   v.sound(1.0)]
+                  + rep(f"counter.put.{kind}", f"counter took the {kind} corn: on top now",
+                        "BLOCK_USED"))
+    rules.add(22, [v.at([raw, cooked], event=b), under(st["Counter_Full"], b)],
+              [put(st["Counter"], -1, b)] + rep("counter.take", "picked food up off the counter", b))
+    # THE STOVE: raw corn in -> 3 s -> roasted corn on top; taken -> empty again.
+    rules.add(30, [v.at([st["Stove"]]), carrying(raw)],
+              [put(st["Stove_Cooking"], 0, "BLOCK_USED"), v.sound(0.8),
+               put(st["Stove_Done"], 0, "BLOCK_USED", 3.0), put(cooked, 1, "BLOCK_USED", 3.0)]
+              + rep("stove.in", "stove took the raw corn: roasted in 3 s", "BLOCK_USED"))
+    rules.add(31, [v.at([cooked], event=b), under(st["Stove_Done"], b)],
+              [put(st["Stove"], -1, b)] + rep("stove.take", "picked the roasted corn off the stove", b))
+    # F ON FOOD WHILE CARRYING: the pick-up fails (already carrying). Is the press heard?
+    for n, (kind, fid) in enumerate((("raw", raw), ("cooked", cooked))):
+        rules.add(40 + n, [v.at([raw, cooked]), carrying_check(fid)],
+                  rep(f"combine.{kind}", f"heard F on food while carrying {kind} corn "
+                                         "(combining would work)", "BLOCK_USED"))
+    # THE CALLERS: a guest behind each, one at a time.
+    for n, g in enumerate(("a", "b")):
+        role_id = guest_roles[g]
+        rules.add(50 + n, [v.at([st[f"Caller_{g.upper()}"]]),
+                           {"Type": "EntityCountCondition", "Event": "BLOCK_USED",
+                            "Comparison": "AtMost", "Count": 0, "EntityType": [role_id]}],
+                  [{"Type": "SpawnNpc", "Event": "BLOCK_USED", "NpcType": role_id,
+                    "Origin": "Event", "Count": 1, "Yaw": 180.0,
+                    "Offset": {"X": 0.0, "Y": -0.5, "Z": float(CARRY_GUEST_DZ)}}]
+                  + rep(f"call.{g}", f"guest {g.upper()} called", "BLOCK_USED"))
+    rules.write(CARRY_EFFECT, comment)
+    # THE PAD round guest B: a real entity use while carrying -> it takes the carried corn.
+    pad = v.Entries()
+    for n, (kind, fid) in enumerate((("raw", raw), ("cooked", cooked))):
+        pad.add(1 + n, [carrying(fid)],
+                rep(f"pad.{kind}", f"guest B's pad took the carried {kind} corn "
+                                   "(UseEntity path)", "BLOCK_USED"))
+    pad.write(CARRY_PAD_EFFECT, comment)
+
+    y = GROUND
+    return [{"x": 4, "y": y, "z": CARRY_ROW, "name": st["Crate"]},
+            {"x": 4, "y": y + 1, "z": CARRY_ROW, "name": raw},
+            {"x": 6, "y": y, "z": CARRY_ROW, "name": st["Counter"]},
+            {"x": 8, "y": y, "z": CARRY_ROW, "name": st["Stove"]},
+            {"x": 12, "y": y, "z": CARRY_ROW, "name": st["Caller_A"]},
+            {"x": 16, "y": y, "z": CARRY_ROW, "name": st["Caller_B"]}]
+
+
+def _carry_pad_box():
+    """Round guest B: its caller at x 16, it stands CARRY_GUEST_DZ further on."""
+    z = CARRY_ROW + CARRY_GUEST_DZ
+    return ((15.0, 0.0, z - 1.0), (18.0, 5.0, z + 2.0))
 
 
 def _tip_dial(model, debug):
@@ -584,6 +780,11 @@ def build(model, name, debug=True):
     if spike.get("best_probe"):
         extra += _best_run(model, debug)
         mounted.append(v.volume("spike_best", BEST_EFFECT, {"spike": "best"}))
+    if spike.get("carry_probe"):
+        extra += _carry_food(model, debug)
+        mounted.append(v.volume("spike_carry", CARRY_EFFECT, {"spike": "carry"}))
+        mounted.append(v.volume("spike_carry_pad", CARRY_PAD_EFFECT, {"spike": "carrypad"},
+                                box=_carry_pad_box()))
     if spike.get("dispenser"):
         extra.append({"x": HAZARD_DISPENSER[0], "y": GROUND, "z": HAZARD_DISPENSER[1],
                       "name": hazards.ids(model)["dispenser"]})
@@ -602,6 +803,8 @@ def build(model, name, debug=True):
         given = [(SETUP, 1)] + [(items[i]["game_id"], 1) for i in spike["give"]]
     else:
         given = kit(model, stations)
+    if spike.get("carry_probe"):
+        given += [("Food_Popcorn", 3)]
     if spike.get("mats"):
         mats = blocks.mat_ids(model)
         ids_ = {"mat": mats["levels"][0], "mat_rubber": mats["rubber"]}
